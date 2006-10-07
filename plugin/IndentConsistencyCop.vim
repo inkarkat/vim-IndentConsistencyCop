@@ -71,7 +71,12 @@ function! s:InspectLine(lineNum)
 	" Tabs-only can also be interpreted as a softtabstop-line without
 	" balancing spaces. 
 	call s:CountSofttabstops( l:beginningWhitespace )
-    elseif match( l:beginningWhitespace, '^ \+$' ) != -1
+    elseif match( l:beginningWhitespace, '^ \{1,7}$' ) != -1
+	call s:CountSpaces( l:beginningWhitespace )
+	" Spaces-only (up to 7) can also be interpreted as a softtabstop-line
+	" without tabs. 
+	call s:CountSofttabstops( l:beginningWhitespace )
+    elseif match( l:beginningWhitespace, '^ \{8,}$' ) != -1
 	call s:CountSpaces( l:beginningWhitespace )
     elseif match( l:beginningWhitespace, '^\t\+ \{1,7}$' ) != -1
 	call s:CountSofttabstops( l:beginningWhitespace )
