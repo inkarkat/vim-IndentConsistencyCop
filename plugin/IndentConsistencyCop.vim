@@ -16,17 +16,19 @@ if exists("loaded_tabcontrol") || (v:version < 700)
 endif
 let loaded_tabcontrol = 1
 
-function! s:IncreaseKey( key )
+function! s:IncreaseKey( dict, key )
 echo '**** ' . a:key
-    if has_key( s:occurrences, a:key )
-	let s:occurrences[ a:key ] += 1
+    if has_key( a:dict, a:key )
+	let a:dict[ a:key ] += 1
     else
-	let s:occurrences[ a:key ] = 1
+	let a:dict[ a:key ] = 1
     endif
 endfunction
 
 function! s:TabControl()
     let s:occurrences = {}
+    let s:spaces = {}
+    let s:softtabstops = {}
 
     let l:lineNum = 1
     while l:lineNum <= line('$')
@@ -34,6 +36,8 @@ function! s:TabControl()
 	let l:lineNum += 1
     endwhile
     echo s:occurrences
+    echo s:spaces
+    echo s:softtabstops
 endfunction
 
 function! s:InspectLine(lineNum)
@@ -55,23 +59,23 @@ echo getline(a:lineNum)
 endfunction
 
 function! s:CountTabs( tabString )
-    call s:IncreaseKey( 'ts' )
+    call s:IncreaseKey( s:occurrences, 'ts' )
 endfunction
 
 function! s:CountSpaces( spaceString )
-    call s:IncreaseKey( 'sp' . len( a:spaceString ) )
+    call s:IncreaseKey( s:spaces, len( a:spaceString ) )
 endfunction
 
 function! s:CountSofttabstops( stsString )
-    call s:IncreaseKey( 'sts' . len( substitute( a:stsString, '\t', '        ', 'g' ) ) )
+    call s:IncreaseKey( s:spaces, len( substitute( a:stsString, '\t', '        ', 'g' ) ) )
 endfunction
 
 function! s:CountBadSofttabstop( string )
-    call s:IncreaseKey('badsts')
+    call s:IncreaseKey( s:occurrences, 'badsts')
 endfunction
 
 function! s:CountBadMixOfSpacesAndTabs( string )
-    call s:IncreaseKey('badmix')
+    call s:IncreaseKey( s:occurrences, 'badmix')
 endfunction
 
 "TODO: range-command
