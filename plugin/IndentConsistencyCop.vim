@@ -16,7 +16,7 @@ if exists("loaded_tabcontrol") || (v:version < 700)
 endif
 let loaded_tabcontrol = 1
 
-function! s:IncreaseKeyBy( dict, key, num )
+function! s:IncreaseKeyedBy( dict, key, num )
 "****D echo '**** ' . a:key
     if has_key( a:dict, a:key )
 	let a:dict[ a:key ] += a:num
@@ -25,8 +25,21 @@ function! s:IncreaseKeyBy( dict, key, num )
     endif
 endfunction
 
-function! s:IncreaseKey( dict, key )
-    call s:IncreaseKeyBy( a:dict, a:key, 1 )
+function! s:IncreaseKeyed( dict, key )
+    call s:IncreaseKeyedBy( a:dict, a:key, 1 )
+endfunction
+
+function! s:GetKeyedValue( dict, key )
+    if has_key( a:dict, a:key )
+	return a:dict[a:key]
+    else
+	return 0
+endfunction
+
+function! s:RemoveKey( dict, key )
+    if has_key( a:dict, a:key )
+	unlet a:dict[a:key]
+    endif
 endfunction
 
 function! s:IsDivsorOf( newNumber, numbers )
@@ -64,7 +77,7 @@ function! s:EvaluateIndentsIntoOccurrences( dict, type )
 	    if l:indent % l:indentCnt == 0
 		if ! s:IsDivsorOf( l:indentCnt, l:divisors )
 		    "****D echo "**** " . l:indent . " adding " . l:indentCnt
-		    call s:IncreaseKeyBy( s:occurrences, a:type . l:indentCnt, a:dict[ l:indent ] )
+		    call s:IncreaseKeyedBy( s:occurrences, a:type . l:indentCnt, a:dict[ l:indent ] )
 		"****D else
 		    "****D echo "**** " . l:indent . " discarding " . l:indentCnt . " because already done " . string(l:divisors)
 		endif
@@ -89,15 +102,45 @@ function! s:ApplyPrecedences()
 "* RETURN VALUES: 
 "   none
 "*******************************************************************************
+    " Space indents of up to 7 spaces can be either softtabstop or space-indent,
+    " and have been collected in the 'dbt n' keys so far. 
+    " If there is only either 'sts n' or 'spc n', the 'dbt n' value is moved to
+    " that key. If both exist, its value is added to both. If both are zero /
+    " non-existing, the 'dbt n' value is moved to 'spc n'; without further
+    " evidence, spaces take precedence over softtabstops. 
+    let l:indentCnt = 8
+    while l:indentCnt > 0
+	let l:dbtKey = 'dbt' . l:indentCnt
+	let l:dbt = s:GetKeyedValue( s:occurrences, l:dbtKey )
+	if l:dbt > 0
+	    let l:spcKey = 'spc' . l:indentCnt
+	    let l:stsKey = 'sts' . l:indentCnt
+	    let l:spc = s:GetKeyedValue( s:occurrences, l:spcKey )
+	    let l:sts = s:GetKeyedValue( s:occurrences, l:stsKey )
+	    if l:spc == 0 && l:sts == 0
+		call s:IncreaseKeyedBy( s:occurrences, l:spcKey, l:dbt )
+	    else
+		if l:spc > 0
+		    call s:IncreaseKeyedBy( s:occurrences, l:spcKey, l:dbt )
+		endif
+		if l:sts > 0
+		    call s:IncreaseKeyedBy( s:occurrences, l:stsKey, l:dbt )
+		endif
+	    endif
+	    call s:RemoveKey( s:occurrences, l:dbtKey )
+	endif
+
+	let l:indentCnt -= 1
+    endwhile
+
     " The occurrence 'sts8' has only been collected because of the parallelism
     " with 'spc8'. Effectively, 'sts8' is the same as 'tab', and is removed. 
-    "if s:occurrences['sts8'] != s:occurrences['tab']
-    "    throw "assert sts8 == tab"
-    "endif
-    "unlet s:occurrences['sts8']
-
-    " Space indents of up to 7 spaces can be either softtabstop or space-indent;
-    " you cannot tell. Each 'sts n' value is substracted from the corresponding
+    if has_key( s:occurrences, 'sts8' )
+	if s:occurrences['sts8'] != s:occurrences['tab']
+	    throw "assert sts8 == tab"
+	endif
+	unlet s:occurrences['sts8']
+    endif
 endfunction
 
 function! s:TabControl()
@@ -119,10 +162,11 @@ function! s:TabControl()
     echo 'Spaces:       ' . string( s:spaces )
     echo 'Softtabstops: ' . string( s:softtabstops )
     echo 'Doubtful:     ' . string( s:doubtful )
-    echo 'Occurrences:  ' . string( s:occurrences )
+    echo 'Occurrences 1:' . string( s:occurrences )
 
     call s:ApplyPrecedences()
 
+    echo 'Occurrences 2:' . string( s:occurrences )
     echo 'This is probably a ' . string( filter( copy( s:occurrences ), 'v:val == max( s:occurrences )') )
 endfunction
 
@@ -155,27 +199,27 @@ function! s:InspectLine(lineNum)
 endfunction
 
 function! s:CountTabs( tabString )
-    call s:IncreaseKey( s:occurrences, 'tab' )
+    call s:IncreaseKeyed( s:occurrences, 'tab' )
 endfunction
 
 function! s:CountDoubtful( spaceString )
-    call s:IncreaseKey( s:doubtful, len( a:spaceString ) )
+    call s:IncreaseKeyed( s:doubtful, len( a:spaceString ) )
 endfunction
 
 function! s:CountSpaces( spaceString )
-    call s:IncreaseKey( s:spaces, len( a:spaceString ) )
+    call s:IncreaseKeyed( s:spaces, len( a:spaceString ) )
 endfunction
 
 function! s:CountSofttabstops( stsString )
-    call s:IncreaseKey( s:softtabstops, len( substitute( a:stsString, '\t', '        ', 'g' ) ) )
+    call s:IncreaseKeyed( s:softtabstops, len( substitute( a:stsString, '\t', '        ', 'g' ) ) )
 endfunction
 
 function! s:CountBadSofttabstop( string )
-    call s:IncreaseKey( s:occurrences, 'badsts')
+    call s:IncreaseKeyed( s:occurrences, 'badsts')
 endfunction
 
 function! s:CountBadMixOfSpacesAndTabs( string )
-    call s:IncreaseKey( s:occurrences, 'badmix')
+    call s:IncreaseKeyed( s:occurrences, 'badmix')
 endfunction
 
 "TODO: range-command
