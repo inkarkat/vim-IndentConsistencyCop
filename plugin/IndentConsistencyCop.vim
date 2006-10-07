@@ -17,7 +17,7 @@ endif
 let loaded_tabcontrol = 1
 
 function! s:IncreaseKeyBy( dict, key, num )
-echo '**** ' . a:key
+"****D echo '**** ' . a:key
     if has_key( a:dict, a:key )
 	let a:dict[ a:key ] += a:num
     else
@@ -57,10 +57,12 @@ function! s:TabControl()
     echo s:spaces
     echo s:softtabstops
     echo s:occurrences
+
+    echo 'This is probably a ' . string( filter( copy( s:occurrences ), 'v:val == max( s:occurrences )') )
 endfunction
 
 function! s:InspectLine(lineNum)
-echo getline(a:lineNum)
+"****D echo getline(a:lineNum)
     let l:beginningWhitespace = matchstr( getline(a:lineNum), '^\s*' )
     if l:beginningWhitespace == ''
 	return
