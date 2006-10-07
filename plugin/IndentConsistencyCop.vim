@@ -75,6 +75,31 @@ function! s:EvaluateIndentsIntoOccurrences( dict, type )
     endfor
 endfunction
 
+function! s:ApplyPrecedences()
+"*******************************************************************************
+"* PURPOSE:
+"   Relates individual indent settings to others, thereby "stronger" indent
+"   settings take precedent over "weaker" ones. 
+"* ASSUMPTIONS / PRECONDITIONS:
+"   s:occurrences contains consolidated indent occurrences. 
+"* EFFECTS / POSTCONDITIONS:
+"   Modifies s:occurrences. 
+"* INPUTS:
+"   none
+"* RETURN VALUES: 
+"   none
+"*******************************************************************************
+    " The occurrence 'sts8' has only been collected because of the parallelism
+    " with 'spc8'. Effectively, 'sts8' is the same as 'tab', and is removed. 
+    "if s:occurrences['sts8'] != s:occurrences['tab']
+    "    throw "assert sts8 == tab"
+    "endif
+    "unlet s:occurrences['sts8']
+
+    " Space indents of up to 7 spaces can be either softtabstop or space-indent;
+    " you cannot tell. Each 'sts n' value is substracted from the corresponding
+endfunction
+
 function! s:TabControl()
     let s:occurrences = {}
     let s:spaces = {}
@@ -88,9 +113,12 @@ function! s:TabControl()
 
     call s:EvaluateIndentsIntoOccurrences( s:spaces, 'spc' )
     call s:EvaluateIndentsIntoOccurrences( s:softtabstops, 'sts' )
-    echo s:spaces
-    echo s:softtabstops
-    echo s:occurrences
+    " Now, the indent occurences have been consolidated into s:occurrences. 
+    echo 'Spaces:       ' . string( s:spaces )
+    echo 'Softtabstops: ' . string( s:softtabstops )
+    echo 'Occurrences:  ' . string( s:occurrences )
+
+    call s:ApplyPrecedences()
 
     echo 'This is probably a ' . string( filter( copy( s:occurrences ), 'v:val == max( s:occurrences )') )
 endfunction
