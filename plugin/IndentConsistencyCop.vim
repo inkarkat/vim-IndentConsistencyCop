@@ -52,7 +52,7 @@ function! s:TabControl()
 	let l:lineNum += 1
     endwhile
 
-    call s:EvaluateIndentsIntoOccurrences( s:spaces, 'sp' )
+    call s:EvaluateIndentsIntoOccurrences( s:spaces, 'spc' )
     call s:EvaluateIndentsIntoOccurrences( s:softtabstops, 'sts' )
     echo s:spaces
     echo s:softtabstops
@@ -88,7 +88,7 @@ function! s:InspectLine(lineNum)
 endfunction
 
 function! s:CountTabs( tabString )
-    call s:IncreaseKey( s:occurrences, 'ts' )
+    call s:IncreaseKey( s:occurrences, 'tab' )
 endfunction
 
 function! s:CountSpaces( spaceString )
