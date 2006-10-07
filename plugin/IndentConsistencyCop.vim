@@ -29,12 +29,46 @@ function! s:IncreaseKey( dict, key )
     call s:IncreaseKeyBy( a:dict, a:key, 1 )
 endfunction
 
+function! s:IsDivsorOf( newNumber, numbers )
+    for l:number in a:numbers
+	if l:number % a:newNumber == 0
+	    return 1
+	endif
+    endfor
+    return 0
+endfunction
+
 function! s:EvaluateIndentsIntoOccurrences( dict, type )
+"*******************************************************************************
+"* PURPOSE:
+"   An actual indent x translates into occurrences for shiftwidths n, 
+"   where n is a divisor of x. Divisors that are divisors of other divisors are
+"   skipped. 
+"   e.g. indent of 18 -> shiftwidth of 6 (1,2,3 skipped)
+"	 indent of 21 -> shiftwidths of 7,3 (1 skipped)
+"	 indent of 17 -> shiftwidth of 1
+"* ASSUMPTIONS / PRECONDITIONS:
+"	? List of any external variable, control, or other element whose state affects this procedure.
+"* EFFECTS / POSTCONDITIONS:
+"	? List of the procedure's effect on each external variable, control, or other element.
+"* INPUTS:
+"   dict: the dictionary of actual indents for a particular type
+"   type: either 'spc' or 'sts'
+"* RETURN VALUES: 
+"   Modifies the passed dict reference. 
+"*******************************************************************************
     for l:indent in keys( a:dict )
+	let l:divisors = []
 	let l:indentCnt = 8
 	while l:indentCnt > 0
 	    if l:indent % l:indentCnt == 0
-		call s:IncreaseKeyBy( s:occurrences, a:type . l:indentCnt, a:dict[ l:indent ] )
+		if ! s:IsDivsorOf( l:indentCnt, l:divisors )
+		    "****D echo "**** " . l:indent . " adding " . l:indentCnt
+		    call s:IncreaseKeyBy( s:occurrences, a:type . l:indentCnt, a:dict[ l:indent ] )
+		"****D else
+		    "****D echo "**** " . l:indent . " discarding " . l:indentCnt . " because already done " . string(l:divisors)
+		endif
+		let l:divisors += [ l:indentCnt ]
 	    endif
 	    let l:indentCnt -= 1
 	endwhile
