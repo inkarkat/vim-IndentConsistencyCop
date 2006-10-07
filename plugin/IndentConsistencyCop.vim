@@ -104,6 +104,7 @@ function! s:TabControl()
     let s:occurrences = {}
     let s:spaces = {}
     let s:softtabstops = {}
+    let s:doubtful = {}
 
     let l:lineNum = 1
     while l:lineNum <= line('$')
@@ -113,9 +114,11 @@ function! s:TabControl()
 
     call s:EvaluateIndentsIntoOccurrences( s:spaces, 'spc' )
     call s:EvaluateIndentsIntoOccurrences( s:softtabstops, 'sts' )
+    call s:EvaluateIndentsIntoOccurrences( s:doubtful, 'dbt' )
     " Now, the indent occurences have been consolidated into s:occurrences. 
     echo 'Spaces:       ' . string( s:spaces )
     echo 'Softtabstops: ' . string( s:softtabstops )
+    echo 'Doubtful:     ' . string( s:doubtful )
     echo 'Occurrences:  ' . string( s:occurrences )
 
     call s:ApplyPrecedences()
@@ -137,10 +140,9 @@ function! s:InspectLine(lineNum)
 	" preference of tab over sts8, though). 
 	call s:CountSofttabstops( l:beginningWhitespace )
     elseif match( l:beginningWhitespace, '^ \{1,7}$' ) != -1
-	call s:CountSpaces( l:beginningWhitespace )
 	" Spaces-only (up to 7) can also be interpreted as a softtabstop-line
 	" without tabs. 
-	call s:CountSofttabstops( l:beginningWhitespace )
+	call s:CountDoubtful( l:beginningWhitespace )
     elseif match( l:beginningWhitespace, '^ \{8,}$' ) != -1
 	call s:CountSpaces( l:beginningWhitespace )
     elseif match( l:beginningWhitespace, '^\t\+ \{1,7}$' ) != -1
@@ -154,6 +156,10 @@ endfunction
 
 function! s:CountTabs( tabString )
     call s:IncreaseKey( s:occurrences, 'tab' )
+endfunction
+
+function! s:CountDoubtful( spaceString )
+    call s:IncreaseKey( s:doubtful, len( a:spaceString ) )
 endfunction
 
 function! s:CountSpaces( spaceString )
