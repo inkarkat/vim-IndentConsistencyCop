@@ -16,13 +16,29 @@ if exists("loaded_tabcontrol") || (v:version < 700)
 endif
 let loaded_tabcontrol = 1
 
-function! s:IncreaseKey( dict, key )
+function! s:IncreaseKeyBy( dict, key, num )
 echo '**** ' . a:key
     if has_key( a:dict, a:key )
-	let a:dict[ a:key ] += 1
+	let a:dict[ a:key ] += a:num
     else
-	let a:dict[ a:key ] = 1
+	let a:dict[ a:key ] = a:num
     endif
+endfunction
+
+function! s:IncreaseKey( dict, key )
+    call s:IncreaseKeyBy( a:dict, a:key, 1 )
+endfunction
+
+function! s:EvaluateIndentsIntoOccurrences( dict, type )
+    for l:indent in keys( a:dict )
+	let l:indentCnt = 8
+	while l:indentCnt > 0
+	    if l:indent % l:indentCnt == 0
+		call s:IncreaseKeyBy( s:occurrences, a:type . l:indentCnt, a:dict[ l:indent ] )
+	    endif
+	    let l:indentCnt -= 1
+	endwhile
+    endfor
 endfunction
 
 function! s:TabControl()
@@ -35,9 +51,12 @@ function! s:TabControl()
 	call s:InspectLine(l:lineNum)
 	let l:lineNum += 1
     endwhile
-    echo s:occurrences
+
+    call s:EvaluateIndentsIntoOccurrences( s:spaces, 'sp' )
+    call s:EvaluateIndentsIntoOccurrences( s:softtabstops, 'sts' )
     echo s:spaces
     echo s:softtabstops
+    echo s:occurrences
 endfunction
 
 function! s:InspectLine(lineNum)
@@ -67,7 +86,7 @@ function! s:CountSpaces( spaceString )
 endfunction
 
 function! s:CountSofttabstops( stsString )
-    call s:IncreaseKey( s:spaces, len( substitute( a:stsString, '\t', '        ', 'g' ) ) )
+    call s:IncreaseKey( s:softtabstops, len( substitute( a:stsString, '\t', '        ', 'g' ) ) )
 endfunction
 
 function! s:CountBadSofttabstop( string )
