@@ -104,6 +104,9 @@ function! s:InspectLine(lineNum)
 	call s:CountTabs( l:beginningWhitespace )
 	" Tabs-only can also be interpreted as a softtabstop-line without
 	" balancing spaces. 
+	" If we discarded this, we would neglect to count an indent of 10 tabs
+	" (= 80 characters) as 16 * sts5 (the 10 * sts8 will be dropped by the
+	" preference of tab over sts8, though). 
 	call s:CountSofttabstops( l:beginningWhitespace )
     elseif match( l:beginningWhitespace, '^ \{1,7}$' ) != -1
 	call s:CountSpaces( l:beginningWhitespace )
