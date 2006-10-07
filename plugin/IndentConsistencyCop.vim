@@ -16,8 +16,17 @@ if exists("loaded_tabcontrol") || (v:version < 700)
 endif
 let loaded_tabcontrol = 1
 
+function! s:IncreaseKey( key )
+echo '**** ' . a:key
+    if has_key( s:occurrences, a:key )
+	let s:occurrences[ a:key ] += 1
+    else
+	let s:occurrences[ a:key ] = 1
+    endif
+endfunction
+
 function! s:TabControl()
-    let s:occurrences = {'ts': 0, 'sp1': 0, 'sp2': 0, 'sp3': 0, 'sp4': 0, 'sp5': 0, 'sp6': 0, 'sp7': 0, 'sp8': 0, 'sts1': 0, 'sts2': 0, 'sts3': 0, 'sts4': 0, 'sts5': 0, 'sts6': 0, 'sts7': 0, 'sts8': 0, 'badsts': 0, 'badmix': 0}
+    let s:occurrences = {}
 
     let l:lineNum = 1
     while l:lineNum <= line('$')
@@ -46,36 +55,23 @@ echo getline(a:lineNum)
 endfunction
 
 function! s:CountTabs( tabString )
-    let s:occurrences["ts"] += 1
-echo '****ts'
-endfunction
-
-function! s:CountSpacesWithType( type, spaceString )
-    let l:indentCnt = 8
-    while l:indentCnt > 0
-	if len( a:spaceString ) % l:indentCnt == 0
-	    let s:occurrences[ a:type . l:indentCnt ] += 1
-echo '****' . a:type . l:indentCnt
-	    break
-	endif
-	let l:indentCnt -= 1
-    endwhile
+    call s:IncreaseKey( 'ts' )
 endfunction
 
 function! s:CountSpaces( spaceString )
-    call s:CountSpacesWithType( 'sp', a:spaceString )
+    call s:IncreaseKey( 'sp' . len( a:spaceString ) )
 endfunction
 
 function! s:CountSofttabstops( stsString )
-    call s:CountSpacesWithType( 'sts', substitute( a:stsString, '\t', '        ', 'g' ) )
+    call s:IncreaseKey( 'sts' . len( substitute( a:stsString, '\t', '        ', 'g' ) ) )
 endfunction
 
 function! s:CountBadSofttabstop( string )
-    let s:occurrences['badsts'] += 1
+    call s:IncreaseKey('badsts')
 endfunction
 
 function! s:CountBadMixOfSpacesAndTabs( string )
-    let s:occurrences['badmix'] += 1
+    call s:IncreaseKey('badmix')
 endfunction
 
 "TODO: range-command
