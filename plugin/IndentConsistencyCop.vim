@@ -66,6 +66,9 @@ echo getline(a:lineNum)
 	return
     elseif match( l:beginningWhitespace, '^\t\+$' ) != -1
 	call s:CountTabs( l:beginningWhitespace )
+	" Tabs-only can also be interpreted as a softtabstop-line without
+	" balancing spaces. 
+	call s:CountSofttabstops( l:beginningWhitespace )
     elseif match( l:beginningWhitespace, '^ \+$' ) != -1
 	call s:CountSpaces( l:beginningWhitespace )
     elseif match( l:beginningWhitespace, '^\t\+ \{1,7}$' ) != -1
