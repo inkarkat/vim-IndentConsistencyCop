@@ -135,19 +135,52 @@ function! s:ApplyPrecedences()
 
     " The occurrence 'sts8' has only been collected because of the parallelism
     " with 'spc8'. Effectively, 'sts8' is the same as 'tab', and is removed. 
-    if has_key( s:occurrences, 'sts8' )
-	if s:occurrences['sts8'] != s:occurrences['tab']
-	    throw "assert sts8 == tab"
-	endif
-	unlet s:occurrences['sts8']
+    if s:GetKeyedValue( s:occurrences, 'sts8' ) != s:GetKeyedValue( s:occurrences, 'tab' )
+	throw "assert sts8 == tab"
     endif
+    call s:RemoveKey( s:occurrences, 'sts8' )
+endfunction
+
+function! s:GetIncompatiblesForIndentSetting( indentSetting )
+    let l:incompatibles = [ 'xxx' . a:indentSetting ]
+    return l:incompatibles
+endfunction
+
+function! s:EvaluateIncompatibleIndentSettings()
+"*******************************************************************************
+"* PURPOSE:
+"   Each found indent setting (in s:occurrences) may be compatible with another
+"   (e.g. 'sts4' could be unified with 'sts6', if the actual indents found in
+"   s:softtabstops and s:doubtful are 12 and 24 (but not 6, 18)). To do this
+"   evaluation, the actual indents in s:spaces, s:softtabstops and s:doubtful
+"   must be inspected. 
+"* ASSUMPTIONS / PRECONDITIONS:
+"	? List of any external variable, control, or other element whose state affects this procedure.
+"* EFFECTS / POSTCONDITIONS:
+"	? List of the procedure's effect on each external variable, control, or other element.
+"* INPUTS:
+"	? Explanation of each argument that isn't obvious.; value: list of
+"	indent settings. 
+"* RETURN VALUES: 
+"    Key: indent setting; value: list of indent settings.
+"*******************************************************************************
+    let l:incompatibles = {}
+    for l:indentSetting in keys( s:occurrences )
+	let l:incompatibles[ l:indentSetting ] = s:GetIncompatiblesForIndentSetting( l:indentSetting )
+    endfor
+    return l:incompatibles
 endfunction
 
 function! s:TabControl()
-    let s:occurrences = {}
-    let s:spaces = {}
-    let s:softtabstops = {}
-    let s:doubtful = {}
+    " This dictionary collects the occurrences of all found indent settings. It
+    " is the basis for all evaluations and statistics. 
+    let s:occurrences = {}  " key: indent setting (e.g. 'sts4'); value: number of lines that have that indent setting. 
+
+    " These intermediate dictionaries will be processed into s:occurences via
+    " EvaluateIndentsIntoOccurrences(). 
+    let s:spaces = {}	    " key: number of indent spaces (>=8); value: number of lines that have the number of indent spaces. 
+    let s:softtabstops = {} " key: number of indent softtabstops (converted to spaces); value: number of lines that have the number of spaces. 
+    let s:doubtful = {}	    " key: number of indent spaces (<8) which may be either spaces or softtabstops; value: number of lines that have the number of spaces. 
 
     let l:lineNum = 1
     while l:lineNum <= line('$')
@@ -168,6 +201,11 @@ function! s:TabControl()
 
     echo 'Occurrences 2:' . string( s:occurrences )
     echo 'This is probably a ' . string( filter( copy( s:occurrences ), 'v:val == max( s:occurrences )') )
+
+    " This dictionary contains the incompatible indent settings for each indent
+    " setting. 
+    let l:incompatibles = s:EvaluateIncompatibleIndentSettings() " Key: indent setting; value: list of indent settings. 
+    echo 'Incompatibles:' . string( l:incompatibles )
 endfunction
 
 function! s:InspectLine(lineNum)
