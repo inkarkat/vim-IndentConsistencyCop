@@ -141,20 +141,56 @@ function! s:ApplyPrecedences()
     call s:RemoveKey( s:occurrences, 'sts8' )
 endfunction
 
-function! s:IsIndentSettingCompatibleWith( baseIndentSetting, testIndentSetting )
-    if a:baseIndentSetting == a:testIndentSetting
-	return 1
+
+function! s:GetMultiplierFromIndentSetting( indentSetting )
+    return str2nr( strpart( a:indentSetting, 3 ) )
+endfunction
+
+function! s:GetSettingFromIndentSetting( indentSetting )
+    return strpart( a:indentSetting, 0, 3 )
+endfunction
+
+function! s:IsIndentProduceableWithIndentSetting( indent, indentSetting )
+    let l:indentMultiplier = s:GetMultiplierFromIndentSetting( a:indentSetting )
+    if l:indentMultiplier == 0
+	return 0 " This is for the 'badsts' and 'badmix' indent settings. 
+    else
+	return (a:indent % l:indentMultiplier == 0)
     endif
-    return 0
+endfunction
+
+function! s:RemoveFromList( list, value )
+    call filter( a:list, 'v:val != "' . a:value . '"' )
 endfunction
 
 function! s:GetIncompatiblesForIndentSetting( indentSetting )
-    let l:incompatibles = []
-    for l:indentSetting in keys( s:occurrences )
-	if ! s:IsIndentSettingCompatibleWith( a:indentSetting, l:indentSetting )
-	    let l:incompatibles += [ l:indentSetting ]
-	endif
-    endfor
+    " Start by assuming all indent settings are incompatible. 
+    let l:incompatibles = keys( s:occurrences )
+    " The indent setting is compatible with itself. 
+    call s:RemoveFromList( l:incompatibles, a:indentSetting )
+
+    let l:setting = s:GetSettingFromIndentSetting( a:indentSetting )
+    if l:setting == 'tab'
+    " 'sts' could be compatible with 'tab'
+    " softtabstop must be inspected; doubt contains indents that are too small (<8) for 'tab'
+    elseif l:setting == 'sts'
+    " 'tab' is compatible by definition
+    call s:RemoveFromList( l:incompatibles, 'tab' )
+    " 'spc' is incompatible
+    " softtabstop and doubt must be inspected
+    elseif l:setting == 'spc'
+    " 'tab' is incompatible
+    " 'sts' is incompatible
+    " spaces and doubt must be inspected
+    elseif l:setting == 'bad'
+    " for bad, all are incompatible
+    else
+	throw 'Unknown indent setting: ' . l:setting
+    endif
+"
+"    find all that match a:indentSetting
+"      compare each indent with all other existing indentSettings
+"        if indent isn't compatible, add to incompatible set
     return l:incompatibles
 endfunction
 
