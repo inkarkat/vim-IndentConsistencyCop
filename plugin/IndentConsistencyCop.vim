@@ -260,6 +260,89 @@ function! s:EvaluateIncompatibleIndentSettings()
     return l:incompatibles
 endfunction
 
+function! s:EvaluateOccurrenceAndIncompatibleIntoRating( occurrences, incompatibles )
+"*******************************************************************************
+"* PURPOSE:
+"   For each indent setting, calculates a single (unnormalized) rating; the
+"   higher, the more probable the indent setting. 
+"   The formula is rating( indent setting ) = # of indent setting occurrences /
+"   sum( # of occurrences of incompatible indent settings ). 
+"* ASSUMPTIONS / PRECONDITIONS:
+"	? List of any external variable, control, or other element whose state affects this procedure.
+"* EFFECTS / POSTCONDITIONS:
+"	? List of the procedure's effect on each external variable, control, or other element.
+"* INPUTS:
+"   a:occurrences: dictionary of occurences
+"   a:incompatibles: dictionary of incompatibles
+"* RETURN VALUES: 
+"   dictionary of ratings; key: indent setting; value: rating number
+"   -1 means a perfect rating (i.e. no incompatibles)
+"*******************************************************************************
+    let l:ratings = {}
+    for l:indentSetting in keys( a:occurrences )
+	let l:incompatibles = a:incompatibles[ l:indentSetting ]
+	if empty( l:incompatibles )
+	    " No incompatibles; this gets the perfect rating. 
+	    let l:ratings[ l:indentSetting ] = -1
+	else
+	    let l:incompatibleOccurrences = 0
+	    for l:incompatible in l:incompatibles
+		let l:incompatibleOccurrences += a:occurrences[ l:incompatible ]
+	    endfor
+	    let l:ratings[ l:indentSetting ] = 10000 * a:occurrences[ l:indentSetting ] / l:incompatibleOccurrences
+	endif
+    endfor
+    return l:ratings
+endfunction
+
+function! s:IsContainsPerfectRating( ratings )
+    let l:perfectCount = count( a:ratings, -1 )
+    if l:perfectCount > 1
+	throw "assert perfectCount <= 1"
+    endif
+    return l:perfectCount == 1
+endfunction
+
+function! s:NormalizePerfectRating( ratings )
+    for l:rating in keys( a:ratings )
+	if a:ratings[ l:rating ] == -1
+	    " Normalize to 100%
+	    let a:ratings[ l:rating ] = 100
+	else
+	    unlet a:ratings[ l:rating ] 
+	endif
+    endfor
+endfunction
+
+function! s:NormalizeAndTrimRating( ratings )
+    let l:ratingThreshold = 20
+
+    let l:valueSum = 0
+    for l:value in values( a:ratings )
+	let l:valueSum += l:value
+    endfor
+    if l:valueSum <= 0 
+	throw "assert valueSum > 0"
+    endif
+
+    for l:rating in keys( a:ratings )
+	let l:newRating = 100 * a:ratings[ l:rating ] / l:valueSum
+	if l:newRating < l:ratingThreshold
+	    unlet a:ratings[ l:rating ] 
+	else
+	    let a:ratings[ l:rating ] = l:newRating
+	endif
+    endfor
+endfunction
+
+function! s:NormalizeRatings( ratings )
+    if s:IsContainsPerfectRating( a:ratings )
+	call s:NormalizePerfectRating( a:ratings )
+    else
+	call s:NormalizeAndTrimRating( a:ratings )
+    endif
+endfunction
+
 function! s:TabControl()
     " This dictionary collects the occurrences of all found indent settings. It
     " is the basis for all evaluations and statistics. 
@@ -281,20 +364,28 @@ function! s:TabControl()
     call s:EvaluateIndentsIntoOccurrences( s:softtabstops, 'sts' )
     call s:EvaluateIndentsIntoOccurrences( s:doubtful, 'dbt' )
     " Now, the indent occurences have been consolidated into s:occurrences. 
-    echo 'Spaces:       ' . string( s:spaces )
-    echo 'Softtabstops: ' . string( s:softtabstops )
-    echo 'Doubtful:     ' . string( s:doubtful )
-    echo 'Occurrences 1:' . string( s:occurrences )
+echo 'Spaces:       ' . string( s:spaces )
+echo 'Softtabstops: ' . string( s:softtabstops )
+echo 'Doubtful:     ' . string( s:doubtful )
+"****D echo 'Occurrences 1:' . string( s:occurrences )
 
     call s:ApplyPrecedences()
 
-    echo 'Occurrences 2:' . string( s:occurrences )
+echo 'Occurrences 2:' . string( s:occurrences )
     echo 'This is probably a ' . string( filter( copy( s:occurrences ), 'v:val == max( s:occurrences )') )
 
     " This dictionary contains the incompatible indent settings for each indent
     " setting. 
     let l:incompatibles = s:EvaluateIncompatibleIndentSettings() " Key: indent setting; value: list of indent settings. 
-    echo 'Incompatibles:' . string( l:incompatibles )
+"****D echo 'Incompatibles:' . string( l:incompatibles )
+
+    " This dictionary contains the final rating, a combination of high indent settings occurrence and low incompatible occurrences. 
+    let l:ratings = s:EvaluateOccurrenceAndIncompatibleIntoRating( s:occurrences, l:incompatibles ) " Key: indent setting; value: rating number
+echo 'ratings:     ' . string( l:ratings )
+
+    call s:NormalizeRatings( l:ratings )
+echo 'nrm. ratings:' . string( l:ratings )
+
 endfunction
 
 function! s:InspectLine(lineNum)
