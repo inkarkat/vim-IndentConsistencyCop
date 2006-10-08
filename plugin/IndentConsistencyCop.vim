@@ -141,8 +141,20 @@ function! s:ApplyPrecedences()
     call s:RemoveKey( s:occurrences, 'sts8' )
 endfunction
 
+function! s:IsIndentSettingCompatibleWith( baseIndentSetting, testIndentSetting )
+    if a:baseIndentSetting == a:testIndentSetting
+	return 1
+    endif
+    return 0
+endfunction
+
 function! s:GetIncompatiblesForIndentSetting( indentSetting )
-    let l:incompatibles = [ 'xxx' . a:indentSetting ]
+    let l:incompatibles = []
+    for l:indentSetting in keys( s:occurrences )
+	if ! s:IsIndentSettingCompatibleWith( a:indentSetting, l:indentSetting )
+	    let l:incompatibles += [ l:indentSetting ]
+	endif
+    endfor
     return l:incompatibles
 endfunction
 
