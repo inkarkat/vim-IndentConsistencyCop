@@ -314,8 +314,12 @@ function! s:NormalizePerfectRating( ratings )
     endfor
 endfunction
 
-function! s:NormalizeAndTrimRating( ratings )
-    let l:ratingThreshold = 20
+function! s:IsBadIndentSetting( indentSetting )
+    return s:GetSettingFromIndentSetting( a:indentSetting ) == 'bad'
+endfunction
+
+function! s:NormalizeNonPerfectRating( ratings )
+    let l:ratingThreshold = 10	" Remove everything below this percentage. Exception: indent setting 'bad'. 
 
     let l:valueSum = 0
     for l:value in values( a:ratings )
@@ -327,7 +331,7 @@ function! s:NormalizeAndTrimRating( ratings )
 
     for l:rating in keys( a:ratings )
 	let l:newRating = 100 * a:ratings[ l:rating ] / l:valueSum
-	if l:newRating < l:ratingThreshold
+	if l:newRating < l:ratingThreshold && ! s:IsBadIndentSetting( l:rating )
 	    unlet a:ratings[ l:rating ] 
 	else
 	    let a:ratings[ l:rating ] = l:newRating
@@ -339,7 +343,7 @@ function! s:NormalizeRatings( ratings )
     if s:IsContainsPerfectRating( a:ratings )
 	call s:NormalizePerfectRating( a:ratings )
     else
-	call s:NormalizeAndTrimRating( a:ratings )
+	call s:NormalizeNonPerfectRating( a:ratings )
     endif
 endfunction
 
