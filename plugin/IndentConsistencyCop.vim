@@ -159,6 +159,28 @@ function! s:IsIndentProduceableWithIndentSetting( indent, indentSetting )
     endif
 endfunction
 
+function! s:InspectForCompatibles( incompatibles, indents, baseSetting, testSetting )
+    " Seed possible incompatibles with passed set; filter is testSetting. 
+    let l:isIncompatibles = {}	" Key: indentSetting; value: boolean (0/1). 
+    for l:incompatible in a:incompatibles
+	if s:GetSettingFromIndentSetting( l:incompatible ) == a:testSetting
+	    let l:isIncompatibles[ l:incompatible ] = 0
+	endif
+    endfor
+"
+"    find all that match a:baseSetting
+"      compare each indent with all a:testSetting
+"        if indent isn't compatible, add to incompatible set
+"
+    " Remove the incompatibles that have been found compatible from
+    " a:incompatibles. 
+    for l:isIncompatible in keys( l:isIncompatibles )
+	if ! l:isIncompatibles[ l:isIncompatible ]
+	    call s:RemoveFromList( a:incompatibles, l:isIncompatible )
+	endif
+    endfor
+endfunction
+
 function! s:RemoveFromList( list, value )
     call filter( a:list, 'v:val != "' . a:value . '"' )
 endfunction
@@ -171,26 +193,26 @@ function! s:GetIncompatiblesForIndentSetting( indentSetting )
 
     let l:setting = s:GetSettingFromIndentSetting( a:indentSetting )
     if l:setting == 'tab'
-    " 'sts' could be compatible with 'tab'
-    " softtabstop must be inspected; doubt contains indents that are too small (<8) for 'tab'
+	" 'sts' could be compatible with 'tab'. 
+	" softtabstops must be inspected; doubtful contains indents that are too small (<8) for 'tab'. 
+	call s:InspectForCompatibles( l:incompatibles, keys( s:softtabstops ), l:setting, 'sts' )
     elseif l:setting == 'sts'
-    " 'tab' is compatible by definition
-    call s:RemoveFromList( l:incompatibles, 'tab' )
-    " 'spc' is incompatible
-    " softtabstop and doubt must be inspected
+	" 'tab' is compatible by definition. 
+	call s:RemoveFromList( l:incompatibles, 'tab' )
+	" 'spc' is incompatible
+	" Other 'sts' multipliers could be compatible; softtabstops and doubtful must be inspected. 
+	call s:InspectForCompatibles( l:incompatibles, keys( s:softtabstops ) + keys( s:doubtful ), l:setting, 'sts' )
     elseif l:setting == 'spc'
-    " 'tab' is incompatible
-    " 'sts' is incompatible
-    " spaces and doubt must be inspected
+	" 'tab' is incompatible. 
+	" 'sts' is incompatible. 
+	" Other 'spc' multipliers could be compatible; spaces and doubtful must be inspected. 
+	call s:InspectForCompatibles( l:incompatibles, keys( s:spaces ) + keys( s:doubtful ), l:setting, 'spc' )
     elseif l:setting == 'bad'
-    " for bad, all are incompatible
+	" for bad, all are incompatible. 
     else
 	throw 'Unknown indent setting: ' . l:setting
     endif
-"
-"    find all that match a:indentSetting
-"      compare each indent with all other existing indentSettings
-"        if indent isn't compatible, add to incompatible set
+
     return l:incompatibles
 endfunction
 
