@@ -143,7 +143,11 @@ endfunction
 
 
 function! s:GetMultiplierFromIndentSetting( indentSetting )
-    return str2nr( strpart( a:indentSetting, 3 ) )
+    if a:indentSetting == 'tab'
+	return 8
+    else
+	return str2nr( strpart( a:indentSetting, 3 ) )
+    endif
 endfunction
 
 function! s:GetSettingFromIndentSetting( indentSetting )
@@ -168,19 +172,19 @@ function! s:InspectForCompatibles( incompatibles, indents, baseIndentSetting, te
 	endif
     endfor
 
-    for l:indent in a:indents
-	" Find all that match a:baseIndentSetting. 
-	if s:IsIndentProduceableWithIndentSetting( l:indent, a:baseIndentSetting )
-	    " Hunt for possible incompatibles with this indent. 
-	    for l:isIncompatible in keys( l:isIncompatibles )
-		if ! l:isIncompatibles[ l:isIncompatible ]  " Optimization: Skip check if already incompatible. 
-		    if ! s:IsIndentProduceableWithIndentSetting( l:indent, l:isIncompatibles[ l:isIncompatible ] )
-			    " Indent isn't compatible, mark as incompatible. 
-			let l:isIncompatibles[ l:isIncompatible ] = 1
-		    endif
+    for l:isIncompatible in keys( l:isIncompatibles )
+	for l:indent in a:indents
+	    " Find indents all that match l:isIncompatible and test whether is
+	    " also matches with a:baseIndentSetting
+	    if s:IsIndentProduceableWithIndentSetting( l:indent, l:isIncompatible )
+		if ! s:IsIndentProduceableWithIndentSetting( l:indent, a:baseIndentSetting )
+		    " Indent isn't compatible, mark as incompatible. 
+		    let l:isIncompatibles[ l:isIncompatible ] = 1
+		    " We're through with this possible incompatible. 
+		    break
 		endif
-	    endfor
-	endif
+	    endif
+	endfor
     endfor
 
     " Remove the incompatibles that have been found compatible from
@@ -188,7 +192,7 @@ function! s:InspectForCompatibles( incompatibles, indents, baseIndentSetting, te
     for l:isIncompatible in keys( l:isIncompatibles )
 	if ! l:isIncompatibles[ l:isIncompatible ]
 	    call s:RemoveFromList( a:incompatibles, l:isIncompatible )
-echo '**** ' . l:isIncompatible . ' is actually compatible with ' . a:baseIndentSetting
+"****D echo '**** ' . l:isIncompatible . ' is actually compatible with ' . a:baseIndentSetting
 	endif
     endfor
 endfunction
@@ -207,20 +211,20 @@ function! s:GetIncompatiblesForIndentSetting( indentSetting )
     if l:setting == 'tab'
 	" 'sts' could be compatible with 'tab'. 
 	" softtabstops must be inspected; doubtful contains indents that are too small (<8) for 'tab'. 
-echo '**** Inspecting for "tab": ' . string( keys( s:softtabstops ) )
+"****D echo '**** Inspecting for "tab": ' . string( keys( s:softtabstops ) )
 	call s:InspectForCompatibles( l:incompatibles, keys( s:softtabstops ), a:indentSetting, 'sts' )
     elseif l:setting == 'sts'
 	" 'tab' is compatible by definition. 
 	call s:RemoveFromList( l:incompatibles, 'tab' )
 	" 'spc' is incompatible
 	" Other 'sts' multipliers could be compatible; softtabstops and doubtful must be inspected. 
-echo '**** Inspecting for "sts": ' . string( keys( s:softtabstops ) + keys( s:doubtful ))
+"****D echo '**** Inspecting for "sts": ' . string( keys( s:softtabstops ) + keys( s:doubtful ))
 	call s:InspectForCompatibles( l:incompatibles, keys( s:softtabstops ) + keys( s:doubtful ), a:indentSetting, 'sts' )
     elseif l:setting == 'spc'
 	" 'tab' is incompatible. 
 	" 'sts' is incompatible. 
 	" Other 'spc' multipliers could be compatible; spaces and doubtful must be inspected. 
-echo '**** Inspecting for "spc": ' . string( keys( s:spaces ) + keys( s:doubtful ))
+"****D echo '**** Inspecting for "spc": ' . string( keys( s:spaces ) + keys( s:doubtful ))
 	call s:InspectForCompatibles( l:incompatibles, keys( s:spaces ) + keys( s:doubtful ), a:indentSetting, 'spc' )
     elseif l:setting == 'bad'
 	" for bad, all are incompatible. 
