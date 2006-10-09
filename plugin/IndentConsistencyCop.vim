@@ -490,6 +490,8 @@ function! s:NormalizeRatings( ratings )
 endfunction
 
 function! s:IndentConsistencyCop() " {{{1
+    " TODO: add range arguments
+    
     " This dictionary collects the occurrences of all found indent settings. It
     " is the basis for all evaluations and statistics. 
     let s:occurrences = {}  " key: indent setting (e.g. 'sts4'); value: number of lines that have that indent setting. 
