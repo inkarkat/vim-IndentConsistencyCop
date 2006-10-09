@@ -1,4 +1,4 @@
-" tabcontrol.vim: does the buffer's indentation conform to tab settings?
+" IndentConsistencyCop.vim: Is the buffer's indentation consistent and does it conform to tab settings?
 "
 " Maintainer:	Ingo Karkat <ingo@karkat.de>
 "
@@ -11,11 +11,13 @@
 "	0.01	08-Oct-2006	file creation
 
 " Avoid installing twice or when in compatible mode
-if exists("loaded_tabcontrol") || (v:version < 700)
+if exists("loaded_indentconsistencycop") || (v:version < 700)
     finish
 endif
-let loaded_tabcontrol = 1
+let loaded_indentconsistencycop = 1
 
+
+"------------------------------------------------------------------------------
 function! s:IncreaseKeyedBy( dict, key, num )
 "****D echo '**** ' . a:key
     if has_key( a:dict, a:key )
@@ -347,7 +349,7 @@ function! s:NormalizeRatings( ratings )
     endif
 endfunction
 
-function! s:TabControl()
+function! s:IndentConsistencyCop()
     " This dictionary collects the occurrences of all found indent settings. It
     " is the basis for all evaluations and statistics. 
     let s:occurrences = {}  " key: indent setting (e.g. 'sts4'); value: number of lines that have that indent setting. 
@@ -372,6 +374,11 @@ echo 'Spaces:       ' . string( s:spaces )
 echo 'Softtabstops: ' . string( s:softtabstops )
 echo 'Doubtful:     ' . string( s:doubtful )
 "****D echo 'Occurrences 1:' . string( s:occurrences )
+
+    if empty( s:occurrences )
+	echomsg "There are no indents in this buffer!"
+	return
+    endif
 
     call s:ApplyPrecedences()
 
@@ -445,5 +452,5 @@ function! s:CountBadMixOfSpacesAndTabs( string )
 endfunction
 
 "TODO: range-command
-command! -nargs=0 TabControl call <SID>TabControl()
+command! -nargs=0 IndentConsistencyCop call <SID>IndentConsistencyCop()
 
