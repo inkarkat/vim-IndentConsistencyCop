@@ -17,7 +17,7 @@ endif
 let loaded_indentconsistencycop = 1
 
 
-"------------------------------------------------------------------------------
+"- list and dictionary utility functions ---------------------------------{{{1
 function! s:IncreaseKeyedBy( dict, key, num )
 "****D echo '**** ' . a:key
     if has_key( a:dict, a:key )
@@ -44,6 +44,11 @@ function! s:RemoveKey( dict, key )
     endif
 endfunction
 
+function! s:RemoveFromList( list, value )
+    call filter( a:list, 'v:val != "' . a:value . '"' )
+endfunction
+
+"- utility functions -----------------------------------------------------{{{1
 function! s:IsDivsorOf( newNumber, numbers )
     for l:number in a:numbers
 	if l:number % a:newNumber == 0
@@ -53,7 +58,93 @@ function! s:IsDivsorOf( newNumber, numbers )
     return 0
 endfunction
 
-function! s:EvaluateIndentsIntoOccurrences( dict, type )
+function! s:GetMultiplierFromIndentSetting( indentSetting )
+    if a:indentSetting == 'tab'
+	return 8
+    else
+	return str2nr( strpart( a:indentSetting, 3 ) )
+    endif
+endfunction
+
+function! s:GetSettingFromIndentSetting( indentSetting )
+    return strpart( a:indentSetting, 0, 3 )
+endfunction
+
+"- Processing of lines in buffer -----------------------------------------{{{1
+function! s:CountTabs( tabString )
+    call s:IncreaseKeyed( s:occurrences, 'tab' )
+endfunction
+
+function! s:CountDoubtful( spaceString )
+    call s:IncreaseKeyed( s:doubtful, len( a:spaceString ) )
+endfunction
+
+function! s:CountSpaces( spaceString )
+    call s:IncreaseKeyed( s:spaces, len( a:spaceString ) )
+endfunction
+
+function! s:CountSofttabstops( stsString )
+    call s:IncreaseKeyed( s:softtabstops, len( substitute( a:stsString, '\t', '        ', 'g' ) ) )
+endfunction
+
+function! s:CountBadSofttabstop( string )
+    call s:IncreaseKeyed( s:occurrences, 'badsts')
+endfunction
+
+function! s:CountBadMixOfSpacesAndTabs( string )
+    call s:IncreaseKeyed( s:occurrences, 'badmix')
+endfunction
+
+function! s:InspectLine(lineNum)
+"*******************************************************************************
+"* PURPOSE:
+"   Count the whitespace at the beginning of the passed line (until the first
+"   non-whitespace character) and increase one of the counters. There are two
+"   types of counters:
+"   1. The master counter s:occurrences can be directly filled with elements
+"      like all-Tabs or bad Tab-Space combinations, where the number of Tabs /
+"      Spaces doesn't matter. 
+"   2. The intermediate counters s:spaces, s:softtabstops and s:doubtful also
+"      capture the number of the characters. These counters are later
+"      consolidated into s:occurrences. 
+"
+"* ASSUMPTIONS / PRECONDITIONS:
+"	? List of any external variable, control, or other element whose state affects this procedure.
+"* EFFECTS / POSTCONDITIONS:
+"   updates s:occurrences, s:spaces, s:softtabstops, s:doubtful
+"* INPUTS:
+"   lineNum: number of line in the current buffer
+"* RETURN VALUES: 
+"   none
+"*******************************************************************************
+"****D echo getline(a:lineNum)
+    let l:beginningWhitespace = matchstr( getline(a:lineNum), '^\s*' )
+    if l:beginningWhitespace == ''
+	return
+    elseif match( l:beginningWhitespace, '^\t\+$' ) != -1
+	call s:CountTabs( l:beginningWhitespace )
+	" Tabs-only can also be interpreted as a softtabstop-line without
+	" balancing spaces. 
+	" If we discarded this, we would neglect to count an indent of 10 tabs
+	" (= 80 characters) as 16 * sts5 (the 10 * sts8 will be dropped by the
+	" preference of tab over sts8, though). 
+	call s:CountSofttabstops( l:beginningWhitespace )
+    elseif match( l:beginningWhitespace, '^ \{1,7}$' ) != -1
+	" Spaces-only (up to 7) can also be interpreted as a softtabstop-line
+	" without tabs. 
+	call s:CountDoubtful( l:beginningWhitespace )
+    elseif match( l:beginningWhitespace, '^ \{8,}$' ) != -1
+	call s:CountSpaces( l:beginningWhitespace )
+    elseif match( l:beginningWhitespace, '^\t\+ \{1,7}$' ) != -1
+	call s:CountSofttabstops( l:beginningWhitespace )
+    elseif match( l:beginningWhitespace, '^\t\+ \{8,}$' ) != -1
+	call s:CountBadSofttabstop( l:beginningWhitespace )
+    else
+	call s:CountBadMixOfSpacesAndTabs( l:beginningWhitespace )
+    endif
+endfunction
+
+function! s:EvaluateIndentsIntoOccurrences( dict, type ) " {{{1
 "*******************************************************************************
 "* PURPOSE:
 "   An actual indent x translates into occurrences for shiftwidths n, 
@@ -90,7 +181,7 @@ function! s:EvaluateIndentsIntoOccurrences( dict, type )
     endfor
 endfunction
 
-function! s:ApplyPrecedences()
+function! s:ApplyPrecedences() " {{{1
 "*******************************************************************************
 "* PURPOSE:
 "   Relates individual indent settings to others, thereby "stronger" indent
@@ -144,18 +235,7 @@ function! s:ApplyPrecedences()
 endfunction
 
 
-function! s:GetMultiplierFromIndentSetting( indentSetting )
-    if a:indentSetting == 'tab'
-	return 8
-    else
-	return str2nr( strpart( a:indentSetting, 3 ) )
-    endif
-endfunction
-
-function! s:GetSettingFromIndentSetting( indentSetting )
-    return strpart( a:indentSetting, 0, 3 )
-endfunction
-
+"- Check for compatible indent settings ----------------------------------{{{1
 function! s:IsIndentProduceableWithIndentSetting( indent, indentSetting )
     let l:indentMultiplier = s:GetMultiplierFromIndentSetting( a:indentSetting )
     if l:indentMultiplier == 0
@@ -166,6 +246,36 @@ function! s:IsIndentProduceableWithIndentSetting( indent, indentSetting )
 endfunction
 
 function! s:InspectForCompatibles( incompatibles, indents, baseIndentSetting, testSetting )
+"*******************************************************************************
+"* PURPOSE:
+"   Uses the passed list of indents to find indent settings in a:testSetting
+"   that are compatible with a:baseIndentSetting. 
+"   Candidates are: tabs may count as softtabstops, short indents (captured in
+"   s:doubtful) may be both softtabstops or spaces. Spaces and softtabstops may
+"   have different multipliers (e.g. sts5 and sts3) that may be compatible (e.g.
+"   for indents 15, 30, 45). 
+"* ASSUMPTIONS / PRECONDITIONS:
+"   none
+"* EFFECTS / POSTCONDITIONS:
+"   Modifies the passed a:incompatibles. 
+"* INPUTS:
+"   a:incompatibles: reference to the pre-initialized list of (possibly)
+"	incompatibles. Will contain only *real* incompatibles after the function
+"	run. 
+"   a:indents:	list of actual indents that have occurred in the buffer. 
+"	The list should exclude indents that are not caused by
+"	a:baseIndentSetting, so that no false positives are found. 
+"   a:baseIndentSetting: indent setting (e.g. 'sts6') on which the search for
+"	compatibles is based on
+"   a:testSetting: setting (e.g. 'sts') which filters the indent settings to be
+"	searched for compatibles. 
+"* RETURN VALUES: 
+"   none
+"* EXAMPLES:
+"   s:InspectForCompatibles( l:incompatibles, [ 6, 12, 48, 60 ], 'sts6', 'sts' )
+"	searches for compatibles to 'sts6' that match 'sts', using the passed
+"	indent list. It'll return [ 'sts1', 'sts2', 'sts3' ]. 
+"*******************************************************************************
     " Seed possible incompatibles with passed set; filter is testSetting. 
     let l:isIncompatibles = {}	" Key: indentSetting; value: boolean (0/1). 
     for l:incompatible in a:incompatibles
@@ -199,11 +309,22 @@ function! s:InspectForCompatibles( incompatibles, indents, baseIndentSetting, te
     endfor
 endfunction
 
-function! s:RemoveFromList( list, value )
-    call filter( a:list, 'v:val != "' . a:value . '"' )
-endfunction
-
 function! s:GetIncompatiblesForIndentSetting( indentSetting )
+"*******************************************************************************
+"* PURPOSE:
+"   This function encodes the straightforward (i.e. general, settings-wide)
+"   compatibility rules for the indent settings. Compatibilities that require
+"   inspection of the actual indents in the buffer are delegated to
+"   s:InspectForCompatibles(). 
+"* ASSUMPTIONS / PRECONDITIONS:
+"	? List of any external variable, control, or other element whose state affects this procedure.
+"* EFFECTS / POSTCONDITIONS:
+"	? List of the procedure's effect on each external variable, control, or other element.
+"* INPUTS:
+"	? Explanation of each argument that isn't obvious.
+"* RETURN VALUES: 
+"    list of indent settings.
+"*******************************************************************************
     " Start by assuming all indent settings are incompatible. 
     let l:incompatibles = keys( s:occurrences )
     " The indent setting is compatible with itself. 
@@ -262,6 +383,7 @@ function! s:EvaluateIncompatibleIndentSettings()
     return l:incompatibles
 endfunction
 
+"- Rating generation -----------------------------------------------------{{{1
 function! s:EvaluateOccurrenceAndIncompatibleIntoRating( occurrences, incompatibles )
 "*******************************************************************************
 "* PURPOSE:
@@ -305,6 +427,7 @@ function! s:IsContainsPerfectRating( ratings )
     return l:perfectCount == 1
 endfunction
 
+"- Rating normalization --------------------------------------------------{{{1
 function! s:NormalizePerfectRating( ratings )
     for l:rating in keys( a:ratings )
 	if a:ratings[ l:rating ] == -1
@@ -342,6 +465,23 @@ function! s:NormalizeNonPerfectRating( ratings )
 endfunction
 
 function! s:NormalizeRatings( ratings )
+"*******************************************************************************
+"* PURPOSE:
+"   Changes the values in the a:ratings dictionary to that the sum of all values
+"   is 100; i.e. make percentages out of the ratings. 
+"   Values below a certain percentage threshold are dropped from the dictionary
+"   *after* the normalization, in order to remove clutter when displaying the
+"   results to the user. 
+"* ASSUMPTIONS / PRECONDITIONS:
+"	? List of any external variable, control, or other element whose state affects this procedure.
+"* EFFECTS / POSTCONDITIONS:
+"   Modifies values in a:ratings. 
+"   Removes entries that fall below the threshold. 
+"* INPUTS:
+"   a:ratings: Key: indent setting; value: rating number
+"* RETURN VALUES: 
+"   none
+"*******************************************************************************
     if s:IsContainsPerfectRating( a:ratings )
 	call s:NormalizePerfectRating( a:ratings )
     else
@@ -349,7 +489,7 @@ function! s:NormalizeRatings( ratings )
     endif
 endfunction
 
-function! s:IndentConsistencyCop()
+function! s:IndentConsistencyCop() " {{{1
     " This dictionary collects the occurrences of all found indent settings. It
     " is the basis for all evaluations and statistics. 
     let s:occurrences = {}  " key: indent setting (e.g. 'sts4'); value: number of lines that have that indent setting. 
@@ -397,60 +537,11 @@ echo 'ratings:     ' . string( l:ratings )
     call s:NormalizeRatings( l:ratings )
 echo 'nrm. ratings:' . string( l:ratings )
 
+    " TODO: cleanup of s:...
 endfunction
 
-function! s:InspectLine(lineNum)
-"****D echo getline(a:lineNum)
-    let l:beginningWhitespace = matchstr( getline(a:lineNum), '^\s*' )
-    if l:beginningWhitespace == ''
-	return
-    elseif match( l:beginningWhitespace, '^\t\+$' ) != -1
-	call s:CountTabs( l:beginningWhitespace )
-	" Tabs-only can also be interpreted as a softtabstop-line without
-	" balancing spaces. 
-	" If we discarded this, we would neglect to count an indent of 10 tabs
-	" (= 80 characters) as 16 * sts5 (the 10 * sts8 will be dropped by the
-	" preference of tab over sts8, though). 
-	call s:CountSofttabstops( l:beginningWhitespace )
-    elseif match( l:beginningWhitespace, '^ \{1,7}$' ) != -1
-	" Spaces-only (up to 7) can also be interpreted as a softtabstop-line
-	" without tabs. 
-	call s:CountDoubtful( l:beginningWhitespace )
-    elseif match( l:beginningWhitespace, '^ \{8,}$' ) != -1
-	call s:CountSpaces( l:beginningWhitespace )
-    elseif match( l:beginningWhitespace, '^\t\+ \{1,7}$' ) != -1
-	call s:CountSofttabstops( l:beginningWhitespace )
-    elseif match( l:beginningWhitespace, '^\t\+ \{8,}$' ) != -1
-	call s:CountBadSofttabstop( l:beginningWhitespace )
-    else
-	call s:CountBadMixOfSpacesAndTabs( l:beginningWhitespace )
-    endif
-endfunction
-
-function! s:CountTabs( tabString )
-    call s:IncreaseKeyed( s:occurrences, 'tab' )
-endfunction
-
-function! s:CountDoubtful( spaceString )
-    call s:IncreaseKeyed( s:doubtful, len( a:spaceString ) )
-endfunction
-
-function! s:CountSpaces( spaceString )
-    call s:IncreaseKeyed( s:spaces, len( a:spaceString ) )
-endfunction
-
-function! s:CountSofttabstops( stsString )
-    call s:IncreaseKeyed( s:softtabstops, len( substitute( a:stsString, '\t', '        ', 'g' ) ) )
-endfunction
-
-function! s:CountBadSofttabstop( string )
-    call s:IncreaseKeyed( s:occurrences, 'badsts')
-endfunction
-
-function! s:CountBadMixOfSpacesAndTabs( string )
-    call s:IncreaseKeyed( s:occurrences, 'badmix')
-endfunction
-
+"- commands --------------------------------------------------------------{{{1
 "TODO: range-command
 command! -nargs=0 IndentConsistencyCop call <SID>IndentConsistencyCop()
 
+" vim:ft=vim foldmethod=marker
