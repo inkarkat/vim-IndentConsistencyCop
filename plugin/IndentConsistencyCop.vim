@@ -598,11 +598,23 @@ function! s:IndentSettingToUserString( indentSetting )
     return l:userString
 endfunction
 
+function! s:DictCompareDescending( i1, i2 )
+    return a:i1[1] == a:i2[1] ? 0 : a:i1[1] > a:i2[1] ? -1 : 1
+endfunction
+
 function! s:RatingsToUserString( occurrences, ratings )
     let l:userString = ''
 
-    for l:indentSetting in keys( a:ratings )
-	let l:userString .= "\n" . s:IndentSettingToUserString( l:indentSetting ) . ' rating of ' . a:ratings[ l:indentSetting ] . ' (' . a:occurrences[ l:indentSetting ] . ' occurrences)'
+    " In order to output the ratings from highest to lowest, we need to
+    " convert the ratings dictionary to a list and sort it with a custom
+    " comparator which considers the value part of each list element. 
+    " There is no built-in sort() function for dictionaries. 
+    let l:ratingLists = items( a:ratings )
+    call sort( l:ratingLists, "s:DictCompareDescending" )
+    for l:ratingList in l:ratingLists
+	let l:indentSetting = l:ratingList[0]
+	" l:rating = l:ratingLists[1] = a:ratings[ l:indentSetting ]
+	let l:userString .= "\n" . s:IndentSettingToUserString( l:indentSetting ) . ' - rating of ' . a:ratings[ l:indentSetting ] . ' (' . a:occurrences[ l:indentSetting ] . ' occurrences)'
     endfor
 
     return l:userString
