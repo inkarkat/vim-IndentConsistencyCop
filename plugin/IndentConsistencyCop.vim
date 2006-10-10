@@ -6,6 +6,8 @@
 " - When using 'softtabstop', 'tabstop' remains at the standard value of 8. 
 "   Any other value would sort of undermine the idea of 'softtabstop', anyway. 
 " - The indentation value lies in the range of 1-8 spaces or is 1 tab. 
+" - When 'smarttab' is set (global setting), 'tabstop' and 'softtabstop' become
+"   irrelevant to front-of-the-line indenting; only 'shiftwidth' counts. 
 "
 " REVISION	DATE		REMARKS 
 "	0.02	11-Oct-2006	Completed consistency check for complete buffer. 
@@ -582,7 +584,12 @@ endfunction
 
 "- consistency with buffer settings functions -----------------------------{{{1
 function! s:GetCorrectTabstopSetting( indentSetting )
-    if s:GetSettingFromIndentSetting( a:indentSetting ) == 'tab'
+    if &smarttab == 1
+	" When using 'smarttab', front-of-the-line indenting solely uses
+	" 'shiftwidth'; 'tabstop' and 'softtabstop' are only used in other
+	" places. 
+	return &l:tabstop
+    elseif s:GetSettingFromIndentSetting( a:indentSetting ) == 'tab'
 	return &l:tabstop
     elseif s:GetSettingFromIndentSetting( a:indentSetting ) == 'sts'
 	return 8
@@ -595,7 +602,12 @@ function! s:GetCorrectTabstopSetting( indentSetting )
 endfunction
 
 function! s:GetCorrectSofttabstopSetting( indentSetting )
-    if s:GetSettingFromIndentSetting( a:indentSetting ) == 'sts'
+    if &smarttab == 1
+	" When using 'smarttab', front-of-the-line indenting solely uses
+	" 'shiftwidth'; 'tabstop' and 'softtabstop' are only used in other
+	" places. 
+	return &l:softtabstop
+    elseif s:GetSettingFromIndentSetting( a:indentSetting ) == 'sts'
 	return s:GetMultiplierFromIndentSetting( a:indentSetting )
     else
 	" Prefers (ts=n sts=0 expandtab) over (ts=8 sts=n expandtab). 
