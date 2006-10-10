@@ -8,11 +8,20 @@
 " - The indentation value lies in the range of 1-8 spaces or is 1 tab. 
 " - When 'smarttab' is set (global setting), 'tabstop' and 'softtabstop' become
 "   irrelevant to front-of-the-line indenting; only 'shiftwidth' counts. 
+" - There are two possibilities to model 'expandtab': Either set the indent via
+"   'tabstop', or keep 'tabstop=8' and set the indent via 'softtabstop'. 
+"   We use the following guideline: 
+"   If tabstop is kept at the standard 8, we prefer changing the indent via
+"   softtabstop. 
+"   If tabstop is non-standard, anyway, we rather modify tabstop than turning on
+"   softtabstop. 
 "
 " REVISION	DATE		REMARKS 
 "	0.02	11-Oct-2006	Completed consistency check for complete buffer. 
 "				Added check for range of the current buffer. 
 "				Added user choice to automatically change buffer settings. 
+"				Now correctly handling 'smarttab' and the
+"				'expandtab' ambiguity. 
 "	0.01	08-Oct-2006	file creation
 
 " Avoid installing twice or when in compatible mode
@@ -594,8 +603,13 @@ function! s:GetCorrectTabstopSetting( indentSetting )
     elseif s:GetSettingFromIndentSetting( a:indentSetting ) == 'sts'
 	return 8
     elseif s:GetSettingFromIndentSetting( a:indentSetting ) == 'spc'
-	" Prefers (ts=n sts=0 expandtab) over (ts=8 sts=n expandtab). 
-	return s:GetMultiplierFromIndentSetting( a:indentSetting )
+	" If tabstop=8, we prefer changing the indent via softtabstop. 
+	" If tabstop!=8, we rather modify tabstop than turning on softtabstop. 
+	if &l:tabstop == 8
+	    return 8
+	else
+	    return s:GetMultiplierFromIndentSetting( a:indentSetting )
+	endif
     else
 	throw "assert false"
     endif
@@ -609,6 +623,14 @@ function! s:GetCorrectSofttabstopSetting( indentSetting )
 	return &l:softtabstop
     elseif s:GetSettingFromIndentSetting( a:indentSetting ) == 'sts'
 	return s:GetMultiplierFromIndentSetting( a:indentSetting )
+    elseif s:GetSettingFromIndentSetting( a:indentSetting ) == 'spc'
+	" If tabstop=8, we prefer changing the indent via softtabstop. 
+	" If tabstop!=8, we rather modify tabstop than turning on softtabstop. 
+	if &l:tabstop == 8 && s:GetMultiplierFromIndentSetting( a:indentSetting ) != 8
+	    return s:GetMultiplierFromIndentSetting( a:indentSetting )
+	else
+	    return 0
+	endif
     else
 	" Prefers (ts=n sts=0 expandtab) over (ts=8 sts=n expandtab). 
 	return 0
