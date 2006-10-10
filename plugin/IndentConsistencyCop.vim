@@ -581,6 +581,19 @@ endfunction
 
 "- output functions -------------------------------------------------------{{{1
 function! s:IndentSettingToUserString( indentSetting )
+"*******************************************************************************
+"* PURPOSE:
+"   Converts the internally used 'xxxn' indent setting into a
+"   user-understandable string. 
+"* ASSUMPTIONS / PRECONDITIONS:
+"	? List of any external variable, control, or other element whose state affects this procedure.
+"* EFFECTS / POSTCONDITIONS:
+"	? List of the procedure's effect on each external variable, control, or other element.
+"* INPUTS:
+"   a:indentSetting: indent setting
+"* RETURN VALUES: 
+"   string describing the indent setting
+"*******************************************************************************
     let l:userString = ''
 
     if a:indentSetting == 'tab' 
@@ -608,7 +621,21 @@ function! s:DictCompareDescending( i1, i2 )
     return a:i1[1] == a:i2[1] ? 0 : a:i1[1] > a:i2[1] ? -1 : 1
 endfunction
 
-function! s:RatingsToUserString( occurrences, ratings )
+function! s:RatingsToUserString( occurrences, ratings, lineCnt )
+"*******************************************************************************
+"* PURPOSE:
+"   Dresses up the ratings information into a multi-line string that can be
+"   displayed to the user. The lines are ordered from high to low ratings. If
+"   low ratings have been filtered out, this is reported, too. 
+"* ASSUMPTIONS / PRECONDITIONS:
+"	? List of any external variable, control, or other element whose state affects this procedure.
+"* EFFECTS / POSTCONDITIONS:
+"	? List of the procedure's effect on each external variable, control, or other element.
+"* INPUTS:
+"	? Explanation of each argument that isn't obvious.
+"* RETURN VALUES: 
+"	? Explanation of the value returned.
+"*******************************************************************************
     let l:userString = ''
 
     " In order to output the ratings from highest to lowest, we need to
@@ -617,20 +644,38 @@ function! s:RatingsToUserString( occurrences, ratings )
     " There is no built-in sort() function for dictionaries. 
     let l:ratingLists = items( a:ratings )
     call sort( l:ratingLists, "s:DictCompareDescending" )
+    let l:ratingSum = 0
     for l:ratingList in l:ratingLists
 	let l:indentSetting = l:ratingList[0]
+	let l:userString .= "\n- " . s:IndentSettingToUserString( l:indentSetting ) . ' (' . a:occurrences[ l:indentSetting ] . ' of ' . a:lineCnt . ' lines)'
 	"**** l:rating = l:ratingLists[1] = a:ratings[ l:indentSetting ]
-	" TODO: change 'x occurences' to 'x of y lines'
-	let l:userString .= "\n- " . s:IndentSettingToUserString( l:indentSetting ) . ' (' . a:occurrences[ l:indentSetting ] . ' occurrences)'
+	let l:ratingSum += a:ratings[ l:indentSetting ]
     endfor
+
+    if l:ratingSum < 100
+	let l:userString .= "\n- (minor / inconclusive potential settings have been omitted)"
+    endif
 
     return l:userString
 endfunction
 
 function! s:IndentConsistencyCop( startLineNum, endLineNum ) " {{{1
+"*******************************************************************************
+"* PURPOSE:
+"   Triggers the indent consistency check and presents the results to the user. 
+"* ASSUMPTIONS / PRECONDITIONS:
+"	? List of any external variable, control, or other element whose state affects this procedure.
+"* EFFECTS / POSTCONDITIONS:
+"	? List of the procedure's effect on each external variable, control, or other element.
+"* INPUTS:
+"   a:startLineNum, a:endLineNum: range in the current buffer that is to be
+"	checked. 
+"* RETURN VALUES: 
+"   none
+"*******************************************************************************
     let l:isEntireBuffer = ( a:startLineNum == 1 && a:endLineNum == line('$') )
-"****D echo 'isEntireBuffer ? ' . l:isEntireBuffer
     let l:scopeUserString = (l:isEntireBuffer ? 'buffer' : 'range')
+    let l:lineCnt = a:endLineNum - a:startLineNum + 1
 
     let l:occurrences = {}
     let l:ratings = {}
@@ -639,7 +684,7 @@ function! s:IndentConsistencyCop( startLineNum, endLineNum ) " {{{1
     if l:isConsistent == -1
 	echomsg 'This ' . l:scopeUserString . ' does not contain indented text. '
     elseif l:isConsistent == 0
-	call confirm( 'Found inconsistent indentation in this ' . l:scopeUserString . '; possibly generated from these conflicting settings: ' . s:RatingsToUserString( l:occurrences, l:ratings ) )
+	call confirm( 'Found inconsistent indentation in this ' . l:scopeUserString . '; possibly generated from these conflicting settings: ' . s:RatingsToUserString( l:occurrences, l:ratings, l:lineCnt ) )
     elseif l:isConsistent == 1
 	echomsg 'The indentation in this ' . l:scopeUserString . " is based on the '" . s:IndentSettingToUserString( keys( l:ratings )[0] ) . "' setting; it is applied consistently. "
     else
