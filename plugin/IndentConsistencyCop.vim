@@ -579,6 +579,84 @@ function! s:CheckBufferConsistency( startLineNum, endLineNum, occurrences, ratin
 endfunction
 
 
+"- consistency with buffer settings functions -----------------------------{{{1
+function! s:GetCorrectTabstopSetting( indentSetting )
+    if s:GetSettingFromIndentSetting( a:indentSetting ) == 'tab'
+	return &l:tabstop
+    elseif s:GetSettingFromIndentSetting( a:indentSetting ) == 'sts'
+	return 8
+    elseif s:GetSettingFromIndentSetting( a:indentSetting ) == 'spc'
+	" Prefers (ts=n sts=0 expandtab) over (ts=8 sts=n expandtab). 
+	return s:GetMultiplierFromIndentSetting( a:indentSetting )
+    else
+	throw "assert false"
+    endif
+endfunction
+
+function! s:GetCorrectSofttabstopSetting( indentSetting )
+    if s:GetSettingFromIndentSetting( a:indentSetting ) == 'sts'
+	return s:GetMultiplierFromIndentSetting( a:indentSetting )
+    else
+	" Prefers (ts=n sts=0 expandtab) over (ts=8 sts=n expandtab). 
+	return 0
+    endif
+endfunction
+
+function! s:GetCorrectShiftwidthSetting( indentSetting )
+    if s:GetSettingFromIndentSetting( a:indentSetting ) == 'tab'
+	return &l:tabstop
+    else
+	return s:GetMultiplierFromIndentSetting( a:indentSetting )
+    endif
+endfunction
+
+function! s:GetCorrectExpandtabSetting( indentSetting )
+    return (s:GetSettingFromIndentSetting( a:indentSetting ) == 'spc')
+endfunction
+
+function! s:CheckConsistencyWithBufferSettings( indentSetting ) " {{{2
+"*******************************************************************************
+"* PURPOSE:
+"   Checks the consistency of the passed indent setting with the indent settings
+"   of the current buffer, i.e. the 'tabstop', 'softtabstop', 'shiftwidth' and
+"   'expandtab' settings. 
+"* ASSUMPTIONS / PRECONDITIONS:
+"	? List of any external variable, control, or other element whose state affects this procedure.
+"* EFFECTS / POSTCONDITIONS:
+"	? List of the procedure's effect on each external variable, control, or other element.
+"* INPUTS:
+"   a:indentSettings: prescribed indent setting for the buffer
+"* RETURN VALUES: 
+"   empty string: indent setting is consistent with buffer indent settings, else
+"   user string describing the necessary changes to adapt the buffer indent
+"	settings. 
+"*******************************************************************************
+    let l:isTabstopCorrect = (s:GetCorrectTabstopSetting( a:indentSetting ) == &l:tabstop)
+    let l:isSofttabstopCorrect = (s:GetCorrectSofttabstopSetting( a:indentSetting ) == &l:softtabstop)
+    let l:isShiftwidthCorrect = (s:GetCorrectShiftwidthSetting( a:indentSetting ) == &l:shiftwidth)
+    let l:isExpandtabCorrect = (s:GetCorrectExpandtabSetting( a:indentSetting ) == &l:expandtab)
+
+    if l:isTabstopCorrect && l:isSofttabstopCorrect && l:isShiftwidthCorrect && l:isExpandtabCorrect
+	return ''
+    else
+	let l:userString = "The buffer's indent settings are inconsistent with the used indent '" . s:IndentSettingToUserString( a:indentSetting ) . "'; these settings must be changed: "
+	if ! l:isTabstopCorrect
+	    let l:userString .= "\n- tabstop from " . &l:tabstop . ' to ' . s:GetCorrectTabstopSetting( a:indentSetting )
+	endif
+	if ! l:isSofttabstopCorrect
+	    let l:userString .= "\n- softtabstop from " . &l:softtabtop . ' to ' . s:GetCorrectSofttabstopSetting( a:indentSetting )
+	endif
+	if ! l:isShiftwidthCorrect
+	    let l:userString .= "\n- shiftwidth from " . &l:shiftwidth . ' to ' . s:GetCorrectShiftwidthSetting( a:indentSetting )
+	endif
+	if ! l:isExpandtabCorrect
+	    let l:userString .= "\n- expandtab from " . &l:expandtab . ' to ' . s:GetCorrectExpandtabSetting( a:indentSetting )
+	endif
+
+	return l:userString
+    endif
+endfunction
+
 "- output functions -------------------------------------------------------{{{1
 function! s:IndentSettingToUserString( indentSetting )
 "*******************************************************************************
@@ -659,7 +737,7 @@ function! s:RatingsToUserString( occurrences, ratings, lineCnt )
     return l:userString
 endfunction
 
-function! s:IndentConsistencyCop( startLineNum, endLineNum ) " {{{1
+function! s:IndentConsistencyCop( startLineNum, endLineNum, isBufferSettingsCheck ) " {{{1
 "*******************************************************************************
 "* PURPOSE:
 "   Triggers the indent consistency check and presents the results to the user. 
@@ -670,6 +748,8 @@ function! s:IndentConsistencyCop( startLineNum, endLineNum ) " {{{1
 "* INPUTS:
 "   a:startLineNum, a:endLineNum: range in the current buffer that is to be
 "	checked. 
+"   a:isBufferSettingsCheck: flag whether consistency with the buffer
+"	settings should also be checked. 
 "* RETURN VALUES: 
 "   none
 "*******************************************************************************
@@ -686,7 +766,17 @@ function! s:IndentConsistencyCop( startLineNum, endLineNum ) " {{{1
     elseif l:isConsistent == 0
 	call confirm( 'Found inconsistent indentation in this ' . l:scopeUserString . '; possibly generated from these conflicting settings: ' . s:RatingsToUserString( l:occurrences, l:ratings, l:lineCnt ) )
     elseif l:isConsistent == 1
-	echomsg 'The indentation in this ' . l:scopeUserString . " is based on the '" . s:IndentSettingToUserString( keys( l:ratings )[0] ) . "' setting; it is applied consistently. "
+	let l:consistentIndentSetting = keys( l:ratings )[0]
+	let l:userMessage = ''
+	if a:isBufferSettingsCheck
+	    let l:userMessage = s:CheckConsistencyWithBufferSettings( l:consistentIndentSetting )
+	    if ! empty( l:userMessage )
+		call confirm( l:userMessage )
+	    endif
+	endif
+	if empty( l:userMessage )
+	    echomsg 'The indentation in this ' . l:scopeUserString . " is based on the '" . s:IndentSettingToUserString( l:consistentIndentSetting ) . "' setting; it is applied consistently. "
+	endif
     else
 	throw "assert false"
     endif
@@ -696,6 +786,12 @@ function! s:IndentConsistencyCop( startLineNum, endLineNum ) " {{{1
 endfunction
 
 "- commands --------------------------------------------------------------{{{1
-command! -range=% -nargs=0 IndentConsistencyCop call <SID>IndentConsistencyCop( <line1>, <line2> )
+" Only check indent consistency within range / buffer. Don't check the
+" consistency with buffer indent settings. 
+command! -range=% -nargs=0 IndentRangeConsistencyCop call <SID>IndentConsistencyCop( <line1>, <line2>, 0 )
+
+" Ensure indent consistency within the range / buffer, and - if achieved -, also
+" check consistency with buffer indent settings. 
+command! -range=% -nargs=0 IndentConsistencyCop call <SID>IndentConsistencyCop( <line1>, <line2>, 1 )
 
 " vim:ft=vim foldmethod=marker
