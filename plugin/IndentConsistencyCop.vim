@@ -3,13 +3,14 @@
 " Maintainer:	Ingo Karkat <ingo@karkat.de>
 "
 " ASSUMPTIONS:
-" - When using 'softtabtop', 'tabstop' remains at the standard value of 8. 
+" - When using 'softtabstop', 'tabstop' remains at the standard value of 8. 
 "   Any other value would sort of undermine the idea of 'softtabstop', anyway. 
 " - The indentation value lies in the range of 1-8 spaces or is 1 tab. 
 "
 " REVISION	DATE		REMARKS 
 "	0.02	11-Oct-2006	Completed consistency check for complete buffer. 
 "				Added check for range of the current buffer. 
+"				Added user choice to automatically change buffer settings. 
 "	0.01	08-Oct-2006	file creation
 
 " Avoid installing twice or when in compatible mode
@@ -631,10 +632,10 @@ function! s:CheckConsistencyWithBufferSettings( indentSetting ) " {{{2
 "   user string describing the necessary changes to adapt the buffer indent
 "	settings. 
 "*******************************************************************************
-    let l:isTabstopCorrect = (s:GetCorrectTabstopSetting( a:indentSetting ) == &l:tabstop)
+    let l:isTabstopCorrect     = (s:GetCorrectTabstopSetting( a:indentSetting )	    == &l:tabstop)
     let l:isSofttabstopCorrect = (s:GetCorrectSofttabstopSetting( a:indentSetting ) == &l:softtabstop)
-    let l:isShiftwidthCorrect = (s:GetCorrectShiftwidthSetting( a:indentSetting ) == &l:shiftwidth)
-    let l:isExpandtabCorrect = (s:GetCorrectExpandtabSetting( a:indentSetting ) == &l:expandtab)
+    let l:isShiftwidthCorrect  = (s:GetCorrectShiftwidthSetting( a:indentSetting )  == &l:shiftwidth)
+    let l:isExpandtabCorrect   = (s:GetCorrectExpandtabSetting( a:indentSetting )   == &l:expandtab)
 
     if l:isTabstopCorrect && l:isSofttabstopCorrect && l:isShiftwidthCorrect && l:isExpandtabCorrect
 	return ''
@@ -644,7 +645,7 @@ function! s:CheckConsistencyWithBufferSettings( indentSetting ) " {{{2
 	    let l:userString .= "\n- tabstop from " . &l:tabstop . ' to ' . s:GetCorrectTabstopSetting( a:indentSetting )
 	endif
 	if ! l:isSofttabstopCorrect
-	    let l:userString .= "\n- softtabstop from " . &l:softtabtop . ' to ' . s:GetCorrectSofttabstopSetting( a:indentSetting )
+	    let l:userString .= "\n- softtabstop from " . &l:softtabstop . ' to ' . s:GetCorrectSofttabstopSetting( a:indentSetting )
 	endif
 	if ! l:isShiftwidthCorrect
 	    let l:userString .= "\n- shiftwidth from " . &l:shiftwidth . ' to ' . s:GetCorrectShiftwidthSetting( a:indentSetting )
@@ -655,6 +656,13 @@ function! s:CheckConsistencyWithBufferSettings( indentSetting ) " {{{2
 
 	return l:userString
     endif
+endfunction " }}}2
+
+function! s:MakeBufferSettingsConsistentWith( indentSetting )
+    let &l:tabstop    = s:GetCorrectTabstopSetting( a:indentSetting )
+    let &l:softtabstop = s:GetCorrectSofttabstopSetting( a:indentSetting )
+    let &l:shiftwidth = s:GetCorrectShiftwidthSetting( a:indentSetting )
+    let &l:expandtab  = s:GetCorrectExpandtabSetting( a:indentSetting )
 endfunction
 
 "- output functions -------------------------------------------------------{{{1
@@ -737,6 +745,51 @@ function! s:RatingsToUserString( occurrences, ratings, lineCnt )
     return l:userString
 endfunction
 
+function! s:PrintBufferSettings( messageIntro )
+    let l:userMessage = a:messageIntro
+    let l:userMessage .= 'tabstop=' . &l:tabstop . ' softtabstop=' . &l:softtabstop . ' shiftwidth=' . &l:shiftwidth
+    let l:userMessage .= (&l:expandtab ? ' expandtab' : ' noexpandtab')
+
+    echomsg l:userMessage
+endfunction
+
+function! s:IndentBufferConsistencyCop( scopeUserString, consistentIndentSetting, isBufferSettingsCheck ) " {{{1
+"*******************************************************************************
+"* PURPOSE:
+"   Reports buffer consistency and (if desired) triggers the consistency check
+"   with the buffer indent settings, thereby interacting with the user. 
+"* ASSUMPTIONS / PRECONDITIONS:
+"	? List of any external variable, control, or other element whose state affects this procedure.
+"* EFFECTS / POSTCONDITIONS:
+"	? List of the procedure's effect on each external variable, control, or other element.
+"* INPUTS:
+"   a:scopeUserString: either 'range' or 'buffer'
+"   a:consistentIndentSetting: determined consistent indent setting of the
+"      buffer
+"   a:isBufferSettingsCheck: flag whether consistency with the buffer
+"	settings should also be checked. 
+"* RETURN VALUES: 
+"   none
+"*******************************************************************************
+    let l:userMessage = ''
+    if a:isBufferSettingsCheck
+	let l:userMessage = s:CheckConsistencyWithBufferSettings( a:consistentIndentSetting )
+	if ! empty( l:userMessage )
+	    let l:userMessage .= "\nHow do you want to deal with the inconsistency?"
+	    let l:actionNum = confirm( l:userMessage, "&Ignore\n&Change" )
+	    if l:actionNum <= 1
+		call s:PrintBufferSettings( 'The buffer settings remain inconsistent: ' )
+	    elseif l:actionNum == 2
+		call s:MakeBufferSettingsConsistentWith( a:consistentIndentSetting )
+		call s:PrintBufferSettings( 'The buffer settings have been changed: ' )
+	    endif
+	endif
+    endif
+    if empty( l:userMessage )
+	echomsg 'The indentation in this ' . a:scopeUserString . " is consistently based on the '" . s:IndentSettingToUserString( a:consistentIndentSetting ) . "' setting; it is consistent with the buffer indent settings. "
+    endif
+endfunction
+
 function! s:IndentConsistencyCop( startLineNum, endLineNum, isBufferSettingsCheck ) " {{{1
 "*******************************************************************************
 "* PURPOSE:
@@ -767,16 +820,7 @@ function! s:IndentConsistencyCop( startLineNum, endLineNum, isBufferSettingsChec
 	call confirm( 'Found inconsistent indentation in this ' . l:scopeUserString . '; possibly generated from these conflicting settings: ' . s:RatingsToUserString( l:occurrences, l:ratings, l:lineCnt ) )
     elseif l:isConsistent == 1
 	let l:consistentIndentSetting = keys( l:ratings )[0]
-	let l:userMessage = ''
-	if a:isBufferSettingsCheck
-	    let l:userMessage = s:CheckConsistencyWithBufferSettings( l:consistentIndentSetting )
-	    if ! empty( l:userMessage )
-		call confirm( l:userMessage )
-	    endif
-	endif
-	if empty( l:userMessage )
-	    echomsg 'The indentation in this ' . l:scopeUserString . " is based on the '" . s:IndentSettingToUserString( l:consistentIndentSetting ) . "' setting; it is applied consistently. "
-	endif
+	call s:IndentBufferConsistencyCop( l:scopeUserString, l:consistentIndentSetting, a:isBufferSettingsCheck )
     else
 	throw "assert false"
     endif
