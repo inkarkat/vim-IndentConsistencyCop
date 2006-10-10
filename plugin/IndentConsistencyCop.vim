@@ -8,6 +8,7 @@
 " - The indentation value lies in the range of 1-8 spaces or is 1 tab. 
 "
 " REVISION	DATE		REMARKS 
+"	0.02	11-Oct-2006	Completed consistency check for complete buffer. 
 "	0.01	08-Oct-2006	file creation
 
 " Avoid installing twice or when in compatible mode
@@ -613,8 +614,9 @@ function! s:RatingsToUserString( occurrences, ratings )
     call sort( l:ratingLists, "s:DictCompareDescending" )
     for l:ratingList in l:ratingLists
 	let l:indentSetting = l:ratingList[0]
-	" l:rating = l:ratingLists[1] = a:ratings[ l:indentSetting ]
-	let l:userString .= "\n" . s:IndentSettingToUserString( l:indentSetting ) . ' - rating of ' . a:ratings[ l:indentSetting ] . ' (' . a:occurrences[ l:indentSetting ] . ' occurrences)'
+	"**** l:rating = l:ratingLists[1] = a:ratings[ l:indentSetting ]
+	" TODO: change 'x occurences' to 'x of y lines'
+	let l:userString .= "\n- " . s:IndentSettingToUserString( l:indentSetting ) . ' (' . a:occurrences[ l:indentSetting ] . ' occurrences)'
     endfor
 
     return l:userString
@@ -628,9 +630,9 @@ function! s:IndentConsistencyCop() " {{{1
     if l:isConsistent == -1
 	echomsg "This buffer does not contain indented text. "
     elseif l:isConsistent == 0
-	call confirm( "Found inconsistent indentation in this buffer; possibly generated from these settings: " . s:RatingsToUserString( l:occurrences, l:ratings ) )
+	call confirm( "Found inconsistent indentation in this buffer; possibly generated from these conflicting settings: " . s:RatingsToUserString( l:occurrences, l:ratings ) )
     elseif l:isConsistent == 1
-	echomsg "The indentation in this buffer is based on the " . s:IndentSettingToUserString( keys( l:ratings )[0] ) . " setting; it is applied consistently. "
+	echomsg "The indentation in this buffer is based on the '" . s:IndentSettingToUserString( keys( l:ratings )[0] ) . "' setting; it is applied consistently. "
     else
 	throw "assert false"
     endif
