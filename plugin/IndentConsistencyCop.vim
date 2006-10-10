@@ -572,13 +572,59 @@ function! s:CheckBufferConsistency( startLine, endLine, occurrences, ratings ) "
     return l:isConsistent
 endfunction
 
+
+"- output functions -------------------------------------------------------{{{1
+function! s:IndentSettingToUserString( indentSetting )
+    let l:userString = ''
+
+    if a:indentSetting == 'tab' 
+	let l:userString = 'tabstop'
+    elseif a:indentSetting == 'badsts'
+	let l:userString = 'soft tabstop with too many trailing spaces'
+    elseif a:indentSetting == 'badmix'
+	let l:userString = 'bad mix of spaces and tabs'
+    else
+	let l:setting = s:GetSettingFromIndentSetting( a:indentSetting )
+	let l:multiplier = s:GetMultiplierFromIndentSetting( a:indentSetting )
+	if l:setting == 'sts'
+	    let l:userString = l:multiplier . ' characters soft tabstop' 
+	elseif l:setting == 'spc'
+	    let l:userString = l:multiplier . ' spaces'
+	else
+	    throw 'assert false'
+	endif
+    endif
+
+    return l:userString
+endfunction
+
+function! s:RatingsToUserString( occurrences, ratings )
+    let l:userString = ''
+
+    for l:indentSetting in keys( a:ratings )
+	let l:userString .= "\n" . s:IndentSettingToUserString( l:indentSetting ) . ' rating of ' . a:ratings[ l:indentSetting ] . ' (' . a:occurrences[ l:indentSetting ] . ' occurrences)'
+    endfor
+
+    return l:userString
+endfunction
+
 function! s:IndentConsistencyCop() " {{{1
     let l:occurrences = {}
     let l:ratings = {}
     let l:isConsistent = s:CheckBufferConsistency( 1, line('$'), l:occurrences, l:ratings )
-echo 'Consistent   ? ' . l:isConsistent
-echo 'Occurrences:   ' . string( l:occurrences )
-echo 'nrm. ratings:  ' . string( l:ratings )
+
+    if l:isConsistent == -1
+	echomsg "This buffer does not contain indented text. "
+    elseif l:isConsistent == 0
+	call confirm( "Found inconsistent indentation in this buffer; possibly generated from these settings: " . s:RatingsToUserString( l:occurrences, l:ratings ) )
+    elseif l:isConsistent == 1
+	echomsg "The indentation in this buffer is based on the " . s:IndentSettingToUserString( keys( l:ratings )[0] ) . " setting; it is applied consistently. "
+    else
+	throw "assert false"
+    endif
+"****D echo 'Consistent   ? ' . l:isConsistent
+"****D echo 'Occurrences:   ' . string( l:occurrences )
+"****D echo 'nrm. ratings:  ' . string( l:ratings )
 endfunction
 
 "- commands --------------------------------------------------------------{{{1
