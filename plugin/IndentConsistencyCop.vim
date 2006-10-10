@@ -489,7 +489,27 @@ function! s:NormalizeRatings( ratings )
     endif
 endfunction
 
-function! s:IndentConsistencyCop() " {{{1
+function! s:CheckBufferConsistency( startLine, endLine, occurrences, ratings ) " {{{1
+"*******************************************************************************
+"* PURPOSE:
+"   Checks the consistency of the indents in the current buffer, range of
+"   startLine to endLine. 
+"* ASSUMPTIONS / PRECONDITIONS:
+"   none
+"* EFFECTS / POSTCONDITIONS:
+"   none
+"* INPUTS:
+"   a:occurrences: empty dictionary
+"   a:ratings: empty dictionary
+"* RETURN VALUES: 
+"   -1: checked range does not contain indents
+"    0: checked range is not consistent
+"    1: checked range is consistent
+"   Fills the a:occurrences dictionary; key: indent setting; value: number of
+"	lines that have that indent setting
+"   Fills the a:ratings dictionary; key: indent setting; value: percentage 
+"	rating (100: checked range is consistent; < 100: inconsistent. 
+"*******************************************************************************
     " TODO: add range arguments
     
     " This dictionary collects the occurrences of all found indent settings. It
@@ -512,20 +532,19 @@ function! s:IndentConsistencyCop() " {{{1
     call s:EvaluateIndentsIntoOccurrences( s:softtabstops, 'sts' )
     call s:EvaluateIndentsIntoOccurrences( s:doubtful, 'dbt' )
     " Now, the indent occurences have been consolidated into s:occurrences. 
-echo 'Spaces:       ' . string( s:spaces )
-echo 'Softtabstops: ' . string( s:softtabstops )
-echo 'Doubtful:     ' . string( s:doubtful )
+"****D echo 'Spaces:       ' . string( s:spaces )
+"****D echo 'Softtabstops: ' . string( s:softtabstops )
+"****D echo 'Doubtful:     ' . string( s:doubtful )
 "****D echo 'Occurrences 1:' . string( s:occurrences )
 
     if empty( s:occurrences )
-	echomsg "There are no indents in this buffer!"
-	return
+	return -1
     endif
 
     call s:ApplyPrecedences()
 
-echo 'Occurrences 2:' . string( s:occurrences )
-    echo 'This is probably a ' . string( filter( copy( s:occurrences ), 'v:val == max( s:occurrences )') )
+"****D echo 'Occurrences 2:' . string( s:occurrences )
+"****D echo 'This is probably a ' . string( filter( copy( s:occurrences ), 'v:val == max( s:occurrences )') )
 
     " This dictionary contains the incompatible indent settings for each indent
     " setting. 
@@ -534,12 +553,32 @@ echo 'Occurrences 2:' . string( s:occurrences )
 
     " This dictionary contains the final rating, a combination of high indent settings occurrence and low incompatible occurrences. 
     let l:ratings = s:EvaluateOccurrenceAndIncompatibleIntoRating( s:occurrences, l:incompatibles ) " Key: indent setting; value: rating number
-echo 'ratings:     ' . string( l:ratings )
+"****D echo 'ratings:     ' . string( l:ratings )
 
     call s:NormalizeRatings( l:ratings )
-echo 'nrm. ratings:' . string( l:ratings )
+"****D echo 'nrm. ratings:' . string( l:ratings )
 
-    " TODO: cleanup of s:...
+
+    call extend( a:occurrences, s:occurrences )
+    call extend( a:ratings, l:ratings )
+
+    " Cleanup variables with script-scope. 
+    call filter( s:occurrences, 0 )
+    call filter( s:spaces, 0 )
+    call filter( s:softtabstops, 0 )
+    call filter( s:doubtful, 0 )
+
+    let l:isConsistent = (count( l:ratings, 100 ) == 1)
+    return l:isConsistent
+endfunction
+
+function! s:IndentConsistencyCop() " {{{1
+    let l:occurrences = {}
+    let l:ratings = {}
+    let l:isConsistent = s:CheckBufferConsistency( 1, line('$'), l:occurrences, l:ratings )
+echo 'Consistent   ? ' . l:isConsistent
+echo 'Occurrences:   ' . string( l:occurrences )
+echo 'nrm. ratings:  ' . string( l:ratings )
 endfunction
 
 "- commands --------------------------------------------------------------{{{1
