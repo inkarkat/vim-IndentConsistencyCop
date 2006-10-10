@@ -9,6 +9,7 @@
 "
 " REVISION	DATE		REMARKS 
 "	0.02	11-Oct-2006	Completed consistency check for complete buffer. 
+"				Added check for range of the current buffer. 
 "	0.01	08-Oct-2006	file creation
 
 " Avoid installing twice or when in compatible mode
@@ -490,7 +491,7 @@ function! s:NormalizeRatings( ratings )
     endif
 endfunction
 
-function! s:CheckBufferConsistency( startLine, endLine, occurrences, ratings ) " {{{1
+function! s:CheckBufferConsistency( startLineNum, endLineNum, occurrences, ratings ) " {{{1
 "*******************************************************************************
 "* PURPOSE:
 "   Checks the consistency of the indents in the current buffer, range of
@@ -500,6 +501,8 @@ function! s:CheckBufferConsistency( startLine, endLine, occurrences, ratings ) "
 "* EFFECTS / POSTCONDITIONS:
 "   none
 "* INPUTS:
+"   a:startLineNum
+"   a:endLineNum
 "   a:occurrences: empty dictionary
 "   a:ratings: empty dictionary
 "* RETURN VALUES: 
@@ -511,8 +514,10 @@ function! s:CheckBufferConsistency( startLine, endLine, occurrences, ratings ) "
 "   Fills the a:ratings dictionary; key: indent setting; value: percentage 
 "	rating (100: checked range is consistent; < 100: inconsistent. 
 "*******************************************************************************
-    " TODO: add range arguments
-    
+    if a:startLineNum > a:endLineNum
+	throw assert startLineNum <= a:endLineNum
+    endif
+
     " This dictionary collects the occurrences of all found indent settings. It
     " is the basis for all evaluations and statistics. 
     let s:occurrences = {}  " key: indent setting (e.g. 'sts4'); value: number of lines that have that indent setting. 
@@ -523,8 +528,8 @@ function! s:CheckBufferConsistency( startLine, endLine, occurrences, ratings ) "
     let s:softtabstops = {} " key: number of indent softtabstops (converted to spaces); value: number of lines that have the number of spaces. 
     let s:doubtful = {}	    " key: number of indent spaces (<8) which may be either spaces or softtabstops; value: number of lines that have the number of spaces. 
 
-    let l:lineNum = 1
-    while l:lineNum <= line('$')
+    let l:lineNum = a:startLineNum
+    while l:lineNum <= a:endLineNum
 	call s:InspectLine(l:lineNum)
 	let l:lineNum += 1
     endwhile
@@ -622,17 +627,21 @@ function! s:RatingsToUserString( occurrences, ratings )
     return l:userString
 endfunction
 
-function! s:IndentConsistencyCop() " {{{1
+function! s:IndentConsistencyCop( startLineNum, endLineNum ) " {{{1
+    let l:isEntireBuffer = ( a:startLineNum == 1 && a:endLineNum == line('$') )
+"****D echo 'isEntireBuffer ? ' . l:isEntireBuffer
+    let l:scopeUserString = (l:isEntireBuffer ? 'buffer' : 'range')
+
     let l:occurrences = {}
     let l:ratings = {}
-    let l:isConsistent = s:CheckBufferConsistency( 1, line('$'), l:occurrences, l:ratings )
+    let l:isConsistent = s:CheckBufferConsistency( a:startLineNum, a:endLineNum, l:occurrences, l:ratings )
 
     if l:isConsistent == -1
-	echomsg "This buffer does not contain indented text. "
+	echomsg 'This ' . l:scopeUserString . ' does not contain indented text. '
     elseif l:isConsistent == 0
-	call confirm( "Found inconsistent indentation in this buffer; possibly generated from these conflicting settings: " . s:RatingsToUserString( l:occurrences, l:ratings ) )
+	call confirm( 'Found inconsistent indentation in this ' . l:scopeUserString . '; possibly generated from these conflicting settings: ' . s:RatingsToUserString( l:occurrences, l:ratings ) )
     elseif l:isConsistent == 1
-	echomsg "The indentation in this buffer is based on the '" . s:IndentSettingToUserString( keys( l:ratings )[0] ) . "' setting; it is applied consistently. "
+	echomsg 'The indentation in this ' . l:scopeUserString . " is based on the '" . s:IndentSettingToUserString( keys( l:ratings )[0] ) . "' setting; it is applied consistently. "
     else
 	throw "assert false"
     endif
@@ -642,7 +651,6 @@ function! s:IndentConsistencyCop() " {{{1
 endfunction
 
 "- commands --------------------------------------------------------------{{{1
-"TODO: range-command
-command! -nargs=0 IndentConsistencyCop call <SID>IndentConsistencyCop()
+command! -range=% -nargs=0 IndentConsistencyCop call <SID>IndentConsistencyCop( <line1>, <line2> )
 
 " vim:ft=vim foldmethod=marker
