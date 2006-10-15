@@ -773,7 +773,7 @@ function! s:RatingsToUserString( occurrences, ratings, lineCnt )
     endfor
 
     if l:ratingSum < 100
-	let l:userString .= "\n- (minor / inconclusive potential settings have been omitted)"
+	let l:userString .= "\nSome minor / inconclusive potential settings have been omitted. "
     endif
 
     return l:userString
