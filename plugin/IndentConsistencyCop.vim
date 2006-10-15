@@ -772,7 +772,7 @@ function! s:RatingsToUserString( occurrences, ratings, lineCnt )
 	let l:ratingSum += a:ratings[ l:indentSetting ]
     endfor
 
-    if l:ratingSum < 100
+    if l:ratingSum < (100 - 1) " Allow for 1% rounding error. 
 	let l:userString .= "\nSome minor / inconclusive potential settings have been omitted. "
     endif
 
