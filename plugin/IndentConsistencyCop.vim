@@ -2,6 +2,12 @@
 "
 " Maintainer:	Ingo Karkat <ingo@karkat.de>
 "
+" LIMITATIONS:
+" - 'softtabstop' is only recognized correctly when a correct combination of
+"   tabs and spaces is actually used. If a file only has small indents,
+"   resulting in only spaces or tabs (but not the combination), the indent
+"   setting is recognized as a combination of 'tab' and 'spc n'. 
+"
 " ASSUMPTIONS:
 " - When using 'softtabstop', 'tabstop' remains at the standard value of 8. 
 "   Any other value would sort of undermine the idea of 'softtabstop', anyway. 
