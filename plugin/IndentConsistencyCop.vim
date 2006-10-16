@@ -830,6 +830,30 @@ function! s:IndentBufferConsistencyCop( scopeUserString, consistentIndentSetting
     endif
 endfunction
 
+function! s:IndentBufferSaveEditCop( startLineNum, endLineNum, inconsistentIndentationMessage, isBufferSettingsCheck ) " {{{1
+"*******************************************************************************
+"* PURPOSE:
+"   Reports buffer inconsistency and (if desired) triggers the save edit check. 
+"* ASSUMPTIONS / PRECONDITIONS:
+"	? List of any external variable, control, or other element whose state affects this procedure.
+"* EFFECTS / POSTCONDITIONS:
+"	? List of the procedure's effect on each external variable, control, or other element.
+"* INPUTS:
+"   a:startLineNum, a:endLineNum: range in the current buffer that is to be
+"	checked. 
+"   a:inconsistentIndentationMessage: user message about the inconsistent
+"	indentation and possible conflicting indent settings
+"   a:isBufferSettingsCheck: flag whether consistency with the buffer
+"	settings should also be checked. 
+"* RETURN VALUES: 
+"   none
+"*******************************************************************************
+    " TODO: if a:isBufferSettingsCheck
+    "	CheckRangeSaveEdit()
+    " endif
+    call confirm( a:inconsistentIndentationMessage )
+endfunction
+
 function! s:IndentConsistencyCop( startLineNum, endLineNum, isBufferSettingsCheck ) " {{{1
 "*******************************************************************************
 "* PURPOSE:
@@ -857,7 +881,8 @@ function! s:IndentConsistencyCop( startLineNum, endLineNum, isBufferSettingsChec
     if l:isConsistent == -1
 	echomsg 'This ' . l:scopeUserString . ' does not contain indented text. '
     elseif l:isConsistent == 0
-	call confirm( 'Found inconsistent indentation in this ' . l:scopeUserString . '; possibly generated from these conflicting settings: ' . s:RatingsToUserString( l:occurrences, l:ratings, l:lineCnt ) )
+	let l:inconsistentIndentationMessage = 'Found inconsistent indentation in this ' . l:scopeUserString . '; possibly generated from these conflicting settings: ' . s:RatingsToUserString( l:occurrences, l:ratings, l:lineCnt )
+	call s:IndentBufferSaveEditCop( a:startLineNum, a:endLineNum, l:inconsistentIndentationMessage, a:isBufferSettingsCheck )
     elseif l:isConsistent == 1
 	let l:consistentIndentSetting = keys( l:ratings )[0]
 	call s:IndentBufferConsistencyCop( l:scopeUserString, l:consistentIndentSetting, a:isBufferSettingsCheck )
