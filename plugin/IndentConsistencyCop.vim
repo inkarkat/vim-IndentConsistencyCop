@@ -597,6 +597,89 @@ function! s:CheckBufferConsistency( startLineNum, endLineNum, occurrences, ratin
 endfunction
 
 
+"- consistency of buffer settings functions -------------------------------{{{1
+function! s:CheckBufferSettingsConsistency()
+"*******************************************************************************
+"* PURPOSE:
+"   Checks the buffer indent settings (tabstop, softtabstop, shiftwidth,
+"   expandtab) for consistency. 
+"* ASSUMPTIONS / PRECONDITIONS:
+"	? List of any external variable, control, or other element whose state affects this procedure.
+"* EFFECTS / POSTCONDITIONS:
+"	? List of the procedure's effect on each external variable, control, or other element.
+"* INPUTS:
+"   none
+"* RETURN VALUES: 
+"   Empty string if settings are consistent, else
+"   User string describing the inconsistencies. 
+"*******************************************************************************
+    let l:inconsistencies = ''
+
+    " 'shiftwidth' must be equal to 'tabstop' or 'softtabstop', except when
+    " using 'smarttab'. 
+    if ! &l:smarttab
+	if &l:softtabstop > 0
+	    if &l:softtabstop != &l:shiftwidth
+		let l:inconsistencies .= "\nThe value of softtabstop (" . &l:softtabstop . ") should equal the value of shiftwidth (" . &l:shiftwidth . "). "
+	    endif
+	else
+	    if &l:tabstop != &l:shiftwidth
+		let l:inconsistencies .= "\nThe value of tabstop (" . &l:tabstop . ") should equal the value of shiftwidth (" . &l:shiftwidth . "). "
+	    endif
+	endif
+    endif
+	
+    " When using 'softtabstop', 'tabstop' remains at the standard value of 8. 
+    if &l:softtabstop > 0 && &l:tabstop != 8
+	let l:inconsistencies .= "\nWhen using soft tabstops, tabstop (" . &l:tabstop . ") should remain at the standard value of 8. "
+    endif
+
+    if ! empty( l:inconsistencies )
+	let l:inconsistencies = "\n\nThe buffer's indent settings are inconsistent:" . l:inconsistencies
+    endif
+
+    return l:inconsistencies
+endfunction
+
+function! s:IsBufferSettingsConsistent()
+    return empty( s:CheckBufferSettingsConsistency() )
+endfunction
+
+function! s:GetIndentSettingForBufferSettings()
+"*******************************************************************************
+"* PURPOSE:
+"   Translates the buffer indent settings (tabstop, softtabstop, shiftwidth,
+"   expandtab) into an indent setting (e.g. 'sts4'). 
+"* ASSUMPTIONS / PRECONDITIONS:
+"	? List of any external variable, control, or other element whose state affects this procedure.
+"* EFFECTS / POSTCONDITIONS:
+"	? List of the procedure's effect on each external variable, control, or other element.
+"* INPUTS:
+"   none
+"* RETURN VALUES: 
+"   indent setting
+"   'badset' if inconsistent buffer indent settings
+"*******************************************************************************
+    if ! s:IsBufferSettingsConsistent()
+	return 'badset'
+    endif
+
+    if &l:expandtab
+	let l:setting = 'spc'
+    elseif &l:softtabstop > 0
+	let l:setting = 'sts'
+    else
+	let l:setting = 'tab'
+    endif
+
+    " We use 'shiftwidth' for the indent multiplier, because it is not only
+    " easier to resolve than 'tabstop'/'softtabstop', but it is also valid when
+    " 'smarttab' is set. 
+    let l:multiplier = &l:shiftwidth
+
+    return l:setting . l:multiplier
+endfunction
+
 "- consistency with buffer settings functions -----------------------------{{{1
 function! s:GetCorrectTabstopSetting( indentSetting )
     if &smarttab == 1
@@ -728,6 +811,8 @@ function! s:IndentSettingToUserString( indentSetting )
 	let l:userString = 'soft tabstop with too many trailing spaces'
     elseif a:indentSetting == 'badmix'
 	let l:userString = 'bad mix of spaces and tabs'
+    elseif a:indentSetting == 'badset'
+	let l:userString = 'inconsistent buffer indent settings'
     else
 	let l:setting = s:GetSettingFromIndentSetting( a:indentSetting )
 	let l:multiplier = s:GetMultiplierFromIndentSetting( a:indentSetting )
@@ -830,10 +915,10 @@ function! s:IndentBufferConsistencyCop( scopeUserString, consistentIndentSetting
     endif
 endfunction
 
-function! s:IndentBufferSaveEditCop( startLineNum, endLineNum, inconsistentIndentationMessage, isBufferSettingsCheck ) " {{{1
+function! s:IndentBufferSafeEditCop( startLineNum, endLineNum, inconsistentIndentationMessage, isBufferSettingsCheck ) " {{{1
 "*******************************************************************************
 "* PURPOSE:
-"   Reports buffer inconsistency and (if desired) triggers the save edit check. 
+"   Reports buffer inconsistency and (if desired) triggers the safe edit check. 
 "* ASSUMPTIONS / PRECONDITIONS:
 "	? List of any external variable, control, or other element whose state affects this procedure.
 "* EFFECTS / POSTCONDITIONS:
@@ -849,9 +934,15 @@ function! s:IndentBufferSaveEditCop( startLineNum, endLineNum, inconsistentInden
 "   none
 "*******************************************************************************
     " TODO: if a:isBufferSettingsCheck
-    "	CheckRangeSaveEdit()
+    "	CheckRangeSafeEdit()
     " endif
-    call confirm( a:inconsistentIndentationMessage )
+echo s:CheckBufferSettingsConsistency() . s:GetIndentSettingForBufferSettings()
+
+    call confirm( a:inconsistentIndentationMessage, "&Ignore\n&Highlight wrong indents..." )
+    " Highlight inconsistent with buffer settings
+    " Highlight with best guess
+    " Highlight with chosen setting...
+    " Highlight illegal indents only. (?)
 endfunction
 
 function! s:IndentConsistencyCop( startLineNum, endLineNum, isBufferSettingsCheck ) " {{{1
@@ -882,7 +973,7 @@ function! s:IndentConsistencyCop( startLineNum, endLineNum, isBufferSettingsChec
 	echomsg 'This ' . l:scopeUserString . ' does not contain indented text. '
     elseif l:isConsistent == 0
 	let l:inconsistentIndentationMessage = 'Found inconsistent indentation in this ' . l:scopeUserString . '; possibly generated from these conflicting settings: ' . s:RatingsToUserString( l:occurrences, l:ratings, l:lineCnt )
-	call s:IndentBufferSaveEditCop( a:startLineNum, a:endLineNum, l:inconsistentIndentationMessage, a:isBufferSettingsCheck )
+	call s:IndentBufferSafeEditCop( a:startLineNum, a:endLineNum, l:inconsistentIndentationMessage, a:isBufferSettingsCheck )
     elseif l:isConsistent == 1
 	let l:consistentIndentSetting = keys( l:ratings )[0]
 	call s:IndentBufferConsistencyCop( l:scopeUserString, l:consistentIndentSetting, a:isBufferSettingsCheck )
