@@ -341,7 +341,8 @@ function! s:GetIncompatiblesForIndentSetting( indentSetting )
 "   inspection of the actual indents in the buffer are delegated to
 "   s:InspectForCompatibles(). 
 "* ASSUMPTIONS / PRECONDITIONS:
-"	? List of any external variable, control, or other element whose state affects this procedure.
+"   s:occurrences dictionary; key: indent setting; value: number of
+"	lines that have that indent setting
 "* EFFECTS / POSTCONDITIONS:
 "	? List of the procedure's effect on each external variable, control, or other element.
 "* INPUTS:
@@ -391,7 +392,8 @@ function! s:EvaluateIncompatibleIndentSettings()
 "   evaluation, the actual indents in s:spaces, s:softtabstops and s:doubtful
 "   must be inspected. 
 "* ASSUMPTIONS / PRECONDITIONS:
-"	? List of any external variable, control, or other element whose state affects this procedure.
+"   s:occurrences dictionary; key: indent setting; value: number of
+"	lines that have that indent setting
 "* EFFECTS / POSTCONDITIONS:
 "	? List of the procedure's effect on each external variable, control, or other element.
 "* INPUTS:
@@ -408,7 +410,7 @@ function! s:EvaluateIncompatibleIndentSettings()
 endfunction
 
 "- Rating generation -----------------------------------------------------{{{1
-function! s:EvaluateOccurrenceAndIncompatibleIntoRating( occurrences, incompatibles )
+function! s:EvaluateOccurrenceAndIncompatibleIntoRating( incompatibles )
 "*******************************************************************************
 "* PURPOSE:
 "   For each indent setting, calculates a single (unnormalized) rating; the
@@ -416,35 +418,35 @@ function! s:EvaluateOccurrenceAndIncompatibleIntoRating( occurrences, incompatib
 "   The formula is rating( indent setting ) = # of indent setting occurrences /
 "   sum( # of occurrences of incompatible indent settings ). 
 "* ASSUMPTIONS / PRECONDITIONS:
-"	? List of any external variable, control, or other element whose state affects this procedure.
+"   s:occurrences dictionary; key: indent setting; value: number of
+"	lines that have that indent setting
+"   s:ratings: empty dictionary
 "* EFFECTS / POSTCONDITIONS:
-"	? List of the procedure's effect on each external variable, control, or other element.
+"   Fills s:ratings: dictionary of ratings; key: indent setting; value: rating number
+"   -1 means a perfect rating (i.e. no incompatibles)
 "* INPUTS:
-"   a:occurrences: dictionary of occurences
 "   a:incompatibles: dictionary of incompatibles
 "* RETURN VALUES: 
-"   dictionary of ratings; key: indent setting; value: rating number
-"   -1 means a perfect rating (i.e. no incompatibles)
+"   none
 "*******************************************************************************
-    let l:ratings = {}
-    for l:indentSetting in keys( a:occurrences )
+    let s:ratings = {}
+    for l:indentSetting in keys( s:occurrences )
 	let l:incompatibles = a:incompatibles[ l:indentSetting ]
 	if empty( l:incompatibles )
 	    " No incompatibles; this gets the perfect rating. 
-	    let l:ratings[ l:indentSetting ] = -1
+	    let s:ratings[ l:indentSetting ] = -1
 	else
 	    let l:incompatibleOccurrences = 0
 	    for l:incompatible in l:incompatibles
-		let l:incompatibleOccurrences += a:occurrences[ l:incompatible ]
+		let l:incompatibleOccurrences += s:occurrences[ l:incompatible ]
 	    endfor
-	    let l:ratings[ l:indentSetting ] = 10000 * a:occurrences[ l:indentSetting ] / l:incompatibleOccurrences
+	    let s:ratings[ l:indentSetting ] = 10000 * s:occurrences[ l:indentSetting ] / l:incompatibleOccurrences
 	endif
     endfor
-    return l:ratings
 endfunction
 
-function! s:IsContainsPerfectRating( ratings )
-    let l:perfectCount = count( a:ratings, -1 )
+function! s:IsContainsPerfectRating()
+    let l:perfectCount = count( s:ratings, -1 )
     if l:perfectCount > 1
 	throw "assert perfectCount <= 1"
     endif
@@ -452,13 +454,13 @@ function! s:IsContainsPerfectRating( ratings )
 endfunction
 
 "- Rating normalization --------------------------------------------------{{{1
-function! s:NormalizePerfectRating( ratings )
-    for l:rating in keys( a:ratings )
-	if a:ratings[ l:rating ] == -1
+function! s:NormalizePerfectRating()
+    for l:rating in keys( s:ratings )
+	if s:ratings[ l:rating ] == -1
 	    " Normalize to 100%
-	    let a:ratings[ l:rating ] = 100
+	    let s:ratings[ l:rating ] = 100
 	else
-	    unlet a:ratings[ l:rating ] 
+	    unlet s:ratings[ l:rating ] 
 	endif
     endfor
 endfunction
@@ -467,74 +469,75 @@ function! s:IsBadIndentSetting( indentSetting )
     return s:GetSettingFromIndentSetting( a:indentSetting ) == 'bad'
 endfunction
 
-function! s:NormalizeNonPerfectRating( ratings )
+function! s:NormalizeNonPerfectRating()
     let l:ratingThreshold = 10	" Remove everything below this percentage. Exception: indent setting 'bad'. 
 
     let l:valueSum = 0
-    for l:value in values( a:ratings )
+    for l:value in values( s:ratings )
 	let l:valueSum += l:value
     endfor
     if l:valueSum <= 0 
 	throw "assert valueSum > 0"
     endif
 
-    for l:rating in keys( a:ratings )
-	let l:newRating = 100 * a:ratings[ l:rating ] / l:valueSum
+    for l:rating in keys( s:ratings )
+	let l:newRating = 100 * s:ratings[ l:rating ] / l:valueSum
 	if l:newRating < l:ratingThreshold && ! s:IsBadIndentSetting( l:rating )
-	    unlet a:ratings[ l:rating ] 
+	    unlet s:ratings[ l:rating ] 
 	else
-	    let a:ratings[ l:rating ] = l:newRating
+	    let s:ratings[ l:rating ] = l:newRating
 	endif
     endfor
 endfunction
 
-function! s:NormalizeRatings( ratings )
+function! s:NormalizeRatings()
 "*******************************************************************************
 "* PURPOSE:
-"   Changes the values in the a:ratings dictionary to that the sum of all values
+"   Changes the values in the s:ratings dictionary to that the sum of all values
 "   is 100; i.e. make percentages out of the ratings. 
 "   Values below a certain percentage threshold are dropped from the dictionary
 "   *after* the normalization, in order to remove clutter when displaying the
 "   results to the user. 
 "* ASSUMPTIONS / PRECONDITIONS:
-"	? List of any external variable, control, or other element whose state affects this procedure.
+"   s:ratings dictionary; key: indent setting; value: raw rating number >= 0 or
+"	-1 means a perfect rating (i.e. no incompatibles)
 "* EFFECTS / POSTCONDITIONS:
-"   Modifies values in a:ratings. 
+"   s:ratings dictionary; key: indent setting; value: percentage 
+"	rating (100: checked range is consistent; < 100: inconsistent. 
+"   Modifies values in s:ratings. 
 "   Removes entries that fall below the threshold. 
 "* INPUTS:
-"   a:ratings: Key: indent setting; value: rating number
+"   none
 "* RETURN VALUES: 
 "   none
 "*******************************************************************************
-    if s:IsContainsPerfectRating( a:ratings )
-	call s:NormalizePerfectRating( a:ratings )
+    if s:IsContainsPerfectRating()
+	call s:NormalizePerfectRating()
     else
-	call s:NormalizeNonPerfectRating( a:ratings )
+	call s:NormalizeNonPerfectRating()
     endif
 endfunction
 
-function! s:CheckBufferConsistency( startLineNum, endLineNum, occurrences, ratings ) " {{{1
+function! s:CheckBufferConsistency( startLineNum, endLineNum ) " {{{1
 "*******************************************************************************
 "* PURPOSE:
 "   Checks the consistency of the indents in the current buffer, range of
 "   startLine to endLine. 
 "* ASSUMPTIONS / PRECONDITIONS:
-"   none
+"   s:occurrences: empty dictionary
+"   s:ratings: empty dictionary
 "* EFFECTS / POSTCONDITIONS:
-"   none
+"   Fills the s:occurrences dictionary; key: indent setting; value: number of
+"	lines that have that indent setting
+"   Fills the s:ratings dictionary; key: indent setting; value: raw rating
+"   number, or -1 means a perfect rating (i.e. no incompatibles)
 "* INPUTS:
 "   a:startLineNum
 "   a:endLineNum
-"   a:occurrences: empty dictionary
-"   a:ratings: empty dictionary
 "* RETURN VALUES: 
 "   -1: checked range does not contain indents
 "    0: checked range is not consistent
 "    1: checked range is consistent
-"   Fills the a:occurrences dictionary; key: indent setting; value: number of
-"	lines that have that indent setting
-"   Fills the a:ratings dictionary; key: indent setting; value: percentage 
-"	rating (100: checked range is consistent; < 100: inconsistent. 
 "*******************************************************************************
     if a:startLineNum > a:endLineNum
 	throw assert startLineNum <= a:endLineNum
@@ -579,24 +582,20 @@ function! s:CheckBufferConsistency( startLineNum, endLineNum, occurrences, ratin
     let l:incompatibles = s:EvaluateIncompatibleIndentSettings() " Key: indent setting; value: list of indent settings. 
 "****D echo 'Incompatibles:' . string( l:incompatibles )
 
-    " This dictionary contains the final rating, a combination of high indent settings occurrence and low incompatible occurrences. 
-    let l:ratings = s:EvaluateOccurrenceAndIncompatibleIntoRating( s:occurrences, l:incompatibles ) " Key: indent setting; value: rating number
-"****D echo 'ratings:     ' . string( l:ratings )
+    " The s:ratings dictionary contains the final rating, a combination of high indent settings occurrence and low incompatible occurrences. 
+    call s:EvaluateOccurrenceAndIncompatibleIntoRating( l:incompatibles ) " Key: indent setting; value: rating number
+"****D echo 'ratings:     ' . string( s:ratings )
 
-    call s:NormalizeRatings( l:ratings )
-"****D echo 'nrm. ratings:' . string( l:ratings )
+    call s:NormalizeRatings()
+"****D echo 'nrm. ratings:' . string( s:ratings )
 
-
-    call extend( a:occurrences, s:occurrences )
-    call extend( a:ratings, l:ratings )
 
     " Cleanup variables with script-scope. 
-    call filter( s:occurrences, 0 )
     call filter( s:spaces, 0 )
     call filter( s:softtabstops, 0 )
     call filter( s:doubtful, 0 )
 
-    let l:isConsistent = (count( l:ratings, 100 ) == 1)
+    let l:isConsistent = (count( s:ratings, 100 ) == 1)
     return l:isConsistent
 endfunction
 
@@ -839,20 +838,23 @@ function! s:DictCompareDescending( i1, i2 )
     return a:i1[1] == a:i2[1] ? 0 : a:i1[1] > a:i2[1] ? -1 : 1
 endfunction
 
-function! s:RatingsToUserString( occurrences, ratings, lineCnt )
+function! s:RatingsToUserString( lineCnt )
 "*******************************************************************************
 "* PURPOSE:
 "   Dresses up the ratings information into a multi-line string that can be
 "   displayed to the user. The lines are ordered from high to low ratings. If
 "   low ratings have been filtered out, this is reported, too. 
 "* ASSUMPTIONS / PRECONDITIONS:
-"	? List of any external variable, control, or other element whose state affects this procedure.
+"   s:occurrences dictionary; key: indent setting; value: number of
+"	lines that have that indent setting
+"   s:ratings dictionary; key: indent setting; value: percentage 
+"	rating (100: checked range is consistent; < 100: inconsistent. 
 "* EFFECTS / POSTCONDITIONS:
 "	? List of the procedure's effect on each external variable, control, or other element.
 "* INPUTS:
-"	? Explanation of each argument that isn't obvious.
+"   a:lineCnt:	Number of lines in the range / buffer that have been inspected. 
 "* RETURN VALUES: 
-"	? Explanation of the value returned.
+"   user string describing the ratings information
 "*******************************************************************************
     let l:bufferIndentSetting = s:GetIndentSettingForBufferSettings()
     let l:isBufferIndentSettingInRatings = 0
@@ -862,18 +864,18 @@ function! s:RatingsToUserString( occurrences, ratings, lineCnt )
     " convert the ratings dictionary to a list and sort it with a custom
     " comparator which considers the value part of each list element. 
     " There is no built-in sort() function for dictionaries. 
-    let l:ratingLists = items( a:ratings )
+    let l:ratingLists = items( s:ratings )
     call sort( l:ratingLists, "s:DictCompareDescending" )
     let l:ratingSum = 0
     for l:ratingList in l:ratingLists
 	let l:indentSetting = l:ratingList[0]
-	let l:userString .= "\n- " . s:IndentSettingToUserString( l:indentSetting ) . ' (' . a:occurrences[ l:indentSetting ] . ' of ' . a:lineCnt . ' lines)'
-	"**** let l:rating = l:ratingLists[1] = a:ratings[ l:indentSetting ]
+	let l:userString .= "\n- " . s:IndentSettingToUserString( l:indentSetting ) . ' (' . s:occurrences[ l:indentSetting ] . ' of ' . a:lineCnt . ' lines)'
+	"**** let l:rating = l:ratingLists[1] = s:ratings[ l:indentSetting ]
 	if l:indentSetting == l:bufferIndentSetting
 	    let l:userString .= ' <- buffer setting'
 	    let l:isBufferIndentSettingInRatings = 1
 	endif
-	let l:ratingSum += a:ratings[ l:indentSetting ]
+	let l:ratingSum += s:ratings[ l:indentSetting ]
     endfor
 
     if l:ratingSum < (100 - 1) " Allow for 1% rounding error. 
@@ -1001,12 +1003,13 @@ function! s:QueryIndentSetting()
     " TODO
 endfunction
 
-function! s:IndentBufferInconsistencyCop( startLineNum, endLineNum, inconsistentIndentationMessage, ratings ) " {{{1
+function! s:IndentBufferInconsistencyCop( startLineNum, endLineNum, inconsistentIndentationMessage ) " {{{1
 "*******************************************************************************
 "* PURPOSE:
 "   Reports buffer inconsistency and offers steps to tackle the problem. 
 "* ASSUMPTIONS / PRECONDITIONS:
-"	? List of any external variable, control, or other element whose state affects this procedure.
+"   s:ratings dictionary; key: indent setting; value: percentage 
+"	rating (100: checked range is consistent; < 100: inconsistent. 
 "* EFFECTS / POSTCONDITIONS:
 "	? List of the procedure's effect on each external variable, control, or other element.
 "* INPUTS:
@@ -1014,7 +1017,6 @@ function! s:IndentBufferInconsistencyCop( startLineNum, endLineNum, inconsistent
 "	checked. 
 "   a:inconsistentIndentationMessage: user message about the inconsistent
 "	indentation and possible conflicting indent settings
-"   a:ratings: Key: indent setting; value: rating number
 "* RETURN VALUES: 
 "   none
 "*******************************************************************************
@@ -1023,7 +1025,7 @@ function! s:IndentBufferInconsistencyCop( startLineNum, endLineNum, inconsistent
 	" User chose to ignore the inconsistencies. 
     elseif l:actionNum == 2
 	let l:bufferIndentSetting = s:GetIndentSettingForBufferSettings()
-	let l:ratingLists = items( a:ratings )
+	let l:ratingLists = items( s:ratings )
 	call sort( l:ratingLists, "s:DictCompareDescending" )
 	let l:bestGuessIndentSetting = l:ratingLists[0][0]
 
@@ -1066,24 +1068,28 @@ function! s:IndentConsistencyCop( startLineNum, endLineNum, isBufferSettingsChec
     let l:scopeUserString = (l:isEntireBuffer ? 'buffer' : 'range')
     let l:lineCnt = a:endLineNum - a:startLineNum + 1
 
-    let l:occurrences = {}
-    let l:ratings = {}
-    let l:isConsistent = s:CheckBufferConsistency( a:startLineNum, a:endLineNum, l:occurrences, l:ratings )
+    let s:occurrences = {}
+    let s:ratings = {}
+    let l:isConsistent = s:CheckBufferConsistency( a:startLineNum, a:endLineNum )
 
     if l:isConsistent == -1
 	echomsg 'This ' . l:scopeUserString . ' does not contain indented text. '
     elseif l:isConsistent == 0
-	let l:inconsistentIndentationMessage = 'Found inconsistent indentation in this ' . l:scopeUserString . '; possibly generated from these conflicting settings: ' . s:RatingsToUserString( l:occurrences, l:ratings, l:lineCnt )
-	call s:IndentBufferInconsistencyCop( a:startLineNum, a:endLineNum, l:inconsistentIndentationMessage, l:ratings )
+	let l:inconsistentIndentationMessage = 'Found inconsistent indentation in this ' . l:scopeUserString . '; possibly generated from these conflicting settings: ' . s:RatingsToUserString( l:lineCnt )
+	call s:IndentBufferInconsistencyCop( a:startLineNum, a:endLineNum, l:inconsistentIndentationMessage )
     elseif l:isConsistent == 1
-	let l:consistentIndentSetting = keys( l:ratings )[0]
+	let l:consistentIndentSetting = keys( s:ratings )[0]
 	call s:IndentBufferConsistencyCop( l:scopeUserString, l:consistentIndentSetting, a:isBufferSettingsCheck )
     else
 	throw "assert false"
     endif
 "****D echo 'Consistent   ? ' . l:isConsistent
-"****D echo 'Occurrences:   ' . string( l:occurrences )
-"****D echo 'nrm. ratings:  ' . string( l:ratings )
+"****D echo 'Occurrences:   ' . string( s:occurrences )
+"****D echo 'nrm. ratings:  ' . string( s:ratings )
+
+    " Cleanup variables with script-scope. 
+    call filter( s:occurrences, 0 )
+    call filter( s:ratings, 0 )
 endfunction
 
 "- commands --------------------------------------------------------------{{{1
