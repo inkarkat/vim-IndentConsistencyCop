@@ -931,10 +931,48 @@ function! s:IndentBufferConsistencyCop( scopeUserString, consistentIndentSetting
     endif
 endfunction
 
-function! s:IndentBufferSafeEditCop( startLineNum, endLineNum, inconsistentIndentationMessage, isBufferSettingsCheck ) " {{{1
+
+"- highlight functions-----------------------------------------------------{{{1
+function! s:IsLineCorrect( lineNum, correctIndentSetting )
+    " TODO
+    return (a:lineNum % 3 != 0)
+endfunction
+
+function! s:HighlightInconsistentIndents( startLineNum, endLineNum, correctIndentSetting )
+    " Patterns for correct tabstops and space indents are easy to come up with.
+    " The softtabstops of 1,2,4 are easy, too. The softtabstop indents of 3, 5,
+    " 7 are very difficult to express, because you have to consider the number
+    " of tabs, too. 
+    " Negating this match to highlight all incorrect indents plus the possible
+    " bad space-tab combinations only makes things worse. Thus, we use the brute
+    " approach and examine all lines, and build the pattern with the
+    " inconsistent line numbers. (Hoping that this approach scales reasonably
+    " well with many inconsistent line numbers.) 
+
+    "\(\%23l\|\%17l\|\%4l\)\&^\s\+
+    let l:linePattern = ''
+
+    let l:lineNum = a:startLineNum
+    while l:lineNum <= a:endLineNum
+	if ! s:IsLineCorrect( l:lineNum, a:correctIndentSetting )
+	    let l:linePattern .= '\|\%' . l:lineNum . 'l'
+	endif
+	let l:lineNum += 1
+    endwhile
+    let l:linePattern = '\(' . strpart( l:linePattern, 2) . '\)\&^\s\+'
+echo '**** linePattern:' . l:linePattern
+    let @/ = l:linePattern
+    set hlsearch
+endfunction
+
+function! s:QueryIndentSetting()
+    " TODO
+endfunction
+
+function! s:IndentBufferInconsistencyCop( startLineNum, endLineNum, inconsistentIndentationMessage, ratings ) " {{{1
 "*******************************************************************************
 "* PURPOSE:
-"   Reports buffer inconsistency and (if desired) triggers the safe edit check. 
+"   Reports buffer inconsistency and offers steps to tackle the problem. 
 "* ASSUMPTIONS / PRECONDITIONS:
 "	? List of any external variable, control, or other element whose state affects this procedure.
 "* EFFECTS / POSTCONDITIONS:
@@ -944,20 +982,36 @@ function! s:IndentBufferSafeEditCop( startLineNum, endLineNum, inconsistentInden
 "	checked. 
 "   a:inconsistentIndentationMessage: user message about the inconsistent
 "	indentation and possible conflicting indent settings
-"   a:isBufferSettingsCheck: flag whether consistency with the buffer
-"	settings should also be checked. 
+"   a:ratings: Key: indent setting; value: rating number
 "* RETURN VALUES: 
 "   none
 "*******************************************************************************
-    " TODO: if a:isBufferSettingsCheck
-    "	CheckRangeSafeEdit()
-    " endif
+    let l:actionNum = confirm( a:inconsistentIndentationMessage, "&Ignore\n&Highlight wrong indents..." )
+    if l:actionNum <= 1
+	" User chose to ignore the inconsistencies. 
+    elseif l:actionNum == 2
+	let l:bufferIndentSetting = s:GetIndentSettingForBufferSettings()
+	let l:ratingLists = items( a:ratings )
+	call sort( l:ratingLists, "s:DictCompareDescending" )
+	let l:bestGuessIndentSetting = l:ratingLists[0][0]
 
-    call confirm( a:inconsistentIndentationMessage, "&Ignore\n&Highlight wrong indents..." )
-    " Highlight inconsistent with buffer settings
-    " Highlight with best guess
-    " Highlight with chosen setting...
-    " Highlight illegal indents only. (?)
+	let l:highlightMessage = 'What kind of inconsistent indents do you want to highlight?'
+	let l:highlightChoices = "Not &buffer settings (" . l:bufferIndentSetting . ")\nNot best &guess (" . l:bestGuessIndentSetting . ")\nNot &chosen setting...\n&Illegal indents only"
+	let l:highlightNum = confirm( l:highlightMessage, l:highlightChoices )
+	if l:highlightNum <= 0
+	    " User canceled
+	elseif l:highlightNum == 1
+	    call s:HighlightInconsistentIndents( a:startLineNum, a:endLineNum, l:bufferIndentSetting )
+	elseif l:highlightNum == 2
+	    call s:HighlightInconsistentIndents( a:startLineNum, a:endLineNum, l:bestGuessIndentSetting )
+	elseif l:highlightNum == 3
+	    call s:HighlightInconsistentIndents( a:startLineNum, a:endLineNum, s:QueryIndentSetting() )
+	elseif l:highlightNum == 4
+	    call s:HighlightInconsistentIndents( a:startLineNum, a:endLineNum, 'bad' )
+	else
+	    throw 'assert false'
+	endif
+    endif
 endfunction
 
 function! s:IndentConsistencyCop( startLineNum, endLineNum, isBufferSettingsCheck ) " {{{1
@@ -988,7 +1042,7 @@ function! s:IndentConsistencyCop( startLineNum, endLineNum, isBufferSettingsChec
 	echomsg 'This ' . l:scopeUserString . ' does not contain indented text. '
     elseif l:isConsistent == 0
 	let l:inconsistentIndentationMessage = 'Found inconsistent indentation in this ' . l:scopeUserString . '; possibly generated from these conflicting settings: ' . s:RatingsToUserString( l:occurrences, l:ratings, l:lineCnt )
-	call s:IndentBufferSafeEditCop( a:startLineNum, a:endLineNum, l:inconsistentIndentationMessage, a:isBufferSettingsCheck )
+	call s:IndentBufferInconsistencyCop( a:startLineNum, a:endLineNum, l:inconsistentIndentationMessage, l:ratings )
     elseif l:isConsistent == 1
 	let l:consistentIndentSetting = keys( l:ratings )[0]
 	call s:IndentBufferConsistencyCop( l:scopeUserString, l:consistentIndentSetting, a:isBufferSettingsCheck )
