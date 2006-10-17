@@ -669,7 +669,8 @@ function! s:GetIndentSettingForBufferSettings()
     elseif &l:softtabstop > 0
 	let l:setting = 'sts'
     else
-	let l:setting = 'tab'
+	" No multiplier for 'tab'. 
+	return 'tab'
     endif
 
     " We use 'shiftwidth' for the indent multiplier, because it is not only
@@ -821,7 +822,7 @@ function! s:IndentSettingToUserString( indentSetting )
 	elseif l:setting == 'spc'
 	    let l:userString = l:multiplier . ' spaces'
 	else
-	    throw 'assert false'
+	    throw 'unknown indent setting "' . a:indentSetting . '"'
 	endif
     endif
 
@@ -847,6 +848,8 @@ function! s:RatingsToUserString( occurrences, ratings, lineCnt )
 "* RETURN VALUES: 
 "	? Explanation of the value returned.
 "*******************************************************************************
+    let l:bufferIndentSetting = s:GetIndentSettingForBufferSettings()
+    let l:isBufferIndentSettingInRatings = 0
     let l:userString = ''
 
     " In order to output the ratings from highest to lowest, we need to
@@ -859,12 +862,25 @@ function! s:RatingsToUserString( occurrences, ratings, lineCnt )
     for l:ratingList in l:ratingLists
 	let l:indentSetting = l:ratingList[0]
 	let l:userString .= "\n- " . s:IndentSettingToUserString( l:indentSetting ) . ' (' . a:occurrences[ l:indentSetting ] . ' of ' . a:lineCnt . ' lines)'
-	"**** l:rating = l:ratingLists[1] = a:ratings[ l:indentSetting ]
+	"**** let l:rating = l:ratingLists[1] = a:ratings[ l:indentSetting ]
+	if l:indentSetting == l:bufferIndentSetting
+	    let l:userString .= ' <- buffer setting'
+	    let l:isBufferIndentSettingInRatings = 1
+	endif
 	let l:ratingSum += a:ratings[ l:indentSetting ]
     endfor
 
     if l:ratingSum < (100 - 1) " Allow for 1% rounding error. 
 	let l:userString .= "\nSome minor / inconclusive potential settings have been omitted. "
+    endif
+
+    if ! l:isBufferIndentSettingInRatings
+	let l:bufferSettingsInconsistencies = s:CheckBufferSettingsConsistency()
+	if empty( l:bufferSettingsInconsistencies )
+	    let l:userString .= "\nThe buffer setting is " . s:IndentSettingToUserString( s:GetIndentSettingForBufferSettings() ) . '. '
+	else
+	    let l:userString .= l:bufferSettingsInconsistencies
+	endif
     endif
 
     return l:userString
@@ -936,7 +952,6 @@ function! s:IndentBufferSafeEditCop( startLineNum, endLineNum, inconsistentInden
     " TODO: if a:isBufferSettingsCheck
     "	CheckRangeSafeEdit()
     " endif
-echo s:CheckBufferSettingsConsistency() . s:GetIndentSettingForBufferSettings()
 
     call confirm( a:inconsistentIndentationMessage, "&Ignore\n&Highlight wrong indents..." )
     " Highlight inconsistent with buffer settings
