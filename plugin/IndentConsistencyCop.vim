@@ -115,6 +115,10 @@ function! s:CountBadMixOfSpacesAndTabs( string )
     call s:IncreaseKeyed( s:occurrences, 'badmix')
 endfunction
 
+function! s:GetBeginningWhitespace( lineNum )
+    return matchstr( getline(a:lineNum), '^\s*' )
+endfunction
+
 function! s:InspectLine(lineNum)
 "*******************************************************************************
 "* PURPOSE:
@@ -138,7 +142,7 @@ function! s:InspectLine(lineNum)
 "   none
 "*******************************************************************************
 "****D echo getline(a:lineNum)
-    let l:beginningWhitespace = matchstr( getline(a:lineNum), '^\s*' )
+    let l:beginningWhitespace = s:GetBeginningWhitespace( a:lineNum )
     if l:beginningWhitespace == ''
 	return
     elseif match( l:beginningWhitespace, '^\t\+$' ) != -1
@@ -814,6 +818,8 @@ function! s:IndentSettingToUserString( indentSetting )
 	let l:userString = 'bad mix of spaces and tabs'
     elseif a:indentSetting == 'badset'
 	let l:userString = 'inconsistent buffer indent settings'
+    elseif a:indentSetting == 'notbad'
+	let l:userString = 'no bad mixes or soft tabstops with too many spaces'
     else
 	let l:setting = s:GetSettingFromIndentSetting( a:indentSetting )
 	let l:multiplier = s:GetMultiplierFromIndentSetting( a:indentSetting )
@@ -934,8 +940,29 @@ endfunction
 
 "- highlight functions-----------------------------------------------------{{{1
 function! s:IsLineCorrect( lineNum, correctIndentSetting )
-    " TODO
-    return (a:lineNum % 3 != 0)
+    let l:beginningWhitespace = s:GetBeginningWhitespace( a:lineNum )
+    if empty( l:beginningWhitespace ) 
+	return 1
+    endif
+
+    if a:correctIndentSetting == 'tab'
+	return l:beginningWhitespace =~ '^\t\+$'
+    elseif s:GetSettingFromIndentSetting( a:correctIndentSetting ) == 'spc'
+	return l:beginningWhitespace =~ '^ \+$' && s:IsIndentProduceableWithIndentSetting( len( l:beginningWhitespace ), a:correctIndentSetting )
+    elseif s:GetSettingFromIndentSetting( a:correctIndentSetting ) == 'sts'
+	let l:beginningSpaces = substitute( l:beginningWhitespace, '\t', '        ', 'g' )
+	return l:beginningWhitespace =~ '^\t* \{0,7}$' && s:IsIndentProduceableWithIndentSetting( len( l:beginningSpaces ), a:correctIndentSetting )
+    elseif a:correctIndentSetting == 'notbad'
+	return l:beginningWhitespace =~ '^\(\t\+ \{0,7}\| \+\)$'
+    elseif a:correctIndentSetting == 'badsts'
+	return l:beginningWhitespace =~ '^\t* \{8,}$'
+    elseif a:correctIndentSetting == 'badmix'
+	return l:beginningWhitespace =~ ' \t'
+    elseif a:correctIndentSetting == 'badset'
+	throw 'cannot evaluate lines with badset'
+    else
+	throw 'unknown indent setting "' . a:indentSetting . '"'
+    endif
 endfunction
 
 function! s:HighlightInconsistentIndents( startLineNum, endLineNum, correctIndentSetting )
@@ -1007,7 +1034,7 @@ function! s:IndentBufferInconsistencyCop( startLineNum, endLineNum, inconsistent
 	elseif l:highlightNum == 3
 	    call s:HighlightInconsistentIndents( a:startLineNum, a:endLineNum, s:QueryIndentSetting() )
 	elseif l:highlightNum == 4
-	    call s:HighlightInconsistentIndents( a:startLineNum, a:endLineNum, 'bad' )
+	    call s:HighlightInconsistentIndents( a:startLineNum, a:endLineNum, 'notbad' )
 	else
 	    throw 'assert false'
 	endif
