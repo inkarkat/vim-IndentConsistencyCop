@@ -1008,6 +1008,8 @@ function! s:IndentBufferInconsistencyCop( startLineNum, endLineNum, inconsistent
 "* PURPOSE:
 "   Reports buffer inconsistency and offers steps to tackle the problem. 
 "* ASSUMPTIONS / PRECONDITIONS:
+"   s:occurrences dictionary; key: indent setting; value: number of
+"	lines that have that indent setting
 "   s:ratings dictionary; key: indent setting; value: percentage 
 "	rating (100: checked range is consistent; < 100: inconsistent. 
 "* EFFECTS / POSTCONDITIONS:
@@ -1030,7 +1032,12 @@ function! s:IndentBufferInconsistencyCop( startLineNum, endLineNum, inconsistent
 	let l:bestGuessIndentSetting = l:ratingLists[0][0]
 
 	let l:highlightMessage = 'What kind of inconsistent indents do you want to highlight?'
-	let l:highlightChoices = "Not &buffer settings (" . l:bufferIndentSetting . ")\nNot best &guess (" . l:bestGuessIndentSetting . ")\nNot &chosen setting...\n&Illegal indents only"
+	let l:highlightChoices = "Not &buffer settings (" . l:bufferIndentSetting . ')'
+	let l:highlightChoices .= "\nNot best &guess (" . l:bestGuessIndentSetting . ')'
+	let l:highlightChoices .= "\nNot &chosen setting..."
+	if s:GetKeyedValue( s:occurrences, 'badmix' ) + s:GetKeyedValue( s:occurrences, 'badsts' ) > 0
+	    let l:highlightChoices .= "\n&Illegal indents only"
+	endif
 	let l:highlightNum = confirm( l:highlightMessage, l:highlightChoices )
 	if l:highlightNum <= 0
 	    " User canceled
