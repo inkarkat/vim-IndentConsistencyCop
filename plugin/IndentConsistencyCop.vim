@@ -1063,10 +1063,15 @@ function! s:IndentBufferInconsistencyCop( startLineNum, endLineNum, inconsistent
 	let l:ratingLists = items( s:ratings )
 	call sort( l:ratingLists, "s:DictCompareDescending" )
 	let l:bestGuessIndentSetting = l:ratingLists[0][0]
+	let l:isBestGuessEqualToBufferIndent = (l:bestGuessIndentSetting == l:bufferIndentSetting)
 
 	let l:highlightMessage = 'What kind of inconsistent indents do you want to highlight?'
-	let l:highlightChoices = "Not &buffer settings (" . l:bufferIndentSetting . ')'
-	let l:highlightChoices .= "\nNot best &guess (" . l:bestGuessIndentSetting . ')'
+	if l:isBestGuessEqualToBufferIndent
+	    let l:highlightChoices = "Not &buffer settings / best guess (" . l:bufferIndentSetting . ')'
+	else
+	    let l:highlightChoices = "Not &buffer settings (" . l:bufferIndentSetting . ')'
+	    let l:highlightChoices .= "\nNot best &guess (" . l:bestGuessIndentSetting . ')'
+	endif
 	let l:highlightChoices .= "\nNot &chosen setting..."
 	if s:GetKeyedValue( s:occurrences, 'badmix' ) + s:GetKeyedValue( s:occurrences, 'badsts' ) > 0
 	    let l:highlightChoices .= "\n&Illegal indents only"
@@ -1076,14 +1081,14 @@ function! s:IndentBufferInconsistencyCop( startLineNum, endLineNum, inconsistent
 	    " User canceled
 	elseif l:highlightNum == 1
 	    call s:HighlightInconsistentIndents( a:startLineNum, a:endLineNum, l:bufferIndentSetting )
-	elseif l:highlightNum == 2
+	elseif l:highlightNum == (2 - l:isBestGuessEqualToBufferIndent)
 	    call s:HighlightInconsistentIndents( a:startLineNum, a:endLineNum, l:bestGuessIndentSetting )
-	elseif l:highlightNum == 3
+	elseif l:highlightNum == (3 - l:isBestGuessEqualToBufferIndent)
 	    let l:chosenIndentSetting = s:QueryIndentSetting()
 	    if ! empty( l:chosenIndentSetting )
 		call s:HighlightInconsistentIndents( a:startLineNum, a:endLineNum, l:chosenIndentSetting )
 	    endif
-	elseif l:highlightNum == 4
+	elseif l:highlightNum == (4 - l:isBestGuessEqualToBufferIndent)
 	    call s:HighlightInconsistentIndents( a:startLineNum, a:endLineNum, 'notbad' )
 	else
 	    throw 'assert false'
