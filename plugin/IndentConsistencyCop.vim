@@ -980,11 +980,13 @@ function! s:HighlightInconsistentIndents( startLineNum, endLineNum, correctInden
 
     "\(\%23l\|\%17l\|\%4l\)\&^\s\+
     let l:linePattern = ''
+    let l:incorrectLineCnt = 0
 
     let l:lineNum = a:startLineNum
     while l:lineNum <= a:endLineNum
 	if ! s:IsLineCorrect( l:lineNum, a:correctIndentSetting )
 	    let l:linePattern .= '\|\%' . l:lineNum . 'l'
+	    let l:incorrectLineCnt += 1
 	endif
 	let l:lineNum += 1
     endwhile
@@ -996,11 +998,42 @@ function! s:HighlightInconsistentIndents( startLineNum, endLineNum, correctInden
 "****D echo '**** linePattern:' . l:linePattern
 	let @/ = l:linePattern
 	set hlsearch
+	echomsg 'Populated search pattern with ' . l:incorrectLineCnt . ' incorrect lines. Use n/N to navigate. '
     endif
 endfunction
 
 function! s:QueryIndentSetting()
-    " TODO
+"*******************************************************************************
+"* PURPOSE:
+"	? What the procedure does (not how).
+"* ASSUMPTIONS / PRECONDITIONS:
+"	? List of any external variable, control, or other element whose state affects this procedure.
+"* EFFECTS / POSTCONDITIONS:
+"	? List of the procedure's effect on each external variable, control, or other element.
+"* INPUTS:
+"	? Explanation of each argument that isn't obvious.
+"* RETURN VALUES: 
+"   Queried indent setting (e.g. 'spc4'), or empty string if user has canceled. 
+"*******************************************************************************
+    let l:settingNum = confirm( 'Choose the indent setting:', "&tabstop\n&soft tabstop\nspa&ces" )
+    if l:settingNum <= 0
+	return ''
+    elseif l:settingNum >= 2
+	let l:multiplier = confirm( 'Choose indent value:', "&1\n&2\n&3\n&4\n&5\n&6\n&7\n&8" )
+	if l:multiplier <= 0
+	    return ''
+	endif
+    endif
+
+    if l:settingNum == 1
+	return 'tab'
+    elseif l:settingNum == 2
+	return 'sts' . l:multiplier
+    elseif l:settingNum == 3
+	return 'spc' . l:multiplier
+    else
+	throw 'assert false'
+    endif
 endfunction
 
 function! s:IndentBufferInconsistencyCop( startLineNum, endLineNum, inconsistentIndentationMessage ) " {{{1
@@ -1046,7 +1079,10 @@ function! s:IndentBufferInconsistencyCop( startLineNum, endLineNum, inconsistent
 	elseif l:highlightNum == 2
 	    call s:HighlightInconsistentIndents( a:startLineNum, a:endLineNum, l:bestGuessIndentSetting )
 	elseif l:highlightNum == 3
-	    call s:HighlightInconsistentIndents( a:startLineNum, a:endLineNum, s:QueryIndentSetting() )
+	    let l:chosenIndentSetting = s:QueryIndentSetting()
+	    if ! empty( l:chosenIndentSetting )
+		call s:HighlightInconsistentIndents( a:startLineNum, a:endLineNum, l:chosenIndentSetting )
+	    endif
 	elseif l:highlightNum == 4
 	    call s:HighlightInconsistentIndents( a:startLineNum, a:endLineNum, 'notbad' )
 	else
