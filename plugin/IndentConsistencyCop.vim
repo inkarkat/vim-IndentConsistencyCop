@@ -986,10 +986,15 @@ function! s:HighlightInconsistentIndents( startLineNum, endLineNum, correctInden
 	endif
 	let l:lineNum += 1
     endwhile
-    let l:linePattern = '\(' . strpart( l:linePattern, 2) . '\)\&^\s\+'
-echo '**** linePattern:' . l:linePattern
-    let @/ = l:linePattern
-    set hlsearch
+    if empty( l:linePattern )
+	" All lines are correct; clear the search pattern. 
+	let @/ = ''
+    else
+	let l:linePattern = '\(' . strpart( l:linePattern, 2) . '\)\&^\s\+'
+"****D echo '**** linePattern:' . l:linePattern
+	let @/ = l:linePattern
+	set hlsearch
+    endif
 endfunction
 
 function! s:QueryIndentSetting()
