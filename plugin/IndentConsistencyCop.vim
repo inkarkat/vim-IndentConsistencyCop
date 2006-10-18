@@ -28,6 +28,12 @@
 "				g:indentconsistencycop_non_indent_pattern. 
 "				Implemented g:indentconsistencycop_highlighting
 "				options 'shlm'. 
+"				BF: All 'sts n' were treated as compatible to
+"				'tab', whereas the multiplicity of the tabstop
+"				had to be considered. Added storing of tabstop
+"				indents in s:tabstops and corresponding
+"				evaluation in
+"				GetIncompatiblesForIndentSetting(). 
 "	0.02	11-Oct-2006	Completed consistency check for complete buffer. 
 "				Added check for range of the current buffer. 
 "				Added user choice to automatically change buffer settings. 
@@ -126,7 +132,11 @@ endfunction
 
 "- Processing of lines in buffer -----------------------------------------{{{1
 function! s:CountTabs( tabString )
+    " A tab is a tab, and can thus be counted directly. 
+    " However, the number of tabs, or the equivalent indent, must be captured to
+    " be able to resolve possible compatibilities with softtabstops. 
     call s:IncreaseKeyed( s:occurrences, 'tab' )
+    call s:IncreaseKeyed( s:tabstops, len( substitute( a:tabString, '\t', '        ', 'g' ) ) )
 endfunction
 
 function! s:CountDoubtful( spaceString )
@@ -165,11 +175,13 @@ function! s:InspectLine(lineNum)
 "   2. The intermediate counters s:spaces, s:softtabstops and s:doubtful also
 "      capture the number of the characters. These counters are later
 "      consolidated into s:occurrences. 
+"   3. The intermediate counter s:tabstops is only necessary to resolve possible
+"      compatibilities with other indent settings. 
 "
 "* ASSUMPTIONS / PRECONDITIONS:
 "	? List of any external variable, control, or other element whose state affects this procedure.
 "* EFFECTS / POSTCONDITIONS:
-"   updates s:occurrences, s:spaces, s:softtabstops, s:doubtful
+"   updates s:occurrences, s:tabstops, s:spaces, s:softtabstops, s:doubtful
 "* INPUTS:
 "   lineNum: number of line in the current buffer
 "* RETURN VALUES: 
@@ -396,8 +408,9 @@ function! s:GetIncompatiblesForIndentSetting( indentSetting )
 "****D echo '**** Inspecting for "tab": ' . string( keys( s:softtabstops ) )
 	call s:InspectForCompatibles( l:incompatibles, keys( s:softtabstops ), a:indentSetting, 'sts' )
     elseif l:setting == 'sts'
-	" 'tab' is compatible by definition. 
-	call s:RemoveFromList( l:incompatibles, 'tab' )
+	" 'tab' could be compatible with 'sts' if the multipliers are right; tabstops must be inspected. 
+"****D echo '**** Inspecting for "sts": ' . string( keys( s:tabstops ))
+	call s:InspectForCompatibles( l:incompatibles, keys( s:tabstops ), a:indentSetting, 'sts' )
 	" 'spc' is incompatible
 	" Other 'sts' multipliers could be compatible; softtabstops and doubtful must be inspected. 
 "****D echo '**** Inspecting for "sts": ' . string( keys( s:softtabstops ) + keys( s:doubtful ))
@@ -585,6 +598,7 @@ function! s:CheckBufferConsistency( startLineNum, endLineNum ) " {{{1
 
     " These intermediate dictionaries will be processed into s:occurences via
     " EvaluateIndentsIntoOccurrences(). 
+    let s:tabstops = {}	    " key: number of indent spaces (8*n); value: number of lines that have the number of indent spaces. 
     let s:spaces = {}	    " key: number of indent spaces (>=8); value: number of lines that have the number of indent spaces. 
     let s:softtabstops = {} " key: number of indent softtabstops (converted to spaces); value: number of lines that have the number of spaces. 
     let s:doubtful = {}	    " key: number of indent spaces (<8) which may be either spaces or softtabstops; value: number of lines that have the number of spaces. 
@@ -595,10 +609,14 @@ function! s:CheckBufferConsistency( startLineNum, endLineNum ) " {{{1
 	let l:lineNum += 1
     endwhile
 
+    " s:tabstops need not be evaluated into occurrences, as there are no
+    " multiplicity ambiguities. The tabstops have already been counted in
+    " s:occurrences. 
     call s:EvaluateIndentsIntoOccurrences( s:spaces, 'spc' )
     call s:EvaluateIndentsIntoOccurrences( s:softtabstops, 'sts' )
     call s:EvaluateIndentsIntoOccurrences( s:doubtful, 'dbt' )
     " Now, the indent occurences have been consolidated into s:occurrences. 
+"****D echo 'Tabstops:     ' . string( s:tabstops )
 "****D echo 'Spaces:       ' . string( s:spaces )
 "****D echo 'Softtabstops: ' . string( s:softtabstops )
 "****D echo 'Doubtful:     ' . string( s:doubtful )
@@ -627,6 +645,7 @@ function! s:CheckBufferConsistency( startLineNum, endLineNum ) " {{{1
 
 
     " Cleanup variables with script-scope. 
+    call filter( s:tabstops, 0 )
     call filter( s:spaces, 0 )
     call filter( s:softtabstops, 0 )
     call filter( s:doubtful, 0 )
