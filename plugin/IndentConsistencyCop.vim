@@ -24,6 +24,10 @@
 "
 " REVISION	DATE		REMARKS 
 "	0.03	19-Oct-2006	Added highlighting functionality. 
+"				Now coping with special comments indents via
+"				g:indentconsistencycop_non_indent_pattern. 
+"				Implemented g:indentconsistencycop_highlighting
+"				options 'shlm'. 
 "	0.02	11-Oct-2006	Completed consistency check for complete buffer. 
 "				Added check for range of the current buffer. 
 "				Added user choice to automatically change buffer settings. 
@@ -47,7 +51,20 @@ if ! exists('g:indentconsistencycop_highlighting')
     " IDEA: set foldexpr=index([20,23,24,25,26],v:lnum)==-1
     " q - populate quickfix list
     " IDEA: :cgetexpr
-    let g:indentconsistencycop_highlighting = ''
+    let g:indentconsistencycop_highlighting = 'shlm'
+endif
+
+if ! exists('g:indentconsistencycop_non_indent_pattern')
+    " Some comment styles use additional whitespace characters inside the
+    " comment block to neatly left-align the comment block, e.g. this is often
+    " used in Java and C/C++ programs:
+    " /* This is a comment that spans multiple 
+    "  * lines; neatly left-aligned with asterisks. 
+    "  */
+    " The IndentConsistencyCop would be confused by these special indents, so we
+    " define a non-indent pattern that removes these additional whitespaces from
+    " the indent when evaluating lines. 
+    let g:indentconsistencycop_non_indent_pattern = ' \*[/ ]'
 endif
 
 "}}}1
@@ -133,7 +150,7 @@ function! s:CountBadMixOfSpacesAndTabs( string )
 endfunction
 
 function! s:GetBeginningWhitespace( lineNum )
-    return matchstr( getline(a:lineNum), '^\s*' )
+    return matchstr( getline(a:lineNum), '^\s\{-}\ze\($\|\S\|' . g:indentconsistencycop_non_indent_pattern . '\)' )
 endfunction
 
 function! s:InspectLine(lineNum)
@@ -999,6 +1016,43 @@ function! s:IsLineCorrect( lineNum, correctIndentSetting )
     endif
 endfunction
 
+function! s:SetHighlighting( lineNumbers )
+    if match( g:indentconsistencycop_highlighting, '[sm]' ) != -1
+	let l:linePattern = ''
+	for l:lineNum in a:lineNumbers
+	    let l:linePattern .= '\|\%' . l:lineNum . 'l'
+	endfor
+	let l:linePattern = '\(' . strpart( l:linePattern, 2) . '\)\&^\s\+'
+
+	if match( g:indentconsistencycop_highlighting, 's' ) != -1
+	    let @/ = l:linePattern
+	endif
+	if match( g:indentconsistencycop_highlighting, 'm' ) != -1
+	    execute '2match Error /' . l:linePattern . '/'
+	endif
+
+    endif
+
+    if match( g:indentconsistencycop_highlighting, 'h' ) != -1
+	set hlsearch
+    endif
+    if match( g:indentconsistencycop_highlighting, 'l' ) != -1
+	setlocal list
+    endif
+endfunction
+
+function! s:ClearHighlighting()
+    if match( g:indentconsistencycop_highlighting, 's' ) != -1
+	let @/ = ''
+    endif
+    if match( g:indentconsistencycop_highlighting, 'm' ) != -1
+	2match none
+    endif
+    " 'h' : There's no need to undo 'hlsearch', because the search pattern has
+    "	    already been cleared, so there's no highlighting anyway. 
+    " 'l' : We don't restore 'list' to its previous value. 
+endfunction
+
 function! s:HighlightInconsistentIndents( startLineNum, endLineNum, correctIndentSetting )
     " Patterns for correct tabstops and space indents are easy to come up with.
     " The softtabstops of 1,2,4 are easy, too. The softtabstop indents of 3, 5,
@@ -1009,28 +1063,28 @@ function! s:HighlightInconsistentIndents( startLineNum, endLineNum, correctInden
     " approach and examine all lines, and build the pattern with the
     " inconsistent line numbers. (Hoping that this approach scales reasonably
     " well with many inconsistent line numbers.) 
-
-    "\(\%23l\|\%17l\|\%4l\)\&^\s\+
-    let l:linePattern = ''
-    let l:incorrectLineCnt = 0
+    "
+    " A search pattern would then look like this:
+    "\(\%4l\|\%17l\|\%23l\)\&^\s\+
+    "
+    " Another benefit of storing the line numbers versus creating a pattern is
+    " that this allows different methods of visualization (highlighting,
+    " folding, quickfix, ...).
+    let l:lineNumbers = []
 
     let l:lineNum = a:startLineNum
     while l:lineNum <= a:endLineNum
 	if ! s:IsLineCorrect( l:lineNum, a:correctIndentSetting )
-	    let l:linePattern .= '\|\%' . l:lineNum . 'l'
-	    let l:incorrectLineCnt += 1
+	    let l:lineNumbers += [ l:lineNum ]
 	endif
 	let l:lineNum += 1
     endwhile
-    if empty( l:linePattern )
-	" All lines are correct; clear the search pattern. 
-	let @/ = ''
+    if len( l:lineNumbers ) == 0
+	" All lines are correct. 
+	call s:ClearHighlighting()
     else
-	let l:linePattern = '\(' . strpart( l:linePattern, 2) . '\)\&^\s\+'
-"****D echo '**** linePattern:' . l:linePattern
-	let @/ = l:linePattern
-	set hlsearch
-	call s:EchoUserMessage( 'Populated search pattern with ' . l:incorrectLineCnt . ' incorrect lines. Use n/N to navigate. ' )
+	call s:SetHighlighting( l:lineNumbers )
+	call s:EchoUserMessage( 'Marked ' . len( l:lineNumbers ) . ' incorrect lines. ' )
     endif
 endfunction
 
