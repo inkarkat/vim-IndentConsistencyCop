@@ -23,6 +23,7 @@
 "   softtabstop. 
 "
 " REVISION	DATE		REMARKS 
+"	0.03	19-Oct-2006	Added highlighting functionality. 
 "	0.02	11-Oct-2006	Completed consistency check for complete buffer. 
 "				Added check for range of the current buffer. 
 "				Added user choice to automatically change buffer settings. 
@@ -47,10 +48,6 @@ if ! exists('g:indentconsistencycop_highlighting')
     " q - populate quickfix list
     " IDEA: :cgetexpr
     let g:indentconsistencycop_highlighting = ''
-endif
-
-if ! exists('g:indentconsistencycop_no_consistency_message')
-    let g:indentconsistencycop_no_consistency_message = 0
 endif
 
 "}}}1
@@ -923,7 +920,17 @@ function! s:PrintBufferSettings( messageIntro )
     let l:userMessage .= 'tabstop=' . &l:tabstop . ' softtabstop=' . &l:softtabstop . ' shiftwidth=' . &l:shiftwidth
     let l:userMessage .= (&l:expandtab ? ' expandtab' : ' noexpandtab')
 
-    echomsg l:userMessage
+    call s:EchoUserMessage( l:userMessage )
+endfunction
+
+function! s:EchoUserMessage( message )
+    " When the IndentConsistencyCop is triggered by through autocmds
+    " (IndentConsistencyCopAutoCmds.vim), the newly created buffer is not yet
+    " displayed. To allow the user to see what text IndentConsistencyCop is
+    " talking about, we're forcing a redraw. 
+    redraw
+
+    echomsg a:message
 endfunction
 
 function! s:IndentBufferConsistencyCop( scopeUserString, consistentIndentSetting, isBufferSettingsCheck ) " {{{1
@@ -948,6 +955,7 @@ function! s:IndentBufferConsistencyCop( scopeUserString, consistentIndentSetting
     if a:isBufferSettingsCheck
 	let l:userMessage = s:CheckConsistencyWithBufferSettings( a:consistentIndentSetting )
 	if ! empty( l:userMessage )
+	    redraw
 	    let l:userMessage .= "\nHow do you want to deal with the inconsistency?"
 	    let l:actionNum = confirm( l:userMessage, "&Ignore\n&Change" )
 	    if l:actionNum <= 1
@@ -959,7 +967,7 @@ function! s:IndentBufferConsistencyCop( scopeUserString, consistentIndentSetting
 	endif
     endif
     if empty( l:userMessage )
-	echomsg 'The indentation in this ' . a:scopeUserString . " is consistently based on the '" . s:IndentSettingToUserString( a:consistentIndentSetting ) . "' setting; it is consistent with the buffer indent settings. "
+	call s:EchoUserMessage( 'This ' . a:scopeUserString . " uses '" . s:IndentSettingToUserString( a:consistentIndentSetting ) . "' consistently. " )
     endif
 endfunction
 
@@ -1022,7 +1030,7 @@ function! s:HighlightInconsistentIndents( startLineNum, endLineNum, correctInden
 "****D echo '**** linePattern:' . l:linePattern
 	let @/ = l:linePattern
 	set hlsearch
-	echomsg 'Populated search pattern with ' . l:incorrectLineCnt . ' incorrect lines. Use n/N to navigate. '
+	call s:EchoUserMessage( 'Populated search pattern with ' . l:incorrectLineCnt . ' incorrect lines. Use n/N to navigate. ' )
     endif
 endfunction
 
@@ -1079,6 +1087,7 @@ function! s:IndentBufferInconsistencyCop( startLineNum, endLineNum, inconsistent
 "* RETURN VALUES: 
 "   none
 "*******************************************************************************
+    redraw
     let l:actionNum = confirm( a:inconsistentIndentationMessage, "&Ignore\n&Highlight wrong indents..." )
     if l:actionNum <= 1
 	" User chose to ignore the inconsistencies. 
@@ -1145,7 +1154,7 @@ function! s:IndentConsistencyCop( startLineNum, endLineNum, isBufferSettingsChec
     let l:isConsistent = s:CheckBufferConsistency( a:startLineNum, a:endLineNum )
 
     if l:isConsistent == -1
-	echomsg 'This ' . l:scopeUserString . ' does not contain indented text. '
+	call s:EchoUserMessage( 'This ' . l:scopeUserString . ' does not contain indented text. ' )
     elseif l:isConsistent == 0
 	let l:inconsistentIndentationMessage = 'Found inconsistent indentation in this ' . l:scopeUserString . '; possibly generated from these conflicting settings: ' . s:RatingsToUserString( l:lineCnt )
 	call s:IndentBufferInconsistencyCop( a:startLineNum, a:endLineNum, l:inconsistentIndentationMessage )
