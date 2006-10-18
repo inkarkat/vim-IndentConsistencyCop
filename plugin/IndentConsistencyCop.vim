@@ -57,7 +57,7 @@ if ! exists('g:indentconsistencycop_highlighting')
     " IDEA: set foldexpr=index([20,23,24,25,26],v:lnum)==-1
     " q - populate quickfix list
     " IDEA: :cgetexpr
-    let g:indentconsistencycop_highlighting = 'shlm'
+    let g:indentconsistencycop_highlighting = 'shlmf:3'
 endif
 
 if ! exists('g:indentconsistencycop_non_indent_pattern')
@@ -1036,6 +1036,10 @@ function! s:IsLineCorrect( lineNum, correctIndentSetting )
     endif
 endfunction
 
+function! s:FoldExpr( lineNum, foldContext )
+    return index( b:indentconsistencycop_lineNumbers, a:lineNum ) == -1
+endfunction
+
 function! s:SetHighlighting( lineNumbers )
     if match( g:indentconsistencycop_highlighting, '[sm]' ) != -1
 	let l:linePattern = ''
@@ -1058,6 +1062,13 @@ function! s:SetHighlighting( lineNumbers )
     endif
     if match( g:indentconsistencycop_highlighting, 'l' ) != -1
 	setlocal list
+    endif
+
+    let l:foldContext = matchstr( g:indentconsistencycop_highlighting, 'f:\zs\d' )
+    if ! empty( l:foldContext )
+	let b:indentconsistencycop_lineNumbers = copy( a:lineNumbers )
+	execute 'setlocal foldexpr=<SID>FoldExpr(v:lnum,' . l:foldContext . ')'
+	setlocal foldmethod=expr
     endif
 endfunction
 
