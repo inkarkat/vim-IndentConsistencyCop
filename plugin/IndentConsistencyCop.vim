@@ -36,6 +36,24 @@ if exists("loaded_indentconsistencycop") || (v:version < 700)
 endif
 let loaded_indentconsistencycop = 1
 
+"- configuration ----------------------------------------------------------{{{1
+if ! exists('g:indentconsistencycop_highlighting')
+    " s - search pattern
+    " h - set hlsearch
+    " l - set list (to see difference between tabs and spaces)
+    " m - use :match2 error highlighting
+    " f:{n} (n = 0..9) - fold correct lines with a context of {n} lines (like diff)
+    " IDEA: set foldexpr=index([20,23,24,25,26],v:lnum)==-1
+    " q - populate quickfix list
+    " IDEA: :cgetexpr
+    let g:indentconsistencycop_highlighting = ''
+endif
+
+if ! exists('g:indentconsistencycop_no_consistency_message')
+    let g:indentconsistencycop_no_consistency_message = 0
+endif
+
+"}}}1
 
 "- list and dictionary utility functions ---------------------------------{{{1
 function! s:IncreaseKeyedBy( dict, key, num )
@@ -89,6 +107,8 @@ endfunction
 function! s:GetSettingFromIndentSetting( indentSetting )
     return strpart( a:indentSetting, 0, 3 )
 endfunction
+
+"}}}1
 
 "- Processing of lines in buffer -----------------------------------------{{{1
 function! s:CountTabs( tabString )
@@ -518,6 +538,8 @@ function! s:NormalizeRatings()
     endif
 endfunction
 
+"}}}1
+
 function! s:CheckBufferConsistency( startLineNum, endLineNum ) " {{{1
 "*******************************************************************************
 "* PURPOSE:
@@ -791,6 +813,8 @@ function! s:MakeBufferSettingsConsistentWith( indentSetting )
     let &l:shiftwidth = s:GetCorrectShiftwidthSetting( a:indentSetting )
     let &l:expandtab  = s:GetCorrectExpandtabSetting( a:indentSetting )
 endfunction
+
+"}}}1
 
 "- output functions -------------------------------------------------------{{{1
 function! s:IndentSettingToUserString( indentSetting )
@@ -1139,6 +1163,8 @@ function! s:IndentConsistencyCop( startLineNum, endLineNum, isBufferSettingsChec
     call filter( s:occurrences, 0 )
     call filter( s:ratings, 0 )
 endfunction
+
+"}}}1
 
 "- commands --------------------------------------------------------------{{{1
 " Only check indent consistency within range / buffer. Don't check the
