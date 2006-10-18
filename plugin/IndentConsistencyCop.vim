@@ -410,7 +410,7 @@ function! s:GetIncompatiblesForIndentSetting( indentSetting )
     elseif l:setting == 'sts'
 	" 'tab' could be compatible with 'sts' if the multipliers are right; tabstops must be inspected. 
 "****D echo '**** Inspecting for "sts": ' . string( keys( s:tabstops ))
-	call s:InspectForCompatibles( l:incompatibles, keys( s:tabstops ), a:indentSetting, 'sts' )
+	call s:InspectForCompatibles( l:incompatibles, keys( s:tabstops ), a:indentSetting, 'tab' )
 	" 'spc' is incompatible
 	" Other 'sts' multipliers could be compatible; softtabstops and doubtful must be inspected. 
 "****D echo '**** Inspecting for "sts": ' . string( keys( s:softtabstops ) + keys( s:doubtful ))
@@ -639,6 +639,7 @@ function! s:CheckBufferConsistency( startLineNum, endLineNum ) " {{{1
     " The s:ratings dictionary contains the final rating, a combination of high indent settings occurrence and low incompatible occurrences. 
     call s:EvaluateOccurrenceAndIncompatibleIntoRating( l:incompatibles ) " Key: indent setting; value: rating number
 "****D echo 'ratings:     ' . string( s:ratings )
+"****D call confirm('debug')
 
     call s:NormalizeRatings()
 "****D echo 'nrm. ratings:' . string( s:ratings )
