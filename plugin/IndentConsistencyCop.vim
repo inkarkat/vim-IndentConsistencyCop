@@ -27,6 +27,8 @@
 "   softtabstop. 
 "
 " REVISION	DATE		REMARKS 
+"	0.04	20-Oct-2006	Improved undo of highlighting;
+"				added :IndentConsistencyCopOff. 
 "	0.03	19-Oct-2006	Added highlighting functionality. 
 "				Now coping with special comments indents via
 "				g:indentconsistencycop_non_indent_pattern. 
@@ -55,15 +57,17 @@ let loaded_indentconsistencycop = 1
 
 "- configuration ----------------------------------------------------------{{{1
 if ! exists('g:indentconsistencycop_highlighting')
-    " s - search pattern
-    " h - set hlsearch
-    " l - set list (to see difference between tabs and spaces)
-    " m - use :match2 error highlighting
+    " s - Fill search pattern with all incorrect lines. 
+    " g - Jump to the first error. 
+    " l - As a visualization aid, ':setlocal list' (to see difference between tabs and spaces). 
+    " m - Use :2match error highlighting; this is especially useful if you don't
+    "	  use the search pattern in combination with 'set hlsearch' to locate
+    "	  the incorrect lines. 
     " f:{n} (n = 0..9) - fold correct lines with a context of {n} lines (like diff)
-    " IDEA: set foldexpr=index([20,23,24,25,26],v:lnum)==-1
-    " q - populate quickfix list
+    " TODO:
+    " q - Populate quickfix list with all incorrect lines. 
     " IDEA: :cgetexpr
-    let g:indentconsistencycop_highlighting = 'shlmf:3'
+    let g:indentconsistencycop_highlighting = 'sglmf:3'
 endif
 
 if ! exists('g:indentconsistencycop_non_indent_pattern')
@@ -1078,10 +1082,15 @@ function! s:SetHighlighting( lineNumbers )
 
     endif
 
-    if match( g:indentconsistencycop_highlighting, 'h' ) != -1
-	set hlsearch
+    if match( g:indentconsistencycop_highlighting, 'g' ) != -1
+	let l:firstLineNum = min( a:lineNumbers )
+	if l:firstLineNum > 0
+	    execute 'normal ' . l:firstLineNum . 'G0'
+	endif
     endif
+
     if match( g:indentconsistencycop_highlighting, 'l' ) != -1
+	let b:indentconsistencycop_save_list = &l:list
 	setlocal list
     endif
 
@@ -1090,7 +1099,9 @@ function! s:SetHighlighting( lineNumbers )
 	" The list of lines to be highlighted is copied to a list with
 	" buffer-scope, because the (buffer-scoped) foldexpr needs access to it. 
 	let b:indentconsistencycop_lineNumbers = copy( a:lineNumbers )
-	execute 'setlocal foldexpr=<SID>FoldExpr(v:lnum,' . l:foldContext . ')'
+	let b:indentconsistencycop_save_foldexpr = &l:foldexpr
+	let b:indentconsistencycop_save_foldmethod = &l:foldmethod
+	let &l:foldexpr='s:FoldExpr(v:lnum,' . l:foldContext . ')'
 	setlocal foldmethod=expr
     endif
 endfunction
@@ -1099,6 +1110,7 @@ function! s:ClearHighlighting()
     if ! exists( 'b:indentconsistencycop_did_highlighting' ) || ! b:indentconsistencycop_did_highlighting 
 	return
     endif
+    unlet b:indentconsistencycop_did_highlighting
 
     if match( g:indentconsistencycop_highlighting, 's' ) != -1
 	let @/ = ''
@@ -1106,13 +1118,25 @@ function! s:ClearHighlighting()
     if match( g:indentconsistencycop_highlighting, 'm' ) != -1
 	2match none
     endif
-    " 'h' : There's no need to undo 'hlsearch', because the search pattern has
-    "	    already been cleared, so there's no highlighting anyway. 
-    " 'l' : We don't restore 'list' to its previous value. 
+
+    " 'g' : There's no need to undo this. 
+
+    if match( g:indentconsistencycop_highlighting, 'l' ) != -1
+	if exists( 'b:indentconsistencycop_save_list' )
+	    let &l:list = b:indentconsistencycop_save_list
+	    unlet b:indentconsistencycop_save_list
+	endif
+    endif
 
     if ! empty( matchstr( g:indentconsistencycop_highlighting, 'f:\zs\d' ) )
-	" TODO: better undo of fold settings
-	setlocal foldexpr=
+	if exists( 'b:indentconsistencycop_save_foldmethod' )
+	    let &l:foldmethod = b:indentconsistencycop_save_foldmethod
+	    unlet b:indentconsistencycop_save_foldmethod
+	endif
+	if exists( 'b:indentconsistencycop_save_foldexpr' )
+	    let &l:foldexpr = b:indentconsistencycop_save_foldexpr
+	    unlet b:indentconsistencycop_save_foldexpr
+	endif
     endif
 endfunction
 
@@ -1145,6 +1169,7 @@ function! s:HighlightInconsistentIndents( startLineNum, endLineNum, correctInden
     if len( l:lineNumbers ) == 0
 	" All lines are correct. 
 	call s:ClearHighlighting()
+	call s:EchoUserMessage('No incorrect lines found! ')
     else
 	call s:SetHighlighting( l:lineNumbers )
 	call s:EchoUserMessage( 'Marked ' . len( l:lineNumbers ) . ' incorrect lines. ' )
@@ -1295,12 +1320,19 @@ endfunction
 "}}}1
 
 "- commands --------------------------------------------------------------{{{1
-" Only check indent consistency within range / buffer. Don't check the
-" consistency with buffer indent settings. 
-command! -range=% -nargs=0 IndentRangeConsistencyCop call <SID>IndentConsistencyCop( <line1>, <line2>, 0 )
-
 " Ensure indent consistency within the range / buffer, and - if achieved -, also
 " check consistency with buffer indent settings. 
 command! -range=% -nargs=0 IndentConsistencyCop call <SID>IndentConsistencyCop( <line1>, <line2>, 1 )
+
+" Remove the highlighting of inconsistent lines and restore the normal view for
+" this buffer. 
+command! -nargs=0 IndentConsistencyCopOff call <SID>ClearHighlighting()
+
+" Only check indent consistency within range / buffer. Don't check the
+" consistency with buffer indent settings. Prefer this command to
+" IndentRangeConsistencyCop if you don't want your buffer indent settings
+" changed, or if you only want to check a limited range of the buffer that you
+" know does not conform to the buffer indent settings. 
+command! -range=% -nargs=0 IndentRangeConsistencyCop call <SID>IndentConsistencyCop( <line1>, <line2>, 0 )
 
 " vim:ft=vim foldmethod=marker
