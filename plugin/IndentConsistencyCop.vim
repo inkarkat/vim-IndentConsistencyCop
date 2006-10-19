@@ -1096,7 +1096,10 @@ function! s:IsLineCorrect( lineNum, correctIndentSetting )
     endif
 endfunction
 
-function! s:FoldExpr( lineNum, foldContext )
+function! IndentConsistencyCopFoldExpr( lineNum, foldContext )
+    " This function must be global; I could not get either s:FoldExpr() nor
+    " <SID>FoldExpr() resolved properly when setting 'foldexpr' to a
+    " script-local function. 
     let l:lineCnt = a:lineNum - a:foldContext
     while l:lineCnt <= a:lineNum + a:foldContext
 	if index( b:indentconsistencycop_lineNumbers, l:lineCnt ) != -1
@@ -1151,7 +1154,7 @@ function! s:SetHighlighting( lineNumbers )
 	let b:indentconsistencycop_lineNumbers = copy( a:lineNumbers )
 	let b:indentconsistencycop_save_foldexpr = &l:foldexpr
 	let b:indentconsistencycop_save_foldmethod = &l:foldmethod
-	let &l:foldexpr='s:FoldExpr(v:lnum,' . l:foldContext . ')'
+	let &l:foldexpr='IndentConsistencyCopFoldExpr(v:lnum,' . l:foldContext . ')'
 	setlocal foldmethod=expr
     endif
 endfunction
