@@ -7,6 +7,10 @@
 "   tabs and spaces is actually used. If a file only has small indents,
 "   resulting in only spaces or tabs (but not the combination), the indent
 "   setting is recognized as a combination of 'tab' and 'spc n'. 
+" - Highlighting of inconsistent and bad indents is static; i.e. when modifying
+"   the buffer / inserting or deleting lines, the highlighting will be wrong /
+"   out of place. You need to re-run the IndentConsistencyCop to fix the
+"   highlighting. 
 "
 " ASSUMPTIONS:
 " - When using 'softtabstop', 'tabstop' remains at the standard value of 8. 
@@ -34,6 +38,8 @@
 "				indents in s:tabstops and corresponding
 "				evaluation in
 "				GetIncompatiblesForIndentSetting(). 
+"				Implemented highlighting via folding. 
+"				Correctly cleaning up highlighting. 
 "	0.02	11-Oct-2006	Completed consistency check for complete buffer. 
 "				Added check for range of the current buffer. 
 "				Added user choice to automatically change buffer settings. 
@@ -1037,10 +1043,25 @@ function! s:IsLineCorrect( lineNum, correctIndentSetting )
 endfunction
 
 function! s:FoldExpr( lineNum, foldContext )
-    return index( b:indentconsistencycop_lineNumbers, a:lineNum ) == -1
+    let l:lineCnt = a:lineNum - a:foldContext
+    while l:lineCnt <= a:lineNum + a:foldContext
+	if index( b:indentconsistencycop_lineNumbers, l:lineCnt ) != -1
+	    return 0
+	endif
+	let l:lineCnt += 1
+    endwhile
+    return 1
 endfunction
 
 function! s:SetHighlighting( lineNumbers )
+    " Set a buffer-scoped flag that the buffer's settings were modified for
+    " highlighting, so that ClearHighlighting() is able to only undo the
+    " modifications if there have been any. This is important because
+    " ClearHighlighting() is also executed when the buffer is consistent, and in
+    " that case we don't know whether there was any highlighting done
+    " beforehand. 
+    let b:indentconsistencycop_did_highlighting = 1
+
     if match( g:indentconsistencycop_highlighting, '[sm]' ) != -1
 	let l:linePattern = ''
 	for l:lineNum in a:lineNumbers
@@ -1066,6 +1087,8 @@ function! s:SetHighlighting( lineNumbers )
 
     let l:foldContext = matchstr( g:indentconsistencycop_highlighting, 'f:\zs\d' )
     if ! empty( l:foldContext )
+	" The list of lines to be highlighted is copied to a list with
+	" buffer-scope, because the (buffer-scoped) foldexpr needs access to it. 
 	let b:indentconsistencycop_lineNumbers = copy( a:lineNumbers )
 	execute 'setlocal foldexpr=<SID>FoldExpr(v:lnum,' . l:foldContext . ')'
 	setlocal foldmethod=expr
@@ -1073,6 +1096,10 @@ function! s:SetHighlighting( lineNumbers )
 endfunction
 
 function! s:ClearHighlighting()
+    if ! exists( 'b:indentconsistencycop_did_highlighting' ) || ! b:indentconsistencycop_did_highlighting 
+	return
+    endif
+
     if match( g:indentconsistencycop_highlighting, 's' ) != -1
 	let @/ = ''
     endif
@@ -1082,6 +1109,11 @@ function! s:ClearHighlighting()
     " 'h' : There's no need to undo 'hlsearch', because the search pattern has
     "	    already been cleared, so there's no highlighting anyway. 
     " 'l' : We don't restore 'list' to its previous value. 
+
+    if ! empty( matchstr( g:indentconsistencycop_highlighting, 'f:\zs\d' ) )
+	" TODO: better undo of fold settings
+	setlocal foldexpr=
+    endif
 endfunction
 
 function! s:HighlightInconsistentIndents( startLineNum, endLineNum, correctIndentSetting )
@@ -1244,6 +1276,8 @@ function! s:IndentConsistencyCop( startLineNum, endLineNum, isBufferSettingsChec
 	let l:inconsistentIndentationMessage = 'Found inconsistent indentation in this ' . l:scopeUserString . '; possibly generated from these conflicting settings: ' . s:RatingsToUserString( l:lineCnt )
 	call s:IndentBufferInconsistencyCop( a:startLineNum, a:endLineNum, l:inconsistentIndentationMessage )
     elseif l:isConsistent == 1
+	call s:ClearHighlighting()
+
 	let l:consistentIndentSetting = keys( s:ratings )[0]
 	call s:IndentBufferConsistencyCop( l:scopeUserString, l:consistentIndentSetting, a:isBufferSettingsCheck )
     else
