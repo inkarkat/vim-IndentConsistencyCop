@@ -1,5 +1,5 @@
 " IndentConsistencyCop.vim: Is the buffer's indentation consistent and does it conform to tab settings?
-"
+" {{{1
 " Maintainer:	Ingo Karkat <ingo@karkat.de>
 "
 " LIMITATIONS:
@@ -29,6 +29,9 @@
 " REVISION	DATE		REMARKS 
 "	0.04	20-Oct-2006	Improved undo of highlighting;
 "				added :IndentConsistencyCopOff. 
+"				Added check IsEnoughIndentForSolidAssessment();
+"				user messages now include 'potentially' if the
+"				indent is not sufficient. 
 "	0.03	19-Oct-2006	Added highlighting functionality. 
 "				Now coping with special comments indents via
 "				g:indentconsistencycop_non_indent_pattern. 
@@ -54,6 +57,7 @@ if exists("loaded_indentconsistencycop") || (v:version < 700)
     finish
 endif
 let loaded_indentconsistencycop = 1
+" }}}1
 
 "- configuration ----------------------------------------------------------{{{1
 if ! exists('g:indentconsistencycop_highlighting')
@@ -173,6 +177,19 @@ function! s:GetBeginningWhitespace( lineNum )
     return matchstr( getline(a:lineNum), '^\s\{-}\ze\($\|\S\|' . g:indentconsistencycop_non_indent_pattern . '\)' )
 endfunction
 
+function! s:UpdateIndentMax( beginningWhitespace )
+    let l:currentIndent = len( substitute( a:beginningWhitespace, '\t', '        ', 'g' ) )
+    if l:currentIndent > s:indentMax
+	let s:indentMax = l:currentIndent
+    endif
+endfunction
+
+function! s:IsEnoughIndentForSolidAssessment()
+    " Only indents greater than the default tabstop value of 8 allow us to
+    " unequivocally recognize soft tabstops. 
+    return s:indentMax > 8
+endfunction
+
 function! s:InspectLine(lineNum)
 "*******************************************************************************
 "* PURPOSE:
@@ -192,6 +209,7 @@ function! s:InspectLine(lineNum)
 "	? List of any external variable, control, or other element whose state affects this procedure.
 "* EFFECTS / POSTCONDITIONS:
 "   updates s:occurrences, s:tabstops, s:spaces, s:softtabstops, s:doubtful
+"   updates s:indentMax
 "* INPUTS:
 "   lineNum: number of line in the current buffer
 "* RETURN VALUES: 
@@ -222,6 +240,8 @@ function! s:InspectLine(lineNum)
     else
 	call s:CountBadMixOfSpacesAndTabs( l:beginningWhitespace )
     endif
+
+    call s:UpdateIndentMax( l:beginningWhitespace )
 endfunction
 
 function! s:EvaluateIndentsIntoOccurrences( dict, type ) " {{{1
@@ -583,8 +603,7 @@ function! s:CheckBufferConsistency( startLineNum, endLineNum ) " {{{1
 "   Checks the consistency of the indents in the current buffer, range of
 "   startLine to endLine. 
 "* ASSUMPTIONS / PRECONDITIONS:
-"   s:occurrences: empty dictionary
-"   s:ratings: empty dictionary
+"   none
 "* EFFECTS / POSTCONDITIONS:
 "   Fills the s:occurrences dictionary; key: indent setting; value: number of
 "	lines that have that indent setting
@@ -601,6 +620,9 @@ function! s:CheckBufferConsistency( startLineNum, endLineNum ) " {{{1
     if a:startLineNum > a:endLineNum
 	throw assert startLineNum <= a:endLineNum
     endif
+
+    " This variable stores the maximum indent encountered. 
+    let s:indentMax = 0
 
     " This dictionary collects the occurrences of all found indent settings. It
     " is the basis for all evaluations and statistics. 
@@ -631,6 +653,7 @@ function! s:CheckBufferConsistency( startLineNum, endLineNum ) " {{{1
 "****D echo 'Softtabstops: ' . string( s:softtabstops )
 "****D echo 'Doubtful:     ' . string( s:doubtful )
 "****D echo 'Occurrences 1:' . string( s:occurrences )
+"****D echo 'Max. indent:  ' . s:indentMax
 
     if empty( s:occurrences )
 	return -1
@@ -655,11 +678,12 @@ function! s:CheckBufferConsistency( startLineNum, endLineNum ) " {{{1
 "****D echo 'nrm. ratings:' . string( s:ratings )
 
 
-    " Cleanup variables with script-scope. 
+    " Cleanup lists and dictionaries with script-scope to free memory. 
     call filter( s:tabstops, 0 )
     call filter( s:spaces, 0 )
     call filter( s:softtabstops, 0 )
     call filter( s:doubtful, 0 )
+    " Do not free s:indentMax, it is still accessed by s:IsEnoughIndentForSolidAssessment(). 
 
     let l:isConsistent = (count( s:ratings, 100 ) == 1)
     return l:isConsistent
@@ -833,7 +857,8 @@ function! s:CheckConsistencyWithBufferSettings( indentSetting ) " {{{2
     if l:isTabstopCorrect && l:isSofttabstopCorrect && l:isShiftwidthCorrect && l:isExpandtabCorrect
 	return ''
     else
-	let l:userString = "The buffer's indent settings are inconsistent with the used indent '" . s:IndentSettingToUserString( a:indentSetting ) . "'; these settings must be changed: "
+	let l:userString = "The buffer's indent settings are " . ( s:IsEnoughIndentForSolidAssessment() ? '' : 'potentially ')
+	let l:userString .= "inconsistent with the used indent '" . s:IndentSettingToUserString( a:indentSetting ) . "'; these settings must be changed: "
 	if ! l:isTabstopCorrect
 	    let l:userString .= "\n- tabstop from " . &l:tabstop . ' to ' . s:GetCorrectTabstopSetting( a:indentSetting )
 	endif
@@ -846,6 +871,8 @@ function! s:CheckConsistencyWithBufferSettings( indentSetting ) " {{{2
 	if ! l:isExpandtabCorrect
 	    let l:userString .= "\n- expandtab from " . &l:expandtab . ' to ' . s:GetCorrectExpandtabSetting( a:indentSetting )
 	endif
+
+	let l:userString .= s:GetInsufficientIndentUserMessage()
 
 	return l:userString
     endif
@@ -861,6 +888,16 @@ endfunction
 "}}}1
 
 "- output functions -------------------------------------------------------{{{1
+function! s:EchoUserMessage( message )
+    " When the IndentConsistencyCop is triggered by through autocmds
+    " (IndentConsistencyCopAutoCmds.vim), the newly created buffer is not yet
+    " displayed. To allow the user to see what text IndentConsistencyCop is
+    " talking about, we're forcing a redraw. 
+    redraw
+
+    echomsg a:message
+endfunction
+
 function! s:IndentSettingToUserString( indentSetting )
 "*******************************************************************************
 "* PURPOSE:
@@ -970,14 +1007,12 @@ function! s:PrintBufferSettings( messageIntro )
     call s:EchoUserMessage( l:userMessage )
 endfunction
 
-function! s:EchoUserMessage( message )
-    " When the IndentConsistencyCop is triggered by through autocmds
-    " (IndentConsistencyCopAutoCmds.vim), the newly created buffer is not yet
-    " displayed. To allow the user to see what text IndentConsistencyCop is
-    " talking about, we're forcing a redraw. 
-    redraw
-
-    echomsg a:message
+function! s:GetInsufficientIndentUserMessage()
+    if s:IsEnoughIndentForSolidAssessment()
+	return ''
+    else
+	return "\nWarning: The maximum indent of " . s:indentMax . ' is too small for a solid assessment. '
+    endif
 endfunction
 
 function! s:IndentBufferConsistencyCop( scopeUserString, consistentIndentSetting, isBufferSettingsCheck ) " {{{1
@@ -1003,7 +1038,9 @@ function! s:IndentBufferConsistencyCop( scopeUserString, consistentIndentSetting
 	let l:userMessage = s:CheckConsistencyWithBufferSettings( a:consistentIndentSetting )
 	if ! empty( l:userMessage )
 	    redraw
-	    let l:userMessage .= "\nHow do you want to deal with the inconsistency?"
+	    let l:userMessage .= "\nHow do you want to deal with the "
+	    let l:userMessage .= ( s:IsEnoughIndentForSolidAssessment() ? '' : 'potential ')
+	    let l:userMessage .= 'inconsistency?'
 	    let l:actionNum = confirm( l:userMessage, "&Ignore\n&Change" )
 	    if l:actionNum <= 1
 		call s:PrintBufferSettings( 'The buffer settings remain inconsistent: ' )
@@ -1298,7 +1335,10 @@ function! s:IndentConsistencyCop( startLineNum, endLineNum, isBufferSettingsChec
     if l:isConsistent == -1
 	call s:EchoUserMessage( 'This ' . l:scopeUserString . ' does not contain indented text. ' )
     elseif l:isConsistent == 0
-	let l:inconsistentIndentationMessage = 'Found inconsistent indentation in this ' . l:scopeUserString . '; possibly generated from these conflicting settings: ' . s:RatingsToUserString( l:lineCnt )
+	let l:inconsistentIndentationMessage = 'Found ' . ( s:IsEnoughIndentForSolidAssessment() ? '' : 'potentially ')
+	let l:inconsistentIndentationMessage .= 'inconsistent indentation in this ' . l:scopeUserString . '; generated from these conflicting settings: ' 
+	let l:inconsistentIndentationMessage .= s:RatingsToUserString( l:lineCnt )
+	let l:inconsistentIndentationMessage .= s:GetInsufficientIndentUserMessage()
 	call s:IndentBufferInconsistencyCop( a:startLineNum, a:endLineNum, l:inconsistentIndentationMessage )
     elseif l:isConsistent == 1
 	call s:ClearHighlighting()
