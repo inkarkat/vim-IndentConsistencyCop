@@ -32,6 +32,10 @@
 "				Added check IsEnoughIndentForSolidAssessment();
 "				user messages now include 'potentially' if the
 "				indent is not sufficient. 
+"				Print out informational message for large ranges
+"				/ buffers. 
+"				Added user messages when ignoring
+"				inconsistencies. 
 "	0.03	19-Oct-2006	Added highlighting functionality. 
 "				Now coping with special comments indents via
 "				g:indentconsistencycop_non_indent_pattern. 
@@ -888,13 +892,23 @@ endfunction
 "}}}1
 
 "- output functions -------------------------------------------------------{{{1
-function! s:EchoUserMessage( message )
+function! s:EchoStartupMessage( lineCnt, scopeUserString )
     " When the IndentConsistencyCop is triggered by through autocmds
     " (IndentConsistencyCopAutoCmds.vim), the newly created buffer is not yet
     " displayed. To allow the user to see what text IndentConsistencyCop is
     " talking about, we're forcing a redraw. 
     redraw
 
+    " For large ranges / buffers, processing may take a while. We print out an
+    " informational message so that the user knows what is eating the CPU cycles
+    " right now. But we only print the message for large files to avoid the
+    " 'Press ENTER to continue' VIM prompt. 
+    if a:lineCnt > 2000 " empirical value
+	echo 'IndentConsistencyCop is investigating ' . a:scopeUserString . '...'
+    endif
+endfunction
+
+function! s:EchoUserMessage( message )
     echomsg a:message
 endfunction
 
@@ -1037,7 +1051,6 @@ function! s:IndentBufferConsistencyCop( scopeUserString, consistentIndentSetting
     if a:isBufferSettingsCheck
 	let l:userMessage = s:CheckConsistencyWithBufferSettings( a:consistentIndentSetting )
 	if ! empty( l:userMessage )
-	    redraw
 	    let l:userMessage .= "\nHow do you want to deal with the "
 	    let l:userMessage .= ( s:IsEnoughIndentForSolidAssessment() ? '' : 'potential ')
 	    let l:userMessage .= 'inconsistency?'
@@ -1206,7 +1219,7 @@ function! s:HighlightInconsistentIndents( startLineNum, endLineNum, correctInden
     if len( l:lineNumbers ) == 0
 	" All lines are correct. 
 	call s:ClearHighlighting()
-	call s:EchoUserMessage('No incorrect lines found! ')
+	call s:EchoUserMessage("No incorrect lines found for setting '" . s:IndentSettingToUserString( a:correctIndentSetting ) . "'!")
     else
 	call s:SetHighlighting( l:lineNumbers )
 	call s:EchoUserMessage( 'Marked ' . len( l:lineNumbers ) . ' incorrect lines. ' )
@@ -1266,10 +1279,10 @@ function! s:IndentBufferInconsistencyCop( startLineNum, endLineNum, inconsistent
 "* RETURN VALUES: 
 "   none
 "*******************************************************************************
-    redraw
     let l:actionNum = confirm( a:inconsistentIndentationMessage, "&Ignore\n&Highlight wrong indents..." )
     if l:actionNum <= 1
 	" User chose to ignore the inconsistencies. 
+	call s:EchoUserMessage('Be careful when modifying the inconsistent indents! ')
     elseif l:actionNum == 2
 	let l:bufferIndentSetting = s:GetIndentSettingForBufferSettings()
 	let l:ratingLists = items( s:ratings )
@@ -1327,6 +1340,8 @@ function! s:IndentConsistencyCop( startLineNum, endLineNum, isBufferSettingsChec
     let l:isEntireBuffer = ( a:startLineNum == 1 && a:endLineNum == line('$') )
     let l:scopeUserString = (l:isEntireBuffer ? 'buffer' : 'range')
     let l:lineCnt = a:endLineNum - a:startLineNum + 1
+
+    call s:EchoStartupMessage( l:lineCnt, l:scopeUserString )
 
     let s:occurrences = {}
     let s:ratings = {}
