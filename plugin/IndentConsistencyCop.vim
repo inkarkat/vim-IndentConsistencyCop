@@ -36,6 +36,12 @@
 "				/ buffers. 
 "				Added user messages when ignoring
 "				inconsistencies. 
+"				BF: s:FoldExpr() is now a global function
+"				IndentConsistencyCopFoldExpr() to fix problems
+"				with set foldexpr=...
+"				BF: SetHighlighting() doesn't save buffer
+"				settings it has set itself in a previous run any
+"				more. 
 "	0.03	19-Oct-2006	Added highlighting functionality. 
 "				Now coping with special comments indents via
 "				g:indentconsistencycop_non_indent_pattern. 
@@ -1111,6 +1117,20 @@ function! IndentConsistencyCopFoldExpr( lineNum, foldContext )
 endfunction
 
 function! s:SetHighlighting( lineNumbers )
+"*******************************************************************************
+"* PURPOSE:
+"   Highlights the incorrect lines; saves the original values if modifications
+"   to buffer settings are done. 
+"* ASSUMPTIONS / PRECONDITIONS:
+"	? List of any external variable, control, or other element whose state affects this procedure.
+"* EFFECTS / POSTCONDITIONS:
+"   Sets b:indentconsistencycop_did_highlighting = 1. 
+"   Saves buffer settings in buffer-local variables if they don't already exist. 
+"* INPUTS:
+"   lineNumbers: List of buffer line numbers. 
+"* RETURN VALUES: 
+"   none
+"*******************************************************************************
     " Set a buffer-scoped flag that the buffer's settings were modified for
     " highlighting, so that ClearHighlighting() is able to only undo the
     " modifications if there have been any. This is important because
@@ -1118,6 +1138,15 @@ function! s:SetHighlighting( lineNumbers )
     " that case we don't know whether there was any highlighting done
     " beforehand. 
     let b:indentconsistencycop_did_highlighting = 1
+
+    " Before modifying any buffer setting, the original value is saved in a
+    " buffer-local variable. ClearHighlighting() will use those to restore the
+    " original buffer settings. SetHighlighting() may be invoked multiple times
+    " without a corresponding ClearHighlighting() when the user performs
+    " multiple :IndentConsistencyCop sequentially. Thus, the buffer settings
+    " must only be saved on the first invocation, or after a
+    " ClearHighlighting(), i.e. when the variables used for saving are
+    " undefined. 
 
     if match( g:indentconsistencycop_highlighting, '[sm]' ) != -1
 	let l:linePattern = ''
@@ -1143,7 +1172,9 @@ function! s:SetHighlighting( lineNumbers )
     endif
 
     if match( g:indentconsistencycop_highlighting, 'l' ) != -1
-	let b:indentconsistencycop_save_list = &l:list
+	if ! exists( 'b:indentconsistencycop_save_list' )
+	    let b:indentconsistencycop_save_list = &l:list
+	endif
 	setlocal list
     endif
 
@@ -1152,14 +1183,32 @@ function! s:SetHighlighting( lineNumbers )
 	" The list of lines to be highlighted is copied to a list with
 	" buffer-scope, because the (buffer-scoped) foldexpr needs access to it. 
 	let b:indentconsistencycop_lineNumbers = copy( a:lineNumbers )
-	let b:indentconsistencycop_save_foldexpr = &l:foldexpr
-	let b:indentconsistencycop_save_foldmethod = &l:foldmethod
+	if ! exists( 'b:indentconsistencycop_save_foldexpr' )
+	    let b:indentconsistencycop_save_foldexpr = &l:foldexpr
+	endif
 	let &l:foldexpr='IndentConsistencyCopFoldExpr(v:lnum,' . l:foldContext . ')'
+	if ! exists( 'b:indentconsistencycop_save_foldmethod' )
+	    let b:indentconsistencycop_save_foldmethod = &l:foldmethod
+	endif
 	setlocal foldmethod=expr
     endif
 endfunction
 
 function! s:ClearHighlighting()
+"*******************************************************************************
+"* PURPOSE:
+"   Undoes the highlighting done by SetHighlighting() and restores the buffer
+"   settings to its original values. 
+"* ASSUMPTIONS / PRECONDITIONS:
+"   b:indentconsistencycop_did_highlighting == 1 if highlighting was done
+"* EFFECTS / POSTCONDITIONS:
+"   Restores the buffer settings and undefines the buffer-local variables used
+"   for saving. 
+"* INPUTS:
+"   none
+"* RETURN VALUES: 
+"   none
+"*******************************************************************************
     if ! exists( 'b:indentconsistencycop_did_highlighting' ) || ! b:indentconsistencycop_did_highlighting 
 	return
     endif
@@ -1182,6 +1231,10 @@ function! s:ClearHighlighting()
     endif
 
     if ! empty( matchstr( g:indentconsistencycop_highlighting, 'f:\zs\d' ) )
+	if exists( 'b:indentconsistencycop_lineNumbers' )
+	    " Just free the memory here. 
+	    unlet b:indentconsistencycop_lineNumbers
+	endif
 	if exists( 'b:indentconsistencycop_save_foldmethod' )
 	    let &l:foldmethod = b:indentconsistencycop_save_foldmethod
 	    unlet b:indentconsistencycop_save_foldmethod
