@@ -1,6 +1,75 @@
 " IndentConsistencyCop.vim: Is the buffer's indentation consistent and does it conform to tab settings?
 " {{{1
-" Maintainer:	Ingo Karkat <ingo@karkat.de>
+" DESCRIPTION:
+"   In order to achieve consistent indentation, you need to agree on the
+"   indentation width (e.g. 2, 4 or 8 spaces), and the indentation method (only
+"   tabs, only spaces, or a mix of tabs and spaces that minimizes the number of
+"   spaces and is called 'softtabstop' in VIM). Unfortunately, different people
+"   use different editors and cannot agree on "the right" width and method.
+"   Consistency is important, though, to make the text look the same in
+"   different editors and on printouts. If any editor inadvertently converts
+"   tabs and spaces, version control and diff'ing will be much harder to do. 
+"
+"   The IndentConsistencyCop examines the indent of the buffer and analyzes the
+"   used indent widths and methods. If there are conflicting ones or if bad
+"   combinations of tabs and spaces are found, it alerts you and offers help in
+"   locating the offenders - just like a friendly policeman: 
+"
+"   :IndentConsistencyCop
+"   Found inconsistent indentation in this buffer; generated from these
+"   conflicting settings:
+"   - tabstop (1838 of 3711 lines) <- buffer setting
+"   - 4 spaces (33 of 3711 lines)
+"   - bad mix of spaces and tabs (4 of 3711 lines)
+"	[I]gnore, (H)ighlight wrong indents...: h
+"   What kind of inconsistent indents do you want to highlight?
+"	Not [b]uffer settings (sts4), Not best (g)uess (tab), Not (c)hosen
+"	setting..., (I)llegal indents only: g
+"   Marked 180 incorrect lines.
+"
+"   If the buffer contents are okay, the IndentConsistencyCop can evaluate
+"   whether VIM's buffer settings are compatible with the indent used in the
+"   buffer. The friendly cop offers to correct your buffer settings if you run
+"   the risk of screwing up the indent consistency with your wrong buffer
+"   settings: 
+"   
+"   :IndentConsistencyCop
+"   The buffer's indent settings are inconsistent with the used indent '8
+"   spaces'; these settings must be changed:
+"   - expandtab from 0 to 1
+"   How do you want to deal with the inconsistency?
+"	[I]gnore, (C)hange: c
+"   The buffer settings have been changed: tabstop=8 softtabstop=0 shiftwidth=8
+"   expandtab
+"
+"   The IndentConsistencyCop is only concerned with the amount of whitespace
+"   from column 1 to the first visible character; it does not check the
+"   alignment of tables, equals signs in variable assignments, etc. Neither does
+"   it know any specifics about programming languages, or your personal
+"   preferred indentation style. 
+"
+" USAGE:
+"   Start the examination of the current buffer or range via:
+"	:[range]IndentConsistencyCop
+"   The triggering can be done automatically for configurable filetypes with the
+"   autocmds defined in IndentConsistencyCopAutoCmds.vim. 
+"
+"   If you chose to highlight incorrect indents, either re-start the
+"   IndentConsistencyCop to update the highlighting, or execute
+"	:IndentConsistencyCopOff
+"   to remove the highlightings. 
+"
+"   If you just want to check a read-only file, or do not intend to modify the
+"   file, you don't care if VIM's buffer settings are compatible with the used
+"   indent. In this case, you can use 
+"	:[range]IndentRangeConsistencyCop
+"   instead of :IndentConsistencyCop. 
+"
+" INSTALLATION:
+"   Put the script into your user or system VIM plugin directory (e.g.
+"   ~/.vim/plugin). 
+"
+" CONFIGURATION:
 "
 " LIMITATIONS:
 " - 'softtabstop' is only recognized correctly when a correct combination of
@@ -25,6 +94,11 @@
 "   softtabstop. 
 "   If tabstop is non-standard, anyway, we rather modify tabstop than turning on
 "   softtabstop. 
+"
+" Copyright: (C) 2006 by Ingo Karkat
+"   The VIM LICENSE applies to this script; see ':help copyright'. 
+"
+" Maintainer:	Ingo Karkat <ingo@karkat.de>
 "
 " REVISION	DATE		REMARKS 
 "	0.04	20-Oct-2006	Improved undo of highlighting;
