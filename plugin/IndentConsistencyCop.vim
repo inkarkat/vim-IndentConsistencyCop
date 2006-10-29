@@ -70,6 +70,10 @@
 "   ~/.vim/plugin). 
 "
 " CONFIGURATION:
+"   You can select method(s) of highlighting incorrect lines via
+"   g:indentconsistencycop_highlighting; the default fills the search pattern,
+"   jumps to the first error, uses the 'Error' highlighting and folds away the
+"   correct lines. 
 "
 " LIMITATIONS:
 " - 'softtabstop' is only recognized correctly when a correct combination of
@@ -145,16 +149,23 @@ let loaded_indentconsistencycop = 1
 
 "- configuration ----------------------------------------------------------{{{1
 if ! exists('g:indentconsistencycop_highlighting')
-    " s - Fill search pattern with all incorrect lines. 
-    " g - Jump to the first error. 
-    " l - As a visualization aid, ':setlocal list' (to see difference between tabs and spaces). 
-    " m - Use :2match error highlighting; this is especially useful if you don't
-    "	  use the search pattern in combination with 'set hlsearch' to locate
-    "	  the incorrect lines. 
-    " f:{n} (n = 0..9) - fold correct lines with a context of {n} lines (like diff)
-    " TODO:
-    " q - Populate quickfix list with all incorrect lines. 
-    " IDEA: :cgetexpr
+    " Defines the highlighting methods of incorrect lines, when this is
+    " requested by the user. Multiple methods can be combined. The changes done
+    " for highlighting are undone when highlighting is removed via
+    " :IndentConsistencyCopOff. 
+    "	s - Fill search pattern with all incorrect lines, so that you navigate
+    "	    through all incorrect lines with n/N. 
+    " 	g - Jump to the first error. 
+    " 	l - As a visualization aid, execute ':setlocal list' to see difference
+    "	    between tabs and spaces. 
+    "	m - Use :2match error highlighting to highlight the wrong indent via the
+    "	    'Error' highlighting group. This is especially useful if you don't
+    " 	    use the search pattern in combination with 'set hlsearch' to locate
+    " 	    the incorrect lines. 
+    " 	f:{n} (n = 0..9) - Fold correct lines with a context of {n} lines (like
+    "	    in VIM diff mode). 
+    " 	TODO:
+    " 	q - Populate quickfix list with all incorrect lines. IDEA: Use :cgetexpr. 
     let g:indentconsistencycop_highlighting = 'sglmf:3'
 endif
 
