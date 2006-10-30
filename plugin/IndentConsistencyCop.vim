@@ -99,12 +99,23 @@
 "   If tabstop is non-standard, anyway, we rather modify tabstop than turning on
 "   softtabstop. 
 "
+" TODO:
+" - Define autocmds to remove the highlighting if it isn't in scope any more
+"   (e.g. remove search pattern when buffer is changed, remove error
+"   highlighting and folding if another file is loaded into the buffer via :e). 
+" - Allow user to override wrongly found consistent setting (e.g. 'sts1' instead
+"   of 'tab'), both by specifying the correct setting in the
+"   :IndentConsistencyCop call and by choosing 'wrong setting' in the
+"   IndentBufferConsistencyCop. 
+"
 " Copyright: (C) 2006 by Ingo Karkat
 "   The VIM LICENSE applies to this script; see ':help copyright'. 
 "
 " Maintainer:	Ingo Karkat <ingo@karkat.de>
 "
 " REVISION	DATE		REMARKS 
+"	0.05	30-Oct-2006	Improved g:indentconsistencycop_non_indent_pattern 
+"				to also allow ' *\t' and ' *****' comments. 
 "	0.04	20-Oct-2006	Improved undo of highlighting;
 "				added :IndentConsistencyCopOff. 
 "				Added check IsEnoughIndentForSolidAssessment();
@@ -179,7 +190,7 @@ if ! exists('g:indentconsistencycop_non_indent_pattern')
     " The IndentConsistencyCop would be confused by these special indents, so we
     " define a non-indent pattern that removes these additional whitespaces from
     " the indent when evaluating lines. 
-    let g:indentconsistencycop_non_indent_pattern = ' \*[/ ]'
+    let g:indentconsistencycop_non_indent_pattern = ' \*[*/ \t]'
 endif
 
 "}}}1
