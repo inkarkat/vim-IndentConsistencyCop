@@ -648,17 +648,8 @@ function! s:IsContainsPerfectRating()
 endfunction
 
 function! s:NormalizePerfectRating()
-    " A perfect rating (i.e. an indent setting that is consistent throughout the
-    " entire buffer / range) is only accepted if its absolute rating number is
-    " also the maximum rating. Without this qualification, a few small indent
-    " settings (e.g. sts1, spc2) could be deemed the consistent setting, even
-    " though they actually are just indent errors that sabotage the actual,
-    " larger desired indent setting (e.g. sts4, spc4). In other words, the cop
-    " must not be fooled by some wrong spaces into believing that we have a
-    " consistent sts1, although the vast majority of indents suggests an sts4
-    " with some inconsistencies. 
     for l:rating in keys( s:ratings )
-	if s:ratings[ l:rating ] == -1
+	if s:ratings[ l:rating ] < 0
 	    " Normalize to 100%
 	    let s:ratings[ l:rating ] = 100
 	else
@@ -692,6 +683,14 @@ function! s:NormalizeNonPerfectRating()
     endfor
 endfunction
 
+function! s:DemotePerfectRating()
+    for l:rating in keys( s:ratings )
+	if s:ratings[ l:rating ] < 0
+	    let s:ratings[ l:rating ] = -1 * s:ratings[ l:rating ]
+	endif
+    endfor
+endfunction
+
 function! s:NormalizeRatings()
 "*******************************************************************************
 "* PURPOSE:
@@ -714,7 +713,30 @@ function! s:NormalizeRatings()
 "   none
 "*******************************************************************************
     if s:IsContainsPerfectRating()
-	call s:NormalizePerfectRating()
+	" A perfect rating (i.e. an indent setting that is consistent throughout the
+	" entire buffer / range) is only accepted if its absolute rating number is
+	" also the maximum rating. Without this qualification, a few small indent
+	" settings (e.g. sts1, spc2) could be deemed the consistent setting, even
+	" though they actually are just indent errors that sabotage the actual,
+	" larger desired indent setting (e.g. sts4, spc4). In other words, the cop
+	" must not be fooled by some wrong spaces into believing that we have a
+	" consistent sts1, although the vast majority of indents suggests an sts4
+	" with some inconsistencies. 
+	let l:absolutePerfectRating = -1 * min( s:ratings )
+	if l:absolutePerfectRating <= 0
+	    throw 'assert perfect rating < 0'
+	endif
+	let l:bestNonPerfectRating = max( s:ratings )
+	if l:bestNonPerfectRating <= 0
+	    throw 'assert best rating > 0'
+	endif
+echo '**** perfect rating = ' . l:absolutePerfectRating . '; best other rating = ' . l:bestNonPerfectRating
+	if l:absolutePerfectRating >= l:bestNonPerfectRating
+	    call s:NormalizePerfectRating()
+	else
+	    call s:DemotePerfectRating()
+	    call s:NormalizeNonPerfectRating()
+	endif
     else
 	call s:NormalizeNonPerfectRating()
     endif
@@ -773,6 +795,16 @@ function! s:CheckBufferConsistency( startLineNum, endLineNum ) " {{{1
     call s:EvaluateIndentsIntoOccurrences( s:softtabstops, 'sts' )
     call s:EvaluateIndentsIntoOccurrences( s:doubtful, 'dbt' )
     " Now, the indent occurences have been consolidated into s:occurrences. 
+    " It counts the actual or possible indent settings. An indent of 4 spaces is
+    " counted once as 'spc4', the alternatives of 2x 'spc2' or 4x 'spc1' are
+    " discarded, because only the largest possible unambiguous indent setting wins. 
+    " However, an indent of 30 spaces is counted as both 'spc5' and 'spc6',
+    " because the indent could result from either one. Again, 'spc3', 'spc2' and
+    " 'spc1' are discarded, because they are smaller subsets. 
+    " Thus, the sum of occurences can be larger than the number of actual
+    " indents examined, because some indents can not unambiguously be assigned
+    " to one indent setting. 
+    
 "****D echo 'Tabstops:     ' . string( s:tabstops )
 "****D echo 'Spaces:       ' . string( s:spaces )
 "****D echo 'Softtabstops: ' . string( s:softtabstops )
