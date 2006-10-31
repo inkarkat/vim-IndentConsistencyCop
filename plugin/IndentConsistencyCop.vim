@@ -1,6 +1,6 @@
 " IndentConsistencyCop.vim: Is the buffer's indentation consistent and does it conform to tab settings?
-" {{{1
-" DESCRIPTION:
+"
+" DESCRIPTION: {{{1
 "   In order to achieve consistent indentation, you need to agree on the
 "   indentation width (e.g. 2, 4 or 8 spaces), and the indentation method (only
 "   tabs, only spaces, or a mix of tabs and spaces that minimizes the number of
@@ -47,12 +47,12 @@
 "   alignment of tables, equals signs in variable assignments, etc. Neither does
 "   it know any specifics about programming languages, or your personal
 "   preferred indentation style. 
-"
-" USAGE:
+" 
+" USAGE: {{{1
 "   Start the examination of the current buffer or range via:
 "	:[range]IndentConsistencyCop
 "   The triggering can be done automatically for configurable filetypes with the
-"   autocmds defined in IndentConsistencyCopAutoCmds.vim. 
+"   autocmds defined in IndentConsistencyCopAutoCmds.vim (vimscript #1691). 
 "
 "   If you chose to highlight incorrect indents, either re-start the
 "   IndentConsistencyCop to update the highlighting, or execute
@@ -65,7 +65,7 @@
 "	:[range]IndentRangeConsistencyCop
 "   instead of :IndentConsistencyCop. 
 "
-" INSTALLATION:
+" INSTALLATION: {{{1
 "   Put the script into your user or system VIM plugin directory (e.g.
 "   ~/.vim/plugin). 
 "
@@ -75,7 +75,7 @@
 "   jumps to the first error, uses the 'Error' highlighting and folds away the
 "   correct lines. 
 "
-" LIMITATIONS:
+" LIMITATIONS: {{{1
 " - 'softtabstop' is only recognized correctly when a correct combination of
 "   tabs and spaces is actually used. If a file only has small indents,
 "   resulting in only spaces or tabs (but not the combination), the indent
@@ -113,7 +113,7 @@
 "
 " Maintainer:	Ingo Karkat <ingo@karkat.de>
 "
-" REVISION	DATE		REMARKS 
+" REVISION	DATE		REMARKS {{{1
 "	0.05	30-Oct-2006	Improved g:indentconsistencycop_non_indent_pattern 
 "				to also allow ' *\t' and ' *****' comments. 
 "	0.04	20-Oct-2006	Improved undo of highlighting;
