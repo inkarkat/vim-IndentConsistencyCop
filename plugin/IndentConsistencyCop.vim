@@ -114,7 +114,13 @@
 " Maintainer:	Ingo Karkat <ingo@karkat.de>
 "
 " REVISION	DATE		REMARKS {{{1
-"	0.06	01-Nov-2006	BF: Avoiding runtime error in
+"	0.06	01-Nov-2006	Corrected unreasonable assumption of a
+"				consistent small indent setting (of 1 or 2
+"				spaces) when actually only some wrong spaces
+"				spoil the consistency. Now, a perfect consistent
+"				rating is only accepted if its absolute rating
+"				number is also the maximum rating. 
+"				BF: Avoiding runtime error in
 "				IndentBufferInconsistencyCop() if s:ratings is
 "				empty. 
 "	0.05	30-Oct-2006	Improved g:indentconsistencycop_non_indent_pattern 
@@ -691,6 +697,25 @@ function! s:DemotePerfectRating()
     endfor
 endfunction
 
+function! s:IsPerfectRatingAlsoTheBestRating()
+    let l:absolutePerfectRating = -1 * min( s:ratings )
+    if l:absolutePerfectRating <= 0
+	throw 'assert perfect rating < 0'
+    endif
+
+    let l:bestNonPerfectRating = max( s:ratings )
+    if l:bestNonPerfectRating <= 0
+	if -1 * l:bestNonPerfectRating == l:absolutePerfectRating
+	    " There is no other rating than the perfect rating; max() == min().  
+	    return 1
+	else
+	    throw 'assert best rating > 0'
+	endif
+    endif
+"****D echo '**** perfect rating = ' . l:absolutePerfectRating . '; best other rating = ' . l:bestNonPerfectRating
+    return (l:absolutePerfectRating >= l:bestNonPerfectRating)
+endfunction
+
 function! s:NormalizeRatings()
 "*******************************************************************************
 "* PURPOSE:
@@ -722,16 +747,7 @@ function! s:NormalizeRatings()
 	" must not be fooled by some wrong spaces into believing that we have a
 	" consistent sts1, although the vast majority of indents suggests an sts4
 	" with some inconsistencies. 
-	let l:absolutePerfectRating = -1 * min( s:ratings )
-	if l:absolutePerfectRating <= 0
-	    throw 'assert perfect rating < 0'
-	endif
-	let l:bestNonPerfectRating = max( s:ratings )
-	if l:bestNonPerfectRating <= 0
-	    throw 'assert best rating > 0'
-	endif
-echo '**** perfect rating = ' . l:absolutePerfectRating . '; best other rating = ' . l:bestNonPerfectRating
-	if l:absolutePerfectRating >= l:bestNonPerfectRating
+	if s:IsPerfectRatingAlsoTheBestRating()
 	    call s:NormalizePerfectRating()
 	else
 	    call s:DemotePerfectRating()
@@ -818,21 +834,21 @@ function! s:CheckBufferConsistency( startLineNum, endLineNum ) " {{{1
 
     call s:ApplyPrecedences()
 
-echo 'Occurrences 2:' . string( s:occurrences )
-echo 'This is probably a ' . string( filter( copy( s:occurrences ), 'v:val == max( s:occurrences )') )
+"****D echo 'Occurrences 2:' . string( s:occurrences )
+"****D echo 'This is probably a ' . string( filter( copy( s:occurrences ), 'v:val == max( s:occurrences )') )
 
     " This dictionary contains the incompatible indent settings for each indent
     " setting. 
     let l:incompatibles = s:EvaluateIncompatibleIndentSettings() " Key: indent setting; value: list of indent settings. 
-echo 'Incompatibles:' . string( l:incompatibles )
+"****D echo 'Incompatibles:' . string( l:incompatibles )
 
     " The s:ratings dictionary contains the final rating, a combination of high indent settings occurrence and low incompatible occurrences. 
     call s:EvaluateOccurrenceAndIncompatibleIntoRating( l:incompatibles ) " Key: indent setting; value: rating number
-echo 'ratings:     ' . string( s:ratings )
+"****D echo 'ratings:     ' . string( s:ratings )
 
     call s:NormalizeRatings()
-echo 'nrm. ratings:' . string( s:ratings )
-call confirm('debug')
+"****D echo 'nrm. ratings:' . string( s:ratings )
+"****D call confirm('debug')
 
 
     " Cleanup lists and dictionaries with script-scope to free memory. 
