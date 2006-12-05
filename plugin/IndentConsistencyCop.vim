@@ -69,6 +69,9 @@
 "   Put the script into your user or system VIM plugin directory (e.g.
 "   ~/.vim/plugin). 
 "
+" DEPENDENCIES:
+"   - Requires VIM 7.0. 
+"
 " CONFIGURATION:
 "   You can select method(s) of highlighting incorrect lines via
 "   g:indentconsistencycop_highlighting; the default fills the search pattern,
@@ -114,6 +117,9 @@
 " Maintainer:	Ingo Karkat <ingo@karkat.de>
 "
 " REVISION	DATE		REMARKS {{{1
+"	0.07	02-Nov-2006	BF: Suppressing 'Not buffer setting' option if
+"				the buffer setting is inconsistent ('badset'),
+"				which threw an exception when selected. 
 "	0.06	01-Nov-2006	Corrected unreasonable assumption of a
 "				consistent small indent setting (of 1 or 2
 "				spaces) when actually only some wrong spaces
@@ -1504,7 +1510,11 @@ function! s:IndentBufferInconsistencyCop( startLineNum, endLineNum, inconsistent
 	call s:EchoUserMessage('Be careful when modifying the inconsistent indents! ')
     elseif l:actionNum == 2
 	let l:bufferIndentSetting = s:GetIndentSettingForBufferSettings()
-	let l:isBestGuessEqualToBufferIndent = 1
+	" The buffer indent settings may be 'badset', which cannot be
+	" highlighted. So we need to suppress this option if it is bad. 
+	let l:isBadBufferIndent = (s:IsBadIndentSetting( l:bufferIndentSetting ) ? 1 : 0)
+
+	let l:isBestGuessEqualToBufferIndent = 1 " Suppress best guess option if no guess available. 
 	if ! empty( s:ratings )
 	    let l:ratingLists = items( s:ratings )
 	    call sort( l:ratingLists, "s:DictCompareDescending" )
@@ -1513,29 +1523,35 @@ function! s:IndentBufferInconsistencyCop( startLineNum, endLineNum, inconsistent
 	endif
 
 	let l:highlightMessage = 'What kind of inconsistent indents do you want to highlight?'
-	if l:isBestGuessEqualToBufferIndent
-	    let l:highlightChoices = "Not &buffer settings / best guess (" . l:bufferIndentSetting . ')'
+	if l:isBestGuessEqualToBufferIndent && l:isBadBufferIndent
+	    let l:highlightChoices = ''
+	elseif l:isBestGuessEqualToBufferIndent && ! l:isBadBufferIndent
+	    let l:highlightChoices = "\nNot &buffer settings / best guess (" . l:bufferIndentSetting . ')'
+	elseif ! l:isBestGuessEqualToBufferIndent && l:isBadBufferIndent
+	    let l:highlightChoices = "\nNot best &guess (" . l:bestGuessIndentSetting . ')'
 	else
-	    let l:highlightChoices = "Not &buffer settings (" . l:bufferIndentSetting . ')'
+	    let l:highlightChoices = "\nNot &buffer settings (" . l:bufferIndentSetting . ')'
 	    let l:highlightChoices .= "\nNot best &guess (" . l:bestGuessIndentSetting . ')'
 	endif
 	let l:highlightChoices .= "\nNot &chosen setting..."
 	if s:GetKeyedValue( s:occurrences, 'badmix' ) + s:GetKeyedValue( s:occurrences, 'badsts' ) > 0
 	    let l:highlightChoices .= "\n&Illegal indents only"
 	endif
-	let l:highlightNum = confirm( l:highlightMessage, l:highlightChoices )
+
+	let l:highlightNum = confirm( l:highlightMessage, strpart( l:highlightChoices, 1 ) )
 	if l:highlightNum <= 0
-	    " User canceled
-	elseif l:highlightNum == 1
+	    " User canceled. 
+	    call s:EchoUserMessage('Be careful when modifying the inconsistent indents! ')
+	elseif l:highlightNum == (1 - l:isBadBufferIndent )
 	    call s:HighlightInconsistentIndents( a:startLineNum, a:endLineNum, l:bufferIndentSetting )
-	elseif l:highlightNum == (2 - l:isBestGuessEqualToBufferIndent)
+	elseif l:highlightNum == (2 - l:isBestGuessEqualToBufferIndent - l:isBadBufferIndent)
 	    call s:HighlightInconsistentIndents( a:startLineNum, a:endLineNum, l:bestGuessIndentSetting )
-	elseif l:highlightNum == (3 - l:isBestGuessEqualToBufferIndent)
+	elseif l:highlightNum == (3 - l:isBestGuessEqualToBufferIndent - l:isBadBufferIndent)
 	    let l:chosenIndentSetting = s:QueryIndentSetting()
 	    if ! empty( l:chosenIndentSetting )
 		call s:HighlightInconsistentIndents( a:startLineNum, a:endLineNum, l:chosenIndentSetting )
 	    endif
-	elseif l:highlightNum == (4 - l:isBestGuessEqualToBufferIndent)
+	elseif l:highlightNum == (4 - l:isBestGuessEqualToBufferIndent - l:isBadBufferIndent)
 	    call s:HighlightInconsistentIndents( a:startLineNum, a:endLineNum, 'notbad' )
 	else
 	    throw 'assert false'
