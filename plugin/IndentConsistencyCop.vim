@@ -110,6 +110,9 @@
 "   of 'tab'), both by specifying the correct setting in the
 "   :IndentConsistencyCop call and by choosing 'wrong setting' in the
 "   IndentBufferConsistencyCop. 
+" - Add configuration what to do when the maximum indent is not sufficient for a
+"   solid assessment: a) still bring up pop-up dialog, b) just :echomsg a
+"   warning, c) completely ignore. 
 "
 " Copyright: (C) 2006 by Ingo Karkat
 "   The VIM LICENSE applies to this script; see ':help copyright'. 
@@ -450,7 +453,7 @@ function! s:ApplyPrecedences() " {{{1
     " The occurrence 'sts8' has only been collected because of the parallelism
     " with 'spc8'. Effectively, 'sts8' is the same as 'tab', and is removed. 
     if s:GetKeyedValue( s:occurrences, 'sts8' ) != s:GetKeyedValue( s:occurrences, 'tab' )
-	throw "assert sts8 == tab"
+	throw 'assert sts8 == tab'
     endif
     call s:RemoveKey( s:occurrences, 'sts8' )
 endfunction
@@ -682,7 +685,7 @@ function! s:NormalizeNonPerfectRating()
 	let l:valueSum += l:value
     endfor
     if l:valueSum <= 0 
-	throw "assert valueSum > 0"
+	throw 'assert valueSum > 0'
     endif
 
     for l:rating in keys( s:ratings )
@@ -787,7 +790,7 @@ function! s:CheckBufferConsistency( startLineNum, endLineNum ) " {{{1
 "    1: checked range is consistent
 "*******************************************************************************
     if a:startLineNum > a:endLineNum
-	throw assert startLineNum <= a:endLineNum
+	throw 'assert startLineNum <= a:endLineNum'
     endif
 
     " This variable stores the maximum indent encountered. 
@@ -973,7 +976,7 @@ function! s:GetCorrectTabstopSetting( indentSetting )
 	    return s:GetMultiplierFromIndentSetting( a:indentSetting )
 	endif
     else
-	throw "assert false"
+	throw 'assert false'
     endif
 endfunction
 
@@ -1599,7 +1602,7 @@ function! s:IndentConsistencyCop( startLineNum, endLineNum, isBufferSettingsChec
 	let l:consistentIndentSetting = keys( s:ratings )[0]
 	call s:IndentBufferConsistencyCop( l:scopeUserString, l:consistentIndentSetting, a:isBufferSettingsCheck )
     else
-	throw "assert false"
+	throw 'assert false'
     endif
 "****D echo 'Consistent   ? ' . l:isConsistent
 "****D echo 'Occurrences:   ' . string( s:occurrences )
