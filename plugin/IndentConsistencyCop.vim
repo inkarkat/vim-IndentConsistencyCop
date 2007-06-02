@@ -70,7 +70,7 @@
 "   ~/.vim/plugin). 
 "
 " DEPENDENCIES:
-"   - Requires VIM 7.0. 
+"   - Requires VIM 7.0 or higher. 
 "
 " CONFIGURATION:
 "   You can select method(s) of highlighting incorrect lines via
@@ -111,7 +111,7 @@
 "   call. 
 " - Add configuration what to do when the maximum indent is not sufficient for a
 "   solid assessment: a) still bring up pop-up dialog, b) just :echomsg a
-"   warning, c) completely ignore. 
+"   warning, c) no consistency check with buffer settings, d) completely ignore. 
 "
 " Copyright: (C) 2006-2007 by Ingo Karkat
 "   The VIM LICENSE applies to this script; see ':help copyright'. 
@@ -1643,4 +1643,4 @@ command! -nargs=0 IndentConsistencyCopOff call <SID>ClearHighlighting()
 " know does not conform to the buffer indent settings. 
 command! -range=% -nargs=0 IndentRangeConsistencyCop call <SID>IndentConsistencyCop( <line1>, <line2>, 0 )
 
-" vim:ft=vim foldmethod=marker
+" vim: set sts=4 sw=4 noexpandtab ff=unix fdm=marker :
