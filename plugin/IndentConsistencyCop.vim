@@ -214,10 +214,10 @@ if ! exists('g:indentconsistencycop_non_indent_pattern')
     let g:indentconsistencycop_non_indent_pattern = ' \*[*/ \t]'
 endif
 
-"}}}1
+" }}}1
 
 "- list and dictionary utility functions ---------------------------------{{{1
-function! s:IncreaseKeyedBy( dict, key, num )
+function! s:IncreaseKeyedBy( dict, key, num ) " {{{2
 "****D echo '**** ' . a:key
     if has_key( a:dict, a:key )
 	let a:dict[ a:key ] += a:num
@@ -226,29 +226,30 @@ function! s:IncreaseKeyedBy( dict, key, num )
     endif
 endfunction
 
-function! s:IncreaseKeyed( dict, key )
+function! s:IncreaseKeyed( dict, key ) " {{{2
     call s:IncreaseKeyedBy( a:dict, a:key, 1 )
 endfunction
 
-function! s:GetKeyedValue( dict, key )
+function! s:GetKeyedValue( dict, key ) " {{{2
     if has_key( a:dict, a:key )
 	return a:dict[a:key]
     else
 	return 0
 endfunction
 
-function! s:RemoveKey( dict, key )
+function! s:RemoveKey( dict, key ) " {{{2
     if has_key( a:dict, a:key )
 	unlet a:dict[a:key]
     endif
 endfunction
 
-function! s:RemoveFromList( list, value )
+function! s:RemoveFromList( list, value ) " {{{2
     call filter( a:list, 'v:val != "' . a:value . '"' )
 endfunction
+" }}}2
 
 "- utility functions -----------------------------------------------------{{{1
-function! s:IsDivsorOf( newNumber, numbers )
+function! s:IsDivsorOf( newNumber, numbers ) " {{{2
     for l:number in a:numbers
 	if l:number % a:newNumber == 0
 	    return 1
@@ -257,7 +258,7 @@ function! s:IsDivsorOf( newNumber, numbers )
     return 0
 endfunction
 
-function! s:GetMultiplierFromIndentSetting( indentSetting )
+function! s:GetMultiplierFromIndentSetting( indentSetting ) " {{{2
     if a:indentSetting == 'tab'
 	return 8
     else
@@ -265,14 +266,14 @@ function! s:GetMultiplierFromIndentSetting( indentSetting )
     endif
 endfunction
 
-function! s:GetSettingFromIndentSetting( indentSetting )
+function! s:GetSettingFromIndentSetting( indentSetting ) " {{{2
     return strpart( a:indentSetting, 0, 3 )
 endfunction
 
-"}}}1
+" }}}1
 
 "- Processing of lines in buffer -----------------------------------------{{{1
-function! s:CountTabs( tabString )
+function! s:CountTabs( tabString ) " {{{2
     " A tab is a tab, and can thus be counted directly. 
     " However, the number of tabs, or the equivalent indent, must be captured to
     " be able to resolve possible compatibilities with softtabstops. 
@@ -280,31 +281,31 @@ function! s:CountTabs( tabString )
     call s:IncreaseKeyed( s:tabstops, len( substitute( a:tabString, '\t', '        ', 'g' ) ) )
 endfunction
 
-function! s:CountDoubtful( spaceString )
+function! s:CountDoubtful( spaceString ) " {{{2
     call s:IncreaseKeyed( s:doubtful, len( a:spaceString ) )
 endfunction
 
-function! s:CountSpaces( spaceString )
+function! s:CountSpaces( spaceString ) " {{{2
     call s:IncreaseKeyed( s:spaces, len( a:spaceString ) )
 endfunction
 
-function! s:CountSofttabstops( stsString )
+function! s:CountSofttabstops( stsString ) " {{{2
     call s:IncreaseKeyed( s:softtabstops, len( substitute( a:stsString, '\t', '        ', 'g' ) ) )
 endfunction
 
-function! s:CountBadSofttabstop( string )
+function! s:CountBadSofttabstop( string ) " {{{2
     call s:IncreaseKeyed( s:occurrences, 'badsts')
 endfunction
 
-function! s:CountBadMixOfSpacesAndTabs( string )
+function! s:CountBadMixOfSpacesAndTabs( string ) " {{{2
     call s:IncreaseKeyed( s:occurrences, 'badmix')
 endfunction
 
-function! s:GetBeginningWhitespace( lineNum )
+function! s:GetBeginningWhitespace( lineNum ) " {{{2
     return matchstr( getline(a:lineNum), '^\s\{-}\ze\($\|\S\|' . g:indentconsistencycop_non_indent_pattern . '\)' )
 endfunction
 
-function! s:UpdateIndentMax( beginningWhitespace )
+function! s:UpdateIndentMax( beginningWhitespace ) " {{{2
     let l:currentIndent = len( substitute( a:beginningWhitespace, '\t', '        ', 'g' ) )
     if l:currentIndent > s:indentMax
 	let s:indentMax = l:currentIndent
@@ -370,6 +371,7 @@ function! s:InspectLine(lineNum)
 
     call s:UpdateIndentMax( l:beginningWhitespace )
 endfunction
+" }}}2
 
 function! s:EvaluateIndentsIntoOccurrences( dict, type ) " {{{1
 "*******************************************************************************
@@ -463,7 +465,7 @@ endfunction
 
 
 "- Check for compatible indent settings ----------------------------------{{{1
-function! s:IsIndentProduceableWithIndentSetting( indent, indentSetting )
+function! s:IsIndentProduceableWithIndentSetting( indent, indentSetting ) " {{{2
     let l:indentMultiplier = s:GetMultiplierFromIndentSetting( a:indentSetting )
     if l:indentMultiplier == 0
 	return 0 " This is for the 'badsts' and 'badmix' indent settings. 
@@ -472,7 +474,7 @@ function! s:IsIndentProduceableWithIndentSetting( indent, indentSetting )
     endif
 endfunction
 
-function! s:InspectForCompatibles( incompatibles, indents, baseIndentSetting, testSetting )
+function! s:InspectForCompatibles( incompatibles, indents, baseIndentSetting, testSetting ) " {{{2
 "*******************************************************************************
 "* PURPOSE:
 "   Uses the passed list of indents to find indent settings in a:testSetting
@@ -536,7 +538,7 @@ function! s:InspectForCompatibles( incompatibles, indents, baseIndentSetting, te
     endfor
 endfunction
 
-function! s:GetIncompatiblesForIndentSetting( indentSetting )
+function! s:GetIncompatiblesForIndentSetting( indentSetting ) " {{{2
 "*******************************************************************************
 "* PURPOSE:
 "   This function encodes the straightforward (i.e. general, settings-wide)
@@ -612,9 +614,10 @@ function! s:EvaluateIncompatibleIndentSettings()
     endfor
     return l:incompatibles
 endfunction
+" }}}2
 
 "- Rating generation -----------------------------------------------------{{{1
-function! s:EvaluateOccurrenceAndIncompatibleIntoRating( incompatibles )
+function! s:EvaluateOccurrenceAndIncompatibleIntoRating( incompatibles ) " {{{2
 "*******************************************************************************
 "* PURPOSE:
 "   For each indent setting, calculates a single (unnormalized) rating; the
@@ -659,6 +662,7 @@ function! s:EvaluateOccurrenceAndIncompatibleIntoRating( incompatibles )
 	endif
     endfor
 endfunction
+" }}}2
 
 "- Rating normalization --------------------------------------------------{{{1
 function! s:IsContainsPerfectRating()
@@ -676,7 +680,7 @@ function! s:NormalizePerfectRating()
     endfor
 endfunction
 
-function! s:IsBadIndentSetting( indentSetting )
+function! s:IsBadIndentSetting( indentSetting ) " {{{2
     return s:GetSettingFromIndentSetting( a:indentSetting ) == 'bad'
 endfunction
 
@@ -770,7 +774,7 @@ function! s:NormalizeRatings()
     endif
 endfunction
 
-"}}}1
+" }}}1
 
 function! s:CheckBufferConsistency( startLineNum, endLineNum ) " {{{1
 "*******************************************************************************
@@ -958,9 +962,10 @@ function! s:GetIndentSettingForBufferSettings()
 
     return l:setting . l:multiplier
 endfunction
+" }}}2
 
 "- consistency with buffer settings functions -----------------------------{{{1
-function! s:GetCorrectTabstopSetting( indentSetting )
+function! s:GetCorrectTabstopSetting( indentSetting ) " {{{2
     if &smarttab == 1
 	" When using 'smarttab', front-of-the-line indenting solely uses
 	" 'shiftwidth'; 'tabstop' and 'softtabstop' are only used in other
@@ -983,7 +988,7 @@ function! s:GetCorrectTabstopSetting( indentSetting )
     endif
 endfunction
 
-function! s:GetCorrectSofttabstopSetting( indentSetting )
+function! s:GetCorrectSofttabstopSetting( indentSetting ) " {{{2
     if &smarttab == 1
 	" When using 'smarttab', front-of-the-line indenting solely uses
 	" 'shiftwidth'; 'tabstop' and 'softtabstop' are only used in other
@@ -1005,7 +1010,7 @@ function! s:GetCorrectSofttabstopSetting( indentSetting )
     endif
 endfunction
 
-function! s:GetCorrectShiftwidthSetting( indentSetting )
+function! s:GetCorrectShiftwidthSetting( indentSetting ) " {{{2
     if s:GetSettingFromIndentSetting( a:indentSetting ) == 'tab'
 	return &l:tabstop
     else
@@ -1013,7 +1018,7 @@ function! s:GetCorrectShiftwidthSetting( indentSetting )
     endif
 endfunction
 
-function! s:GetCorrectExpandtabSetting( indentSetting )
+function! s:GetCorrectExpandtabSetting( indentSetting ) " {{{2
     return (s:GetSettingFromIndentSetting( a:indentSetting ) == 'spc')
 endfunction
 
@@ -1063,17 +1068,17 @@ function! s:CheckConsistencyWithBufferSettings( indentSetting ) " {{{2
     endif
 endfunction " }}}2
 
-function! s:MakeBufferSettingsConsistentWith( indentSetting )
+function! s:MakeBufferSettingsConsistentWith( indentSetting ) " {{{2
     let &l:tabstop    = s:GetCorrectTabstopSetting( a:indentSetting )
     let &l:softtabstop = s:GetCorrectSofttabstopSetting( a:indentSetting )
     let &l:shiftwidth = s:GetCorrectShiftwidthSetting( a:indentSetting )
     let &l:expandtab  = s:GetCorrectExpandtabSetting( a:indentSetting )
 endfunction
 
-"}}}1
+" }}}1
 
 "- output functions -------------------------------------------------------{{{1
-function! s:EchoStartupMessage( lineCnt, scopeUserString )
+function! s:EchoStartupMessage( lineCnt, scopeUserString ) " {{{2
     " When the IndentConsistencyCop is triggered by through autocmds
     " (IndentConsistencyCopAutoCmds.vim), the newly created buffer is not yet
     " displayed. To allow the user to see what text IndentConsistencyCop is
@@ -1089,11 +1094,11 @@ function! s:EchoStartupMessage( lineCnt, scopeUserString )
     endif
 endfunction
 
-function! s:EchoUserMessage( message )
+function! s:EchoUserMessage( message ) " {{{2
     echomsg a:message
 endfunction
 
-function! s:IndentSettingToUserString( indentSetting )
+function! s:IndentSettingToUserString( indentSetting ) " {{{2
 "*******************************************************************************
 "* PURPOSE:
 "   Converts the internally used 'xxxn' indent setting into a
@@ -1134,11 +1139,11 @@ function! s:IndentSettingToUserString( indentSetting )
     return l:userString
 endfunction
 
-function! s:DictCompareDescending( i1, i2 )
+function! s:DictCompareDescending( i1, i2 ) " {{{2
     return a:i1[1] == a:i2[1] ? 0 : a:i1[1] > a:i2[1] ? -1 : 1
 endfunction
 
-function! s:RatingsToUserString( lineCnt )
+function! s:RatingsToUserString( lineCnt ) " {{{2
 "*******************************************************************************
 "* PURPOSE:
 "   Dresses up the ratings information into a multi-line string that can be
@@ -1194,7 +1199,7 @@ function! s:RatingsToUserString( lineCnt )
     return l:userString
 endfunction
 
-function! s:PrintBufferSettings( messageIntro )
+function! s:PrintBufferSettings( messageIntro ) " {{{2
     let l:userMessage = a:messageIntro
     let l:userMessage .= 'tabstop=' . &l:tabstop . ' softtabstop=' . &l:softtabstop . ' shiftwidth=' . &l:shiftwidth
     let l:userMessage .= (&l:expandtab ? ' expandtab' : ' noexpandtab')
@@ -1209,6 +1214,7 @@ function! s:GetInsufficientIndentUserMessage()
 	return "\nWarning: The maximum indent of " . s:indentMax . ' is too small for a solid assessment. '
     endif
 endfunction
+" }}}2
 
 function! s:IndentBufferConsistencyCop( startLineNum, endLineNum, scopeUserString, consistentIndentSetting, isBufferSettingsCheck ) " {{{1
 "*******************************************************************************
@@ -1260,7 +1266,7 @@ endfunction
 
 
 "- highlight functions-----------------------------------------------------{{{1
-function! s:IsLineCorrect( lineNum, correctIndentSetting )
+function! s:IsLineCorrect( lineNum, correctIndentSetting ) " {{{2
     let l:beginningWhitespace = s:GetBeginningWhitespace( a:lineNum )
     if empty( l:beginningWhitespace ) 
 	return 1
@@ -1286,7 +1292,7 @@ function! s:IsLineCorrect( lineNum, correctIndentSetting )
     endif
 endfunction
 
-function! IndentConsistencyCopFoldExpr( lineNum, foldContext )
+function! IndentConsistencyCopFoldExpr( lineNum, foldContext ) " {{{2
     " This function must be global; I could not get either s:FoldExpr() nor
     " <SID>FoldExpr() resolved properly when setting 'foldexpr' to a
     " script-local function. 
@@ -1300,7 +1306,7 @@ function! IndentConsistencyCopFoldExpr( lineNum, foldContext )
     return 1
 endfunction
 
-function! s:SetHighlighting( lineNumbers )
+function! s:SetHighlighting( lineNumbers ) " {{{2
 "*******************************************************************************
 "* PURPOSE:
 "   Highlights the incorrect lines; saves the original values if modifications
@@ -1430,7 +1436,7 @@ function! s:ClearHighlighting()
     endif
 endfunction
 
-function! s:GetInconsistentIndents( startLineNum, endLineNum, correctIndentSetting )
+function! s:GetInconsistentIndents( startLineNum, endLineNum, correctIndentSetting ) " {{{2
     let l:lineNumbers = []
 
     let l:lineNum = a:startLineNum
@@ -1444,7 +1450,7 @@ function! s:GetInconsistentIndents( startLineNum, endLineNum, correctIndentSetti
     return l:lineNumbers
 endfunction
 
-function! s:HighlightInconsistentIndents( startLineNum, endLineNum, correctIndentSetting )
+function! s:HighlightInconsistentIndents( startLineNum, endLineNum, correctIndentSetting ) " {{{2
     " Patterns for correct tabstops and space indents are easy to come up with.
     " The softtabstops of 1,2,4 are easy, too. The softtabstop indents of 3, 5,
     " 7 are very difficult to express, because you have to consider the number
@@ -1505,6 +1511,7 @@ function! s:QueryIndentSetting()
 	throw 'assert false'
     endif
 endfunction
+" }}}2
 
 function! s:IndentBufferInconsistencyCop( startLineNum, endLineNum, inconsistentIndentationMessage ) " {{{1
 "*******************************************************************************
@@ -1639,7 +1646,7 @@ function! s:IndentConsistencyCop( startLineNum, endLineNum, isBufferSettingsChec
     call filter( s:ratings, 0 )
 endfunction
 
-"}}}1
+" }}}1
 
 "- commands --------------------------------------------------------------{{{1
 " Ensure indent consistency within the range / buffer, and - if achieved -, also
