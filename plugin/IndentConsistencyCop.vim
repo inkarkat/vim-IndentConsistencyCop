@@ -1185,7 +1185,7 @@ function! s:RatingsToUserString( lineCnt )
     if ! l:isBufferIndentSettingInRatings
 	let l:bufferSettingsInconsistencies = s:CheckBufferSettingsConsistency()
 	if empty( l:bufferSettingsInconsistencies )
-	    let l:userString .= "\nThe buffer setting is " . s:IndentSettingToUserString( s:GetIndentSettingForBufferSettings() ) . '. '
+	    let l:userString .= "\nThe buffer setting is " . s:IndentSettingToUserString( l:bufferIndentSetting ) . '. '
 	else
 	    let l:userString .= l:bufferSettingsInconsistencies
 	endif
@@ -1430,6 +1430,20 @@ function! s:ClearHighlighting()
     endif
 endfunction
 
+function! s:GetInconsistentIndents( startLineNum, endLineNum, correctIndentSetting )
+    let l:lineNumbers = []
+
+    let l:lineNum = a:startLineNum
+    while l:lineNum <= a:endLineNum
+	if ! s:IsLineCorrect( l:lineNum, a:correctIndentSetting )
+	    let l:lineNumbers += [ l:lineNum ]
+	endif
+	let l:lineNum += 1
+    endwhile
+
+    return l:lineNumbers
+endfunction
+
 function! s:HighlightInconsistentIndents( startLineNum, endLineNum, correctIndentSetting )
     " Patterns for correct tabstops and space indents are easy to come up with.
     " The softtabstops of 1,2,4 are easy, too. The softtabstop indents of 3, 5,
@@ -1447,15 +1461,7 @@ function! s:HighlightInconsistentIndents( startLineNum, endLineNum, correctInden
     " Another benefit of storing the line numbers versus creating a pattern is
     " that this allows different methods of visualization (highlighting,
     " folding, quickfix, ...).
-    let l:lineNumbers = []
-
-    let l:lineNum = a:startLineNum
-    while l:lineNum <= a:endLineNum
-	if ! s:IsLineCorrect( l:lineNum, a:correctIndentSetting )
-	    let l:lineNumbers += [ l:lineNum ]
-	endif
-	let l:lineNum += 1
-    endwhile
+    let l:lineNumbers = s:GetInconsistentIndents( a:startLineNum, a:endLineNum, a:correctIndentSetting )
     if len( l:lineNumbers ) == 0
 	" All lines are correct. 
 	call s:ClearHighlighting()
@@ -1603,6 +1609,14 @@ function! s:IndentConsistencyCop( startLineNum, endLineNum, isBufferSettingsChec
     if l:isConsistent == -1
 	call s:EchoUserMessage( 'This ' . l:scopeUserString . ' does not contain indented text. ' )
     elseif l:isConsistent == 0
+	if ! s:IsEnoughIndentForSolidAssessment() && a:isBufferSettingsCheck 
+	    if s:IsBufferConsistentWithBufferSettings( a:startLineNum, a:endLineNum )
+		call s:ClearHighlighting()
+
+		let l:consistentIndentSetting = s:GetIndentSettingForBufferSettings()
+		call s:IndentBufferConsistencyCop( a:startLineNum, a:endLineNum, l:scopeUserString, l:consistentIndentSetting, 0 ) " Pass isBufferSettingsCheck = 0 here (though a:isBufferSettingsCheck == 1) because we've already ensured that the buffer is consistent with the buffer settings. 
+	    endif
+	endif
 	let l:inconsistentIndentationMessage = 'Found ' . ( s:IsEnoughIndentForSolidAssessment() ? '' : 'potentially ')
 	let l:inconsistentIndentationMessage .= 'inconsistent indentation in this ' . l:scopeUserString . '; generated from these conflicting settings: ' 
 	let l:inconsistentIndentationMessage .= s:RatingsToUserString( l:lineCnt )
