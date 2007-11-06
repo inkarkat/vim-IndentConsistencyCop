@@ -116,6 +116,15 @@
 " Maintainer:	Ingo Karkat <ingo@karkat.de>
 "
 " REVISION	DATE		REMARKS {{{1
+"   1.00.010	07-Nov-2007	BF: In an inconsistent and large buffer/range
+"				that has only one or a few small inconsistencies
+"				and one dominant (i.e. 99%) setting, the text
+"				"Some minor / inconclusive potential settings
+"				have been omitted." is not printed. In
+"				s:RatingsToUserString(), enhanced the condition
+"				for this user message: When there's only one
+"				rating, others certainly have been dropped. 
+"				Testcase: IndentBufferConsistencyCop70.txt
 "   1.00.009	03-Jun-2007	ENH: Improved detection accuracy for soft
 "				tabstops when the maximum indent is too small
 "				for a solid assessment. When the maximum indent
@@ -745,14 +754,14 @@ endfunction
 function! s:NormalizeRatings() " {{{2
 "*******************************************************************************
 "* PURPOSE:
-"   Changes the values in the s:ratings dictionary to that the sum of all values
+"   Changes the values in the s:ratings dictionary so that the sum of all values
 "   is 100; i.e. make percentages out of the ratings. 
 "   Values below a certain percentage threshold are dropped from the dictionary
 "   *after* the normalization, in order to remove clutter when displaying the
 "   results to the user. 
 "* ASSUMPTIONS / PRECONDITIONS:
-"   s:ratings dictionary; key: indent setting; value: raw rating number >= 0 or
-"	-1 means a perfect rating (i.e. no incompatibles)
+"   s:ratings dictionary; key: indent setting; value: raw rating number; 
+"	-1 * raw rating number means a perfect rating (i.e. no incompatibles)
 "* EFFECTS / POSTCONDITIONS:
 "   s:ratings dictionary; key: indent setting; value: percentage 
 "	rating (100: checked range is consistent; < 100: inconsistent. 
@@ -1193,7 +1202,7 @@ function! s:RatingsToUserString( lineCnt ) " {{{2
 	let l:ratingSum += s:ratings[ l:indentSetting ]
     endfor
 
-    if l:ratingSum < (100 - 1) " Allow for 1% rounding error. 
+    if l:ratingSum < (100 - 1) || len(s:ratings) == 1 " Allow for 1% rounding error. When there's only one rating, others certainly have been dropped. 
 	let l:userString .= "\nSome minor / inconclusive potential settings have been omitted. "
     endif
 
