@@ -108,10 +108,7 @@
 "   highlighting and folding if another file is loaded into the buffer via :e). 
 " - Allow user to override wrongly found consistent setting (e.g. 'sts1' instead
 "   of 'tab'), by specifying the correct setting in the :IndentConsistencyCop
-"   call. 
-" - Add configuration what to do when the maximum indent is not sufficient for a
-"   solid assessment: a) still bring up pop-up dialog, b) just :echomsg a
-"   warning, c) no consistency check with buffer settings, d) completely ignore. 
+"   call. (Overriding is already offered in the cop's dialog.) 
 "
 " Copyright: (C) 2006-2007 by Ingo Karkat
 "   The VIM LICENSE applies to this script; see ':help copyright'. 
@@ -119,6 +116,19 @@
 " Maintainer:	Ingo Karkat <ingo@karkat.de>
 "
 " REVISION	DATE		REMARKS {{{1
+"   1.00.009	03-Jun-2007	ENH: Improved detection accuracy for soft
+"				tabstops when the maximum indent is too small
+"				for a solid assessment. When the maximum indent
+"				of the buffer is not enough to be sure of the
+"				indent settings (i.e. differentiating between
+"				soft tabstops and spaces), an inconsistent
+"				indent was reported, even though it is much more
+"				likely that the indent is consistent with "soft
+"				tabstop n", but that wasn't recognized because
+"				of the small indents used in the file. If
+"				allowed, the cop now examines the buffer
+"				settings to possibly turn around the verdict of
+"				"inconsistent indent". 
 "   1.00.008	02-Apr-2007	Allowing user to override wrongly found
 "				consistent setting (e.g. 'sts1' instead of
 "				'tab') by choosing 'Wrong, choose correct
@@ -312,13 +322,13 @@ function! s:UpdateIndentMax( beginningWhitespace ) " {{{2
     endif
 endfunction
 
-function! s:IsEnoughIndentForSolidAssessment()
+function! s:IsEnoughIndentForSolidAssessment() " {{{2
     " Only indents greater than the default tabstop value of 8 allow us to
     " unequivocally recognize soft tabstops. 
     return s:indentMax > 8
 endfunction
 
-function! s:InspectLine(lineNum)
+function! s:InspectLine(lineNum) " {{{2
 "*******************************************************************************
 "* PURPOSE:
 "   Count the whitespace at the beginning of the passed line (until the first
@@ -589,7 +599,7 @@ function! s:GetIncompatiblesForIndentSetting( indentSetting ) " {{{2
     return l:incompatibles
 endfunction
 
-function! s:EvaluateIncompatibleIndentSettings()
+function! s:EvaluateIncompatibleIndentSettings() " {{{2
 "*******************************************************************************
 "* PURPOSE:
 "   Each found indent setting (in s:occurrences) may be compatible with another
@@ -665,11 +675,11 @@ endfunction
 " }}}2
 
 "- Rating normalization --------------------------------------------------{{{1
-function! s:IsContainsPerfectRating()
+function! s:IsContainsPerfectRating() " {{{2
     return (min( s:ratings ) < 0)
 endfunction
 
-function! s:NormalizePerfectRating()
+function! s:NormalizePerfectRating() " {{{2
     for l:rating in keys( s:ratings )
 	if s:ratings[ l:rating ] < 0
 	    " Normalize to 100%
@@ -684,7 +694,7 @@ function! s:IsBadIndentSetting( indentSetting ) " {{{2
     return s:GetSettingFromIndentSetting( a:indentSetting ) == 'bad'
 endfunction
 
-function! s:NormalizeNonPerfectRating()
+function! s:NormalizeNonPerfectRating() " {{{2
     let l:ratingThreshold = 10	" Remove everything below this percentage. Exception: indent setting 'bad'. 
 
     let l:valueSum = 0
@@ -705,7 +715,7 @@ function! s:NormalizeNonPerfectRating()
     endfor
 endfunction
 
-function! s:DemotePerfectRating()
+function! s:DemotePerfectRating() " {{{2
     for l:rating in keys( s:ratings )
 	if s:ratings[ l:rating ] < 0
 	    let s:ratings[ l:rating ] = -1 * s:ratings[ l:rating ]
@@ -713,7 +723,7 @@ function! s:DemotePerfectRating()
     endfor
 endfunction
 
-function! s:IsPerfectRatingAlsoTheBestRating()
+function! s:IsPerfectRatingAlsoTheBestRating() " {{{2
     let l:absolutePerfectRating = -1 * min( s:ratings )
     if l:absolutePerfectRating <= 0
 	throw 'assert perfect rating < 0'
@@ -732,7 +742,7 @@ function! s:IsPerfectRatingAlsoTheBestRating()
     return (l:absolutePerfectRating >= l:bestNonPerfectRating)
 endfunction
 
-function! s:NormalizeRatings()
+function! s:NormalizeRatings() " {{{2
 "*******************************************************************************
 "* PURPOSE:
 "   Changes the values in the s:ratings dictionary to that the sum of all values
@@ -880,7 +890,7 @@ endfunction
 
 
 "- consistency of buffer settings functions -------------------------------{{{1
-function! s:CheckBufferSettingsConsistency()
+function! s:CheckBufferSettingsConsistency() " {{{2
 "*******************************************************************************
 "* PURPOSE:
 "   Checks the buffer indent settings (tabstop, softtabstop, shiftwidth,
@@ -923,11 +933,11 @@ function! s:CheckBufferSettingsConsistency()
     return l:inconsistencies
 endfunction
 
-function! s:IsBufferSettingsConsistent()
+function! s:IsBufferSettingsConsistent() " {{{2
     return empty( s:CheckBufferSettingsConsistency() )
 endfunction
 
-function! s:GetIndentSettingForBufferSettings()
+function! s:GetIndentSettingForBufferSettings() " {{{2
 "*******************************************************************************
 "* PURPOSE:
 "   Translates the buffer indent settings (tabstop, softtabstop, shiftwidth,
@@ -1207,7 +1217,7 @@ function! s:PrintBufferSettings( messageIntro ) " {{{2
     call s:EchoUserMessage( l:userMessage )
 endfunction
 
-function! s:GetInsufficientIndentUserMessage()
+function! s:GetInsufficientIndentUserMessage() " {{{2
     if s:IsEnoughIndentForSolidAssessment()
 	return ''
     else
@@ -1263,6 +1273,7 @@ function! s:IndentBufferConsistencyCop( startLineNum, endLineNum, scopeUserStrin
 	call s:EchoUserMessage( 'This ' . a:scopeUserString . " uses '" . s:IndentSettingToUserString( a:consistentIndentSetting ) . "' consistently. " )
     endif
 endfunction
+" }}}1
 
 
 "- highlight functions-----------------------------------------------------{{{1
@@ -1384,7 +1395,7 @@ function! s:SetHighlighting( lineNumbers ) " {{{2
     endif
 endfunction
 
-function! s:ClearHighlighting()
+function! s:ClearHighlighting() " {{{2
 "*******************************************************************************
 "* PURPOSE:
 "   Undoes the highlighting done by SetHighlighting() and restores the buffer
@@ -1478,7 +1489,7 @@ function! s:HighlightInconsistentIndents( startLineNum, endLineNum, correctInden
     endif
 endfunction
 
-function! s:QueryIndentSetting()
+function! s:QueryIndentSetting() " {{{2
 "*******************************************************************************
 "* PURPOSE:
 "	? What the procedure does (not how).
@@ -1587,6 +1598,54 @@ function! s:IndentBufferInconsistencyCop( startLineNum, endLineNum, inconsistent
     endif
 endfunction
 
+function! s:IsBufferConsistentWithBufferSettings( startLineNum, endLineNum ) " {{{1
+"*******************************************************************************
+"* PURPOSE:
+"   Examines the buffer settings to possibly turn around the verdict of
+"   "inconsistent indent". 
+"   When the maximum indent of the buffer is not enough to be sure of the indent
+"   settings (i.e. differentiating between soft tabstops and spaces), an
+"   inconsistent indent is reported, even though it is much more likely that the
+"   indent is consistent with "soft tabstop n", but that wasn't recognized
+"   because of the small indents used in the file. 
+"   The normal process flow of the IndentConsistencyCop is: First check for
+"   consistent indents, and only when they are consistent indeed, bother to
+"   (optionally) check the buffer settings, too. 
+"   This function bypasses the normal process flow by peeking to the buffer
+"   settings to help solve the uncertainty of its judgement of buffers with
+"   small maximum indents. 
+"* ASSUMPTIONS / PRECONDITIONS:
+"   A potential buffer inconsistency has been detected (s:CheckBufferConsistency() == 0). 
+"   Consistency with the buffer settings should also be checked
+"	(a:isBufferSettingsCheck == 1). 
+"* EFFECTS / POSTCONDITIONS:
+"	? List of the procedure's effect on each external variable, control, or other element.
+"* INPUTS:
+"   a:startLineNum, a:endLineNum: range in the current buffer that is to be
+"	checked. 
+"* RETURN VALUES: 
+"   1 if the uncertainty of small maximum indents has been resolved to
+"	"consistent" by examining the buffer settings. 
+"   0 if the verdict is still "inconsistent". 
+"*******************************************************************************
+    if ! s:IsEnoughIndentForSolidAssessment()
+	let l:bufferIndentSetting = s:GetIndentSettingForBufferSettings()
+	if ! s:IsBadIndentSetting( l:bufferIndentSetting ) 
+	    let l:lineNumbers = s:GetInconsistentIndents( a:startLineNum, a:endLineNum, l:bufferIndentSetting )
+	    if len( l:lineNumbers ) == 0
+		" All lines conform to the buffer indent setting, nothing is
+		" inconsistent.
+		return 1
+	    endif
+	    " Inconsistent lines found. 
+	endif
+	" The buffer settings are of no help, because they are inconsistent,
+	" too. 
+    endif
+    " We definitely have inconsistencies. 
+    return 0
+endfunction
+
 function! s:IndentConsistencyCop( startLineNum, endLineNum, isBufferSettingsCheck ) " {{{1
 "*******************************************************************************
 "* PURPOSE:
@@ -1616,19 +1675,18 @@ function! s:IndentConsistencyCop( startLineNum, endLineNum, isBufferSettingsChec
     if l:isConsistent == -1
 	call s:EchoUserMessage( 'This ' . l:scopeUserString . ' does not contain indented text. ' )
     elseif l:isConsistent == 0
-	if ! s:IsEnoughIndentForSolidAssessment() && a:isBufferSettingsCheck 
-	    if s:IsBufferConsistentWithBufferSettings( a:startLineNum, a:endLineNum )
-		call s:ClearHighlighting()
+	if a:isBufferSettingsCheck && s:IsBufferConsistentWithBufferSettings( a:startLineNum, a:endLineNum )
+	    call s:ClearHighlighting()
 
-		let l:consistentIndentSetting = s:GetIndentSettingForBufferSettings()
-		call s:IndentBufferConsistencyCop( a:startLineNum, a:endLineNum, l:scopeUserString, l:consistentIndentSetting, 0 ) " Pass isBufferSettingsCheck = 0 here (though a:isBufferSettingsCheck == 1) because we've already ensured that the buffer is consistent with the buffer settings. 
-	    endif
+	    let l:consistentIndentSetting = s:GetIndentSettingForBufferSettings()
+	    call s:IndentBufferConsistencyCop( a:startLineNum, a:endLineNum, l:scopeUserString, l:consistentIndentSetting, 0 ) " Pass isBufferSettingsCheck = 0 here (though a:isBufferSettingsCheck == 1) because we've already ensured that the buffer is consistent with the buffer settings. 
+	else
+	    let l:inconsistentIndentationMessage = 'Found ' . ( s:IsEnoughIndentForSolidAssessment() ? '' : 'potentially ')
+	    let l:inconsistentIndentationMessage .= 'inconsistent indentation in this ' . l:scopeUserString . '; generated from these conflicting settings: ' 
+	    let l:inconsistentIndentationMessage .= s:RatingsToUserString( l:lineCnt )
+	    let l:inconsistentIndentationMessage .= s:GetInsufficientIndentUserMessage()
+	    call s:IndentBufferInconsistencyCop( a:startLineNum, a:endLineNum, l:inconsistentIndentationMessage )
 	endif
-	let l:inconsistentIndentationMessage = 'Found ' . ( s:IsEnoughIndentForSolidAssessment() ? '' : 'potentially ')
-	let l:inconsistentIndentationMessage .= 'inconsistent indentation in this ' . l:scopeUserString . '; generated from these conflicting settings: ' 
-	let l:inconsistentIndentationMessage .= s:RatingsToUserString( l:lineCnt )
-	let l:inconsistentIndentationMessage .= s:GetInsufficientIndentUserMessage()
-	call s:IndentBufferInconsistencyCop( a:startLineNum, a:endLineNum, l:inconsistentIndentationMessage )
     elseif l:isConsistent == 1
 	call s:ClearHighlighting()
 
