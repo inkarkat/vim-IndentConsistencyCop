@@ -125,6 +125,10 @@
 "				for this user message: When there's only one
 "				rating, others certainly have been dropped. 
 "				Testcase: IndentBufferConsistencyCop70.txt
+"				ENH: In s:CheckConsistencyWithBufferSettings(), 
+"				print "noexpandtab/expandtab" instead of "
+"				expandtab to 0/1", as the user would :setlocal
+"				the setting. 
 "   1.00.009	03-Jun-2007	ENH: Improved detection accuracy for soft
 "				tabstops when the maximum indent is too small
 "				for a solid assessment. When the maximum indent
@@ -1041,6 +1045,10 @@ function! s:GetCorrectExpandtabSetting( indentSetting ) " {{{2
     return (s:GetSettingFromIndentSetting( a:indentSetting ) == 'spc')
 endfunction
 
+function! s:BooleanToSettingNoSetting( settingName, settingValue )
+    return a:settingValue ? a:settingName : 'no' . a:settingName
+endfunction
+
 function! s:CheckConsistencyWithBufferSettings( indentSetting ) " {{{2
 "*******************************************************************************
 "* PURPOSE:
@@ -1078,7 +1086,7 @@ function! s:CheckConsistencyWithBufferSettings( indentSetting ) " {{{2
 	    let l:userString .= "\n- shiftwidth from " . &l:shiftwidth . ' to ' . s:GetCorrectShiftwidthSetting( a:indentSetting )
 	endif
 	if ! l:isExpandtabCorrect
-	    let l:userString .= "\n- expandtab from " . &l:expandtab . ' to ' . s:GetCorrectExpandtabSetting( a:indentSetting )
+	    let l:userString .= "\n- " . s:BooleanToSettingNoSetting( 'expandtab', &l:expandtab ) . ' to ' . s:BooleanToSettingNoSetting( 'expandtab', s:GetCorrectExpandtabSetting( a:indentSetting ) )
 	endif
 
 	let l:userString .= s:GetInsufficientIndentUserMessage()
