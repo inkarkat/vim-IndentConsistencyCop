@@ -479,7 +479,6 @@ function! s:ApplyPrecedencesToIncompatibles( dbtKey, preferredSettings ) " {{{1
 "* RETURN VALUES: 
 "	? Explanation of the value returned.
 "*******************************************************************************
-
     if empty( a:preferredSettings )
 	return
     endif
@@ -487,9 +486,15 @@ function! s:ApplyPrecedencesToIncompatibles( dbtKey, preferredSettings ) " {{{1
     " First map all values to the preferred Settings remove any duplicates. 
     " If the key has precedence indent setting(s), these must be merged with the
     " other keys; the values must be merged and duplicates removed again. 
-    for l:incompatibles in values( s:incompatibles )
-echo "**** mapping: " . a:dbtKey . " to " . string(a:preferredSettings)
-echo "**** before: " . string(l:incompatibles)
+    for l:key in keys( s:incompatibles )
+	let l:incompatibles = s:incompatibles[l:key]
+
+	if l:key == a:dbtKey
+	    for l:addedPreferredSetting in a:preferredSettings
+		call extend( l:incompatibles, get(s:incompatibles, l:addedPreferredSetting, []) )
+	    endfor
+	endif
+
 	let l:preferredIncompatibles = {}
 	for l:incompatible in l:incompatibles
 	    if l:incompatible == a:dbtKey
@@ -500,8 +505,14 @@ echo "**** before: " . string(l:incompatibles)
 		let l:preferredIncompatibles[l:incompatible] = 1
 	    endif
 	endfor
-	let l:incompatibles = keys( l:preferredIncompatibles )
-echo "**** after : " . string(l:incompatibles)
+	if l:key == a:dbtKey
+	    call s:RemoveKey( s:incompatibles, a:dbtKey )
+	    for l:addedPreferredSetting in a:preferredSettings
+		let s:incompatibles[l:addedPreferredSetting] = keys( l:preferredIncompatibles )
+	    endfor
+	else
+	    let s:incompatibles[l:key] = keys( l:preferredIncompatibles )
+	endif
     endfor
 endfunction
 
