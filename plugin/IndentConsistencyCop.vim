@@ -463,6 +463,9 @@ function! s:ApplyPrecedences() " {{{1
 	    let l:spc = s:GetKeyedValue( s:occurrences, l:spcKey )
 	    let l:sts = s:GetKeyedValue( s:occurrences, l:stsKey )
 	    if l:spc == 0 && l:sts == 0
+		if s:GetKeyedValue( s:occurrences, 'tab' ) > 0
+		    call s:IncreaseKeyedBy( s:occurrences, l:stsKey, l:dbt )
+		endif
 		call s:IncreaseKeyedBy( s:occurrences, l:spcKey, l:dbt )
 	    else
 		if l:spc > 0
@@ -477,7 +480,9 @@ function! s:ApplyPrecedences() " {{{1
 
 	let l:indentCnt -= 1
     endwhile
+endfunction
 
+function! s:RemoveSts8()
     " The occurrence 'sts8' has only been collected because of the parallelism
     " with 'spc8'. Effectively, 'sts8' is the same as 'tab', and is removed. 
     if s:GetKeyedValue( s:occurrences, 'sts8' ) != s:GetKeyedValue( s:occurrences, 'tab' )
@@ -587,22 +592,31 @@ function! s:GetIncompatiblesForIndentSetting( indentSetting ) " {{{2
     if l:setting == 'tab'
 	" 'sts' could be compatible with 'tab'. 
 	" softtabstops must be inspected; doubtful contains indents that are too small (<8) for 'tab'. 
-"****D echo '**** Inspecting for "tab": ' . string( keys( s:softtabstops ) )
 	call s:InspectForCompatibles( l:incompatibles, keys( s:softtabstops ), a:indentSetting, 'sts' )
     elseif l:setting == 'sts'
 	" 'tab' could be compatible with 'sts' if the multipliers are right; tabstops must be inspected. 
-"****D echo '**** Inspecting for "sts": ' . string( keys( s:tabstops ))
 	call s:InspectForCompatibles( l:incompatibles, keys( s:tabstops ), a:indentSetting, 'tab' )
 	" 'spc' is incompatible
+	" 'dbt' could be compatible with 'sts' if the multipliers are right; doubtful must be inspected. 
+	call s:InspectForCompatibles( l:incompatibles, keys( s:doubtful ), a:indentSetting, 'dbt' )
 	" Other 'sts' multipliers could be compatible; softtabstops and doubtful must be inspected. 
-"****D echo '**** Inspecting for "sts": ' . string( keys( s:softtabstops ) + keys( s:doubtful ))
 	call s:InspectForCompatibles( l:incompatibles, keys( s:softtabstops ) + keys( s:doubtful ), a:indentSetting, 'sts' )
     elseif l:setting == 'spc'
 	" 'tab' is incompatible. 
 	" 'sts' is incompatible. 
+	" 'dbt' could be compatible with 'spc' if the multipliers are right; doubtful must be inspected. 
+	call s:InspectForCompatibles( l:incompatibles, keys( s:doubtful ), a:indentSetting, 'dbt' )
 	" Other 'spc' multipliers could be compatible; spaces and doubtful must be inspected. 
-"****D echo '**** Inspecting for "spc": ' . string( keys( s:spaces ) + keys( s:doubtful ))
 	call s:InspectForCompatibles( l:incompatibles, keys( s:spaces ) + keys( s:doubtful ), a:indentSetting, 'spc' )
+    elseif l:setting == 'dbt'
+	" 'tab' could be compatible with 'dbt' if the multipliers are right; tabstops must be inspected. 
+	call s:InspectForCompatibles( l:incompatibles, keys( s:tabstops ), a:indentSetting, 'tab' )
+	" 'spc' could be compatible with 'dbt' if the multipliers are right; spaces and doubtful must be inspected. 
+	call s:InspectForCompatibles( l:incompatibles, keys( s:spaces ) + keys( s:doubtful ), a:indentSetting, 'spc' )
+	" 'sts' could be compatible with 'dbt' if the multipliers are right; softtabstops and doubtful must be inspected. 
+	call s:InspectForCompatibles( l:incompatibles, keys( s:softtabstops ) + keys( s:doubtful ), a:indentSetting, 'sts' )
+	" Other 'dbt' multipliers could be compatible; doubtful must be inspected. 
+	call s:InspectForCompatibles( l:incompatibles, keys( s:doubtful ), a:indentSetting, 'dbt' )
     elseif l:setting == 'bad'
 	" for bad, all are incompatible. 
     else
@@ -860,30 +874,30 @@ function! s:CheckBufferConsistency( startLineNum, endLineNum ) " {{{1
     " indents examined, because some indents can not unambiguously be assigned
     " to one indent setting. 
     
-"****D echo 'Tabstops:     ' . string( s:tabstops )
-"****D echo 'Spaces:       ' . string( s:spaces )
-"****D echo 'Softtabstops: ' . string( s:softtabstops )
-"****D echo 'Doubtful:     ' . string( s:doubtful )
-"****D echo 'Occurrences 1:' . string( s:occurrences )
-"****D echo 'Max. indent:  ' . s:indentMax
+echo 'Tabstops:     ' . string( s:tabstops )
+echo 'Spaces:       ' . string( s:spaces )
+echo 'Softtabstops: ' . string( s:softtabstops )
+echo 'Doubtful:     ' . string( s:doubtful )
+echo 'Occurrences 1:' . string( s:occurrences )
+echo 'Max. indent:  ' . s:indentMax
 
     if empty( s:occurrences )
 	return -1
     endif
 
-    call s:ApplyPrecedences()
+    """"!call s:ApplyPrecedences()
 
-"****D echo 'Occurrences 2:' . string( s:occurrences )
-"****D echo 'This is probably a ' . string( filter( copy( s:occurrences ), 'v:val == max( s:occurrences )') )
+echo 'Occurrences 2:' . string( s:occurrences )
+echo 'This is probably a ' . string( filter( copy( s:occurrences ), 'v:val == max( s:occurrences )') )
 
     " This dictionary contains the incompatible indent settings for each indent
     " setting. 
     let l:incompatibles = s:EvaluateIncompatibleIndentSettings() " Key: indent setting; value: list of indent settings. 
-"****D echo 'Incompatibles:' . string( l:incompatibles )
+echo 'Incompatibles:' . string( l:incompatibles )
 
     " The s:ratings dictionary contains the final rating, a combination of high indent settings occurrence and low incompatible occurrences. 
     call s:EvaluateOccurrenceAndIncompatibleIntoRating( l:incompatibles ) " Key: indent setting; value: rating number
-"****D echo 'ratings:     ' . string( s:ratings )
+echo 'ratings:     ' . string( s:ratings )
 
     call s:NormalizeRatings()
 "****D echo 'nrm. ratings:' . string( s:ratings )
