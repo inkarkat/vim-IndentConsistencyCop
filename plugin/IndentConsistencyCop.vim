@@ -447,21 +447,42 @@ function! s:ApplyPrecedences() " {{{1
 "* RETURN VALUES: 
 "   none
 "*******************************************************************************
+    " Space indents of up to 7 spaces can be either softtabstop or space-indent,
+    " and have been collected in the 'dbt n' keys so far. 
+    " If there is only either 'sts n' or 'spc n', the 'dbt n' value is moved to
+    " that key. If both exist, its value is added to both. If both are zero /
+    " non-existing, the 'dbt n' value is moved to 'sts n' if tabs are present,
+    " else to 'spc n'. (Without tabs as an indication of softtabstop, spaces take
+    " precedence over softtabstops.) 
     let l:indentCnt = 8
     while l:indentCnt > 0
 	let l:dbtKey = 'dbt' . l:indentCnt
 	let l:dbt = s:GetKeyedValue( s:occurrences, l:dbtKey )
 	if l:dbt > 0
-	    let l:preferredKey = s:ApplyPrecedence( l:dbtKey )
-	    call s:IncreaseKeyedBy( s:occurrences, l:preferredKey, s:GetKeyedValue( s:occurrences, l:dbtKey ) )
+	    let l:spcKey = 'spc' . l:indentCnt
+	    let l:stsKey = 'sts' . l:indentCnt
+	    let l:spc = s:GetKeyedValue( s:occurrences, l:spcKey )
+	    let l:sts = s:GetKeyedValue( s:occurrences, l:stsKey )
+	    if l:spc == 0 && l:sts == 0
+		if s:GetKeyedValue( s:occurrences, 'tab' ) > 0
+		    call s:IncreaseKeyedBy( s:occurrences, l:stsKey, l:dbt )
+		else
+		    call s:IncreaseKeyedBy( s:occurrences, l:spcKey, l:dbt )
+		endif
+	    else
+		if l:spc > 0
+		    call s:IncreaseKeyedBy( s:occurrences, l:spcKey, l:dbt )
+		endif
+		if l:sts > 0
+		    call s:IncreaseKeyedBy( s:occurrences, l:stsKey, l:dbt )
+		endif
+	    endif
 	    call s:RemoveKey( s:occurrences, l:dbtKey )
-echo 'ApplyPreferences: ' . l:dbtKey . ' becomes ' . l:preferredKey
 	endif
 
 	let l:indentCnt -= 1
     endwhile
-endfunction 
-
+endfunction
 
 function! s:ApplyPrecedence(indentSetting) " {{{1
 "*******************************************************************************
