@@ -698,7 +698,8 @@ function! s:EvaluateIncompatibleIndentSettings() " {{{2
 "*******************************************************************************
     let l:incompatibles = {}
     for l:indentSetting in keys( s:occurrences )
-	let l:incompatibles[ s:ApplyPrecedence( l:indentSetting ) ] = map( s:GetIncompatiblesForIndentSetting( l:indentSetting ), 's:ApplyPrecedence(v:val)' )
+	"""""R:let l:incompatibles[ s:ApplyPrecedence( l:indentSetting ) ] = map( s:GetIncompatiblesForIndentSetting( l:indentSetting ), 's:ApplyPrecedence(v:val)' )
+	let l:incompatibles[ l:indentSetting ] = s:GetIncompatiblesForIndentSetting( l:indentSetting )
     endfor
     return l:incompatibles
 endfunction
