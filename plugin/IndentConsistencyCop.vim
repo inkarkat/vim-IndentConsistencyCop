@@ -267,7 +267,38 @@ function! s:RemoveKey( dict, key ) " {{{2
 endfunction
 
 function! s:RemoveFromList( list, value ) " {{{2
-    call filter( a:list, 'v:val != "' . a:value . '"' )
+    return filter( a:list, 'v:val != "' . a:value . '"' )
+endfunction
+
+function! s:UniqueReplaceElementWithListContents( list, searchElement, substitutionList ) " {{{2
+"*******************************************************************************
+"* PURPOSE:
+"   Each a:searchElement in a:list is replaced with the elements of
+"   a:substitutionList. Any duplicates which are then in a:list are removed (and
+"   the order of elements gets shuffled), so only unique elements are finally
+"   contained in a:list. 
+"* ASSUMPTIONS / PRECONDITIONS:
+"   none
+"* EFFECTS / POSTCONDITIONS:
+"   none
+"* INPUTS:
+"   a:list		source list
+"   a:searchElement 	element of a:list to be replaced
+"   a:substitutionList	list of elements that replace a:searchElement
+"* RETURN VALUES: 
+"   Modifies a:list in-place, and also returns a:list. 
+"*******************************************************************************
+    let l:hash = {}
+    for l:element in a:list
+	if l:element == a:searchElement
+	    for l:substitutionElement in a:substitutionList
+		let l:hash[l:substitutionElement] = 1
+	    endfor
+	else
+	    let l:hash[l:element] = 1
+	endif
+    endfor
+    return keys( l:hash )
 endfunction
 " }}}2
 
@@ -433,13 +464,13 @@ function! s:EvaluateIndentsIntoOccurrences( dict, type ) " {{{1
     endfor
 endfunction
 
-function! s:ApplyPrecedences() " {{{1
+function! s:RemoveSts8() " {{{1
 "*******************************************************************************
 "* PURPOSE:
-"   Relates individual indent settings to others, thereby "stronger" indent
-"   settings take precedent over "weaker" ones. 
+"   The occurrence 'sts8' has only been collected because of the parallelism
+"   with 'spc8'. Effectively, 'sts8' is the same as 'tab', and is removed. 
 "* ASSUMPTIONS / PRECONDITIONS:
-"   s:occurrences contains consolidated indent occurrences. 
+"   s:occurrences contains raw indent occurrences. 
 "* EFFECTS / POSTCONDITIONS:
 "   Modifies s:occurrences. 
 "* INPUTS:
@@ -447,97 +478,54 @@ function! s:ApplyPrecedences() " {{{1
 "* RETURN VALUES: 
 "   none
 "*******************************************************************************
-    let l:indentCnt = 8
-    while l:indentCnt > 0
-	let l:dbtKey = 'dbt' . l:indentCnt
-	let l:settings = s:GetPrecedence( l:dbtKey )
-	call s:ApplyPrecedencesToOccurences( l:dbtKey, l:settings )
-	call s:ApplyPrecedencesToIncompatibles( l:dbtKey, l:settings )
-
-	let l:indentCnt -= 1
-    endwhile
-endfunction
-
-function! s:ApplyPrecedencesToOccurences( dbtKey, preferredSettings ) " {{{1
-    let l:dbt = s:GetKeyedValue( s:occurrences, a:dbtKey )
-    for l:setting in a:preferredSettings
-	call s:IncreaseKeyedBy( s:occurrences, l:setting, l:dbt )
-	call s:RemoveKey( s:occurrences, a:dbtKey )
-    endfor
-endfunction
-
-function! s:ApplyPrecedencesToIncompatibles( dbtKey, preferredSettings ) " {{{1
-"*******************************************************************************
-"* PURPOSE:
-"	? What the procedure does (not how).
-"* ASSUMPTIONS / PRECONDITIONS:
-"	? List of any external variable, control, or other element whose state affects this procedure.
-"* EFFECTS / POSTCONDITIONS:
-" Modifies s:incompatibles
-"* INPUTS:
-" Key: indent setting; value: list of indent settings. 
-"* RETURN VALUES: 
-"	? Explanation of the value returned.
-"*******************************************************************************
-    if empty( a:preferredSettings )
-	return
+    if s:GetKeyedValue( s:occurrences, 'sts8' ) != s:GetKeyedValue( s:occurrences, 'tab' )
+	throw 'assert sts8 == tab'
     endif
-
-    " Map all values to the preferred settings; remove any duplicates. 
-    for l:key in keys( s:incompatibles )
-	let l:preferredIncompatibles = {}
-	for l:incompatible in s:incompatibles[l:key]
-	    if l:incompatible == a:dbtKey
-		for l:addedPreferredSetting in a:preferredSettings
-		    let l:preferredIncompatibles[l:addedPreferredSetting] = 1
-		endfor
-	    else
-		let l:preferredIncompatibles[l:incompatible] = 1
-	    endif
-	endfor
-	let s:incompatibles[l:key] = keys( l:preferredIncompatibles )
-    endfor
+    call s:RemoveKey( s:occurrences, 'sts8' )
 endfunction
 
 function! s:GetPrecedence(indentSetting) " {{{1
 "*******************************************************************************
 "* PURPOSE:
-"   Relates individual indent settings to others, thereby "stronger" indent
-"   settings take precedent over "weaker" ones. 
+"   Converts doubtful indent settings to actual indent settings; the other
+"   actual occurences influence which indent setting(s) are chosen. 
+"
+"   Space indents of up to 7 spaces can be either softtabstop or space-indent,
+"   and have been collected in the 'dbt n' keys so far. 
+"   If there is only either 'sts n' or 'spc n', the 'dbt n' value is converted to
+"   that key. 
+"   If both exist, it is converted to both 'sts n' and 'spc n'. 
+"   If both are zero / non-existing, the 'dbt n' value is converted to 'sts n'
+"   if tabs are present, else to 'spc n'. (Without tabs as an indication of
+"   softtabstop, spaces take precedence over softtabstops.) 
 "* ASSUMPTIONS / PRECONDITIONS:
-"   s:occurrences contains consolidated indent occurrences. 
+"   s:occurrences contains consolidated indent occurrences, and has not yet had
+"   the precedences applied (via s:ApplyPrecedencesToOccurences()). 
 "* EFFECTS / POSTCONDITIONS:
-"   TODO
-"   In s:occurrences, moves doubtful indent settings counts to the preferred
-"   indent settings, and removed the doubtful indent setting. 
-"* INPUTS:
 "   none
+"* INPUTS:
+"   a:indentSetting indent setting to be converted. 
 "* RETURN VALUES: 
-"   Empty list if doubtful indent setting doesn't occur. 
-"   One-element list of the original indent setting if it is not doubtful. 
-"   For doubtful indent settings, list of indent settings; only 'spc' and 'sts'
-"   are contained, no 'dbt' any more.  
+"   (Empty list if the passed doubtful indent setting doesn't occur.) 
+"   One-element list of the original indent setting if it is not doubtful
+"   (pass-through to returned list). 
+"   For doubtful indent settings, a list of indent settings; only 'spc' and
+"   'sts' are contained, no 'dbt' is returned. 
 "*******************************************************************************
-    " Space indents of up to 7 spaces can be either softtabstop or space-indent,
-    " and have been collected in the 'dbt n' keys so far. 
-    " If there is only either 'sts n' or 'spc n', the 'dbt n' value is moved to
-    " that key. If both exist, its value is added to both. If both are zero /
-    " non-existing, the 'dbt n' value is moved to 'sts n' if tabs are present,
-    " else to 'spc n'. (Without tabs as an indication of softtabstop, spaces take
-    " precedence over softtabstops.) 
     if s:GetSettingFromIndentSetting( a:indentSetting ) != 'dbt'
-	return [a:indentSetting]
+	return [a:indentSetting]    " Pass-through. 
     endif
-    let l:settings = []
     let l:multiplier = s:GetMultiplierFromIndentSetting( a:indentSetting )
 
     if s:GetKeyedValue( s:occurrences, a:indentSetting ) <= 0
-	return []
+	return []   " Bad query. 
     endif
+
     let l:spcKey = 'spc' . l:multiplier
     let l:stsKey = 'sts' . l:multiplier
     let l:spc = s:GetKeyedValue( s:occurrences, l:spcKey )
     let l:sts = s:GetKeyedValue( s:occurrences, l:stsKey )
+    let l:settings = []
     if l:spc == 0 && l:sts == 0
 	if s:GetKeyedValue( s:occurrences, 'tab' ) > 0
 	    let l:settings =  [l:stsKey]
@@ -555,15 +543,84 @@ function! s:GetPrecedence(indentSetting) " {{{1
     return l:settings
 endfunction
 
-function! s:RemoveSts8()
-    " The occurrence 'sts8' has only been collected because of the parallelism
-    " with 'spc8'. Effectively, 'sts8' is the same as 'tab', and is removed. 
-    if s:GetKeyedValue( s:occurrences, 'sts8' ) != s:GetKeyedValue( s:occurrences, 'tab' )
-	throw 'assert sts8 == tab'
-    endif
-    call s:RemoveKey( s:occurrences, 'sts8' )
+function! s:ApplyPrecedences() " {{{1
+"*******************************************************************************
+"* PURPOSE:
+"   Replaces doubtful indent settings in the global occurences and list of
+"   incompatible indent settings with the preferred actual indent setting(s). 
+"* ASSUMPTIONS / PRECONDITIONS:
+"   s:occurrences contains consolidated indent occurrences, and has not yet had
+"   the precedences applied (via s:ApplyPrecedencesToOccurences()). 
+"* EFFECTS / POSTCONDITIONS:
+"   Modifies s:occurrences; you cannot call s:GetPrecedence() any more!
+"   Modifies s:incompatibles. 
+"* INPUTS:
+"   none
+"* RETURN VALUES: 
+"   none
+"*******************************************************************************
+    let l:indentCnt = 8
+    while l:indentCnt > 0
+	let l:dbtKey = 'dbt' . l:indentCnt
+	let l:settings = s:GetPrecedence( l:dbtKey )
+	call s:ApplyPrecedencesToOccurences( l:dbtKey, l:settings )
+	call s:ApplyPrecedencesToIncompatibles( l:dbtKey, l:settings )
+
+	let l:indentCnt -= 1
+    endwhile
 endfunction
 
+function! s:ApplyPrecedencesToOccurences( dbtKey, preferredSettings ) " {{{1
+"*******************************************************************************
+"* PURPOSE:
+"   Replaces a doubtful indent setting and moves the indent setting count with
+"   them. 
+"* ASSUMPTIONS / PRECONDITIONS:
+"   s:occurrences contains consolidated indent occurrences, and has not yet had
+"   the precedences applied (via s:ApplyPrecedencesToOccurences()). 
+"* EFFECTS / POSTCONDITIONS:
+"   In s:occurrences, moves doubtful indent settings counts to the preferred
+"   indent setting(s), and removes the doubtful indent setting. 
+"* INPUTS:
+"   a:dbtKey    doubtful indent setting to be replaced
+"   a:preferredSettings	list of preferred settings to which the count will be
+"   moved
+"* RETURN VALUES: 
+"   none
+"*******************************************************************************
+    let l:dbt = s:GetKeyedValue( s:occurrences, a:dbtKey )
+    for l:setting in a:preferredSettings
+	call s:IncreaseKeyedBy( s:occurrences, l:setting, l:dbt )
+	call s:RemoveKey( s:occurrences, a:dbtKey )
+    endfor
+endfunction
+
+function! s:ApplyPrecedencesToIncompatibles( dbtKey, preferredSettings ) " {{{1
+"*******************************************************************************
+"* PURPOSE:
+"   Replaces a doubtful indent setting in the list of incompatibles with the
+"   preferred indent setting(s). 
+"* ASSUMPTIONS / PRECONDITIONS:
+"   s:incompatibles contains map of indent settings to their respective
+"   incompatible settings. Key: indent setting; value: list of indent settings. 
+"* EFFECTS / POSTCONDITIONS:
+"   Modifies values of s:incompatibles. 
+"* INPUTS:
+"   a:dbtKey    doubtful indent setting to be replaced
+"   a:preferredSettings	list of preferred settings to which the count will be
+"   moved
+"* RETURN VALUES: 
+"   none
+"*******************************************************************************
+    if empty( a:preferredSettings )
+	return
+    endif
+
+    " Map all values to the preferred settings; remove any duplicates. 
+    for l:key in keys( s:incompatibles )
+	let s:incompatibles[l:key] = s:UniqueReplaceElementWithListContents( s:incompatibles[l:key], a:dbtKey, a:preferredSettings )
+    endfor
+endfunction
 
 "- Check for compatible indent settings ----------------------------------{{{1
 function! s:IsIndentProduceableWithIndentSetting( indent, indentSetting ) " {{{2
