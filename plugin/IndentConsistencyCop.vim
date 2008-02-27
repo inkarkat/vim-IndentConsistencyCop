@@ -1004,7 +1004,7 @@ echo 'Ratings:      ' . string( s:ratings )
     call filter( s:softtabstops, 0 )
     call filter( s:doubtful, 0 )
     " Do not free s:indentMax, it is still accessed by s:IsEnoughIndentForSolidAssessment(). 
-    call filter( s:occurrences, 0 )
+    call filter( s:incompatibles, 0 )
 
     let l:isConsistent = (count( s:ratings, 100 ) == 1)
     return l:isConsistent
