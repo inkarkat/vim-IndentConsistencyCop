@@ -79,10 +79,6 @@
 "   correct lines. 
 "
 " LIMITATIONS: {{{1
-" - 'softtabstop' is only recognized correctly when a correct combination of
-"   tabs and spaces is actually used. If a file only has small indents,
-"   resulting in only spaces or tabs (but not the combination), the indent
-"   setting is recognized as a combination of 'tab' and 'spc n'. 
 " - Highlighting of inconsistent and bad indents is static; i.e. when modifying
 "   the buffer / inserting or deleting lines, the highlighting will be wrong /
 "   out of place. You need to re-run the IndentConsistencyCop to fix the
@@ -110,12 +106,33 @@
 "   of 'tab'), by specifying the correct setting in the :IndentConsistencyCop
 "   call. (Overriding is already offered in the cop's dialog.) 
 "
-" Copyright: (C) 2006-2007 by Ingo Karkat
+" Copyright: (C) 2006-2008 by Ingo Karkat
 "   The VIM LICENSE applies to this script; see ':help copyright'. 
 "
 " Maintainer:	Ingo Karkat <ingo@karkat.de>
 "
 " REVISION	DATE		REMARKS {{{1
+"   1.10.011	28-Feb-2008	Improved the algorithm so that 'softtabstop' is
+"				recognized even when a file only has small
+"				indents with either (up to 7) spaces or tabs,
+"				but no tab + space combination. Beforehand, the
+"				s:ApplyPrecedences() was applied too early; the
+"				s:EvaluateIncompatibleIndentSettings() could not
+"				take doubtful indent settings into account. In
+"				addition, s:ApplyPrecedences() always preferred
+"				'spc' when neither 'spc' nor 'sts' indents
+"				existed. Now, it choses 'sts' when 'tab' does
+"				exist, because tabs indicate the presence of
+"				softtabstops. Precedences are applied after the
+"				incompatible indent settings have been
+"				determined, and must now be applied to both
+"				s:occurrences and s:incompatibles. For this
+"				purpose, s:ApplyPrecedences() has been split
+"				into s:ApplyPrecedencesToOccurences() and
+"				s:ApplyPrecedencesToIncompatibles(). The latter
+"				thing is a little bit complex, because doubtful
+"				indent settings can be converted to one or two
+"				preferred settings. 
 "   1.00.010	07-Nov-2007	BF: In an inconsistent and large buffer/range
 "				that has only one or a few small inconsistencies
 "				and one dominant (i.e. 99%) setting, the text
@@ -709,7 +726,8 @@ function! s:GetIncompatiblesForIndentSetting( indentSetting ) " {{{2
 "* EFFECTS / POSTCONDITIONS:
 "	? List of the procedure's effect on each external variable, control, or other element.
 "* INPUTS:
-"	? Explanation of each argument that isn't obvious.
+"   a:indentSetting (preferred) indent setting for which the incompatible
+"	settings are calculated. 
 "* RETURN VALUES: 
 "    list of indent settings.
 "*******************************************************************************
@@ -738,15 +756,6 @@ function! s:GetIncompatiblesForIndentSetting( indentSetting ) " {{{2
 	call s:InspectForCompatibles( l:incompatibles, keys( s:doubtful ), a:indentSetting, 'dbt' )
 	" Other 'spc' multipliers could be compatible; spaces and doubtful must be inspected. 
 	call s:InspectForCompatibles( l:incompatibles, keys( s:spaces ) + keys( s:doubtful ), a:indentSetting, 'spc' )
-    elseif l:setting == 'dbt'
-	" 'tab' could be compatible with 'dbt' if the multipliers are right; tabstops must be inspected. 
-	call s:InspectForCompatibles( l:incompatibles, keys( s:tabstops ), a:indentSetting, 'tab' )
-	" 'spc' could be compatible with 'dbt' if the multipliers are right; spaces and doubtful must be inspected. 
-	call s:InspectForCompatibles( l:incompatibles, keys( s:spaces ) + keys( s:doubtful ), a:indentSetting, 'spc' )
-	" 'sts' could be compatible with 'dbt' if the multipliers are right; softtabstops and doubtful must be inspected. 
-	call s:InspectForCompatibles( l:incompatibles, keys( s:softtabstops ) + keys( s:doubtful ), a:indentSetting, 'sts' )
-	" Other 'dbt' multipliers could be compatible; doubtful must be inspected. 
-	call s:InspectForCompatibles( l:incompatibles, keys( s:doubtful ), a:indentSetting, 'dbt' )
     elseif l:setting == 'bad'
 	" for bad, all are incompatible. 
     else
@@ -764,14 +773,31 @@ function! s:EvaluateIncompatibleIndentSettings() " {{{2
 "   s:softtabstops and s:doubtful are 12 and 24 (but not 6, 18)). To do this
 "   evaluation, the actual indents in s:spaces, s:softtabstops and s:doubtful
 "   must be inspected. 
+"   The list of incompatible indent settings (returned values) contains doubtful
+"   settings (which still need to be converted), because for the elimination of
+"   incompatibles, different indent collections must be inspected for doubtful
+"   vs. 'spc' / 'sts' settings. To build up the correct initial list of
+"   incompatibles, s:occurences must contain the raw settings, i.e. including
+"   doubtful ones. 
+"   In contrast, the key indent setting is already a preferred setting; it
+"   cannot be converted later on because for the determination of incompatible
+"   settings, the actual setting must be known.
+"   Example: Occurrences of 'tab', 'dbt2', 'spc8'
+"	'tab': ['dbt2', 'spc8'], 'dbt2': [], 'spc8': ['tab', 'dbt2']
+"   would lead to wrong result 'consistent sts2' ('sts' is preferred because
+"   'tab' exists), even though 'sts2' is inconsistent with 'spc8'. 
+"   Correct evaluation is:
+"	'tab': ['dbt2', 'spc8'], 'sts2': ['spc8'], 'spc8': ['tab', 'dbt2']
+"   'sts' is incompatible with 'spc', 'dbt' would be compatible. 
+"
 "* ASSUMPTIONS / PRECONDITIONS:
 "   s:occurrences dictionary; key: indent setting; value: number of
 "	lines that have that indent setting
+"   s:occurences still contains the raw settings, i.e. including doubtful ones. 
 "* EFFECTS / POSTCONDITIONS:
-"	? List of the procedure's effect on each external variable, control, or other element.
+"   none
 "* INPUTS:
-"	? Explanation of each argument that isn't obvious.; value: list of
-"	indent settings. 
+"   none
 "* RETURN VALUES: 
 "    Key: indent setting; value: list of indent settings.
 "*******************************************************************************
