@@ -533,9 +533,10 @@ function! s:GetPrecedence(indentSetting) " {{{1
 "* INPUTS:
 "   none
 "* RETURN VALUES: 
-"   Empty list if indent setting hasn't changed or doesn't occur.
-"   List of indent settings; only 'spc' and 'sts' are contained, no 'dbt' any
-"   more.  
+"   Empty list if doubtful indent setting doesn't occur. 
+"   One-element list of the original indent setting if it is not doubtful. 
+"   For doubtful indent settings, list of indent settings; only 'spc' and 'sts'
+"   are contained, no 'dbt' any more.  
 "*******************************************************************************
     " Space indents of up to 7 spaces can be either softtabstop or space-indent,
     " and have been collected in the 'dbt n' keys so far. 
@@ -545,7 +546,7 @@ function! s:GetPrecedence(indentSetting) " {{{1
     " else to 'spc n'. (Without tabs as an indication of softtabstop, spaces take
     " precedence over softtabstops.) 
     if s:GetSettingFromIndentSetting( a:indentSetting ) != 'dbt'
-	return []
+	return [a:indentSetting]
     endif
     let l:settings = []
     let l:multiplier = s:GetMultiplierFromIndentSetting( a:indentSetting )
@@ -739,7 +740,9 @@ function! s:EvaluateIncompatibleIndentSettings() " {{{2
 "*******************************************************************************
     let l:incompatibles = {}
     for l:indentSetting in keys( s:occurrences )
-	let l:incompatibles[ l:indentSetting ] = s:GetIncompatiblesForIndentSetting( l:indentSetting )
+	for l:preferredSetting in s:GetPrecedence( l:indentSetting )
+	    let l:incompatibles[ l:preferredSetting ] = s:GetIncompatiblesForIndentSetting( l:preferredSetting )
+	endfor
     endfor
     return l:incompatibles
 endfunction
