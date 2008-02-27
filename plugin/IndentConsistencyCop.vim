@@ -466,17 +466,6 @@ function! s:ApplyPrecedencesToOccurences( dbtKey, preferredSettings ) " {{{1
     endfor
 endfunction
 
-function! s:MergeList( list1, list2 )
-    let l:hash = {}
-    for l:item1 in a:list1
-	let l:hash[l:item1] = 1
-    endfor
-    for l:item2 in a:list2
-	let l:hash[l:item2] = 1
-    endfor
-    return keys( l:hash )
-endfunction
-
 function! s:ApplyPrecedencesToIncompatibles( dbtKey, preferredSettings ) " {{{1
 "*******************************************************************************
 "* PURPOSE:
@@ -494,9 +483,7 @@ function! s:ApplyPrecedencesToIncompatibles( dbtKey, preferredSettings ) " {{{1
 	return
     endif
 
-    " First map all values to the preferred Settings remove any duplicates. 
-    " If the key is a doubtful indent setting(s), these must be merged into the
-    " preferred settings keys; the values must be merged and duplicates removed again. 
+    " Map all values to the preferred settings; remove any duplicates. 
     for l:key in keys( s:incompatibles )
 	let l:preferredIncompatibles = {}
 	for l:incompatible in s:incompatibles[l:key]
@@ -510,13 +497,6 @@ function! s:ApplyPrecedencesToIncompatibles( dbtKey, preferredSettings ) " {{{1
 	endfor
 	let s:incompatibles[l:key] = keys( l:preferredIncompatibles )
     endfor
-
-    if has_key( s:incompatibles, a:dbtKey )
-	for l:addedPreferredSetting in a:preferredSettings
-	    let s:incompatibles[l:addedPreferredSetting] = s:MergeList( s:incompatibles[a:dbtKey], get( s:incompatibles, l:addedPreferredSetting, [] ) )
-	endfor
-	call s:RemoveKey( s:incompatibles, a:dbtKey )
-    endif
 endfunction
 
 function! s:GetPrecedence(indentSetting) " {{{1
