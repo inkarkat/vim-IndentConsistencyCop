@@ -112,6 +112,8 @@
 " Maintainer:	Ingo Karkat <ingo@karkat.de>
 "
 " REVISION	DATE		REMARKS {{{1
+"   1.10.012	13-Jun-2008	Added -bar to all commands that do not take any
+"				arguments, so that these can be chained together. 
 "   1.10.011	28-Feb-2008	Improved the algorithm so that 'softtabstop' is
 "				recognized even when a file only has small
 "				indents with either (up to 7) spaces or tabs,
@@ -1901,17 +1903,17 @@ endfunction
 "- commands --------------------------------------------------------------{{{1
 " Ensure indent consistency within the range / buffer, and - if achieved -, also
 " check consistency with buffer indent settings. 
-command! -range=% -nargs=0 IndentConsistencyCop call <SID>IndentConsistencyCop( <line1>, <line2>, 1 )
+command! -bar -range=% -nargs=0 IndentConsistencyCop call <SID>IndentConsistencyCop( <line1>, <line2>, 1 )
 
 " Remove the highlighting of inconsistent lines and restore the normal view for
 " this buffer. 
-command! -nargs=0 IndentConsistencyCopOff call <SID>ClearHighlighting()
+command! -bar -nargs=0 IndentConsistencyCopOff call <SID>ClearHighlighting()
 
 " Only check indent consistency within range / buffer. Don't check the
 " consistency with buffer indent settings. Prefer this command to
 " IndentConsistencyCop if you don't want your buffer indent settings
 " changed, or if you only want to check a limited range of the buffer that you
 " know does not conform to the buffer indent settings. 
-command! -range=% -nargs=0 IndentRangeConsistencyCop call <SID>IndentConsistencyCop( <line1>, <line2>, 0 )
+command! -bar -range=% -nargs=0 IndentRangeConsistencyCop call <SID>IndentConsistencyCop( <line1>, <line2>, 0 )
 
 " vim: set sts=4 sw=4 noexpandtab ff=unix fdm=marker :
