@@ -112,6 +112,13 @@
 " Maintainer:	Ingo Karkat <ingo@karkat.de>
 "
 " REVISION	DATE		REMARKS {{{1
+"   1.20.013	07-Jul-2008	Also check consistency of buffer settings if the
+"				buffer/range does not contain indented text.
+"				Inconsistent indent settings can then be
+"				corrected with a queried setting. 
+"				Testcase: IndentBufferConsistencyCop80.txt
+"				BF: Clear previous highlighting if buffer/range
+"				now does not contain indented text. 
 "   1.10.012	13-Jun-2008	Added -bar to all commands that do not take any
 "				arguments, so that these can be chained together. 
 "   1.10.011	28-Feb-2008	Improved the algorithm so that 'softtabstop' is
@@ -1419,8 +1426,56 @@ function! s:GetInsufficientIndentUserMessage() " {{{2
     endif
 endfunction
 " }}}2
+" }}}1
 
-function! s:IndentBufferConsistencyCop( startLineNum, endLineNum, scopeUserString, consistentIndentSetting, isBufferSettingsCheck ) " {{{1
+"- buffer consistency cops ------------------------------------------------{{{1
+function! s:UnindentedBufferConsistencyCop( startLineNum, endLineNum, scopeUserString, isBufferSettingsCheck ) " {{{2
+"*******************************************************************************
+"* PURPOSE:
+"   Reports that the buffer does not contain indentation and (if desired)
+"   triggers the consistency check with the buffer indent settings, thereby
+"   interacting with the user. 
+"* ASSUMPTIONS / PRECONDITIONS:
+"	? List of any external variable, control, or other element whose state affects this procedure.
+"* EFFECTS / POSTCONDITIONS:
+"	? List of the procedure's effect on each external variable, control, or other element.
+"* INPUTS:
+"   a:startLineNum, a:endLineNum: range in the current buffer that was to be
+"	checked. 
+"   a:scopeUserString: either 'range' or 'buffer'
+"   a:isBufferSettingsCheck: flag whether consistency with the buffer
+"	settings should also be checked. 
+"* RETURN VALUES: 
+"   none
+"*******************************************************************************
+    let l:userMessage = ''
+    if a:isBufferSettingsCheck
+	let l:userMessage = s:CheckBufferSettingsConsistency()
+	if ! empty( l:userMessage )
+	    let l:userMessage = 'This ' . a:scopeUserString . ' does not contain indented text. ' . l:userMessage
+	    let l:userMessage .= "\nHow do you want to deal with the inconsistency?"
+	    let l:actionNum = confirm( l:userMessage, "&Ignore\n&Correct setting..." )
+	    if l:actionNum <= 1
+		call s:PrintBufferSettings( 'The buffer settings remain inconsistent: ' )
+	    elseif l:actionNum == 2
+		let l:chosenIndentSetting = s:QueryIndentSetting()
+		if ! empty( l:chosenIndentSetting )
+		    call s:MakeBufferSettingsConsistentWith( l:chosenIndentSetting )
+		    call s:PrintBufferSettings( 'The buffer settings have been changed: ' )
+		else
+		    call s:PrintBufferSettings( 'The buffer settings remain inconsistent: ' )
+		endif
+	    else
+		throw 'assert false'
+	    endif
+	endif
+    endif
+    if empty( l:userMessage )
+	call s:EchoUserMessage( 'This ' . a:scopeUserString . ' does not contain indented text. ' )
+    endif
+endfunction
+" }}}2
+function! s:IndentBufferConsistencyCop( startLineNum, endLineNum, scopeUserString, consistentIndentSetting, isBufferSettingsCheck ) " {{{2
 "*******************************************************************************
 "* PURPOSE:
 "   Reports buffer consistency and (if desired) triggers the consistency check
@@ -1457,6 +1512,8 @@ function! s:IndentBufferConsistencyCop( startLineNum, endLineNum, scopeUserStrin
 		let l:chosenIndentSetting = s:QueryIndentSetting()
 		if ! empty( l:chosenIndentSetting )
 		    call s:HighlightInconsistentIndents( a:startLineNum, a:endLineNum, l:chosenIndentSetting )
+		else
+		    call s:PrintBufferSettings( 'The buffer settings remain inconsistent: ' )
 		endif
 	    else
 		throw 'assert false'
@@ -1467,8 +1524,8 @@ function! s:IndentBufferConsistencyCop( startLineNum, endLineNum, scopeUserStrin
 	call s:EchoUserMessage( 'This ' . a:scopeUserString . " uses '" . s:IndentSettingToUserString( a:consistentIndentSetting ) . "' consistently. " )
     endif
 endfunction
+" }}}2
 " }}}1
-
 
 "- highlight functions-----------------------------------------------------{{{1
 function! s:IsLineCorrect( lineNum, correctIndentSetting ) " {{{2
@@ -1867,7 +1924,8 @@ function! s:IndentConsistencyCop( startLineNum, endLineNum, isBufferSettingsChec
     let l:isConsistent = s:CheckBufferConsistency( a:startLineNum, a:endLineNum )
 
     if l:isConsistent == -1
-	call s:EchoUserMessage( 'This ' . l:scopeUserString . ' does not contain indented text. ' )
+	call s:ClearHighlighting()
+	call s:UnindentedBufferConsistencyCop( a:startLineNum, a:endLineNum, l:scopeUserString, a:isBufferSettingsCheck )
     elseif l:isConsistent == 0
 	if a:isBufferSettingsCheck && s:IsBufferConsistentWithBufferSettings( a:startLineNum, a:endLineNum )
 	    call s:ClearHighlighting()
