@@ -1467,7 +1467,7 @@ function! s:UnindentedBufferConsistencyCop( startLineNum, endLineNum, isEntireBu
 		let l:chosenIndentSetting = s:QueryIndentSetting()
 		if ! empty( l:chosenIndentSetting )
 		    call s:MakeBufferSettingsConsistentWith( l:chosenIndentSetting )
-		    call s:SetConsistencyWithBufferSettingsResult( a:isEntireBuffer, 1 )
+		    call s:SetConsistencyWithBufferSettingsResult( a:isEntireBuffer, 1 )    " We trust that it's been made consistent. 
 		    call s:SetBufferSettingsConsistencyResult( 1 )
 		    call s:PrintBufferSettings( 'The buffer settings have been changed: ' )
 		else
@@ -1517,7 +1517,7 @@ function! s:IndentBufferConsistencyCop( startLineNum, endLineNum, isEntireBuffer
 		call s:PrintBufferSettings( 'The buffer settings remain inconsistent: ' )
 	    elseif l:actionNum == 2
 		call s:MakeBufferSettingsConsistentWith( a:consistentIndentSetting )
-		call s:SetConsistencyWithBufferSettingsResult( a:isEntireBuffer, 1 )
+		call s:SetConsistencyWithBufferSettingsResult( a:isEntireBuffer, 1 )	" We trust that it's been made consistent. 
 		call s:SetBufferSettingsConsistencyResult( 1 )
 		call s:PrintBufferSettings( 'The buffer settings have been changed: ' )
 	    elseif l:actionNum == 3
