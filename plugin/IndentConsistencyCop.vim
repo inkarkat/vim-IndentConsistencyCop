@@ -1468,6 +1468,7 @@ function! s:UnindentedBufferConsistencyCop( startLineNum, endLineNum, isEntireBu
 		if ! empty( l:chosenIndentSetting )
 		    call s:MakeBufferSettingsConsistentWith( l:chosenIndentSetting )
 		    call s:SetConsistencyWithBufferSettingsResult( a:isEntireBuffer, 1 )
+		    call s:SetBufferSettingsConsistencyResult( 1 )
 		    call s:PrintBufferSettings( 'The buffer settings have been changed: ' )
 		else
 		    call s:PrintBufferSettings( 'The buffer settings remain inconsistent: ' )
@@ -1517,6 +1518,7 @@ function! s:IndentBufferConsistencyCop( startLineNum, endLineNum, isEntireBuffer
 	    elseif l:actionNum == 2
 		call s:MakeBufferSettingsConsistentWith( a:consistentIndentSetting )
 		call s:SetConsistencyWithBufferSettingsResult( a:isEntireBuffer, 1 )
+		call s:SetBufferSettingsConsistencyResult( 1 )
 		call s:PrintBufferSettings( 'The buffer settings have been changed: ' )
 	    elseif l:actionNum == 3
 		let l:chosenIndentSetting = s:QueryIndentSetting()
@@ -1793,17 +1795,17 @@ function! s:InitResults()
     endif
 endfunction
 
+function! s:SetBufferSettingsConsistencyResult( isConsistent )
+    call s:InitResults()
+    let b:indentconsistencycop_result.isBufferSettingsConsistent = a:isConsistent
+endfunction
+
 function! s:SetConsistencyWithBufferSettingsResult( isEntireBuffer, isConsistent )
     call s:InitResults()
 
     if a:isEntireBuffer || (! a:isConsistent && s:IsEnoughIndentForSolidAssessment())
 	let b:indentconsistencycop_result.isConsistentWithBufferSettings = a:isConsistent
     endif
-endfunction
-
-function! s:SetBufferSettingsConsistencyResult( isConsistent )
-    call s:InitResults()
-    let b:indentconsistencycop_result.isBufferSettingsConsistent = a:isConsistent
 endfunction
 
 function! s:SetConsistencyResult( isEntireBuffer, isConsistent )
@@ -1969,6 +1971,7 @@ function! s:IndentConsistencyCop( startLineNum, endLineNum, isBufferSettingsChec
     let s:ratings = {}
     let l:isConsistent = s:CheckBufferConsistency( a:startLineNum, a:endLineNum )
     call s:SetConsistencyResult( l:isEntireBuffer, l:isConsistent )
+    call s:SetBufferSettingsConsistencyResult( s:IsBufferSettingsConsistent() )
 
     if l:isConsistent == -1
 	call s:ClearHighlighting()
