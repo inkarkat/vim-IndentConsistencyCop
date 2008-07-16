@@ -88,9 +88,12 @@
 "   range checks.) 
 "
 "	b:indentconsistencycop_result.indentSetting
-"   String representing the actual indent settings. One of 'tabN', 'spcN', 'stsN'
-"   (where N is the indent multiplier), 'none' (meaning no indent found in
-"   buffer), 'XXX' (meaning inconsistent indent settings). 
+"   String representing the actual indent settings. Consistent indent settings
+"   are represented by 'tabN', 'spcN', 'stsN' (where N is the indent
+"   multiplier) or 'none' (meaning no indent found in buffer). Completely
+"   inconsistent indent settings are shown as 'XXX'; a setting which is almost
+"   consistent, with only some bad mix of spaces and tabs, is represented by
+"   'badtabN' or 'badstsN'. (There cannot be a 'badspcN'.)
 "
 "	b:indentconsistencycop_result.isConsistent
 "   Flag whether the indent in the entire buffer is consistent. (Not set by
@@ -1032,8 +1035,9 @@ function! s:CheckBufferConsistency( startLineNum, endLineNum ) " {{{1
 "* EFFECTS / POSTCONDITIONS:
 "   Fills the s:occurrences dictionary; key: indent setting; value: number of
 "	lines that have that indent setting
-"   Fills the s:ratings dictionary; key: indent setting; value: raw rating
-"   number, or -1 means a perfect rating (i.e. no incompatibles)
+"   Fills the s:ratings dictionary; key: indent setting; value: rating
+"   percentage (with low percentages removed); 100 means a perfect rating (i.e.
+"   no incompatibles). 
 "* INPUTS:
 "   a:startLineNum
 "   a:endLineNum
@@ -1113,10 +1117,10 @@ function! s:CheckBufferConsistency( startLineNum, endLineNum ) " {{{1
 
     " The s:ratings dictionary contains the final rating, a combination of high indent settings occurrence and low incompatible occurrences. 
     call s:EvaluateOccurrenceAndIncompatibleIntoRating( s:incompatibles ) " Key: indent setting; value: rating number
-"****D echo 'Ratings:      ' . string( s:ratings )
+echo 'Raw  Ratings:' . string( s:ratings )
 
     call s:NormalizeRatings()
-"****D echo 'nrm. ratings:' . string( s:ratings )
+echo 'Nrm. Ratings:' . string( s:ratings )
 "****D call confirm('debug')
 
 
@@ -1127,6 +1131,7 @@ function! s:CheckBufferConsistency( startLineNum, endLineNum ) " {{{1
     call filter( s:doubtful, 0 )
     " Do not free s:indentMax, it is still accessed by s:IsEnoughIndentForSolidAssessment(). 
     call filter( s:incompatibles, 0 )
+    " Do not free s:ratings, it is still accessed by s:IndentConsistencyCop(). 
 
     let l:isConsistent = (count( s:ratings, 100 ) == 1)
     return l:isConsistent
@@ -1889,6 +1894,11 @@ function! s:ReportConsistencyWithBufferSettingsResult( isEntireBuffer, isConsist
     endif
 endfunction
 
+function! s:ReportInconsistentIndentSetting()	"{{{2
+    return 'XXX'
+    let l:badSettingsCnt = 0
+endfunction
+
 function! s:ReportConsistencyResult( isEntireBuffer, isConsistent, consistentIndentSetting ) "{{{2
     call s:InitResults()
 
@@ -1903,7 +1913,7 @@ function! s:ReportConsistencyResult( isEntireBuffer, isConsistent, consistentInd
 		let b:indentconsistencycop_result.indentSetting = s:ReportIndentSetting(a:consistentIndentSetting)
 	    endif
 	elseif a:isConsistent == 0
-	    let b:indentconsistencycop_result.indentSetting = 'XXX'
+	    let b:indentconsistencycop_result.indentSetting = s:ReportInconsistentIndentSetting()
 	elseif a:isConsistent == -1
 	    let b:indentconsistencycop_result.indentSetting = 'none'
 	else
@@ -2100,7 +2110,7 @@ function! s:IndentConsistencyCop( startLineNum, endLineNum, isBufferSettingsChec
     endif
 "****D echo 'Consistent   ? ' . l:isConsistent
 "****D echo 'Occurrences:   ' . string( s:occurrences )
-"****D echo 'nrm. ratings:  ' . string( s:ratings )
+"****D echo 'Nrm. Ratings:  ' . string( s:ratings )
 
     " Cleanup variables with script-scope. 
     call filter( s:occurrences, 0 )
