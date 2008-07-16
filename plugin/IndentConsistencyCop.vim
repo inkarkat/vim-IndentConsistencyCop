@@ -1786,13 +1786,16 @@ function! s:HighlightInconsistentIndents( startLineNum, endLineNum, correctInden
     " Another benefit of storing the line numbers versus creating a pattern is
     " that this allows different methods of visualization (highlighting,
     " folding, quickfix, ...).
+    let l:isEntireBuffer = ( a:startLineNum == 1 && a:endLineNum == line('$') )
     let l:lineNumbers = s:GetInconsistentIndents( a:startLineNum, a:endLineNum, a:correctIndentSetting )
     if len( l:lineNumbers ) == 0
 	" All lines are correct. 
 	call s:ClearHighlighting()
+	call s:ReportConsistencyResult( l:isEntireBuffer, 1, l:correctIndentSetting )	" Update report, now that we have found out that the range / buffer has consistent indent. 
 	call s:EchoUserMessage("No incorrect lines found for setting '" . s:IndentSettingToUserString( a:correctIndentSetting ) . "'!")
     else
 	call s:SetHighlighting( l:lineNumbers )
+	call s:ReportConsistencyResult( l:isEntireBuffer, 0, '' )	" Update report, now that we have found out the range / buffer has inconsistent indent. 
 	call s:EchoUserMessage( 'Marked ' . len( l:lineNumbers ) . ' incorrect lines. ' )
     endif
 endfunction
