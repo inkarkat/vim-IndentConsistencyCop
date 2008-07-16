@@ -97,8 +97,8 @@
 "   range checks.)
 "
 "	b:indentconsistencycop_result.isDefinite
-"   Flag whether there has been enough indent to make a definite judgement for
-"   an inconsistency. (Not set by range checks.)
+"   Flag whether there is enough indent to make a definite judgement about
+"   the buffer indent settings. (Not set by range checks.)
 "
 "	b:indentconsistencycop_result.bufferSettings
 "   String representing the buffer settings. One of 'tabN', 'spcN', 'stsN'
@@ -1555,11 +1555,11 @@ function! s:IndentBufferConsistencyCop( startLineNum, endLineNum, isEntireBuffer
 	call s:ReportConsistencyWithBufferSettingsResult( a:isEntireBuffer, empty(l:userMessage) )
 	if ! empty( l:userMessage )
 	    let l:userMessage .= "\nHow do you want to deal with the "
-	    let l:userMessage .= ( s:IsEnoughIndentForSolidAssessment() ? '' : 'potential ')
+	    let l:userMessage .= (s:IsEnoughIndentForSolidAssessment() ? '' : 'potential ')
 	    let l:userMessage .= 'inconsistency?'
 	    let l:actionNum = confirm( l:userMessage, "&Ignore\n&Change\n&Wrong, choose correct setting..." )
 	    if l:actionNum <= 1
-		call s:PrintBufferSettings( 'The buffer settings remain inconsistent: ' )
+		call s:PrintBufferSettings( 'The buffer settings remain ' . (s:IsEnoughIndentForSolidAssessment() ? 'inconsistent' : 'at') . ': ' )
 	    elseif l:actionNum == 2
 		call s:MakeBufferSettingsConsistentWith( a:consistentIndentSetting )
 		call s:ReportConsistencyWithBufferSettingsResult( a:isEntireBuffer, 1 )
@@ -1570,7 +1570,7 @@ function! s:IndentBufferConsistencyCop( startLineNum, endLineNum, isEntireBuffer
 		if ! empty( l:chosenIndentSetting )
 		    call s:HighlightInconsistentIndents( a:startLineNum, a:endLineNum, l:chosenIndentSetting )
 		else
-		    call s:PrintBufferSettings( 'The buffer settings remain inconsistent: ' )
+		    call s:PrintBufferSettings( 'The buffer settings remain ' . (s:IsEnoughIndentForSolidAssessment() ? 'inconsistent' : 'at') . ': ' )
 		endif
 	    else
 		throw 'assert false'
@@ -1891,7 +1891,7 @@ function! s:ReportConsistencyResult( isEntireBuffer, isConsistent, consistentInd
     " check of a range yielded a definitive inconsistency. 
     if a:isEntireBuffer || (a:isConsistent == 0 && s:IsEnoughIndentForSolidAssessment())
 	let b:indentconsistencycop_result.isConsistent = (a:isConsistent != 0)
-	let b:indentconsistencycop_result.isDefinite = (a:isConsistent != 0 || s:IsEnoughIndentForSolidAssessment())	" When no indent or consistent indent, the judgement is definite, of course. 
+	let b:indentconsistencycop_result.isDefinite = s:IsEnoughIndentForSolidAssessment()
 
 	if a:isConsistent == 1
 	    if ! empty(a:consistentIndentSetting)
