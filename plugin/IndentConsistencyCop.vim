@@ -95,6 +95,11 @@
 "   Flag whether there has been enough indent to make a definite judgement. 
 "   (Not set by range checks.)
 "
+"	b:indentconsistencycop_result.bufferSettings
+"   String representing the buffer settings. One of 'tabN', 'spcN', 'stsN'
+"   (where N is the indent multiplier), or '???' (meaning inconsistent buffer
+"   indent settings). 
+"
 "	b:indentconsistencycop_result.isBufferSettingsConsistent
 "   Flag whether the buffer indent settings (tabstop, softtabstop, shiftwidth,
 "   expandtab) are consistent with each other.  
@@ -1504,7 +1509,7 @@ function! s:UnindentedBufferConsistencyCop( startLineNum, endLineNum, isEntireBu
 		if ! empty( l:chosenIndentSetting )
 		    call s:MakeBufferSettingsConsistentWith( l:chosenIndentSetting )
 		    call s:SetConsistencyWithBufferSettingsResult( a:isEntireBuffer, 1 )
-		    call s:SetBufferSettingsConsistencyResult( 1 )  " We trust that it's been made consistent. 
+		    call s:ReportBufferSettingsConsistency( l:chosenIndentSetting )
 		    call s:PrintBufferSettings( 'The buffer settings have been changed: ' )
 		else
 		    call s:PrintBufferSettings( 'The buffer settings remain inconsistent: ' )
@@ -1553,7 +1558,7 @@ function! s:IndentBufferConsistencyCop( startLineNum, endLineNum, isEntireBuffer
 	    elseif l:actionNum == 2
 		call s:MakeBufferSettingsConsistentWith( a:consistentIndentSetting )
 		call s:SetConsistencyWithBufferSettingsResult( a:isEntireBuffer, 1 )
-		call s:SetBufferSettingsConsistencyResult( 1 )	" We trust that it's been made consistent. 
+		call s:ReportBufferSettingsConsistency( a:consistentIndentSetting )
 		call s:PrintBufferSettings( 'The buffer settings have been changed: ' )
 	    elseif l:actionNum == 3
 		let l:chosenIndentSetting = s:QueryIndentSetting()
@@ -1824,23 +1829,43 @@ endfunction
 " }}}1
 
 "- reporting functions-----------------------------------------------------{{{1
-function! s:InitResults()
+function! s:InitResults() "{{{2
     if ! exists('b:indentconsistencycop_result')
 	let b:indentconsistencycop_result = {}
     endif
 endfunction
 
-function! s:SetBufferSettingsConsistencyResult( isConsistent )
-    let b:indentconsistencycop_result.isBufferSettingsConsistent = a:isConsistent
+function! s:ReportIndentSetting( indentSetting ) "{{{2
+    if a:indentSetting == 'tab'
+	" Internally, there is only one 'tab' indent setting; the actual indent
+	" mulitplier (as specified by the 'tabstop' setting) isn't important. 
+	" For reporting, we want to include this information, however. 
+	return &l:tabstop : a:indentSetting
+    elseif a:indentSetting == 'badset'
+	" Translate the internal 'badset' to something more meaningful to the
+	" user. 
+	return '???'
+    else
+	return a:indentSetting
+    endif
 endfunction
 
-function! s:SetConsistencyWithBufferSettingsResult( isEntireBuffer, isConsistent )
+function! s:ReportBufferSettingsConsistency(...) "{{{2
+    let l:indentSetting = s:GetIndentSettingForBufferSettings()
+    if a:0 > 0 && a:1 != l:indentSetting
+	throw 'assert that passed buffer settings are equal to actual indent settings. '
+    endif
+    let b:indentconsistencycop_result.bufferSettings = s:ReportIndentSetting(l:indentSetting)
+    let b:indentconsistencycop_result.isBufferSettingsConsistent = s:IsBufferSettingsConsistent()
+endfunction
+
+function! s:SetConsistencyWithBufferSettingsResult( isEntireBuffer, isConsistent ) "{{{2
     if a:isEntireBuffer || (! a:isConsistent && s:IsEnoughIndentForSolidAssessment())
 	let b:indentconsistencycop_result.isConsistentWithBufferSettings = a:isConsistent
     endif
 endfunction
 
-function! s:SetConsistencyResult( isEntireBuffer, isConsistent )
+function! s:SetConsistencyResult( isEntireBuffer, isConsistent ) "{{{2
     call s:InitResults()
 
     " Only update the buffer result if the entire buffer was checked or if the
@@ -2004,7 +2029,7 @@ function! s:IndentConsistencyCop( startLineNum, endLineNum, isBufferSettingsChec
     let s:ratings = {}
     let l:isConsistent = s:CheckBufferConsistency( a:startLineNum, a:endLineNum )
     call s:SetConsistencyResult( l:isEntireBuffer, l:isConsistent )
-    call s:SetBufferSettingsConsistencyResult( s:IsBufferSettingsConsistent() )
+    call s:ReportBufferSettingsConsistency()
 
     if l:isConsistent == -1
 	call s:ClearHighlighting()
