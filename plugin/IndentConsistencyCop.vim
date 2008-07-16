@@ -947,6 +947,7 @@ function! s:NormalizeNonPerfectRating() " {{{2
     for l:rating in keys( s:ratings )
 	let l:newRating = 100 * s:ratings[ l:rating ] / l:valueSum
 	if l:newRating < l:ratingThreshold && ! s:IsBadIndentSetting( l:rating )
+	    let s:droppedRatings[ l:rating ] = l:newRating
 	    unlet s:ratings[ l:rating ] 
 	else
 	    let s:ratings[ l:rating ] = l:newRating
@@ -1098,7 +1099,7 @@ function! s:CheckBufferConsistency( startLineNum, endLineNum ) " {{{1
 "****D echo 'Spaces:       ' . string( s:spaces )
 "****D echo 'Softtabstops: ' . string( s:softtabstops )
 "****D echo 'Doubtful:     ' . string( s:doubtful )
-"****D echo 'Raw Occurr.   ' . string( s:occurrences )
+echo 'Raw Occurr.   ' . string( s:occurrences )
 
     if empty( s:occurrences )
 	throw 'Should have returned already, because s:indentMax == 0.'
@@ -1112,15 +1113,17 @@ function! s:CheckBufferConsistency( startLineNum, endLineNum ) " {{{1
 "****D echo 'Raw Incomp.:  ' . string( s:incompatibles )
 
     call s:ApplyPrecedences()
-"****D echo 'Occurrences:  ' . string( s:occurrences )
-"****D echo 'Incompatibles:' . string( s:incompatibles )
+echo 'Occurrences:  ' . string( s:occurrences )
+echo 'Incompatibles:' . string( s:incompatibles )
 
     " The s:ratings dictionary contains the final rating, a combination of high indent settings occurrence and low incompatible occurrences. 
     call s:EvaluateOccurrenceAndIncompatibleIntoRating( s:incompatibles ) " Key: indent setting; value: rating number
-echo 'Raw  Ratings:' . string( s:ratings )
+echo 'Raw   Ratings:' . string( s:ratings )
 
+    let s:droppedRatings = {}
     call s:NormalizeRatings()
-echo 'Nrm. Ratings:' . string( s:ratings )
+echo 'Norm. Ratings:' . string( s:ratings )
+echo 'Drop. Ratings:' . string( s:droppedRatings )
 "****D call confirm('debug')
 
 
@@ -1132,6 +1135,7 @@ echo 'Nrm. Ratings:' . string( s:ratings )
     " Do not free s:indentMax, it is still accessed by s:IsEnoughIndentForSolidAssessment(). 
     call filter( s:incompatibles, 0 )
     " Do not free s:ratings, it is still accessed by s:IndentConsistencyCop(). 
+    " Do not free s:droppedRatings, it is still accessed by s:ReportInconsistentIndentSetting(). 
 
     let l:isConsistent = (count( s:ratings, 100 ) == 1)
     return l:isConsistent
@@ -2115,6 +2119,7 @@ function! s:IndentConsistencyCop( startLineNum, endLineNum, isBufferSettingsChec
     " Cleanup variables with script-scope. 
     call filter( s:occurrences, 0 )
     call filter( s:ratings, 0 )
+    call filter( s:droppedRatings, 0 )
 endfunction
 
 " }}}1
