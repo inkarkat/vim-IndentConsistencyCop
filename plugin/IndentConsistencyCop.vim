@@ -395,6 +395,10 @@ function! s:GetSettingFromIndentSetting( indentSetting ) " {{{2
     return strpart( a:indentSetting, 0, 3 )
 endfunction
 
+function! s:IsBadIndentSetting( indentSetting ) " {{{2
+    return s:GetSettingFromIndentSetting( a:indentSetting ) == 'bad'
+endfunction
+
 " }}}1
 
 "- Processing of lines in buffer -----------------------------------------{{{1
@@ -875,111 +879,96 @@ function! s:EvaluateOccurrenceAndIncompatibleIntoRating( incompatibles ) " {{{2
 "	rating( indent setting ) = # of indent setting occurrences /
 "	    (1 + sum( # of occurrences of incompatible indent settings )). 
 "   If there are no incompatible indent settings, the rating is deemed
-"   "perfect", which is indicated by a negative rating. Apart from multiplying
-"   the result with -1, above formula stays valid:
-"	rating( perfect indent setting ) = -1 * # of indent setting occurrences. 
+"   "perfect", and the indent setting is stored in s:perfectIndentSetting. 
+"   If there is (are? - no, there can only be) one indent setting that is only
+"   incompatible with bad indent settings, this is deemed the "authoritative"
+"   indent setting, even though it isn't perfect. It is stored in
+"   s:authoritativeIndentSetting. 
 "* ASSUMPTIONS / PRECONDITIONS:
 "   s:occurrences dictionary; key: indent setting; value: number of
 "	lines that have that indent setting
-"   s:ratings: empty dictionary
 "* EFFECTS / POSTCONDITIONS:
 "   Fills s:ratings: dictionary of ratings; key: indent setting; value: rating number
-"   A negative rating represents a perfect rating (i.e. no incompatibles)
-"   There is at most one perfect rating. 
+"   s:perfectIndentSetting can contain indent setting. 
+"   s:authoritativeIndentSetting can contain indent setting, but not both at the
+"   same time. 
+"   There is either one perfect rating, or one authoritative rating, or neither. 
 "* INPUTS:
 "   a:incompatibles: dictionary of incompatibles
 "* RETURN VALUES: 
 "   none
 "*******************************************************************************
     let s:ratings = {}
-    let l:hasPerfectRatingOccurred = 0
+    let s:perfectIndentSetting = ''
+    let s:authoritativeIndentSetting = ''
+
     for l:indentSetting in keys( s:occurrences )
 	let l:incompatibles = a:incompatibles[ l:indentSetting ]
+	let l:incompatibleOccurrences = 1
+	for l:incompatible in l:incompatibles
+	    let l:incompatibleOccurrences += s:occurrences[ l:incompatible ]
+	endfor
+	let s:ratings[ l:indentSetting ] = 10000 * s:occurrences[ l:indentSetting ] / l:incompatibleOccurrences
+
 	if empty( l:incompatibles )
-	    if l:hasPerfectRatingOccurred
-		throw 'assert there is only one perfect rating'
-	    endif
-	    " No incompatibles; this gets the perfect rating. 
-	    let s:ratings[ l:indentSetting ] = -10000 * s:occurrences[ l:indentSetting ] " / 1
-	    let l:hasPerfectRatingOccurred = 1
-	else
-	    let l:incompatibleOccurrences = 1
-	    for l:incompatible in l:incompatibles
-		let l:incompatibleOccurrences += s:occurrences[ l:incompatible ]
-	    endfor
-	    let s:ratings[ l:indentSetting ] = 10000 * s:occurrences[ l:indentSetting ] / l:incompatibleOccurrences
+	    " This is a perfect indent setting. 
+	    if ! empty( s:perfectIndentSetting ) | throw 'assert there is only one perfect indent setting. ' | endif
+	    let s:perfectIndentSetting = l:indentSetting
+	elseif empty( filter( copy( l:incompatibles ), '! s:IsBadIndentSetting(v:val)' ) )
+	    " This is an authoritative indent setting. 
+	    if ! empty( s:authoritativeIndentSetting ) | throw 'assert there is only one authoritative indent setting. ' | endif
+	    if ! empty( s:perfectIndentSetting ) | throw 'assert there can only be either a perfect or an authoritative indent setting. ' | endif
+	    let s:authoritativeIndentSetting = l:indentSetting
 	endif
     endfor
 endfunction
 " }}}2
 
 "- Rating normalization --------------------------------------------------{{{1
-function! s:IsContainsPerfectRating() " {{{2
-    return (min( s:ratings ) < 0)
-endfunction
-
 function! s:NormalizePerfectRating() " {{{2
-    for l:rating in keys( s:ratings )
-	if s:ratings[ l:rating ] < 0
-	    " Normalize to 100%
-	    let s:ratings[ l:rating ] = 100
-	else
-	    unlet s:ratings[ l:rating ] 
-	endif
-    endfor
+    " Remove every non-perfect rating. 
+    call filter( s:ratings, 'v:key == s:perfectIndentSetting' )
+
+    " Normalize to 100%
+    let s:ratings[ s:perfectIndentSetting ] = 100
 endfunction
 
-function! s:IsBadIndentSetting( indentSetting ) " {{{2
-    return s:GetSettingFromIndentSetting( a:indentSetting ) == 'bad'
-endfunction
-
-function! s:NormalizeNonPerfectRating() " {{{2
-    let l:ratingThreshold = 10	" Remove everything below this percentage. Exception: indent setting 'bad'. 
-
+function! s:GetRawRatingsSum() "{{{2
     let l:valueSum = 0
     for l:value in values( s:ratings )
 	let l:valueSum += l:value
     endfor
-    if l:valueSum <= 0 
-	throw 'assert valueSum > 0'
-    endif
+    if l:valueSum <= 0 | throw 'assert valueSum > 0' | endif
+    return l:valueSum
+endfunction
 
-    for l:rating in keys( s:ratings )
-	let l:newRating = 100 * s:ratings[ l:rating ] / l:valueSum
-	if l:newRating < l:ratingThreshold && ! s:IsBadIndentSetting( l:rating )
-	    let s:droppedRatings[ l:rating ] = l:newRating
-	    unlet s:ratings[ l:rating ] 
+function! s:NormalizeAuthoritativeRating() " {{{2
+    " Remove every rating except the authoritative and bad indent settings. 
+    let l:rawRatingsSum = s:GetRawRatingsSum()
+    for l:indentSetting in keys( s:ratings )
+	let l:newRating = 100 * s:ratings[ l:indentSetting ] / l:rawRatingsSum
+	if l:indentSetting == s:authoritativeIndentSetting || s:IsBadIndentSetting( l:indentSetting )
+	    let s:ratings[ l:indentSetting ] = l:newRating
 	else
-	    let s:ratings[ l:rating ] = l:newRating
+	    let s:droppedRatings[ l:indentSetting ] = l:newRating
+	    unlet s:ratings[ l:indentSetting ] 
 	endif
     endfor
 endfunction
 
-function! s:DemotePerfectRating() " {{{2
-    for l:rating in keys( s:ratings )
-	if s:ratings[ l:rating ] < 0
-	    let s:ratings[ l:rating ] = -1 * s:ratings[ l:rating ]
+function! s:NormalizeNonPerfectRating() " {{{2
+    let l:ratingThreshold = 10	" Remove everything below this percentage. Exception: bad indent settings. 
+
+    let l:rawRatingsSum = s:GetRawRatingsSum()
+    for l:indentSetting in keys( s:ratings )
+	let l:newRating = 100 * s:ratings[ l:indentSetting ] / l:rawRatingsSum
+	if l:newRating < l:ratingThreshold && ! s:IsBadIndentSetting( l:indentSetting )
+	    let s:droppedRatings[ l:indentSetting ] = l:newRating
+	    unlet s:ratings[ l:indentSetting ] 
+	else
+	    let s:ratings[ l:indentSetting ] = l:newRating
 	endif
     endfor
-endfunction
-
-function! s:IsPerfectRatingAlsoTheBestRating() " {{{2
-    let l:absolutePerfectRating = -1 * min( s:ratings )
-    if l:absolutePerfectRating <= 0
-	throw 'assert perfect rating < 0'
-    endif
-
-    let l:bestNonPerfectRating = max( s:ratings )
-    if l:bestNonPerfectRating <= 0
-	if -1 * l:bestNonPerfectRating == l:absolutePerfectRating
-	    " There is no other rating than the perfect rating; max() == min().  
-	    return 1
-	else
-	    throw 'assert best rating > 0'
-	endif
-    endif
-"****D echo '**** perfect rating = ' . l:absolutePerfectRating . '; best other rating = ' . l:bestNonPerfectRating
-    return (l:absolutePerfectRating >= l:bestNonPerfectRating)
 endfunction
 
 function! s:NormalizeRatings() " {{{2
@@ -992,33 +981,33 @@ function! s:NormalizeRatings() " {{{2
 "   results to the user. 
 "* ASSUMPTIONS / PRECONDITIONS:
 "   s:ratings dictionary; key: indent setting; value: raw rating number; 
-"	-1 * raw rating number means a perfect rating (i.e. no incompatibles)
+"   s:perfectIndentSetting represents perfect indent setting, if such exists. 
+"   s:authoritativeIndentSetting represents authoritative indent setting, if such exists. 
 "* EFFECTS / POSTCONDITIONS:
 "   s:ratings dictionary; key: indent setting; value: percentage 
 "	rating (100: checked range is consistent; < 100: inconsistent. 
 "   Modifies values in s:ratings. 
-"   Removes entries that fall below the threshold. 
+"   Removes entries that fall below the threshold or that are driven out by an
+"	authoritative setting from s:ratings and puts them into
+"	s:droppedRatings. 
 "* INPUTS:
 "   none
 "* RETURN VALUES: 
 "   none
 "*******************************************************************************
-    if s:IsContainsPerfectRating()
-	" A perfect rating (i.e. an indent setting that is consistent throughout the
-	" entire buffer / range) is only accepted if its absolute rating number is
-	" also the maximum rating. Without this qualification, a few small indent
-	" settings (e.g. sts1, spc2) could be deemed the consistent setting, even
-	" though they actually are just indent errors that sabotage the actual,
-	" larger desired indent setting (e.g. sts4, spc4). In other words, the cop
-	" must not be fooled by some wrong spaces into believing that we have a
-	" consistent sts1, although the vast majority of indents suggests an sts4
-	" with some inconsistencies. 
-	if s:IsPerfectRatingAlsoTheBestRating()
-	    call s:NormalizePerfectRating()
-	else
-	    call s:DemotePerfectRating()
-	    call s:NormalizeNonPerfectRating()
-	endif
+    " A perfect rating (i.e. an indent setting that is consistent throughout the
+    " entire buffer / range) is only accepted if its absolute rating number is
+    " also the maximum rating. Without this qualification, a few small indent
+    " settings (e.g. sts1, spc2) could be deemed the consistent setting, even
+    " though they actually are just indent errors that sabotage the actual,
+    " larger desired indent setting (e.g. sts4, spc4). In other words, the cop
+    " must not be fooled by some wrong spaces into believing that we have a
+    " consistent sts1, although the vast majority of indents suggests an sts4
+    " with some inconsistencies. 
+    if ! empty(s:perfectIndentSetting) && s:perfectIndentSetting == s:GetBestRatedIndentSetting()
+	call s:NormalizePerfectRating()
+    elseif ! empty(s:authoritativeIndentSetting) && s:authoritativeIndentSetting == s:GetBestRatedIndentSetting()
+	call s:NormalizeAuthoritativeRating()
     else
 	call s:NormalizeNonPerfectRating()
     endif
@@ -1119,6 +1108,8 @@ echo 'Incompatibles:' . string( s:incompatibles )
     " The s:ratings dictionary contains the final rating, a combination of high indent settings occurrence and low incompatible occurrences. 
     call s:EvaluateOccurrenceAndIncompatibleIntoRating( s:incompatibles ) " Key: indent setting; value: rating number
 echo 'Raw   Ratings:' . string( s:ratings )
+echo (empty(s:perfectIndentSetting      ) ? 'no' : '  ') 'perfect       indent setting' s:perfectIndentSetting
+echo (empty(s:authoritativeIndentSetting) ? 'no' : '  ') 'authoritative indent setting' s:authoritativeIndentSetting
 
     let s:droppedRatings = {}
     call s:NormalizeRatings()
@@ -1410,6 +1401,19 @@ function! s:DictCompareDescending( i1, i2 ) " {{{2
     return a:i1[1] == a:i2[1] ? 0 : a:i1[1] > a:i2[1] ? -1 : 1
 endfunction
 
+function! s:GetSortedRatingList() "{{{2
+    " In order to output the ratings from highest to lowest, we need to
+    " convert the ratings dictionary to a list and sort it with a custom
+    " comparator which considers the value part of each list element. 
+    " There is no built-in sort() function for dictionaries. 
+    let l:ratingLists = items( s:ratings )
+    return sort( l:ratingLists, 's:DictCompareDescending' )
+endfunction
+
+function! s:GetBestRatedIndentSetting() "{{{2
+    return (empty(s:ratings) ? '' : s:GetSortedRatingList()[0][0])
+endfunction
+
 function! s:RatingsToUserString( lineCnt ) " {{{2
 "*******************************************************************************
 "* PURPOSE:
@@ -1432,17 +1436,11 @@ function! s:RatingsToUserString( lineCnt ) " {{{2
     let l:isBufferIndentSettingInRatings = 0
     let l:userString = ''
 
-    " In order to output the ratings from highest to lowest, we need to
-    " convert the ratings dictionary to a list and sort it with a custom
-    " comparator which considers the value part of each list element. 
-    " There is no built-in sort() function for dictionaries. 
-    let l:ratingLists = items( s:ratings )
-    call sort( l:ratingLists, "s:DictCompareDescending" )
     let l:ratingSum = 0
-    for l:ratingList in l:ratingLists
+    for l:ratingList in s:GetSortedRatingList()
 	let l:indentSetting = l:ratingList[0]
 	let l:userString .= "\n- " . s:IndentSettingToUserString( l:indentSetting ) . ' (' . s:occurrences[ l:indentSetting ] . ' of ' . a:lineCnt . ' lines)'
-	"**** let l:rating = l:ratingLists[1] = s:ratings[ l:indentSetting ]
+	"**** let l:rating = l:ratingList[1] = s:ratings[ l:indentSetting ]
 	if l:indentSetting == l:bufferIndentSetting
 	    let l:userString .= ' <- buffer setting'
 	    let l:isBufferIndentSettingInRatings = 1
@@ -1963,9 +1961,7 @@ function! s:IndentBufferInconsistencyCop( startLineNum, endLineNum, inconsistent
 
 	let l:isBestGuessEqualToBufferIndent = 1 " Suppress best guess option if no guess available. 
 	if ! empty( s:ratings )
-	    let l:ratingLists = items( s:ratings )
-	    call sort( l:ratingLists, "s:DictCompareDescending" )
-	    let l:bestGuessIndentSetting = l:ratingLists[0][0]
+	    let l:bestGuessIndentSetting = s:GetBestRatedIndentSetting()
 	    let l:isBestGuessEqualToBufferIndent = (l:bestGuessIndentSetting == l:bufferIndentSetting)
 	endif
 
