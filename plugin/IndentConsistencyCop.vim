@@ -154,12 +154,11 @@
 "   1.20.015	18-Jul-2008	ENH: Completed b:indentconsistencycop_result
 "				dictionary with indent and buffer settings
 "				identifiers. For that, introduced
-"				s:perfectIndentSetting,
-"				s:authoritativeIndentSetting, and
-"				s:droppedRatings. Refactored Rating generation
-"				and normalization so that a perfect rating is
-"				not represented by a negative number; this
-"				simplified the logic. 
+"				s:perfectIndentSetting and
+"				s:authoritativeIndentSetting. Refactored Rating
+"				generation and normalization so that a perfect
+"				rating is not represented by a negative number;
+"				this simplified the logic. 
 "				RF: In s:...BufferIndentConsistencyCop(), only
 "				passing either a:startLineNum/a:endLineNum or
 "				a:isEntireBuffer, not both. 
@@ -969,7 +968,6 @@ function! s:NormalizeAuthoritativeRating() " {{{2
 	if l:indentSetting == s:authoritativeIndentSetting || s:IsBadIndentSetting( l:indentSetting )
 	    let s:ratings[ l:indentSetting ] = l:newRating
 	else
-	    let s:droppedRatings[ l:indentSetting ] = l:newRating
 	    unlet s:ratings[ l:indentSetting ] 
 	endif
     endfor
@@ -982,7 +980,6 @@ function! s:NormalizeNonPerfectRating() " {{{2
     for l:indentSetting in keys( s:ratings )
 	let l:newRating = 100 * s:ratings[ l:indentSetting ] / l:rawRatingsSum
 	if l:newRating < l:ratingThreshold && ! s:IsBadIndentSetting( l:indentSetting )
-	    let s:droppedRatings[ l:indentSetting ] = l:newRating
 	    unlet s:ratings[ l:indentSetting ] 
 	else
 	    let s:ratings[ l:indentSetting ] = l:newRating
@@ -1013,7 +1010,7 @@ function! s:NormalizeRatings() " {{{2
 "   (100: checked range is consistent; < 100: inconsistent). 
 "   Modifies values in s:ratings. 
 "   Removes elements from s:ratings that fall below a threshold or that are
-"   driven out by an authoritative setting and puts them into s:droppedRatings. 
+"   driven out by an authoritative setting. 
 "   May clear s:perfectIndentSetting and s:authoritativeIndentSetting. 
 "* INPUTS:
 "   none
@@ -1139,10 +1136,8 @@ function! s:CheckBufferConsistency( startLineNum, endLineNum ) " {{{1
 "****D echo 'Raw   Ratings:' . string( s:ratings )
 "****D let l:debugIndentSettings = s:perfectIndentSetting . s:authoritativeIndentSetting | if ! empty(l:debugIndentSettings) | echo 'Found' (empty(s:perfectIndentSetting) ? 'authoritative' : 'perfect') 'indent setting before normalization. ' | endif
 
-    let s:droppedRatings = {}
     call s:NormalizeRatings()
 "****D echo 'Norm. Ratings:' . string( s:ratings )
-"****D echo 'Drop. Ratings:' . string( s:droppedRatings )
 "****D let l:debugIndentSettings = s:perfectIndentSetting . s:authoritativeIndentSetting | if ! empty(l:debugIndentSettings) | echo '  ...' (empty(s:perfectIndentSetting) ? 'authoritative' : 'perfect') 'indent setting after normalization. ' | endif
 "****D call confirm('debug')
 
@@ -1155,7 +1150,6 @@ function! s:CheckBufferConsistency( startLineNum, endLineNum ) " {{{1
     " Do not free s:indentMax, it is still accessed by s:IsEnoughIndentForSolidAssessment(). 
     let s:incompatibles = {}
     " Do not free s:ratings, it is still accessed by s:IndentConsistencyCop(). 
-    " Do not free s:droppedRatings, it is still accessed by s:ReportInconsistentIndentSetting(). 
 
     let l:isConsistent = ! empty( s:perfectIndentSetting )
     if l:isConsistent && (count( s:ratings, 100 ) != 1) | throw 'assert if consistent, there should be a 100% rating. ' | endif
@@ -2164,7 +2158,6 @@ function! s:IndentConsistencyCop( startLineNum, endLineNum, isBufferSettingsChec
     " Cleanup remaining dictionaries with script-scope to free memory. 
     let s:occurrences = {}
     let s:ratings = {}
-    let s:droppedRatings = {}
 endfunction
 
 " }}}1
