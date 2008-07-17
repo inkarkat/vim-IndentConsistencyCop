@@ -93,7 +93,7 @@
 "   multiplier) or 'none' (meaning no indent found in buffer). Completely
 "   inconsistent indent settings are shown as 'XXX'; a setting which is almost
 "   consistent, with only some bad mix of spaces and tabs, is represented by
-"   'badtabN' or 'badstsN'. (There cannot be a 'badspcN'.)
+"   'BADtabN', 'BADspcN' or 'BADstsN'. 
 "
 "	b:indentconsistencycop_result.isConsistent
 "   Flag whether the indent in the entire buffer is consistent. (Not set by
@@ -166,6 +166,10 @@
 "				RF: Cleaning up dictionaries with script scope
 "				by assigning empty dictionary instead of
 "				filter()ing out all elements. 
+"				Consistency is now determined by checking
+"				s:perfectIndentSetting, not searching for 100%
+"				rating in s:ratings, which should be
+"				unsusceptible to rounding errors in s:ratings. 
 "   1.20.014	08-Jul-2008	ENH: Added b:indentconsistencycop_result
 "				buffer-scoped dictionary containing the results
 "				of the check, which can be used by other
@@ -994,6 +998,8 @@ function! s:NormalizeRatings() " {{{2
 "   Depending on whether a s:perfectIndentSetting or
 "   s:authoritativeIndentSetting has been detected, other elements may be
 "   dropped from the s:ratings dictionary, if these stand up to scrutiny. 
+"   On the other hand, normalization can also demote a perfect or authoritative
+"   rating. 
 "   If there is no perfect or authoritative indent setting, values below a
 "   certain percentage threshold are dropped from the dictionary *after* the
 "   normalization, in order to remove clutter when displaying the results to the
@@ -1008,6 +1014,7 @@ function! s:NormalizeRatings() " {{{2
 "   Modifies values in s:ratings. 
 "   Removes elements from s:ratings that fall below a threshold or that are
 "   driven out by an authoritative setting and puts them into s:droppedRatings. 
+"   May clear s:perfectIndentSetting and s:authoritativeIndentSetting. 
 "* INPUTS:
 "   none
 "* RETURN VALUES: 
@@ -1027,6 +1034,11 @@ function! s:NormalizeRatings() " {{{2
     elseif ! empty(s:authoritativeIndentSetting) && s:authoritativeIndentSetting == s:GetBestRatedIndentSetting()
 	call s:NormalizeAuthoritativeRating()
     else
+	" Any perfect or authoritative ratings didn't pass the majority rule, so
+	" clear them here to signal a definite inconsistency. 
+	let s:perfectIndentSetting = ''
+	let s:authoritativeIndentSetting = ''
+
 	call s:NormalizeNonPerfectRating()
     endif
 endfunction
@@ -1044,8 +1056,7 @@ function! s:CheckBufferConsistency( startLineNum, endLineNum ) " {{{1
 "   Fills the s:occurrences dictionary; key: indent setting; value: number of
 "	lines that have that indent setting
 "   Fills the s:ratings dictionary; key: indent setting; value: rating
-"   percentage (with low percentages removed); 100 means a perfect rating (i.e.
-"   no incompatibles). 
+"   percentage (with low percentages removed). 
 "* INPUTS:
 "   a:startLineNum
 "   a:endLineNum
@@ -1126,13 +1137,13 @@ function! s:CheckBufferConsistency( startLineNum, endLineNum ) " {{{1
     " The s:ratings dictionary contains the final rating, a combination of high indent settings occurrence and low incompatible occurrences. 
     call s:EvaluateOccurrenceAndIncompatibleIntoRating( s:incompatibles ) " Key: indent setting; value: rating number
 "****D echo 'Raw   Ratings:' . string( s:ratings )
-"****D echo (empty(s:perfectIndentSetting      ) ? 'no' : '  ') 'perfect       indent setting' s:perfectIndentSetting
-"****D echo (empty(s:authoritativeIndentSetting) ? 'no' : '  ') 'authoritative indent setting' s:authoritativeIndentSetting
+"****D let l:debugIndentSettings = s:perfectIndentSetting . s:authoritativeIndentSetting | if ! empty(l:debugIndentSettings) | echo 'Found' (empty(s:perfectIndentSetting) ? 'authoritative' : 'perfect') 'indent setting before normalization. ' | endif
 
     let s:droppedRatings = {}
     call s:NormalizeRatings()
 "****D echo 'Norm. Ratings:' . string( s:ratings )
 "****D echo 'Drop. Ratings:' . string( s:droppedRatings )
+"****D let l:debugIndentSettings = s:perfectIndentSetting . s:authoritativeIndentSetting | if ! empty(l:debugIndentSettings) | echo '  ...' (empty(s:perfectIndentSetting) ? 'authoritative' : 'perfect') 'indent setting after normalization. ' | endif
 "****D call confirm('debug')
 
 
@@ -1146,7 +1157,8 @@ function! s:CheckBufferConsistency( startLineNum, endLineNum ) " {{{1
     " Do not free s:ratings, it is still accessed by s:IndentConsistencyCop(). 
     " Do not free s:droppedRatings, it is still accessed by s:ReportInconsistentIndentSetting(). 
 
-    let l:isConsistent = (count( s:ratings, 100 ) == 1)
+    let l:isConsistent = ! empty( s:perfectIndentSetting )
+    if l:isConsistent && (count( s:ratings, 100 ) != 1) | throw 'assert if consistent, there should be a 100% rating. ' | endif
     return l:isConsistent
 endfunction
 
@@ -1928,8 +1940,15 @@ function! s:ReportConsistencyWithBufferSettingsResult( isEntireBuffer, isConsist
 endfunction
 
 function! s:ReportInconsistentIndentSetting()	"{{{2
-    return 'XXX'
-    let l:badSettingsCnt = 0
+    if ! empty( s:perfectIndentSetting ) | throw 'assert should be inconsistent when called. ' | endif
+    if empty( s:authoritativeIndentSetting )
+	" There is a true inconsistency. 
+	return 'XXX'
+    else
+	" There is an authoritative indent setting; only some bad mix of spaces
+	" and tabs have occured. 
+	return 'BAD' . s:ReportIndentSetting(s:authoritativeIndentSetting)
+    endif
 endfunction
 
 function! s:ReportConsistencyResult( isEntireBuffer, isConsistent, consistentIndentSetting ) "{{{2
