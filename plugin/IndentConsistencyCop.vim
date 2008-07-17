@@ -100,7 +100,7 @@
 "   range checks.)
 "
 "	b:indentconsistencycop_result.isDefinite
-"   Flag whether there is enough indent to make a definite judgement about
+"   Flag whether there has been enough indent to make a definite judgement about
 "   the buffer indent settings. (Not set by range checks.)
 "
 "	b:indentconsistencycop_result.bufferSettings
@@ -151,6 +151,21 @@
 " Maintainer:	Ingo Karkat <ingo@karkat.de>
 "
 " REVISION	DATE		REMARKS {{{1
+"   1.20.015	18-Jul-2008	ENH: Completed b:indentconsistencycop_result
+"				dictionary with indent and buffer settings
+"				identifiers. For that, introduced
+"				s:perfectIndentSetting,
+"				s:authoritativeIndentSetting, and
+"				s:droppedRatings. Refactored Rating generation
+"				and normalization so that a perfect rating is
+"				not represented by a negative number; this
+"				simplified the logic. 
+"				RF: In s:...BufferIndentConsistencyCop(), only
+"				passing either a:startLineNum/a:endLineNum or
+"				a:isEntireBuffer, not both. 
+"				RF: Cleaning up dictionaries with script scope
+"				by assigning empty dictionary instead of
+"				filter()ing out all elements. 
 "   1.20.014	08-Jul-2008	ENH: Added b:indentconsistencycop_result
 "				buffer-scoped dictionary containing the results
 "				of the check, which can be used by other
@@ -161,7 +176,7 @@
 "				buffer/range does not contain indented text.
 "				Inconsistent indent settings can then be
 "				corrected with a queried setting. 
-"				Testcase: IndentBufferConsistencyCop80.txt
+"				Testcase: IndentBufferConsistencyCop56.txt
 "				BF: Clear previous highlighting if buffer/range
 "				now does not contain indented text. 
 "   1.10.012	13-Jun-2008	Added -bar to all commands that do not take any
@@ -195,7 +210,7 @@
 "				s:RatingsToUserString(), enhanced the condition
 "				for this user message: When there's only one
 "				rating, others certainly have been dropped. 
-"				Testcase: IndentBufferConsistencyCop70.txt
+"				Testcase: IndentBufferConsistencyCop54.txt
 "				ENH: In s:CheckConsistencyWithBufferSettings(), 
 "				print "noexpandtab/expandtab" instead of "
 "				expandtab to 0/1", as the user would :setlocal
@@ -976,34 +991,37 @@ function! s:NormalizeRatings() " {{{2
 "* PURPOSE:
 "   Changes the values in the s:ratings dictionary so that the sum of all values
 "   is 100; i.e. make percentages out of the ratings. 
-"   Values below a certain percentage threshold are dropped from the dictionary
-"   *after* the normalization, in order to remove clutter when displaying the
-"   results to the user. 
+"   Depending on whether a s:perfectIndentSetting or
+"   s:authoritativeIndentSetting has been detected, other elements may be
+"   dropped from the s:ratings dictionary, if these stand up to scrutiny. 
+"   If there is no perfect or authoritative indent setting, values below a
+"   certain percentage threshold are dropped from the dictionary *after* the
+"   normalization, in order to remove clutter when displaying the results to the
+"   user. 
 "* ASSUMPTIONS / PRECONDITIONS:
 "   s:ratings dictionary; key: indent setting; value: raw rating number; 
 "   s:perfectIndentSetting represents perfect indent setting, if such exists. 
 "   s:authoritativeIndentSetting represents authoritative indent setting, if such exists. 
 "* EFFECTS / POSTCONDITIONS:
-"   s:ratings dictionary; key: indent setting; value: percentage 
-"	rating (100: checked range is consistent; < 100: inconsistent. 
+"   s:ratings dictionary; key: indent setting; value: percentage rating
+"   (100: checked range is consistent; < 100: inconsistent). 
 "   Modifies values in s:ratings. 
-"   Removes entries that fall below the threshold or that are driven out by an
-"	authoritative setting from s:ratings and puts them into
-"	s:droppedRatings. 
+"   Removes elements from s:ratings that fall below a threshold or that are
+"   driven out by an authoritative setting and puts them into s:droppedRatings. 
 "* INPUTS:
 "   none
 "* RETURN VALUES: 
 "   none
 "*******************************************************************************
-    " A perfect rating (i.e. an indent setting that is consistent throughout the
-    " entire buffer / range) is only accepted if its absolute rating number is
-    " also the maximum rating. Without this qualification, a few small indent
-    " settings (e.g. sts1, spc2) could be deemed the consistent setting, even
-    " though they actually are just indent errors that sabotage the actual,
-    " larger desired indent setting (e.g. sts4, spc4). In other words, the cop
-    " must not be fooled by some wrong spaces into believing that we have a
-    " consistent sts1, although the vast majority of indents suggests an sts4
-    " with some inconsistencies. 
+    " A perfect or authoritative rating (i.e. an indent setting that is
+    " consistent throughout the entire buffer / range) is only accepted if its
+    " absolute rating number is also the maximum rating. Without this
+    " qualification, a few small indent settings (e.g. sts1, spc2) could be
+    " deemed the consistent setting, even though they actually are just indent
+    " errors that sabotage the actual, larger desired indent setting (e.g. sts4,
+    " spc4). In other words, the cop must not be fooled by some wrong spaces
+    " into believing that we have a consistent sts1, although the vast majority
+    " of indents suggests an sts4 with some inconsistencies. 
     if ! empty(s:perfectIndentSetting) && s:perfectIndentSetting == s:GetBestRatedIndentSetting()
 	call s:NormalizePerfectRating()
     elseif ! empty(s:authoritativeIndentSetting) && s:authoritativeIndentSetting == s:GetBestRatedIndentSetting()
@@ -1088,7 +1106,7 @@ function! s:CheckBufferConsistency( startLineNum, endLineNum ) " {{{1
 "****D echo 'Spaces:       ' . string( s:spaces )
 "****D echo 'Softtabstops: ' . string( s:softtabstops )
 "****D echo 'Doubtful:     ' . string( s:doubtful )
-echo 'Raw Occurr.   ' . string( s:occurrences )
+"****D echo 'Raw Occurr.   ' . string( s:occurrences )
 
     if empty( s:occurrences )
 	throw 'Should have returned already, because s:indentMax == 0.'
@@ -1102,29 +1120,29 @@ echo 'Raw Occurr.   ' . string( s:occurrences )
 "****D echo 'Raw Incomp.:  ' . string( s:incompatibles )
 
     call s:ApplyPrecedences()
-echo 'Occurrences:  ' . string( s:occurrences )
-echo 'Incompatibles:' . string( s:incompatibles )
+"****D echo 'Occurrences:  ' . string( s:occurrences )
+"****D echo 'Incompatibles:' . string( s:incompatibles )
 
     " The s:ratings dictionary contains the final rating, a combination of high indent settings occurrence and low incompatible occurrences. 
     call s:EvaluateOccurrenceAndIncompatibleIntoRating( s:incompatibles ) " Key: indent setting; value: rating number
-echo 'Raw   Ratings:' . string( s:ratings )
-echo (empty(s:perfectIndentSetting      ) ? 'no' : '  ') 'perfect       indent setting' s:perfectIndentSetting
-echo (empty(s:authoritativeIndentSetting) ? 'no' : '  ') 'authoritative indent setting' s:authoritativeIndentSetting
+"****D echo 'Raw   Ratings:' . string( s:ratings )
+"****D echo (empty(s:perfectIndentSetting      ) ? 'no' : '  ') 'perfect       indent setting' s:perfectIndentSetting
+"****D echo (empty(s:authoritativeIndentSetting) ? 'no' : '  ') 'authoritative indent setting' s:authoritativeIndentSetting
 
     let s:droppedRatings = {}
     call s:NormalizeRatings()
-echo 'Norm. Ratings:' . string( s:ratings )
-echo 'Drop. Ratings:' . string( s:droppedRatings )
+"****D echo 'Norm. Ratings:' . string( s:ratings )
+"****D echo 'Drop. Ratings:' . string( s:droppedRatings )
 "****D call confirm('debug')
 
 
-    " Cleanup lists and dictionaries with script-scope to free memory. 
-    call filter( s:tabstops, 0 )
-    call filter( s:spaces, 0 )
-    call filter( s:softtabstops, 0 )
-    call filter( s:doubtful, 0 )
+    " Cleanup dictionaries with script-scope to free memory. 
+    let s:tabstops = {}
+    let s:spaces = {}
+    let s:softtabstops = {}
+    let s:doubtful = {}
     " Do not free s:indentMax, it is still accessed by s:IsEnoughIndentForSolidAssessment(). 
-    call filter( s:incompatibles, 0 )
+    let s:incompatibles = {}
     " Do not free s:ratings, it is still accessed by s:IndentConsistencyCop(). 
     " Do not free s:droppedRatings, it is still accessed by s:ReportInconsistentIndentSetting(). 
 
@@ -1402,6 +1420,19 @@ function! s:DictCompareDescending( i1, i2 ) " {{{2
 endfunction
 
 function! s:GetSortedRatingList() "{{{2
+"*******************************************************************************
+"* PURPOSE:
+"   Transforms s:ratings into a list of [ indent setting, rating value ] lists
+"   which are sorted from highest to lowest rating. 
+"* ASSUMPTIONS / PRECONDITIONS:
+"   s:ratings is a dictionary that contains numerical values. 
+"* EFFECTS / POSTCONDITIONS:
+"   none
+"* INPUTS:
+"   none
+"* RETURN VALUES: 
+"   sorted list of [ indent setting, rating value ] lists
+"*******************************************************************************
     " In order to output the ratings from highest to lowest, we need to
     " convert the ratings dictionary to a list and sort it with a custom
     " comparator which considers the value part of each list element. 
@@ -2102,9 +2133,8 @@ function! s:IndentConsistencyCop( startLineNum, endLineNum, isBufferSettingsChec
     elseif l:isConsistent == 1
 	call s:ClearHighlighting()
 
-	let l:consistentIndentSetting = keys( s:ratings )[0]
-	call s:ReportConsistencyResult( l:isEntireBuffer, l:isConsistent, l:consistentIndentSetting )	" Update report, now that we have the consistent indent setting. 
-	call s:IndentBufferConsistencyCop( a:startLineNum, a:endLineNum, l:consistentIndentSetting, a:isBufferSettingsCheck )
+	call s:ReportConsistencyResult( l:isEntireBuffer, l:isConsistent, s:perfectIndentSetting )	" Update report, now that we have the consistent (perfect) indent setting. 
+	call s:IndentBufferConsistencyCop( a:startLineNum, a:endLineNum, s:perfectIndentSetting, a:isBufferSettingsCheck )
     else
 	throw 'assert false'
     endif
@@ -2112,10 +2142,10 @@ function! s:IndentConsistencyCop( startLineNum, endLineNum, isBufferSettingsChec
 "****D echo 'Occurrences:   ' . string( s:occurrences )
 "****D echo 'Nrm. Ratings:  ' . string( s:ratings )
 
-    " Cleanup variables with script-scope. 
-    call filter( s:occurrences, 0 )
-    call filter( s:ratings, 0 )
-    call filter( s:droppedRatings, 0 )
+    " Cleanup remaining dictionaries with script-scope to free memory. 
+    let s:occurrences = {}
+    let s:ratings = {}
+    let s:droppedRatings = {}
 endfunction
 
 " }}}1
