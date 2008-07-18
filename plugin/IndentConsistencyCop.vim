@@ -1837,10 +1837,13 @@ function! s:HighlightInconsistentIndents( startLineNum, endLineNum, correctInden
     if len( l:lineNumbers ) == 0
 	" All lines are correct. 
 	call s:ClearHighlighting()
+	let s:perfectIndentSetting = a:correctIndentSetting " Update the consistency rating. 
+	let s:authoritativeIndentSetting = ''
 	call s:ReportConsistencyResult( l:isEntireBuffer, 1, a:correctIndentSetting )	" Update report, now that we have found out that the range / buffer has consistent indent. 
 	call s:EchoUserMessage("No incorrect lines found for setting '" . s:IndentSettingToUserString( a:correctIndentSetting ) . "'!")
     else
 	call s:SetHighlighting( l:lineNumbers )
+	let s:perfectIndentSetting = ''	" Invalidate the consistency rating. 
 	call s:ReportConsistencyResult( l:isEntireBuffer, 0, '' )	" Update report, now that we have found out the range / buffer has inconsistent indent. 
 	call s:EchoUserMessage( 'Marked ' . len( l:lineNumbers ) . ' incorrect lines. ' )
     endif
