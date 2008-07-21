@@ -151,6 +151,11 @@
 " Maintainer:	Ingo Karkat <ingo@karkat.de>
 "
 " REVISION	DATE		REMARKS {{{1
+"   1.20.016	19-Jul-2008	BF: If different settings have been chosen by
+"				the user ("Wrong, choose correct setting"), this
+"				may have resulted in a consistency with buffer
+"				settings, too. Added call to
+"				s:ReportConsistencyWithBufferSettingsResult(). 
 "   1.20.015	18-Jul-2008	ENH: Completed b:indentconsistencycop_result
 "				dictionary with indent and buffer settings
 "				identifiers. For that, introduced
@@ -1349,6 +1354,9 @@ function! s:CheckConsistencyWithBufferSettings( indentSetting ) " {{{2
 	return l:userString
     endif
 endfunction " }}}2
+function! s:IsConsistentWithBufferSettings( indentSetting ) " {{{2
+    return empty( s:CheckConsistencyWithBufferSettings( a:indentSetting ) )
+endfunction
 
 function! s:MakeBufferSettingsConsistentWith( indentSetting ) " {{{2
     let &l:tabstop    = s:GetCorrectTabstopSetting( a:indentSetting )
@@ -1839,12 +1847,19 @@ function! s:HighlightInconsistentIndents( startLineNum, endLineNum, correctInden
 	call s:ClearHighlighting()
 	let s:perfectIndentSetting = a:correctIndentSetting " Update the consistency rating. 
 	let s:authoritativeIndentSetting = ''
-	call s:ReportConsistencyResult( l:isEntireBuffer, 1, a:correctIndentSetting )	" Update report, now that we have found out that the range / buffer has consistent indent. 
+
+	" Update report, now that we have found out that the range / buffer has consistent indent. 
+	call s:ReportConsistencyWithBufferSettingsResult( l:isEntireBuffer, s:IsConsistentWithBufferSettings(a:correctIndentSetting) )	" If different settings have been chosen by the user, this may have resulted in a consistency with buffer settings, too. 
+	call s:ReportConsistencyResult( l:isEntireBuffer, 1, a:correctIndentSetting )
+
 	call s:EchoUserMessage("No incorrect lines found for setting '" . s:IndentSettingToUserString( a:correctIndentSetting ) . "'!")
     else
 	call s:SetHighlighting( l:lineNumbers )
 	let s:perfectIndentSetting = ''	" Invalidate the consistency rating. 
-	call s:ReportConsistencyResult( l:isEntireBuffer, 0, '' )	" Update report, now that we have found out the range / buffer has inconsistent indent. 
+
+	" Update report, now that we have found out the range / buffer has inconsistent indent. 
+	call s:ReportConsistencyResult( l:isEntireBuffer, 0, '' )
+
 	call s:EchoUserMessage( 'Marked ' . len( l:lineNumbers ) . ' incorrect lines. ' )
     endif
 endfunction
