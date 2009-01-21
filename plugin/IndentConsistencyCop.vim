@@ -151,6 +151,8 @@
 " Maintainer:	Ingo Karkat <ingo@karkat.de>
 "
 " REVISION	DATE		REMARKS {{{1
+"   1.20.017	22-Jul-2008	BF: Undefined variable l:isEntireBuffer in
+"				IndentBufferConsistencyCop(). 
 "   1.20.016	19-Jul-2008	BF: If different settings have been chosen by
 "				the user ("Wrong, choose correct setting"), this
 "				may have resulted in a consistency with buffer
@@ -1603,8 +1605,8 @@ function! s:IndentBufferConsistencyCop( startLineNum, endLineNum, consistentInde
 "   none
 "*******************************************************************************
     let l:userMessage = ''
+    let l:isEntireBuffer = s:IsEntireBuffer(a:startLineNum, a:endLineNum)
     if a:isBufferSettingsCheck
-	let l:isEntireBuffer = s:IsEntireBuffer(a:startLineNum, a:endLineNum)
 	let l:userMessage = s:CheckConsistencyWithBufferSettings( a:consistentIndentSetting )
 	call s:ReportConsistencyWithBufferSettingsResult( l:isEntireBuffer, empty(l:userMessage) )
 	if ! empty( l:userMessage )
