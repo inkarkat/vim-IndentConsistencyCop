@@ -73,10 +73,42 @@
 "   - Requires VIM 7.0 or higher. 
 "
 " CONFIGURATION:
+"   For a permanent configuration, put the following settings into your vimrc
+"   file (see :help vimrc).  
+" 
+"					   *g:indentconsistencycop_highlighting*
 "   You can select method(s) of highlighting incorrect lines via
 "   g:indentconsistencycop_highlighting; the default fills the search pattern,
-"   jumps to the first error, uses the 'Error' highlighting and folds away the
-"   correct lines. 
+"   jumps to the first error, sets 'list', uses the 'Error' highlighting and
+"   folds away the correct lines. 
+"   The variable defines the highlighting methods of incorrect lines, when this is
+"   requested by the user. Multiple methods can be combined by concatenating the
+"   values. The changes done for highlighting are undone when highlighting is
+"   removed via :IndentConsistencyCopOff. 
+"	s - Fill search pattern with all incorrect lines, so that you navigate
+"	    through all incorrect lines with n/N. 
+"	g - Jump to the first error. 
+"	l - As a visualization aid, execute ':setlocal list' to see difference
+"	    between tabs and spaces. 
+"	m - Use :2match error highlighting to highlight the wrong indent via the
+"	    'Error' highlighting group. This is especially useful if you don't
+"	    use the search pattern in combination with 'set hlsearch' to locate
+"	    the incorrect lines. 
+"	f:{n} (n = 0..9) - Fold correct lines with a context of {n} lines (like
+"	    in VIM diff mode). 
+"	TODO:
+"	q - Populate quickfix list with all incorrect lines. IDEA: Use :cgetexpr. 
+"
+"				     *g:indentconsistencycop_non_indent_pattern*
+"   Some comment styles use additional whitespace characters inside the
+"   comment block to neatly left-align the comment block, e.g. this is often
+"   used in Java and C/C++ programs:
+"	/* This is a comment that spans multiple 
+"	 * lines; neatly left-aligned with asterisks. 
+"	 */
+"   The IndentConsistencyCop would be confused by these special indents, so the 
+"   non-indent pattern defined in g:indentconsistencycop_non_indent_pattern
+"   removes these additional whitespaces from the indent when evaluating lines. 
 "
 " INTEGRATION:
 "   The :IndentConsistencyCop and :IndentRangeConsistencyCop commands fill a
@@ -151,6 +183,9 @@
 " Maintainer:	Ingo Karkat <ingo@karkat.de>
 "
 " REVISION	DATE		REMARKS {{{1
+"   1.20.018	22-Jan-2009	Moved (and improved) documentation of
+"				configuration settings from source section to
+"				header. 
 "   1.20.017	22-Jul-2008	BF: Undefined variable l:isEntireBuffer in
 "				IndentBufferConsistencyCop(). 
 "   1.20.016	19-Jul-2008	BF: If different settings have been chosen by
@@ -300,36 +335,10 @@ let loaded_indentconsistencycop = 1
 
 "- configuration ----------------------------------------------------------{{{1
 if ! exists('g:indentconsistencycop_highlighting')
-    " Defines the highlighting methods of incorrect lines, when this is
-    " requested by the user. Multiple methods can be combined. The changes done
-    " for highlighting are undone when highlighting is removed via
-    " :IndentConsistencyCopOff. 
-    "	s - Fill search pattern with all incorrect lines, so that you navigate
-    "	    through all incorrect lines with n/N. 
-    " 	g - Jump to the first error. 
-    " 	l - As a visualization aid, execute ':setlocal list' to see difference
-    "	    between tabs and spaces. 
-    "	m - Use :2match error highlighting to highlight the wrong indent via the
-    "	    'Error' highlighting group. This is especially useful if you don't
-    " 	    use the search pattern in combination with 'set hlsearch' to locate
-    " 	    the incorrect lines. 
-    " 	f:{n} (n = 0..9) - Fold correct lines with a context of {n} lines (like
-    "	    in VIM diff mode). 
-    " 	TODO:
-    " 	q - Populate quickfix list with all incorrect lines. IDEA: Use :cgetexpr. 
     let g:indentconsistencycop_highlighting = 'sglmf:3'
 endif
 
 if ! exists('g:indentconsistencycop_non_indent_pattern')
-    " Some comment styles use additional whitespace characters inside the
-    " comment block to neatly left-align the comment block, e.g. this is often
-    " used in Java and C/C++ programs:
-    " /* This is a comment that spans multiple 
-    "  * lines; neatly left-aligned with asterisks. 
-    "  */
-    " The IndentConsistencyCop would be confused by these special indents, so we
-    " define a non-indent pattern that removes these additional whitespaces from
-    " the indent when evaluating lines. 
     let g:indentconsistencycop_non_indent_pattern = ' \*[*/ \t]'
 endif
 
