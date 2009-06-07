@@ -183,6 +183,7 @@
 " Maintainer:	Ingo Karkat <ingo@karkat.de>
 "
 " REVISION	DATE		REMARKS {{{1
+"   1.20.019	27-Jan-2009	Made assertions more consistent. 
 "   1.20.018	22-Jan-2009	Moved (and improved) documentation of
 "				configuration settings from source section to
 "				header. 
@@ -588,7 +589,7 @@ function! s:RemoveSts8() " {{{1
 "   none
 "*******************************************************************************
     if s:GetKeyedValue( s:occurrences, 'sts8' ) != s:GetKeyedValue( s:occurrences, 'tab' )
-	throw 'assert sts8 == tab'
+	throw 'ASSERT: sts8 == tab'
     endif
     call s:RemoveKey( s:occurrences, 'sts8' )
 endfunction
@@ -946,12 +947,12 @@ function! s:EvaluateOccurrenceAndIncompatibleIntoRating( incompatibles ) " {{{2
 
 	if empty( l:incompatibles )
 	    " This is a perfect indent setting. 
-	    if ! empty( s:perfectIndentSetting ) | throw 'assert there is only one perfect indent setting. ' | endif
+	    if ! empty( s:perfectIndentSetting ) | throw 'ASSERT: There is only one perfect indent setting. ' | endif
 	    let s:perfectIndentSetting = l:indentSetting
 	elseif empty( filter( copy( l:incompatibles ), '! s:IsBadIndentSetting(v:val)' ) )
 	    " This is an authoritative indent setting. 
-	    if ! empty( s:authoritativeIndentSetting ) | throw 'assert there is only one authoritative indent setting. ' | endif
-	    if ! empty( s:perfectIndentSetting ) | throw 'assert there can only be either a perfect or an authoritative indent setting. ' | endif
+	    if ! empty( s:authoritativeIndentSetting ) | throw 'ASSERT: There is only one authoritative indent setting. ' | endif
+	    if ! empty( s:perfectIndentSetting ) | throw 'ASSERT: There can only be either a perfect or an authoritative indent setting. ' | endif
 	    let s:authoritativeIndentSetting = l:indentSetting
 	endif
     endfor
@@ -972,7 +973,7 @@ function! s:GetRawRatingsSum() "{{{2
     for l:value in values( s:ratings )
 	let l:valueSum += l:value
     endfor
-    if l:valueSum <= 0 | throw 'assert valueSum > 0' | endif
+    if l:valueSum <= 0 | throw 'ASSERT: valueSum > 0' | endif
     return l:valueSum
 endfunction
 
@@ -1079,7 +1080,7 @@ function! s:CheckBufferConsistency( startLineNum, endLineNum ) " {{{1
 "    1: checked range is consistent
 "*******************************************************************************
     if a:startLineNum > a:endLineNum
-	throw 'assert startLineNum <= a:endLineNum'
+	throw 'ASSERT: startLineNum <= a:endLineNum'
     endif
 
     " This variable stores the maximum indent encountered. 
@@ -1168,7 +1169,7 @@ function! s:CheckBufferConsistency( startLineNum, endLineNum ) " {{{1
     " Do not free s:ratings, it is still accessed by s:IndentConsistencyCop(). 
 
     let l:isConsistent = ! empty( s:perfectIndentSetting )
-    if l:isConsistent && (count( s:ratings, 100 ) != 1) | throw 'assert if consistent, there should be a 100% rating. ' | endif
+    if l:isConsistent && (count( s:ratings, 100 ) != 1) | throw 'ASSERT: If consistent, there should be a 100% rating. ' | endif
     return l:isConsistent
 endfunction
 
@@ -1278,7 +1279,7 @@ function! s:GetCorrectTabstopSetting( indentSetting ) " {{{2
 	    return s:GetMultiplierFromIndentSetting( a:indentSetting )
 	endif
     else
-	throw 'assert false'
+	throw 'ASSERT: Unknown setting. '
     endif
 endfunction
 
@@ -1585,7 +1586,7 @@ function! s:UnindentedBufferConsistencyCop( isEntireBuffer, isBufferSettingsChec
 		    call s:PrintBufferSettings( 'The buffer settings remain inconsistent: ' )
 		endif
 	    else
-		throw 'assert false'
+		throw 'ASSERT: Unhandled actionNum: ' . l:actionNum
 	    endif
 	endif
     endif
@@ -1638,7 +1639,7 @@ function! s:IndentBufferConsistencyCop( startLineNum, endLineNum, consistentInde
 		    call s:PrintBufferSettings( 'The buffer settings remain ' . (s:IsEnoughIndentForSolidAssessment() ? 'inconsistent' : 'at') . ': ' )
 		endif
 	    else
-		throw 'assert false'
+		throw 'ASSERT: Unhandled l:actionNum: ' . l:actionNum
 	    endif
 	endif
     endif
@@ -1905,7 +1906,7 @@ function! s:QueryIndentSetting() " {{{2
     elseif l:settingNum == 3
 	return 'spc' . l:multiplier
     else
-	throw 'assert false'
+	throw 'ASSERT: Unhandled l:settingNum: ' . l:settingNum
     endif
 endfunction
 " }}}2
@@ -1950,7 +1951,7 @@ function! s:ReportBufferSettingsConsistency( indentSetting ) "{{{2
 "*******************************************************************************
     let l:indentSetting = s:GetIndentSettingForBufferSettings()
     if ! empty(a:indentSetting) && a:indentSetting != l:indentSetting
-	throw 'assert that passed buffer settings are equal to actual indent settings. '
+	throw 'ASSERT: Passed buffer settings are equal to actual indent settings. '
     endif
     let b:indentconsistencycop_result.bufferSettings = s:ReportIndentSetting(l:indentSetting)
     let b:indentconsistencycop_result.isBufferSettingsConsistent = s:IsBufferSettingsConsistent()
@@ -1963,7 +1964,7 @@ function! s:ReportConsistencyWithBufferSettingsResult( isEntireBuffer, isConsist
 endfunction
 
 function! s:ReportInconsistentIndentSetting()	"{{{2
-    if ! empty( s:perfectIndentSetting ) | throw 'assert should be inconsistent when called. ' | endif
+    if ! empty( s:perfectIndentSetting ) | throw 'ASSERT: Should be inconsistent when called. ' | endif
     if empty( s:authoritativeIndentSetting )
 	" There is a true inconsistency. 
 	return 'XXX'
@@ -1992,7 +1993,7 @@ function! s:ReportConsistencyResult( isEntireBuffer, isConsistent, consistentInd
 	elseif a:isConsistent == -1
 	    let b:indentconsistencycop_result.indentSetting = 'none'
 	else
-	    throw 'assert invalid a:isConsistent'
+	    throw 'ASSERT: Unhandled a:isConsistent: ' . a:isConsistent
 	endif
     endif
     " Update if the entire buffer was checked. Range checks are only allowed to
@@ -2070,7 +2071,7 @@ function! s:IndentBufferInconsistencyCop( startLineNum, endLineNum, inconsistent
 	elseif l:highlightNum == (4 - l:isBestGuessEqualToBufferIndent - l:isBadBufferIndent)
 	    call s:HighlightInconsistentIndents( a:startLineNum, a:endLineNum, 'notbad' )
 	else
-	    throw 'assert false'
+	    throw 'ASSERT: Unhandled l:highlightNum: ' . l:highlightNum
 	endif
     endif
 endfunction
@@ -2178,7 +2179,7 @@ function! s:IndentConsistencyCop( startLineNum, endLineNum, isBufferSettingsChec
 	call s:ReportConsistencyResult( l:isEntireBuffer, l:isConsistent, s:perfectIndentSetting )	" Update report, now that we have the consistent (perfect) indent setting. 
 	call s:IndentBufferConsistencyCop( a:startLineNum, a:endLineNum, s:perfectIndentSetting, a:isBufferSettingsCheck )
     else
-	throw 'assert false'
+	throw 'ASSERT: Unhandled l:isConsistent: ' . l:isConsistent
     endif
 "****D echo 'Consistent   ? ' . l:isConsistent
 "****D echo 'Occurrences:   ' . string( s:occurrences )
