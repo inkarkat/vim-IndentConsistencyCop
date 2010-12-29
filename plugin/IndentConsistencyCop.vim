@@ -4,7 +4,7 @@
 "   In order to achieve consistent indentation, you need to agree on the
 "   indentation width (e.g. 2, 4 or 8 spaces), and the indentation method (only
 "   tabs, only spaces, or a mix of tabs and spaces that minimizes the number of
-"   spaces and is called 'softtabstop' in VIM). Unfortunately, different people
+"   spaces and is called 'softtabstop' in Vim). Unfortunately, different people
 "   use different editors and cannot agree on "the right" width and method.
 "   Consistency is important, though, to make the text look the same in
 "   different editors and on printouts. If any editor inadvertently converts
@@ -28,7 +28,7 @@
 "   Marked 180 incorrect lines.
 "
 "   If the buffer contents are okay, the IndentConsistencyCop can evaluate
-"   whether VIM's buffer settings are compatible with the indent used in the
+"   whether Vim's buffer settings are compatible with the indent used in the
 "   buffer. The friendly cop offers to correct your buffer settings if you run
 "   the risk of screwing up the indent consistency with your wrong buffer
 "   settings: 
@@ -60,17 +60,17 @@
 "   to remove the highlightings. 
 "
 "   If you just want to check a read-only file, or do not intend to modify the
-"   file, you don't care if VIM's buffer settings are compatible with the used
+"   file, you don't care if Vim's buffer settings are compatible with the used
 "   indent. In this case, you can use 
 "	:[range]IndentRangeConsistencyCop
 "   instead of :IndentConsistencyCop. 
 "
 " INSTALLATION: {{{1
-"   Put the script into your user or system VIM plugin directory (e.g.
+"   Put the script into your user or system Vim plugin directory (e.g.
 "   ~/.vim/plugin). 
 "
 " DEPENDENCIES:
-"   - Requires VIM 7.0 or higher. 
+"   - Requires Vim 7.0 or higher. 
 "
 " CONFIGURATION:
 "   For a permanent configuration, put the following settings into your vimrc
@@ -91,11 +91,15 @@
 "	l - As a visualization aid, execute ':setlocal list' to see difference
 "	    between tabs and spaces. 
 "	m - Use :2match error highlighting to highlight the wrong indent via the
-"	    'Error' highlighting group. This is especially useful if you don't
-"	    use the search pattern in combination with 'set hlsearch' to locate
-"	    the incorrect lines. 
+"	    'IndentConsistencyCop' highlight group. This is especially useful if
+"	    you don't use the search pattern in combination with 'set hlsearch'
+"	    to locate the incorrect lines. 
+"	    You can customize this by defining / linking the
+"	    'IndentConsistencyCop' highlight group before this script is
+"	    sourced: 
+"		highlight link IndentConsistencyCop Error
 "	f:{n} (n = 0..9) - Fold correct lines with a context of {n} lines (like
-"	    in VIM diff mode). 
+"	    in Vim diff mode). 
 "	TODO:
 "	q - Populate quickfix list with all incorrect lines. IDEA: Use :cgetexpr. 
 "
@@ -113,7 +117,7 @@
 " INTEGRATION:
 "   The :IndentConsistencyCop and :IndentRangeConsistencyCop commands fill a
 "   buffer-scoped dictionary with the results of the check. These results can be
-"   consumed by other VIM integrations (e.g. for a custom 'statusline'). 
+"   consumed by other Vim integrations (e.g. for a custom 'statusline'). 
 "
 "	b:indentconsistencycop_result.maxIndent
 "   Maximum indent (in columns) found in the entire buffer. (Not reduced by
@@ -189,6 +193,12 @@
 "				"Headless mode": Added
 "				g:indentconsistencycop_choices bypass around
 "				user queries for testing purposes. 
+"				Now using IndentConsistencyCop highlight group
+"				instead of hard-coded 'Error' group so that the
+"				highlighting can be customized. By default, this
+"				links to the 'Error' group. This also avoids
+"				script errors in case the 'Error' group does not
+"				exist. 
 "   1.20.019	27-Jan-2009	Made assertions more consistent. 
 "   1.20.018	22-Jan-2009	Moved (and improved) documentation of
 "				configuration settings from source section to
@@ -349,6 +359,9 @@ if ! exists('g:indentconsistencycop_non_indent_pattern')
     let g:indentconsistencycop_non_indent_pattern = ' \*[*/ \t]'
 endif
 
+if g:indentconsistencycop_highlighting =~# 'm'
+    highlight def link IndentConsistencyCop Error
+endif
 " }}}1
 
 "- list and dictionary utility functions ---------------------------------{{{1
@@ -1396,7 +1409,7 @@ function! s:EchoStartupMessage( lineCnt, isEntireBuffer ) " {{{2
     " For large ranges / buffers, processing may take a while. We print out an
     " informational message so that the user knows what is eating the CPU cycles
     " right now. But we only print the message for large files to avoid the
-    " 'Press ENTER to continue' VIM prompt. 
+    " 'Press ENTER to continue' Vim prompt. 
     if a:lineCnt > 2000 " empirical value
 	echo 'IndentConsistencyCop is investigating ' . s:GetScopeUserString(a:isEntireBuffer) . '...'
     endif
@@ -1774,30 +1787,30 @@ function! s:SetHighlighting( lineNumbers ) " {{{2
     " ClearHighlighting(), i.e. when the variables used for saving are
     " undefined. 
 
-    if match( g:indentconsistencycop_highlighting, '[sm]' ) != -1
+    if g:indentconsistencycop_highlighting  =~# '[sm]'
 	let l:linePattern = ''
 	for l:lineNum in a:lineNumbers
 	    let l:linePattern .= '\|\%' . l:lineNum . 'l'
 	endfor
 	let l:linePattern = '\(' . strpart( l:linePattern, 2) . '\)\&^\s\+'
 
-	if match( g:indentconsistencycop_highlighting, 's' ) != -1
+	if g:indentconsistencycop_highlighting =~# 's'
 	    let @/ = l:linePattern
 	endif
-	if match( g:indentconsistencycop_highlighting, 'm' ) != -1
-	    execute '2match Error /' . l:linePattern . '/'
+	if g:indentconsistencycop_highlighting =~# 'm'
+	    execute '2match IndentConsistencyCop /' . l:linePattern . '/'
 	endif
 
     endif
 
-    if match( g:indentconsistencycop_highlighting, 'g' ) != -1
+    if g:indentconsistencycop_highlighting =~# 'g'
 	let l:firstLineNum = min( a:lineNumbers )
 	if l:firstLineNum > 0
 	    execute 'normal ' . l:firstLineNum . 'G0'
 	endif
     endif
 
-    if match( g:indentconsistencycop_highlighting, 'l' ) != -1
+    if g:indentconsistencycop_highlighting =~# 'l'
 	if ! exists( 'b:indentconsistencycop_save_list' )
 	    let b:indentconsistencycop_save_list = &l:list
 	endif
@@ -1840,16 +1853,16 @@ function! s:ClearHighlighting() " {{{2
     endif
     unlet b:indentconsistencycop_did_highlighting
 
-    if match( g:indentconsistencycop_highlighting, 's' ) != -1
+    if g:indentconsistencycop_highlighting =~# 's'
 	let @/ = ''
     endif
-    if match( g:indentconsistencycop_highlighting, 'm' ) != -1
+    if g:indentconsistencycop_highlighting =~# 'm'
 	2match none
     endif
 
     " 'g' : There's no need to undo this. 
 
-    if match( g:indentconsistencycop_highlighting, 'l' ) != -1
+    if g:indentconsistencycop_highlighting =~# 'l'
 	if exists( 'b:indentconsistencycop_save_list' )
 	    let &l:list = b:indentconsistencycop_save_list
 	    unlet b:indentconsistencycop_save_list
