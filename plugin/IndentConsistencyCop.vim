@@ -152,6 +152,11 @@
 "   Flag whether the indent in the entire buffer is consistent with the buffer
 "   indent settings. (Not set by range checks; :IndentRangeConsistencyCop leaves
 "   this flag unchanged.) 
+
+"	b:indentconsistencycop_result.isIgnore
+"   Flag whether the user chose to ignore the inconsistent results. This can be
+"   used by integrations (like IndentConsistencyCopAutoCmds) to cease scheduling
+"   of further cop runs in this buffer. 
 "
 " LIMITATIONS: {{{1
 " - Highlighting of inconsistent and bad indents is static; i.e. when modifying
@@ -187,6 +192,13 @@
 " Maintainer:	Ingo Karkat <ingo@karkat.de>
 "
 " REVISION	DATE		REMARKS {{{1
+"   1.21.021	30-Dec-2010	Added b:indentconsistencycop_result.isIgnore to
+"				allow IndentConsistencyCopAutoCmds integration
+"				to suspend further invocations of the cop in the
+"				buffer. 
+"				BUG: :IndentRangeConsistencyCop didn't report
+"				inconsistencies at all because of a bad
+"				conditional statement introduced in 1.20.014. 
 "   1.20.020	08-Jun-2009	Factored out confirm() calls into s:Query, and
 "				using textual comparison with the passed choices
 "				instead of index-based comparison. 
@@ -2092,6 +2104,7 @@ function! s:IndentBufferInconsistencyCop( startLineNum, endLineNum, inconsistent
 "   none
 "*******************************************************************************
     let l:action = s:Query(a:inconsistentIndentationMessage, ['&Ignore', '&Highlight wrong indents...'], 1)
+    let b:indentconsistencycop_result.isIgnore = (l:action ==# 'Ignore')
     if empty(l:action) || l:action ==# 'Ignore'
 	" User chose to ignore the inconsistencies. 
 	call s:EchoUserMessage('Be careful when modifying the inconsistent indents! ')
@@ -2224,21 +2237,21 @@ function! s:IndentConsistencyCop( startLineNum, endLineNum, isBufferSettingsChec
 	call s:ReportConsistencyWithBufferSettingsResult( l:isEntireBuffer, 1 )
     elseif l:isConsistent == 0
 	if a:isBufferSettingsCheck 
-	    let l:isBufferConsistentWithBufferSettings = s:IsBufferConsistentWithBufferSettings( a:startLineNum, a:endLineNum )
-	    call s:ReportConsistencyWithBufferSettingsResult( l:isEntireBuffer, l:isBufferConsistentWithBufferSettings )
-	    if l:isBufferConsistentWithBufferSettings
-		call s:ClearHighlighting()
+	    let l:isConsistent = s:IsBufferConsistentWithBufferSettings( a:startLineNum, a:endLineNum )
+	    call s:ReportConsistencyWithBufferSettingsResult( l:isEntireBuffer, l:isConsistent )
+	endif
+	if l:isConsistent
+	    call s:ClearHighlighting()
 
-		let l:consistentIndentSetting = s:GetIndentSettingForBufferSettings()
-		call s:ReportConsistencyResult( l:isEntireBuffer, l:isConsistent, l:consistentIndentSetting )	" Update report, now that the verdict has been turned around and we have the consistent indent setting. 
-		call s:IndentBufferConsistencyCop( a:startLineNum, a:endLineNum, l:consistentIndentSetting, 0 ) " Pass isBufferSettingsCheck = 0 here (though a:isBufferSettingsCheck == 1) because we've already ensured that the buffer is consistent with the buffer settings. 
-	    else
-		let l:inconsistentIndentationMessage = 'Found ' . ( s:IsEnoughIndentForSolidAssessment() ? '' : 'potentially ')
-		let l:inconsistentIndentationMessage .= 'inconsistent indentation in this ' . s:GetScopeUserString(l:isEntireBuffer) . '; generated from these conflicting settings: ' 
-		let l:inconsistentIndentationMessage .= s:RatingsToUserString( l:lineCnt )
-		let l:inconsistentIndentationMessage .= s:GetInsufficientIndentUserMessage()
-		call s:IndentBufferInconsistencyCop( a:startLineNum, a:endLineNum, l:inconsistentIndentationMessage )
-	    endif
+	    let l:consistentIndentSetting = s:GetIndentSettingForBufferSettings()
+	    call s:ReportConsistencyResult( l:isEntireBuffer, l:isConsistent, l:consistentIndentSetting )	" Update report, now that the verdict has been turned around and we have the consistent indent setting. 
+	    call s:IndentBufferConsistencyCop( a:startLineNum, a:endLineNum, l:consistentIndentSetting, 0 ) " Pass isBufferSettingsCheck = 0 here (though a:isBufferSettingsCheck == 1) because we've already ensured that the buffer is consistent with the buffer settings. 
+	else
+	    let l:inconsistentIndentationMessage = 'Found ' . ( s:IsEnoughIndentForSolidAssessment() ? '' : 'potentially ')
+	    let l:inconsistentIndentationMessage .= 'inconsistent indentation in this ' . s:GetScopeUserString(l:isEntireBuffer) . '; generated from these conflicting settings: ' 
+	    let l:inconsistentIndentationMessage .= s:RatingsToUserString( l:lineCnt )
+	    let l:inconsistentIndentationMessage .= s:GetInsufficientIndentUserMessage()
+	    call s:IndentBufferInconsistencyCop( a:startLineNum, a:endLineNum, l:inconsistentIndentationMessage )
 	endif
     elseif l:isConsistent == 1
 	call s:ClearHighlighting()
