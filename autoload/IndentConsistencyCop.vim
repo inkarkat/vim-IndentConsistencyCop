@@ -2069,4 +2069,4 @@ endfunction
 
 " }}}1
 
-" vim: set sts=4 sw=4 noexpandtab ff=unix fdm=marker :
+" vim: set ts=8 sts=4 sw=4 noexpandtab ff=unix fdm=marker :
