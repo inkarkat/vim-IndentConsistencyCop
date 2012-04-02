@@ -1637,7 +1637,10 @@ function! s:SetHighlighting( lineNumbers ) " {{{2
 	    let @/ = l:linePattern
 	endif
 	if g:indentconsistencycop_highlighting =~# 'm'
-	    execute '2match IndentConsistencyCop /' . l:linePattern . '/'
+	    if exists('w:indentconsistencycop_match')
+		silent! call matchdelete(w:indentconsistencycop_match)
+	    endif
+	    let w:indentconsistencycop_match = matchadd('IndentConsistencyCop', l:linePattern)
 	endif
 
     endif
@@ -1696,7 +1699,10 @@ function! IndentConsistencyCop#ClearHighlighting() " {{{2
 	let @/ = ''
     endif
     if g:indentconsistencycop_highlighting =~# 'm'
-	2match none
+	if exists('w:indentconsistencycop_match')
+	    silent! call matchdelete(w:indentconsistencycop_match)
+	    unlet w:indentconsistencycop_match
+	endif
     endif
 
     " 'g' : There's no need to undo this. 
