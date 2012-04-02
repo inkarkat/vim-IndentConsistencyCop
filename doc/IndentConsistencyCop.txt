@@ -71,6 +71,10 @@ RELATED WORKS								     *
 - yaifa.vim (vimscript #3096) is a port to vimscript of the above. 
 - detectindent.vim (https://github.com/ciaranm/detectindent) by Ciaran
   McCreesh tries to auto-detect the indentation settings. 
+- indentdetect.vim
+  (https://github.com/ervandew/vimfiles/blob/master/vim/plugin/indentdetect.vim)
+  by Eric Van Dewoestine performs a simple detection and can set defaults
+  based on the filespec. 
 
 ==============================================================================
 USAGE						  *IndentConsistencyCop-usage*
@@ -237,6 +241,14 @@ IDEAS						  *IndentConsistencyCop-ideas*
 ==============================================================================
 HISTORY						*IndentConsistencyCop-history*
 
+1.30	23-Nov-2011
+ENH: Avoid the spurious "potential inconsistency with buffer settings" warning
+when there are only small consistent indents detected as space-indents, but
+the equivalent softtabstop-indent is consistent with the buffer settings. As
+many files only have small indents, this warning popped up regularly and has
+been the most annoying for me, also because to rectify it, one has to answer
+three questions: "[W]rong", "[s]ofttabstop", [N]). 
+
 1.21	31-Dec-2010
 - Added b:indentconsistencycop_result.isIgnore to allow the
   IndentConsistencyCopAutoCmds integration to suspend further invocations of
@@ -310,7 +322,7 @@ First published version.
 Started development. 
 
 ==============================================================================
-Copyright: (C) 2006-2010 Ingo Karkat
+Copyright: (C) 2006-2011 Ingo Karkat
 The VIM LICENSE applies to this script; see |copyright|. 
 
 Maintainer:	Ingo Karkat <ingo@karkat.de>
