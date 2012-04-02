@@ -1690,6 +1690,11 @@ function! IndentConsistencyCop#ClearHighlighting() " {{{2
 "* RETURN VALUES: 
 "   none
 "*******************************************************************************
+    if exists('w:indentconsistencycop_match')
+	silent! call matchdelete(w:indentconsistencycop_match)
+	unlet w:indentconsistencycop_match
+    endif
+
     if ! exists( 'b:indentconsistencycop_did_highlighting' ) || ! b:indentconsistencycop_did_highlighting 
 	return
     endif
@@ -1697,12 +1702,6 @@ function! IndentConsistencyCop#ClearHighlighting() " {{{2
 
     if g:indentconsistencycop_highlighting =~# 's'
 	let @/ = ''
-    endif
-    if g:indentconsistencycop_highlighting =~# 'm'
-	if exists('w:indentconsistencycop_match')
-	    silent! call matchdelete(w:indentconsistencycop_match)
-	    unlet w:indentconsistencycop_match
-	endif
     endif
 
     " 'g' : There's no need to undo this. 
