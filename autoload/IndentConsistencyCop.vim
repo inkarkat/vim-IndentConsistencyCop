@@ -2,12 +2,22 @@
 "
 " DEPENDENCIES:
 "
-" Copyright: (C) 2006-2010 Ingo Karkat
+" Copyright: (C) 2006-2011 Ingo Karkat
 "   The VIM LICENSE applies to this script; see ':help copyright'. 
 "
 " Maintainer:	Ingo Karkat <ingo@karkat.de>
 "
 " REVISION	DATE		REMARKS  {{{1
+"   1.30.023	22-Nov-2011	ENH: Avoid the spurious "potential inconsistency
+"				with buffer settings" warning when there are
+"				only small consistent indents detected as
+"				space-indents, but the equivalent
+"				softtabstop-indent is consistent with the buffer
+"				settings. As many files only have small indents,
+"				this warning popped up regularly and has been
+"				the most annoying for me, also because to
+"				rectify it, one has to answer three questions
+"				("[W]rong", "[s]ofttabstop", [N]). 
 "   1.21.022	31-Dec-2010	Moved functions from plugin to separate autoload
 "				script. 
 "   1.21.021	30-Dec-2010	Added b:indentconsistencycop_result.isIgnore to
@@ -1488,9 +1498,29 @@ function! s:IndentBufferConsistencyCop( startLineNum, endLineNum, consistentInde
 "   none
 "*******************************************************************************
     let l:userMessage = ''
+    let l:consistentIndentSetting = a:consistentIndentSetting
     let l:isEntireBuffer = s:IsEntireBuffer(a:startLineNum, a:endLineNum)
     if a:isBufferSettingsCheck
-	let l:userMessage = s:CheckConsistencyWithBufferSettings( a:consistentIndentSetting )
+	let l:userMessage = s:CheckConsistencyWithBufferSettings( l:consistentIndentSetting )
+	if ! empty( l:userMessage ) && ! s:IsEnoughIndentForSolidAssessment() && s:GetSettingFromIndentSetting(l:consistentIndentSetting) == 'spc'
+	    " Space indents of up to 7 spaces can be either softtabstop or
+	    " space-indent, lacking larger indents or other hints they cannot be
+	    " told apart, so s:GetPrecedence() defaults to 'spc'. To avoid
+	    " spurious buffer settings consistency warnings (which are highly
+	    " annoying because many files have only insufficient indents), check
+	    " for consistency with 'sts', and assume that is the actual correct
+	    " indent setting when it is consistent with the buffer settings. 
+	    " Note: We do this here after-the-fact instead of modifying the
+	    " defaulting logic in s:GetPrecedence() to keep its early evaluation
+	    " logic free of dependencies to the buffer settings. (The functional
+	    " block of s:GetPrecedence() has no knowledge of
+	    " a:isBufferSettingsCheck, and should have none of it.) 
+	    let l:equivalentConsistentIndentSetting = 'sts' . s:GetMultiplierFromIndentSetting(l:consistentIndentSetting)
+	    if s:IsConsistentWithBufferSettings( l:equivalentConsistentIndentSetting )
+		let l:userMessage = ''
+		let l:consistentIndentSetting = l:equivalentConsistentIndentSetting
+	    endif
+	endif
 	call s:ReportConsistencyWithBufferSettingsResult( l:isEntireBuffer, empty(l:userMessage) )
 	if ! empty( l:userMessage )
 	    let l:userMessage .= "\nHow do you want to deal with the "
@@ -1500,9 +1530,9 @@ function! s:IndentBufferConsistencyCop( startLineNum, endLineNum, consistentInde
 	    if empty(l:action) || l:action ==? 'Ignore'
 		call s:PrintBufferSettings( 'The buffer settings remain ' . (s:IsEnoughIndentForSolidAssessment() ? 'inconsistent' : 'at') . ': ' )
 	    elseif l:action ==? 'Change'
-		call s:MakeBufferSettingsConsistentWith( a:consistentIndentSetting )
+		call s:MakeBufferSettingsConsistentWith( l:consistentIndentSetting )
 		call s:ReportConsistencyWithBufferSettingsResult( l:isEntireBuffer, 1 )
-		call s:ReportBufferSettingsConsistency( a:consistentIndentSetting )
+		call s:ReportBufferSettingsConsistency( l:consistentIndentSetting )
 		call s:PrintBufferSettings( 'The buffer settings have been changed: ' )
 	    elseif l:action =~? '^Wrong'
 		let l:chosenIndentSetting = s:QueryIndentSetting()
@@ -1517,7 +1547,7 @@ function! s:IndentBufferConsistencyCop( startLineNum, endLineNum, consistentInde
 	endif
     endif
     if empty( l:userMessage )
-	call s:EchoUserMessage( 'This ' . s:GetScopeUserString(l:isEntireBuffer) . " uses '" . s:IndentSettingToUserString( a:consistentIndentSetting ) . "' consistently. " )
+	call s:EchoUserMessage( 'This ' . s:GetScopeUserString(l:isEntireBuffer) . " uses '" . s:IndentSettingToUserString( l:consistentIndentSetting ) . "' consistently. " )
     endif
 endfunction
 " }}}2
@@ -2042,7 +2072,7 @@ function! IndentConsistencyCop#IndentConsistencyCop( startLineNum, endLineNum, i
 
 	    let l:consistentIndentSetting = s:GetIndentSettingForBufferSettings()
 	    call s:ReportConsistencyResult( l:isEntireBuffer, l:isConsistent, l:consistentIndentSetting )	" Update report, now that the verdict has been turned around and we have the consistent indent setting. 
-	    call s:IndentBufferConsistencyCop( a:startLineNum, a:endLineNum, l:consistentIndentSetting, 0 ) " Pass isBufferSettingsCheck = 0 here (though a:isBufferSettingsCheck == 1) because we've already ensured that the buffer is consistent with the buffer settings. 
+	    call s:IndentBufferConsistencyCop( a:startLineNum, a:endLineNum, l:consistentIndentSetting, 0 ) " Pass isBufferSettingsCheck = 0 here (though a:isBufferSettingsCheck == 1) because we've already ensured that the buffer is consistent with the buffer settings, and just want the function to print the user message. 
 	else
 	    let l:inconsistentIndentationMessage = 'Found ' . ( s:IsEnoughIndentForSolidAssessment() ? '' : 'potentially ')
 	    let l:inconsistentIndentationMessage .= 'inconsistent indentation in this ' . s:GetScopeUserString(l:isEntireBuffer) . '; generated from these conflicting settings: ' 
