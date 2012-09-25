@@ -75,6 +75,8 @@ RELATED WORKS								     *
   (https://github.com/ervandew/vimfiles/blob/master/vim/plugin/indentdetect.vim)
   by Eric Van Dewoestine performs a simple detection and can set defaults
   based on the filespec.
+- matchindent.vim (vimscript #4066) detects tabs, 2 and 4-space indents and
+  adapts the indent settings accordingly.
 
 ==============================================================================
 USAGE						  *IndentConsistencyCop-usage*
