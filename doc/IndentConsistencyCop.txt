@@ -160,7 +160,7 @@ removes these additional whitespaces from the indent when evaluating lines. >
 <
 ==============================================================================
 INTEGRATION				    *IndentConsistencyCop-integration*
-
+					       *b:indentconsistencycop_result*
 The :IndentConsistencyCop and :IndentRangeConsistencyCop commands fill a
 buffer-scoped dictionary with the results of the check. These results can be
 consumed by other Vim integrations (e.g. for a custom 'statusline').
