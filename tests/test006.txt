@@ -1,0 +1,16 @@
+// vim: set ft=cpp ts=8 sts=2 sw=2 noexpandtab:
+// Consistent indentation, but only small indents. Possibly wrong 'noexpandtab'. 
+foo
+  bar
+  baz
+quux
+  quuux
+    q
+    q
+  q
+q
+0
+  1
+    2
+  1
+0
