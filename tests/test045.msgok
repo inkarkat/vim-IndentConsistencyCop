@@ -1,0 +1,7 @@
+The buffer's indent settings are potentially inconsistent with the used indent '2 characters soft tabstop'; these settings must be changed: 
+- softtabstop from 4 to 2
+- shiftwidth from 4 to 2
+Warning: The maximum indent of 8 is too small for a solid assessment. 
+How do you want to deal with the potential inconsistency?
+[I]gnore, (C)hange, (W)rong, choose correct setting...: 
+The buffer settings have been changed: tabstop=8 softtabstop=2 shiftwidth=2 noexpandtab
