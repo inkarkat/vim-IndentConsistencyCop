@@ -2,12 +2,18 @@
 "
 " DEPENDENCIES:
 "
-" Copyright: (C) 2006-2011 Ingo Karkat
+" Copyright: (C) 2006-2012 Ingo Karkat
 "   The VIM LICENSE applies to this script; see ':help copyright'. 
 "
 " Maintainer:	Ingo Karkat <ingo@karkat.de>
 "
 " REVISION	DATE		REMARKS  {{{1
+"   1.31.024	03-Apr-2012	Use matchadd() instead of :2match to avoid
+"				clashes with user highlightings (or other
+"				plugins like html_matchtag.vim).
+"				ENH: Clear highlighting when another buffer is
+"				loaded into the window to avoid that the
+"				highlightings persist in a now wrong context.
 "   1.30.023	22-Nov-2011	ENH: Avoid the spurious "potential inconsistency
 "				with buffer settings" warning when there are
 "				only small consistent indents detected as
@@ -1594,6 +1600,12 @@ function! IndentConsistencyCopFoldExpr( lineNum, foldContext ) " {{{2
     return 1
 endfunction
 
+function! s:ClearMatch()
+    if exists('w:indentconsistencycop_match')
+	silent! call matchdelete(w:indentconsistencycop_match)
+	unlet w:indentconsistencycop_match
+    endif
+endfunction
 function! s:SetHighlighting( lineNumbers ) " {{{2
 "*******************************************************************************
 "* PURPOSE:
@@ -1637,10 +1649,20 @@ function! s:SetHighlighting( lineNumbers ) " {{{2
 	    let @/ = l:linePattern
 	endif
 	if g:indentconsistencycop_highlighting =~# 'm'
-	    if exists('w:indentconsistencycop_match')
-		silent! call matchdelete(w:indentconsistencycop_match)
-	    endif
+	    call s:ClearMatch()
 	    let w:indentconsistencycop_match = matchadd('IndentConsistencyCop', l:linePattern)
+
+	    " Note: The match is installed for the window, but we would like to
+	    " have them attached to the buffer. Therefore, we at least have to
+	    " do cleanup when another buffer is displayed in the current window.
+	    " We do not attempt to restore the match when the buffer is
+	    " re-displayed in a window, because that is hard to get right and
+	    " requires a lot of autocmds. This should happen rarely enough, and
+	    " the user can re-create the highlighting with another
+	    " :IndentConsistencyCop command.
+	    augroup IndentConsistencyCopMatches
+		autocmd! BufWinLeave <buffer> call <SID>ClearMatch() | autocmd! IndentConsistencyCopMatches * <buffer>
+	    augroup END
 	endif
 
     endif
@@ -1690,10 +1712,7 @@ function! IndentConsistencyCop#ClearHighlighting() " {{{2
 "* RETURN VALUES: 
 "   none
 "*******************************************************************************
-    if exists('w:indentconsistencycop_match')
-	silent! call matchdelete(w:indentconsistencycop_match)
-	unlet w:indentconsistencycop_match
-    endif
+    call s:ClearMatch()
 
     if ! exists( 'b:indentconsistencycop_did_highlighting' ) || ! b:indentconsistencycop_did_highlighting 
 	return
