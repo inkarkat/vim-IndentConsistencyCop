@@ -18,6 +18,11 @@
 "				and normalizing: Limit to MAX_INT instead of
 "				carrying on with negative ratings, or just use
 "				Float values when Vim has support for it.
+"				When we have only a few, widely indented lines,
+"				there may be more than one way to interpret them
+"				as a perfect setting. Choose one over the other
+"				via some simple heuristics instead of the
+"				previous assertion error.
 "   1.31.024	03-Apr-2012	Use matchadd() instead of :2match to avoid
 "				clashes with user highlightings (or other
 "				plugins like html_matchtag.vim).
@@ -818,8 +823,34 @@ function! s:EvaluateOccurrenceAndIncompatibleIntoRating( incompatibles ) " {{{2
 
 	if empty( l:incompatibles )
 	    " This is a perfect indent setting.
-	    if ! empty( s:perfectIndentSetting ) | throw 'ASSERT: There is only one perfect indent setting. ' | endif
-	    let s:perfectIndentSetting = l:indentSetting
+	    if empty( s:perfectIndentSetting )
+		let s:perfectIndentSetting = l:indentSetting
+	    else
+		" When we have only a few, widely indented lines, there may be
+		" more than one way to interpret them as a perfect; e.g.
+		" "            " = 2 * spc6 / 3 * spc4;
+		" <Tab><Tab><Tab><Tab><Tab> = 5 * tab / 8 * sts5
+		"
+		" I would probably best to drag along all perfect indent
+		" settings, to later reconcile them with the buffer settings, or
+		" ask the user. Since this should happen rarely, for the moment
+		" just apply some simple heuristics to chose one over the other.
+		if s:perfectIndentSetting == 'tab'
+		    " Prefer the existing Tab.
+		    unlet s:ratings[l:indentSetting]
+		elseif l:indentSetting == 'tab'
+		    " Prefer the new Tab.
+		    unlet s:ratings[s:perfectIndentSetting]
+		    let s:perfectIndentSetting = l:indentSetting
+		elseif s:GetMultiplierFromIndentSetting(l:indentSetting) < s:GetMultiplierFromIndentSetting(s:perfectIndentSetting)
+		    " Prefer the new, smaller multiplier.
+		    unlet s:ratings[s:perfectIndentSetting]
+		    let s:perfectIndentSetting = l:indentSetting
+		else
+		    " Prefer the existing smaller multiplier.
+		    unlet s:ratings[l:indentSetting]
+		endif
+	    endif
 	elseif empty( filter( copy( l:incompatibles ), '! s:IsBadIndentSetting(v:val)' ) )
 	    " This is an authoritative indent setting.
 	    if ! empty( s:authoritativeIndentSetting ) | throw 'ASSERT: There is only one authoritative indent setting. ' | endif
