@@ -1,0 +1,10 @@
+The buffer's indent settings are potentially inconsistent with the used indent '2 spaces'; these settings must be changed: 
+- noexpandtab to expandtab
+Warning: The maximum indent of 4 is too small for a solid assessment. 
+How do you want to deal with the potential inconsistency?
+[I]gnore, (C)hange, (W)rong, choose correct setting...: 
+Choose the indent setting:
+(t)abstop, (s)oft tabstop, spa(c)es: 
+Choose indent value:
+(1), (2), (3), (4), (5), (6), (7), (8): 
+No incorrect lines found for setting '2 characters soft tabstop'!
