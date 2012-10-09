@@ -71,6 +71,7 @@ RELATED WORKS								     *
 - yaifa.vim (vimscript #3096) is a port to vimscript of the above.
 - detectindent.vim (https://github.com/ciaranm/detectindent) by Ciaran
   McCreesh tries to auto-detect the indentation settings.
+- GuessIndent (vimscript #4251) is based on detectindent.vim
 - indentdetect.vim
   (https://github.com/ervandew/vimfiles/blob/master/vim/plugin/indentdetect.vim)
   by Eric Van Dewoestine performs a simple detection and can set defaults
