@@ -8,6 +8,16 @@
 " Maintainer:	Ingo Karkat <ingo@karkat.de>
 "
 " REVISION	DATE		REMARKS  {{{1
+"   1.40.025	10-Oct-2012	The cop can often do a solid assessment when the
+"				maximum indent is 8. Only when there are no
+"				smaller indents, a higher indent is needed to
+"				unequivocally recognize soft tabstops. Start
+"				storing the minimum indent and extend the logic
+"				for solid assessment.
+"				ENH: Better handle integer overflow when rating
+"				and normalizing: Limit to MAX_INT instead of
+"				carrying on with negative ratings, or just use
+"				Float values when Vim has support for it.
 "   1.31.024	03-Apr-2012	Use matchadd() instead of :2match to avoid
 "				clashes with user highlightings (or other
 "				plugins like html_matchtag.vim).
@@ -754,6 +764,17 @@ endfunction
 " }}}2
 
 "- Rating generation -----------------------------------------------------{{{1
+function! s:Rate( occurrences, incompatibleOccurrences) " {{{2
+    if has('float')
+	return 1.0 * a:occurrences / a:incompatibleOccurrences
+    else
+	" Emulate fractional numbers by shifting the decimal point 5 digits.
+	" This may cause an integer overflow; avoid returning a negative value
+	" and instead limit to the maxiumum integer.
+	let l:rate = 10000 * a:occurrences / a:incompatibleOccurrences
+	return (l:rate < 0 ? 0x7FFFFFFF : l:rate)
+    endif
+endfunction
 function! s:EvaluateOccurrenceAndIncompatibleIntoRating( incompatibles ) " {{{2
 "*******************************************************************************
 "* PURPOSE:
@@ -792,7 +813,8 @@ function! s:EvaluateOccurrenceAndIncompatibleIntoRating( incompatibles ) " {{{2
 	for l:incompatible in l:incompatibles
 	    let l:incompatibleOccurrences += s:occurrences[ l:incompatible ]
 	endfor
-	let s:ratings[ l:indentSetting ] = 10000 * s:occurrences[ l:indentSetting ] / l:incompatibleOccurrences
+
+	let s:ratings[ l:indentSetting ] = s:Rate(s:occurrences[ l:indentSetting ], l:incompatibleOccurrences)
 
 	if empty( l:incompatibles )
 	    " This is a perfect indent setting.
@@ -826,11 +848,20 @@ function! s:GetRawRatingsSum() "{{{2
     return l:valueSum
 endfunction
 
+function! s:Normalize( ratings, ratingsSum ) "{{{2
+    if has('float')
+	return float2nr(100.0 * a:ratings / a:ratingsSum)
+    else
+	" Because of the limited range of integers, the multiplication may
+	" overflow without a truncation.
+	return 100 * min([a:ratings, 0x7FFFFFFF/100]) / a:ratingsSum
+    endif
+endfunction
 function! s:NormalizeAuthoritativeRating() " {{{2
     " Remove every rating except the authoritative and bad indent settings.
     let l:rawRatingsSum = s:GetRawRatingsSum()
     for l:indentSetting in keys( s:ratings )
-	let l:newRating = 100 * s:ratings[ l:indentSetting ] / l:rawRatingsSum
+	let l:newRating = s:Normalize(s:ratings[l:indentSetting], l:rawRatingsSum)
 	if l:indentSetting == s:authoritativeIndentSetting || s:IsBadIndentSetting( l:indentSetting )
 	    let s:ratings[ l:indentSetting ] = l:newRating
 	else
@@ -844,7 +875,7 @@ function! s:NormalizeNonPerfectRating() " {{{2
 
     let l:rawRatingsSum = s:GetRawRatingsSum()
     for l:indentSetting in keys( s:ratings )
-	let l:newRating = 100 * s:ratings[ l:indentSetting ] / l:rawRatingsSum
+	let l:newRating = s:Normalize(s:ratings[l:indentSetting], l:rawRatingsSum)
 	if l:newRating < l:ratingThreshold && ! s:IsBadIndentSetting( l:indentSetting )
 	    unlet s:ratings[ l:indentSetting ]
 	else
@@ -1937,7 +1968,7 @@ function! s:ReportConsistencyResult( isEntireBuffer, isConsistent, consistentInd
     if a:isEntireBuffer || (s:indentMax > get(b:indentconsistencycop_result, 'maxIndent', -1))
 	let b:indentconsistencycop_result.maxIndent = s:indentMax
     endif
-    if a:isEntireBuffer || (s:indentMin < get(b:indentconsistencycop_result, 'minIndent', -1))
+    if a:isEntireBuffer || (s:indentMin < get(b:indentconsistencycop_result, 'minIndent', 0x7FFFFFFF))
 	let b:indentconsistencycop_result.minIndent = s:indentMin
     endif
 endfunction
