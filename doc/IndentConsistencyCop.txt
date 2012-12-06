@@ -102,10 +102,10 @@ instead of :IndentConsistencyCop.
 INSTALLATION				   *IndentConsistencyCop-installation*
 
 This script is packaged as a |vimball|. If you have the "gunzip" decompressor
-in your PATH, simply edit the *.vba.gz package in Vim; otherwise, decompress
+in your PATH, simply edit the *.vmb.gz package in Vim; otherwise, decompress
 the archive first, e.g. using WinZip. Inside Vim, install by sourcing the
 vimball or via the |:UseVimball| command. >
-    vim IndentConsistencyCop.vba.gz
+    vim IndentConsistencyCop*.vmb.gz
     :so %
 To uninstall, use the |:RmVimball| command.
 
@@ -249,7 +249,7 @@ IDEAS						  *IndentConsistencyCop-ideas*
 ==============================================================================
 HISTORY						*IndentConsistencyCop-history*
 
-1.40	10-Oct-2012
+1.40	11-Oct-2012
 - The cop can often do a solid assessment when the maximum indent is 8.
   Only when there are no smaller indents, a higher indent is needed to
   unequivocally recognize soft tabstops.
