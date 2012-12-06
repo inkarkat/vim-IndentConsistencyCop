@@ -23,6 +23,8 @@
 "				as a perfect setting. Choose one over the other
 "				via some simple heuristics instead of the
 "				previous assertion error.
+"				FIX: Fall back to the old :2match when
+"				matchadd() is not available.
 "   1.31.024	03-Apr-2012	Use matchadd() instead of :2match to avoid
 "				clashes with user highlightings (or other
 "				plugins like html_matchtag.vim).
@@ -1668,9 +1670,13 @@ function! IndentConsistencyCopFoldExpr( lineNum, foldContext ) " {{{2
 endfunction
 
 function! s:ClearMatch()
-    if exists('w:indentconsistencycop_match')
-	silent! call matchdelete(w:indentconsistencycop_match)
-	unlet w:indentconsistencycop_match
+    if exists('*matchadd')
+	if exists('w:indentconsistencycop_match')
+	    silent! call matchdelete(w:indentconsistencycop_match)
+	    unlet w:indentconsistencycop_match
+	endif
+    elseif g:indentconsistencycop_highlighting =~# 'm'
+	2match none
     endif
 endfunction
 function! s:SetHighlighting( lineNumbers ) " {{{2
@@ -1717,7 +1723,12 @@ function! s:SetHighlighting( lineNumbers ) " {{{2
 	endif
 	if g:indentconsistencycop_highlighting =~# 'm'
 	    call s:ClearMatch()
-	    let w:indentconsistencycop_match = matchadd('IndentConsistencyCop', l:linePattern)
+
+	    if exists('*matchadd')
+		let w:indentconsistencycop_match = matchadd('IndentConsistencyCop', l:linePattern)
+	    else
+		execute '2match IndentConsistencyCop /' . l:linePattern . '/'
+	    endif
 
 	    " Note: The match is installed for the window, but we would like to
 	    " have them attached to the buffer. Therefore, we at least have to
