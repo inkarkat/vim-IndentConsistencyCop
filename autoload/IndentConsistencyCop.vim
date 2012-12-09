@@ -8,6 +8,19 @@
 " Maintainer:	Ingo Karkat <ingo@karkat.de>
 "
 " REVISION	DATE		REMARKS  {{{1
+"   1.41.026	07-Dec-2012	Change the behavior of
+"				:IndentRangeConsistencyCop to consider the
+"				buffer settings to turn around the verdict of
+"				"inconsistent indent" (but still not report
+"				inconsistent buffer settings alone). Otherwise,
+"				together with the IndentConsistencyCopAutoCmds
+"				triggers, it can happen that on opening (i.e.
+"				:IndentConsistencyCop), the file is judged okay
+"				(considering the buffer settings), but on
+"				writing the buffer (:IndentRangeConsistencyCop),
+"				a potential inconsistency due to too small
+"				indent is reported. Thanks to Marcelo Montu for
+"				reporting this issue.
 "   1.40.025	10-Oct-2012	The cop can often do a solid assessment when the
 "				maximum indent is 8. Only when there are no
 "				smaller indents, a higher indent is needed to
@@ -2106,8 +2119,6 @@ function! s:IsBufferConsistentWithBufferSettings( startLineNum, endLineNum ) " {
 "   small maximum indents.
 "* ASSUMPTIONS / PRECONDITIONS:
 "   A potential buffer inconsistency has been detected (s:CheckBufferConsistency() == 0).
-"   Consistency with the buffer settings should also be checked
-"	(a:isBufferSettingsCheck == 1).
 "* EFFECTS / POSTCONDITIONS:
 "	? List of the procedure's effect on each external variable, control, or other element.
 "* INPUTS:
@@ -2168,10 +2179,8 @@ function! IndentConsistencyCop#IndentConsistencyCop( startLineNum, endLineNum, i
 	call s:UnindentedBufferConsistencyCop( l:isEntireBuffer, a:isBufferSettingsCheck )
 	call s:ReportConsistencyWithBufferSettingsResult( l:isEntireBuffer, 1 )
     elseif l:isConsistent == 0
-	if a:isBufferSettingsCheck
-	    let l:isConsistent = s:IsBufferConsistentWithBufferSettings( a:startLineNum, a:endLineNum )
-	    call s:ReportConsistencyWithBufferSettingsResult( l:isEntireBuffer, l:isConsistent )
-	endif
+	let l:isConsistent = s:IsBufferConsistentWithBufferSettings( a:startLineNum, a:endLineNum )
+	call s:ReportConsistencyWithBufferSettingsResult( l:isEntireBuffer, l:isConsistent )
 	if l:isConsistent
 	    call IndentConsistencyCop#ClearHighlighting()
 
