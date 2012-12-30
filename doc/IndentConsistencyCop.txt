@@ -249,6 +249,23 @@ IDEAS						  *IndentConsistencyCop-ideas*
 ==============================================================================
 HISTORY						*IndentConsistencyCop-history*
 
+1.42	10-Dec-2012
+When a perfect or authoritative rating didn't pass the majority rule, try to
+turn around the verdict by checking consistency with buffer settings, as is
+done for small indents only. For example, this avoids a wrong verdict of
+inconsistent spc8 when there are more spc8 than spc4. Thanks to Marcelo Montu
+for reporting this issue.
+
+1.41	07-Dec-2012
+Change the behavior of :IndentRangeConsistencyCop to consider the buffer
+settings to turn around the verdict of "inconsistent indent" (but still not
+report inconsistent buffer settings alone). Otherwise, together with the
+IndentConsistencyCopAutoCmds triggers, it can happen that on opening (i.e.
+:IndentConsistencyCop), the file is judged okay (considering the buffer
+settings), but on writing the buffer (:IndentRangeConsistencyCop), a potential
+inconsistency due to too small indent is reported. Thanks to Marcelo Montu for
+reporting this issue.
+
 1.40	11-Oct-2012
 - The cop can often do a solid assessment when the maximum indent is 8.
   Only when there are no smaller indents, a higher indent is needed to
