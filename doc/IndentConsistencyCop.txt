@@ -78,6 +78,10 @@ RELATED WORKS								     *
   based on the filespec.
 - matchindent.vim (vimscript #4066) detects tabs, 2 and 4-space indents and
   adapts the indent settings accordingly.
+- sleuth.vim (vimscript #4375) by Tim Pope automatically adjusts 'shiftwidth'
+  and 'tabstop' heuristically (via a simplistic sampling that does not check
+  for bad or inconsistent indents) or by looking at other files of the same
+  type.
 
 ==============================================================================
 USAGE						  *IndentConsistencyCop-usage*
