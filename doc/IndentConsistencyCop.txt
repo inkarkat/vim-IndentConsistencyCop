@@ -253,6 +253,9 @@ IDEAS						  *IndentConsistencyCop-ideas*
 ==============================================================================
 HISTORY						*IndentConsistencyCop-history*
 
+1.43	RELEASEME
+- Minor: Make matchstr() robust against 'ignorecase'.
+
 1.42	10-Dec-2012
 When a perfect or authoritative rating didn't pass the majority rule, try to
 turn around the verdict by checking consistency with buffer settings, as is
@@ -369,7 +372,7 @@ First published version.
 Started development.
 
 ==============================================================================
-Copyright: (C) 2006-2012 Ingo Karkat
+Copyright: (C) 2006-2013 Ingo Karkat
 The VIM LICENSE applies to this plugin; see |copyright|.
 
 Maintainer:	Ingo Karkat <ingo@karkat.de>
