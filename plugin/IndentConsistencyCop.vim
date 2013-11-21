@@ -53,4 +53,4 @@ command! -bar IndentConsistencyCopOff call IndentConsistencyCop#ClearHighlightin
 " know does not conform to the buffer indent settings. 
 command! -bar -range=% IndentRangeConsistencyCop call IndentConsistencyCop#IndentConsistencyCop(<line1>, <line2>, 0)
 
-" vim: set sts=4 sw=4 noexpandtab ff=unix fdm=syntax :
+" vim: set ts=8 sts=4 sw=4 noexpandtab ff=unix fdm=syntax :
