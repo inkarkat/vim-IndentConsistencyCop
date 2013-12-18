@@ -161,7 +161,7 @@ and C/C++ programs: >
 The IndentConsistencyCop would be confused by these special indents, so the
 non-indent pattern defined in g:indentconsistencycop_non_indent_pattern
 removes these additional whitespaces from the indent when evaluating lines. >
-    let g:indentconsistencycop_non_indent_pattern = ' \*[*/ \t]'
+    let g:indentconsistencycop_non_indent_pattern = ' \*\%([*/ \t]\|$\)'
 <
 ==============================================================================
 INTEGRATION				    *IndentConsistencyCop-integration*
@@ -255,6 +255,9 @@ HISTORY						*IndentConsistencyCop-history*
 
 1.43	RELEASEME
 - Minor: Make matchstr() robust against 'ignorecase'.
+- Improve g:indentconsistencycop_non_indent_pattern to also handle empty
+  comment lines with a sole ' *' prefix. Thanks to Marcelo Montu for reporting
+  this.
 
 1.42	10-Dec-2012
 When a perfect or authoritative rating didn't pass the majority rule, try to
