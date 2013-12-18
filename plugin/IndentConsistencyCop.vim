@@ -10,6 +10,16 @@
 " Maintainer:	Ingo Karkat <ingo@karkat.de>
 "
 " REVISION	DATE		REMARKS
+"   1.43.024	14-Dec-2013	XXX: Switch default
+"				g:indentconsistencycop_non_indent_pattern to old
+"				regexp engine in Vim 7.4; the new NFA-based one
+"				has a problem with the pattern; cp.
+"				http://article.gmane.org/gmane.editors.vim.devel/43712
+"   1.43.023	22-Nov-2013	Improve
+"				g:indentconsistencycop_non_indent_pattern to
+"				also handle empty comment lines with a sole ' *'
+"				prefix. Thanks to Marcelo Montu for reporting
+"				this.
 "   1.21.022	31-Dec-2010	Moved functions from plugin to separate autoload
 "				script.
 "				Split off documentation into separate help file.
@@ -30,6 +40,11 @@ endif
 
 if ! exists('g:indentconsistencycop_non_indent_pattern')
     let g:indentconsistencycop_non_indent_pattern = ' \*\%([*/ \t]\|$\)'
+    " XXX: The new NFA-based regexp engine has a problem with the pattern; cp.
+    " http://article.gmane.org/gmane.editors.vim.devel/43712
+    if exists('+regexpengine')
+	let g:indentconsistencycop_non_indent_pattern = '\%#=0' . g:indentconsistencycop_non_indent_pattern
+    endif
 endif
 
 if g:indentconsistencycop_highlighting =~# 'm'
