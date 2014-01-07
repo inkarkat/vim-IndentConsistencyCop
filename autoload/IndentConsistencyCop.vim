@@ -2,12 +2,14 @@
 "
 " DEPENDENCIES:
 "
-" Copyright: (C) 2006-2012 Ingo Karkat
+" Copyright: (C) 2006-2013 Ingo Karkat
 "   The VIM LICENSE applies to this script; see ':help copyright'.
 "
 " Maintainer:	Ingo Karkat <ingo@karkat.de>
 "
 " REVISION	DATE		REMARKS  {{{1
+"   1.43.011	14-Jun-2013	Minor: Make matchstr() robust against
+"				'ignorecase'.
 "   1.42.027	10-Dec-2012	When a perfect or authoritative rating didn't
 "				pass the majority rule (inside
 "				s:NormalizeRatings()), try to turn around the
@@ -1790,7 +1792,7 @@ function! s:SetHighlighting( lineNumbers ) " {{{2
 	setlocal list
     endif
 
-    let l:foldContext = matchstr( g:indentconsistencycop_highlighting, 'f:\zs\d' )
+    let l:foldContext = matchstr( g:indentconsistencycop_highlighting, '\Cf:\zs\d' )
     if ! empty( l:foldContext )
 	" The list of lines to be highlighted is copied to a list with
 	" buffer-scope, because the (buffer-scoped) foldexpr needs access to it.
@@ -1841,7 +1843,7 @@ function! IndentConsistencyCop#ClearHighlighting() " {{{2
 	endif
     endif
 
-    if ! empty( matchstr( g:indentconsistencycop_highlighting, 'f:\zs\d' ) )
+    if ! empty( matchstr( g:indentconsistencycop_highlighting, '\Cf:\zs\d' ) )
 	if exists( 'b:indentconsistencycop_lineNumbers' )
 	    " Just free the memory here.
 	    unlet b:indentconsistencycop_lineNumbers
