@@ -253,7 +253,14 @@ IDEAS						  *IndentConsistencyCop-ideas*
 ==============================================================================
 HISTORY						*IndentConsistencyCop-history*
 
-1.43	RELEASEME
+1.44	RELEASEME
+- BUG: The version 1.43 workaround for the Vim 7.4 new regexp engine was
+  ineffective, because the \%#=1 atom needs to be prepended to the entire
+  regular expression, but that's not possible with the configuration value
+  alone. (Also, the workaround mistakenly specified auto-select (0) instead of
+  old engine (1).) Move the workaround to s:GetBeginningWhitespace() instead.
+
+1.43	19-Dec-2013
 - Minor: Make matchstr() robust against 'ignorecase'.
 - Improve g:indentconsistencycop_non_indent_pattern to also handle empty
   comment lines with a sole ' *' prefix. Thanks to Marcelo Montu for reporting
@@ -375,7 +382,7 @@ First published version.
 Started development.
 
 ==============================================================================
-Copyright: (C) 2006-2013 Ingo Karkat
+Copyright: (C) 2006-2014 Ingo Karkat
 The VIM LICENSE applies to this plugin; see |copyright|.
 
 Maintainer:	Ingo Karkat <ingo@karkat.de>
