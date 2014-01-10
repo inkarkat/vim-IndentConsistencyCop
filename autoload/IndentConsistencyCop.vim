@@ -2,12 +2,14 @@
 "
 " DEPENDENCIES:
 "
-" Copyright: (C) 2006-2013 Ingo Karkat
+" Copyright: (C) 2006-2014 Ingo Karkat
 "   The VIM LICENSE applies to this script; see ':help copyright'.
 "
 " Maintainer:	Ingo Karkat <ingo@karkat.de>
 "
 " REVISION	DATE		REMARKS  {{{1
+"   1.44.012	08-Jan-2014	Move workaround of forcing old regexp engine to
+"				s:GetBeginningWhitespace().
 "   1.43.011	14-Jun-2013	Minor: Make matchstr() robust against
 "				'ignorecase'.
 "   1.42.027	10-Dec-2012	When a perfect or authoritative rating didn't
@@ -352,8 +354,15 @@ function! s:CountBadMixOfSpacesAndTabs( string ) " {{{2
     call s:IncreaseKeyed( s:occurrences, 'badmix')
 endfunction
 
+if exists('+regexpengine') " {{{2
+    " XXX: The new NFA-based regexp engine has a problem with the default
+    " pattern; cp. http://article.gmane.org/gmane.editors.vim.devel/43712
+    let s:beginningWhitespacePrefix = '\%#=1'
+else
+    let s:beginningWhitespacePrefix = ''
+endif
 function! s:GetBeginningWhitespace( lineNum ) " {{{2
-    return matchstr( getline(a:lineNum), '^\s\{-}\ze\($\|\S\|' . g:indentconsistencycop_non_indent_pattern . '\)' )
+    return matchstr(getline(a:lineNum), s:beginningWhitespacePrefix . '^\s\{-}\ze\($\|\S\|' . g:indentconsistencycop_non_indent_pattern . '\)')
 endfunction
 
 function! s:UpdateIndentMinMax( beginningWhitespace ) " {{{2
