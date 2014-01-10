@@ -10,6 +10,14 @@
 " REVISION	DATE		REMARKS  {{{1
 "   1.44.012	08-Jan-2014	Move workaround of forcing old regexp engine to
 "				s:GetBeginningWhitespace().
+"				ENH: Close all consistent parts of the buffer
+"				when highlighting the inconsistencies via
+"				folding, and restore the original 'foldlevel'
+"				setting (and therefore the global fold state
+"				set by zM / zR) on :IndentConsistencyCopOff.
+"				Thanks to Marcelo Montu for the idea.
+"				Minor: Made IndentConsistencyCopFoldExpr() an
+"				autoload function.
 "   1.43.011	14-Jun-2013	Minor: Make matchstr() robust against
 "				'ignorecase'.
 "   1.42.027	10-Dec-2012	When a perfect or authoritative rating didn't
@@ -1697,10 +1705,7 @@ function! s:IsLineCorrect( lineNum, correctIndentSetting ) " {{{2
     endif
 endfunction
 
-function! IndentConsistencyCopFoldExpr( lineNum, foldContext ) " {{{2
-    " This function must be global; I could not get either s:FoldExpr() nor
-    " <SID>FoldExpr() resolved properly when setting 'foldexpr' to a
-    " script-local function.
+function! IndentConsistencyCop#FoldExpr( lineNum, foldContext ) " {{{2
     let l:lineCnt = a:lineNum - a:foldContext
     while l:lineCnt <= a:lineNum + a:foldContext
 	if index( b:indentconsistencycop_lineNumbers, l:lineCnt ) != -1
@@ -1806,10 +1811,19 @@ function! s:SetHighlighting( lineNumbers ) " {{{2
 	" The list of lines to be highlighted is copied to a list with
 	" buffer-scope, because the (buffer-scoped) foldexpr needs access to it.
 	let b:indentconsistencycop_lineNumbers = copy( a:lineNumbers )
+
 	if ! exists( 'b:indentconsistencycop_save_foldexpr' )
 	    let b:indentconsistencycop_save_foldexpr = &l:foldexpr
 	endif
-	let &l:foldexpr='IndentConsistencyCopFoldExpr(v:lnum,' . l:foldContext . ')'
+	let &l:foldexpr='IndentConsistencyCop#FoldExpr(v:lnum,' . l:foldContext . ')'
+
+	" Close all folds, so that only the inconsistent lines (plus context
+	" around it) is visible.
+	if ! exists( 'b:indentconsistencycop_save_foldlevel' )
+	    let b:indentconsistencycop_save_foldlevel = &l:foldlevel
+	endif
+	setlocal foldlevel=0
+
 	if ! exists( 'b:indentconsistencycop_save_foldmethod' )
 	    let b:indentconsistencycop_save_foldmethod = &l:foldmethod
 	endif
@@ -1853,17 +1867,24 @@ function! IndentConsistencyCop#ClearHighlighting() " {{{2
     endif
 
     if ! empty( matchstr( g:indentconsistencycop_highlighting, '\Cf:\zs\d' ) )
-	if exists( 'b:indentconsistencycop_lineNumbers' )
-	    " Just free the memory here.
-	    unlet b:indentconsistencycop_lineNumbers
-	endif
 	if exists( 'b:indentconsistencycop_save_foldmethod' )
 	    let &l:foldmethod = b:indentconsistencycop_save_foldmethod
 	    unlet b:indentconsistencycop_save_foldmethod
 	endif
+
+	if exists( 'b:indentconsistencycop_save_foldlevel' )
+	    let &l:foldlevel = b:indentconsistencycop_save_foldlevel
+	    unlet b:indentconsistencycop_save_foldlevel
+	endif
+
 	if exists( 'b:indentconsistencycop_save_foldexpr' )
 	    let &l:foldexpr = b:indentconsistencycop_save_foldexpr
 	    unlet b:indentconsistencycop_save_foldexpr
+	endif
+
+	if exists( 'b:indentconsistencycop_lineNumbers' )
+	    " Just free the memory here.
+	    unlet b:indentconsistencycop_lineNumbers
 	endif
     endif
 endfunction
