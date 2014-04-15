@@ -16,6 +16,9 @@
 "				setting (and therefore the global fold state
 "				set by zM / zR) on :IndentConsistencyCopOff.
 "				Thanks to Marcelo Montu for the idea.
+"				ENH: Enable folding to highlight the
+"				inconsistencies when it was previously :set
+"				nofoldenable'd.
 "				Minor: Made IndentConsistencyCopFoldExpr() an
 "				autoload function.
 "   1.43.011	14-Jun-2013	Minor: Make matchstr() robust against
@@ -1828,6 +1831,12 @@ function! s:SetHighlighting( lineNumbers ) " {{{2
 	    let b:indentconsistencycop_save_foldmethod = &l:foldmethod
 	endif
 	setlocal foldmethod=expr
+
+	" Enable folding to be effective.
+	if ! &l:foldenable && ! exists( 'b:indentconsistencycop_save_foldenable' )
+	    let b:indentconsistencycop_save_foldenable = &l:foldenable
+	endif
+	setlocal foldenable
     endif
 endfunction
 
@@ -1867,6 +1876,11 @@ function! IndentConsistencyCop#ClearHighlighting() " {{{2
     endif
 
     if ! empty( matchstr( g:indentconsistencycop_highlighting, '\Cf:\zs\d' ) )
+	if exists( 'b:indentconsistencycop_save_foldenable' )
+	    let &l:foldenable = b:indentconsistencycop_save_foldenable
+	    unlet b:indentconsistencycop_save_foldenable
+	endif
+
 	if exists( 'b:indentconsistencycop_save_foldmethod' )
 	    let &l:foldmethod = b:indentconsistencycop_save_foldmethod
 	    unlet b:indentconsistencycop_save_foldmethod
