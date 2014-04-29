@@ -1324,6 +1324,8 @@ function! s:CheckConsistencyWithBufferSettings( indentSetting ) " {{{2
 	    let l:userString .= "\n- shiftwidth from " . &l:shiftwidth . ' to ' . s:GetCorrectShiftwidthSetting( a:indentSetting )
 	endif
 	if ! l:isExpandtabCorrect
+	    " Note: Could use ingo#plugin#setting#BooleanToStringValue(), but
+	    " avoid dependency to ingo-library for now.
 	    let l:userString .= "\n- " . s:BooleanToSettingNoSetting( 'expandtab', &l:expandtab ) . ' to ' . s:BooleanToSettingNoSetting( 'expandtab', s:GetCorrectExpandtabSetting( a:indentSetting ) )
 	endif
 
