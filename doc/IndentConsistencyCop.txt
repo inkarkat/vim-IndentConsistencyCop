@@ -253,6 +253,9 @@ IDEAS						  *IndentConsistencyCop-ideas*
 ==============================================================================
 HISTORY						*IndentConsistencyCop-history*
 
+1.45	RELEASEME
+*** You need to update to ingo-library (vimscript #4433) version 1.019! ***
+
 1.44	11-Jan-2014
 - BUG: The version 1.43 workaround for the Vim 7.4 new regexp engine was
   ineffective, because the \%#=1 atom needs to be prepended to the entire
