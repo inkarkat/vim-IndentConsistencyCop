@@ -116,6 +116,8 @@ To uninstall, use the |:RmVimball| command.
 DEPENDENCIES				   *IndentConsistencyCop-dependencies*
 
 - Requires Vim 7.0 or higher.
+- Requires the |ingo-library.vim| plugin (vimscript #4433), version 1.019 or
+  higher.
 
 ==============================================================================
 CONFIGURATION				  *IndentConsistencyCop-configuration*
@@ -254,7 +256,8 @@ IDEAS						  *IndentConsistencyCop-ideas*
 HISTORY						*IndentConsistencyCop-history*
 
 1.45	RELEASEME
-*** You need to update to ingo-library (vimscript #4433) version 1.019! ***
+- Add dependency to ingo-library (vimscript #4433).
+*** You need to separately install ingo-library (vimscript #4433) version 1.019 (or higher)! ***
 
 1.44	11-Jan-2014
 - BUG: The version 1.43 workaround for the Vim 7.4 new regexp engine was
