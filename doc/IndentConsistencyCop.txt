@@ -65,23 +65,26 @@ RELATED WORKS								     *
 
 - IndentConsistencyCopAutoCmds (vimscript #1691) complements this plugin. It
   automatically triggers the IndentConsistencyCop for certain filetypes when
-  loading the buffer and optionally also on each write.
+  loading the buffer and optionally also on each write
 - Indent Finder (vimscript #513) is a Python script and Vim plugin that scans
-  any loaded buffer and configures the appropriate indent settings.
-- yaifa.vim (vimscript #3096) is a port to vimscript of the above.
+  any loaded buffer and configures the appropriate indent settings
+- yaifa.vim (vimscript #3096) is a port to vimscript of the above
 - detectindent.vim (https://github.com/ciaranm/detectindent) by Ciaran
-  McCreesh tries to auto-detect the indentation settings.
+  McCreesh tries to auto-detect the indentation settings
 - GuessIndent (vimscript #4251) is based on detectindent.vim
 - indentdetect.vim
   (https://github.com/ervandew/vimfiles/blob/master/vim/plugin/indentdetect.vim)
   by Eric Van Dewoestine performs a simple detection and can set defaults
-  based on the filespec.
+  based on the filespec
 - matchindent.vim (vimscript #4066) detects tabs, 2 and 4-space indents and
-  adapts the indent settings accordingly.
+  adapts the indent settings accordingly
 - sleuth.vim (vimscript #4375) by Tim Pope automatically adjusts 'shiftwidth'
   and 'tabstop' heuristically (via a simplistic sampling that does not check
   for bad or inconsistent indents) or by looking at other files of the same
-  type.
+  type
+- filetype (vimscript #5065) highlights tabs when 'expandtab' is set, trailing
+  spaces, and lines longer than 'textwidth', but doesn't actually check
+  conformance to indent
 
 ==============================================================================
 USAGE						  *IndentConsistencyCop-usage*
