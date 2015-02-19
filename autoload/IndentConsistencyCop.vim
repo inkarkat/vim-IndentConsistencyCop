@@ -10,6 +10,9 @@
 " Maintainer:	Ingo Karkat <ingo@karkat.de>
 "
 " REVISION	DATE		REMARKS  {{{1
+"   1.45.014	12-Dec-2014	Minor: Highlight action checks are dependent on
+"				'iskeyword' setting, and could cause script
+"				errors.
 "   1.45.013	30-Apr-2014	Consume
 "				ingo#plugin#setting#BooleanToStringValue() from
 "				ingo-library.
@@ -2151,11 +2154,11 @@ function! s:IndentBufferInconsistencyCop( startLineNum, endLineNum, inconsistent
 	if empty(l:highlightAction)
 	    " User canceled.
 	    call s:EchoUserMessage('Be careful when modifying the inconsistent indents! ')
-	elseif l:highlightAction =~? '\<buffer settings\>'
+	elseif l:highlightAction =~? 'buffer settings'
 	    call s:HighlightInconsistentIndents( a:startLineNum, a:endLineNum, l:bufferIndentSetting )
-	elseif l:highlightAction =~? '\<best guess\>'
+	elseif l:highlightAction =~? 'best guess'
 	    call s:HighlightInconsistentIndents( a:startLineNum, a:endLineNum, l:bestGuessIndentSetting )
-	elseif l:highlightAction =~? '\<chosen setting\>'
+	elseif l:highlightAction =~? 'chosen setting'
 	    let l:chosenIndentSetting = s:QueryIndentSetting()
 	    if ! empty( l:chosenIndentSetting )
 		call s:HighlightInconsistentIndents( a:startLineNum, a:endLineNum, l:chosenIndentSetting )
