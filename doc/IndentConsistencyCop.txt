@@ -82,9 +82,9 @@ RELATED WORKS								     *
   and 'tabstop' heuristically (via a simplistic sampling that does not check
   for bad or inconsistent indents) or by looking at other files of the same
   type
-- filetype (vimscript #5065) highlights tabs when 'expandtab' is set, trailing
-  spaces, and lines longer than 'textwidth', but doesn't actually check
-  conformance to indent
+- filestyle (vimscript #5065) highlights tabs when 'expandtab' is set,
+  trailing spaces, and lines longer than 'textwidth', but doesn't actually
+  check conformance to indent
 
 ==============================================================================
 USAGE						  *IndentConsistencyCop-usage*
@@ -258,9 +258,11 @@ IDEAS						  *IndentConsistencyCop-ideas*
 ==============================================================================
 HISTORY						*IndentConsistencyCop-history*
 
-1.45	RELEASEME
-- Add dependency to ingo-library (vimscript #4433).
-*** You need to separately install ingo-library (vimscript #4433) version 1.019 (or higher)! ***
+1.45	12-Dec-2014
+- Minor: Highlight action checks are dependent on 'iskeyword' setting, and
+  could cause script errors.
+- Add dependency to ingo-library (vimscript #4433). *** You need to separately
+  install ingo-library (vimscript #4433) version 1.019 (or higher)! ***
 
 1.44	11-Jan-2014
 - BUG: The version 1.43 workaround for the Vim 7.4 new regexp engine was
