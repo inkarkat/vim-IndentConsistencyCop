@@ -1,7 +1,6 @@
 Found potentially inconsistent indentation in this buffer; generated from these conflicting settings: 
 - 2 characters soft tabstop (1 of 7 lines) <- buffer setting
-- 8 spaces (1 of 7 lines)
-- tabstop (1 of 7 lines)
++- 8 spaces (1 of 7 lines)\n- tabstop (1 of 7 lines)\|- tabstop (1 of 7 lines)\n- 8 spaces (1 of 7 lines)+
 Some minor / inconclusive potential settings have been omitted. 
 Warning: The maximum indent of 8 is too small for a solid assessment. 
 [I]gnore, (H)ighlight wrong indents...: 
