@@ -1,0 +1,7 @@
+Found inconsistent indentation in this buffer; generated from these conflicting settings: 
+- 4 spaces (545 of 1300 lines) <- buffer setting
+Some minor / inconclusive potential settings have been omitted. 
+[I]gnore, (H)ighlight wrong indents...: 
+What kind of inconsistent indents do you want to highlight?
+Not [b]uffer settings / best guess (spc4), Not (c)hosen setting...: 
+Marked 1 incorrect lines. 
