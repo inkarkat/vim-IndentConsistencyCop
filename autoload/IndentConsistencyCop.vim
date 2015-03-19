@@ -1,15 +1,18 @@
 " IndentConsistencyCop.vim: Is the buffer's indentation consistent and does it conform to tab settings?
 "
 " DEPENDENCIES:
+"   - ingo/compat/regexp.vim autoload script
 "   - ingo/plugin/setting.vim autoload script
 "   - ingo/query.vim autoload script
 "
-" Copyright: (C) 2006-2014 Ingo Karkat
+" Copyright: (C) 2006-2015 Ingo Karkat
 "   The VIM LICENSE applies to this script; see ':help copyright'.
 "
 " Maintainer:	Ingo Karkat <ingo@karkat.de>
 "
 " REVISION	DATE		REMARKS  {{{1
+"   1.46.015	20-Feb-2015	Replace explicit regexp engine workaround with
+"				ingo/compat/regexp.vim.
 "   1.45.014	12-Dec-2014	Minor: Highlight action checks are dependent on
 "				'iskeyword' setting, and could cause script
 "				errors.
@@ -375,15 +378,8 @@ function! s:CountBadMixOfSpacesAndTabs( string ) " {{{2
     call s:IncreaseKeyed( s:occurrences, 'badmix')
 endfunction
 
-if exists('+regexpengine') " {{{2
-    " XXX: The new NFA-based regexp engine has a problem with the default
-    " pattern; cp. http://article.gmane.org/gmane.editors.vim.devel/43712
-    let s:beginningWhitespacePrefix = '\%#=1'
-else
-    let s:beginningWhitespacePrefix = ''
-endif
 function! s:GetBeginningWhitespace( lineNum ) " {{{2
-    return matchstr(getline(a:lineNum), s:beginningWhitespacePrefix . '^\s\{-}\ze\($\|\S\|' . g:indentconsistencycop_non_indent_pattern . '\)')
+    return matchstr(getline(a:lineNum), ingo#compat#regexp#GetOldEnginePrefix() . '^\s\{-}\ze\($\|\S\|' . g:indentconsistencycop_non_indent_pattern . '\)')
 endfunction
 
 function! s:UpdateIndentMinMax( beginningWhitespace ) " {{{2
