@@ -1,0 +1,10 @@
+Found inconsistent indentation in this buffer; generated from these conflicting settings: 
+- 1 spaces (4 of 29 lines) <- buffer setting
+- tabstop (6 of 29 lines)
+- 5 spaces (4 of 29 lines)
+- 2 spaces (3 of 29 lines)
+Some minor / inconclusive potential settings have been omitted. 
+[I]gnore, (H)ighlight wrong indents...: 
+What kind of inconsistent indents do you want to highlight?
+Not [b]uffer settings / best guess (spc1), Not (c)hosen setting...: 
+Marked 6 incorrect lines. 
