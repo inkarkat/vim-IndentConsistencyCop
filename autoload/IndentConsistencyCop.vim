@@ -17,6 +17,15 @@
 "				setting", also adapt the buffer settings to that
 "				indent setting, as the user has indicated that
 "				this is the right one.
+"				ENH: Add "Just change buffer settings"
+"				alternative for "Highlight wrong indents..."
+"				search that only adapts the buffer settings, but
+"				does not (in fact clears any) highlight. Often,
+"				I must not fix existing wrong indentation, but
+"				still would like to adapt my buffer settings to
+"				cause no addition harm to the file's indent.
+"				Minor: Use correct singular form for "Marked 1
+"				incorrect lines".
 "   1.46.015	20-Feb-2015	Replace explicit regexp engine workaround with
 "				ingo/compat/regexp.vim.
 "   1.45.014	12-Dec-2014	Minor: Highlight action checks are dependent on
@@ -1964,7 +1973,7 @@ function! s:HighlightInconsistentIndents( startLineNum, endLineNum, correctInden
 	" Update report, now that we have found out the range / buffer has inconsistent indent.
 	call s:ReportConsistencyResult( l:isEntireBuffer, 0, '' )
 
-	call s:EchoUserMessage( 'Marked ' . len( l:lineNumbers ) . ' incorrect lines. ' . a:appendixMessage)
+	call s:EchoUserMessage(printf('Marked %d incorrect line%s. %s', len(l:lineNumbers), (len(l:lineNumbers) == 1 ? '' : 's'), a:appendixMessage))
     endif
 endfunction
 
