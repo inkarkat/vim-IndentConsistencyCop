@@ -258,6 +258,10 @@ IDEAS						  *IndentConsistencyCop-ideas*
 ==============================================================================
 HISTORY						*IndentConsistencyCop-history*
 
+1.46	RELEASEME
+- Minor: Replace explicit regexp engine workaround with ingo/compat/regexp.vim.
+*** You need to update to ingo-library (vimscript #4433) version 1.024! ***
+
 1.45	12-Dec-2014
 - Minor: Highlight action checks are dependent on 'iskeyword' setting, and
   could cause script errors.
@@ -399,7 +403,7 @@ First published version.
 Started development.
 
 ==============================================================================
-Copyright: (C) 2006-2014 Ingo Karkat
+Copyright: (C) 2006-2015 Ingo Karkat
 The VIM LICENSE applies to this plugin; see |copyright|.
 
 Maintainer:	Ingo Karkat <ingo@karkat.de>
