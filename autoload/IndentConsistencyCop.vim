@@ -26,6 +26,8 @@
 "				cause no addition harm to the file's indent.
 "				Minor: Use correct singular form for "Marked 1
 "				incorrect lines".
+"				Cosmetics: Use case-insensitive string
+"				comparisons / matching instead of == / =~.
 "   1.46.015	20-Feb-2015	Replace explicit regexp engine workaround with
 "				ingo/compat/regexp.vim.
 "   1.45.014	12-Dec-2014	Minor: Highlight action checks are dependent on
@@ -301,7 +303,7 @@ function! s:RemoveKey( dict, key ) " {{{2
 endfunction
 
 function! s:RemoveFromList( list, value ) " {{{2
-    return filter( a:list, 'v:val != "' . a:value . '"' )
+    return filter( a:list, 'v:val !=# "' . a:value . '"' )
 endfunction
 
 function! s:UniqueReplaceElementWithListContents( list, searchElement, substitutionList ) " {{{2
@@ -324,7 +326,7 @@ function! s:UniqueReplaceElementWithListContents( list, searchElement, substitut
 "*******************************************************************************
     let l:hash = {}
     for l:element in a:list
-	if l:element == a:searchElement
+	if l:element ==# a:searchElement
 	    for l:substitutionElement in a:substitutionList
 		let l:hash[l:substitutionElement] = 1
 	    endfor
@@ -347,7 +349,7 @@ function! s:IsDivsorOf( newNumber, numbers ) " {{{2
 endfunction
 
 function! s:GetMultiplierFromIndentSetting( indentSetting ) " {{{2
-    if a:indentSetting == 'tab'
+    if a:indentSetting ==# 'tab'
 	return 8
     else
 	return str2nr( strpart( a:indentSetting, 3 ) )
@@ -359,7 +361,7 @@ function! s:GetSettingFromIndentSetting( indentSetting ) " {{{2
 endfunction
 
 function! s:IsBadIndentSetting( indentSetting ) " {{{2
-    return s:GetSettingFromIndentSetting( a:indentSetting ) == 'bad'
+    return s:GetSettingFromIndentSetting( a:indentSetting ) ==# 'bad'
 endfunction
 
 " }}}1
@@ -442,7 +444,7 @@ function! s:InspectLine(lineNum) " {{{2
 "*******************************************************************************
 "****D echo getline(a:lineNum)
     let l:beginningWhitespace = s:GetBeginningWhitespace( a:lineNum )
-    if l:beginningWhitespace == ''
+    if empty(l:beginningWhitespace)
 	return
     elseif match( l:beginningWhitespace, '^\t\+$' ) != -1
 	call s:CountTabs( l:beginningWhitespace )
@@ -521,7 +523,7 @@ function! s:RemoveSts8() " {{{1
 "* RETURN VALUES:
 "   none
 "*******************************************************************************
-    if s:GetKeyedValue( s:occurrences, 'sts8' ) != s:GetKeyedValue( s:occurrences, 'tab' )
+    if s:GetKeyedValue( s:occurrences, 'sts8' ) !=# s:GetKeyedValue( s:occurrences, 'tab' )
 	throw 'ASSERT: sts8 == tab'
     endif
     call s:RemoveKey( s:occurrences, 'sts8' )
@@ -555,7 +557,7 @@ function! s:GetPrecedence(indentSetting) " {{{1
 "   For doubtful indent settings, a list of indent settings; only 'spc' and
 "   'sts' are contained, no 'dbt' is returned.
 "*******************************************************************************
-    if s:GetSettingFromIndentSetting( a:indentSetting ) != 'dbt'
+    if s:GetSettingFromIndentSetting( a:indentSetting ) !=# 'dbt'
 	return [a:indentSetting]    " Pass-through.
     endif
     let l:multiplier = s:GetMultiplierFromIndentSetting( a:indentSetting )
@@ -709,7 +711,7 @@ function! s:InspectForCompatibles( incompatibles, indents, baseIndentSetting, te
     " Seed possible incompatibles with passed set; filter is testSetting.
     let l:isIncompatibles = {}	" Key: indentSetting; value: boolean (0/1).
     for l:incompatible in a:incompatibles
-	if s:GetSettingFromIndentSetting( l:incompatible ) == a:testSetting
+	if s:GetSettingFromIndentSetting( l:incompatible ) ==# a:testSetting
 	    let l:isIncompatibles[ l:incompatible ] = 0
 	endif
     endfor
@@ -763,11 +765,11 @@ function! s:GetIncompatiblesForIndentSetting( indentSetting ) " {{{2
     call s:RemoveFromList( l:incompatibles, a:indentSetting )
 
     let l:setting = s:GetSettingFromIndentSetting( a:indentSetting )
-    if l:setting == 'tab'
+    if l:setting ==# 'tab'
 	" 'sts' could be compatible with 'tab'.
 	" softtabstops must be inspected; doubtful contains indents that are too small (<8) for 'tab'.
 	call s:InspectForCompatibles( l:incompatibles, keys( s:softtabstops ), a:indentSetting, 'sts' )
-    elseif l:setting == 'sts'
+    elseif l:setting ==# 'sts'
 	" 'tab' could be compatible with 'sts' if the multipliers are right; tabstops must be inspected.
 	call s:InspectForCompatibles( l:incompatibles, keys( s:tabstops ), a:indentSetting, 'tab' )
 	" 'spc' is incompatible
@@ -775,14 +777,14 @@ function! s:GetIncompatiblesForIndentSetting( indentSetting ) " {{{2
 	call s:InspectForCompatibles( l:incompatibles, keys( s:doubtful ), a:indentSetting, 'dbt' )
 	" Other 'sts' multipliers could be compatible; softtabstops and doubtful must be inspected.
 	call s:InspectForCompatibles( l:incompatibles, keys( s:softtabstops ) + keys( s:doubtful ), a:indentSetting, 'sts' )
-    elseif l:setting == 'spc'
+    elseif l:setting ==# 'spc'
 	" 'tab' is incompatible.
 	" 'sts' is incompatible.
 	" 'dbt' could be compatible with 'spc' if the multipliers are right; doubtful must be inspected.
 	call s:InspectForCompatibles( l:incompatibles, keys( s:doubtful ), a:indentSetting, 'dbt' )
 	" Other 'spc' multipliers could be compatible; spaces and doubtful must be inspected.
 	call s:InspectForCompatibles( l:incompatibles, keys( s:spaces ) + keys( s:doubtful ), a:indentSetting, 'spc' )
-    elseif l:setting == 'bad'
+    elseif l:setting ==# 'bad'
 	" for bad, all are incompatible.
     else
 	throw 'Unknown indent setting: ' . l:setting
@@ -904,10 +906,10 @@ function! s:EvaluateOccurrenceAndIncompatibleIntoRating( incompatibles ) " {{{2
 		" settings, to later reconcile them with the buffer settings, or
 		" ask the user. Since this should happen rarely, for the moment
 		" just apply some simple heuristics to chose one over the other.
-		if s:perfectIndentSetting == 'tab'
+		if s:perfectIndentSetting ==# 'tab'
 		    " Prefer the existing Tab.
 		    unlet s:ratings[l:indentSetting]
-		elseif l:indentSetting == 'tab'
+		elseif l:indentSetting ==# 'tab'
 		    " Prefer the new Tab.
 		    unlet s:ratings[s:perfectIndentSetting]
 		    let s:perfectIndentSetting = l:indentSetting
@@ -933,7 +935,7 @@ endfunction
 "- Rating normalization --------------------------------------------------{{{1
 function! s:NormalizePerfectRating() " {{{2
     " Remove every non-perfect rating.
-    call filter( s:ratings, 'v:key == s:perfectIndentSetting' )
+    call filter( s:ratings, 'v:key ==# s:perfectIndentSetting' )
 
     " Normalize to 100%
     let s:ratings[ s:perfectIndentSetting ] = 100
@@ -962,7 +964,7 @@ function! s:NormalizeAuthoritativeRating() " {{{2
     let l:rawRatingsSum = s:GetRawRatingsSum()
     for l:indentSetting in keys( s:ratings )
 	let l:newRating = s:Normalize(s:ratings[l:indentSetting], l:rawRatingsSum)
-	if l:indentSetting == s:authoritativeIndentSetting || s:IsBadIndentSetting( l:indentSetting )
+	if l:indentSetting ==# s:authoritativeIndentSetting || s:IsBadIndentSetting( l:indentSetting )
 	    let s:ratings[ l:indentSetting ] = l:newRating
 	else
 	    unlet s:ratings[ l:indentSetting ]
@@ -1025,9 +1027,9 @@ function! s:NormalizeRatings() " {{{2
     " spc4). In other words, the cop must not be fooled by some wrong spaces
     " into believing that we have a consistent sts1, although the vast majority
     " of indents suggests an sts4 with some inconsistencies.
-    if ! empty(s:perfectIndentSetting) && s:perfectIndentSetting == s:GetBestRatedIndentSetting()
+    if ! empty(s:perfectIndentSetting) && s:perfectIndentSetting ==# s:GetBestRatedIndentSetting()
 	call s:NormalizePerfectRating()
-    elseif ! empty(s:authoritativeIndentSetting) && s:authoritativeIndentSetting == s:GetBestRatedIndentSetting()
+    elseif ! empty(s:authoritativeIndentSetting) && s:authoritativeIndentSetting ==# s:GetBestRatedIndentSetting()
 	call s:NormalizeAuthoritativeRating()
     else
 	" Any perfect or authoritative ratings didn't pass the majority rule, so
@@ -1253,11 +1255,11 @@ function! s:GetCorrectTabstopSetting( indentSetting ) " {{{2
 	" 'shiftwidth'; 'tabstop' and 'softtabstop' are only used in other
 	" places.
 	return &l:tabstop
-    elseif s:GetSettingFromIndentSetting( a:indentSetting ) == 'tab'
+    elseif s:GetSettingFromIndentSetting( a:indentSetting ) ==# 'tab'
 	return &l:tabstop
-    elseif s:GetSettingFromIndentSetting( a:indentSetting ) == 'sts'
+    elseif s:GetSettingFromIndentSetting( a:indentSetting ) ==# 'sts'
 	return 8
-    elseif s:GetSettingFromIndentSetting( a:indentSetting ) == 'spc'
+    elseif s:GetSettingFromIndentSetting( a:indentSetting ) ==# 'spc'
 	" If tabstop=8, we prefer changing the indent via softtabstop.
 	" If tabstop!=8, we rather modify tabstop than turning on softtabstop.
 	if &l:tabstop == 8
@@ -1276,9 +1278,9 @@ function! s:GetCorrectSofttabstopSetting( indentSetting ) " {{{2
 	" 'shiftwidth'; 'tabstop' and 'softtabstop' are only used in other
 	" places.
 	return &l:softtabstop
-    elseif s:GetSettingFromIndentSetting( a:indentSetting ) == 'sts'
+    elseif s:GetSettingFromIndentSetting( a:indentSetting ) ==# 'sts'
 	return s:GetMultiplierFromIndentSetting( a:indentSetting )
-    elseif s:GetSettingFromIndentSetting( a:indentSetting ) == 'spc'
+    elseif s:GetSettingFromIndentSetting( a:indentSetting ) ==# 'spc'
 	" If tabstop=8, we prefer changing the indent via softtabstop.
 	" If tabstop!=8, we rather modify tabstop than turning on softtabstop.
 	if &l:tabstop == 8 && s:GetMultiplierFromIndentSetting( a:indentSetting ) != 8
@@ -1293,7 +1295,7 @@ function! s:GetCorrectSofttabstopSetting( indentSetting ) " {{{2
 endfunction
 
 function! s:GetCorrectShiftwidthSetting( indentSetting ) " {{{2
-    if s:GetSettingFromIndentSetting( a:indentSetting ) == 'tab'
+    if s:GetSettingFromIndentSetting( a:indentSetting ) ==# 'tab'
 	return &l:tabstop
     else
 	return s:GetMultiplierFromIndentSetting( a:indentSetting )
@@ -1301,7 +1303,7 @@ function! s:GetCorrectShiftwidthSetting( indentSetting ) " {{{2
 endfunction
 
 function! s:GetCorrectExpandtabSetting( indentSetting ) " {{{2
-    return (s:GetSettingFromIndentSetting( a:indentSetting ) == 'spc')
+    return (s:GetSettingFromIndentSetting( a:indentSetting ) ==# 'spc')
 endfunction
 
 function! s:CheckConsistencyWithBufferSettings( indentSetting ) " {{{2
@@ -1399,22 +1401,22 @@ function! s:IndentSettingToUserString( indentSetting ) " {{{2
 "*******************************************************************************
     let l:userString = ''
 
-    if a:indentSetting == 'tab'
+    if a:indentSetting ==# 'tab'
 	let l:userString = 'tabstop'
-    elseif a:indentSetting == 'badsts'
+    elseif a:indentSetting ==# 'badsts'
 	let l:userString = 'soft tabstop with too many trailing spaces'
-    elseif a:indentSetting == 'badmix'
+    elseif a:indentSetting ==# 'badmix'
 	let l:userString = 'bad mix of spaces and tabs'
-    elseif a:indentSetting == 'badset'
+    elseif a:indentSetting ==# 'badset'
 	let l:userString = 'inconsistent buffer indent settings'
-    elseif a:indentSetting == 'notbad'
+    elseif a:indentSetting ==# 'notbad'
 	let l:userString = 'no bad mixes or soft tabstops with too many spaces'
     else
 	let l:setting = s:GetSettingFromIndentSetting( a:indentSetting )
 	let l:multiplier = s:GetMultiplierFromIndentSetting( a:indentSetting )
-	if l:setting == 'sts'
+	if l:setting ==# 'sts'
 	    let l:userString = l:multiplier . ' characters soft tabstop'
-	elseif l:setting == 'spc'
+	elseif l:setting ==# 'spc'
 	    let l:userString = l:multiplier . ' spaces'
 	else
 	    throw 'unknown indent setting "' . a:indentSetting . '"'
@@ -1481,7 +1483,7 @@ function! s:RatingsToUserString( lineCnt ) " {{{2
 	let l:indentSetting = l:ratingList[0]
 	let l:userString .= "\n- " . s:IndentSettingToUserString( l:indentSetting ) . ' (' . s:occurrences[ l:indentSetting ] . ' of ' . a:lineCnt . ' lines)'
 	"**** let l:rating = l:ratingList[1] = s:ratings[ l:indentSetting ]
-	if l:indentSetting == l:bufferIndentSetting
+	if l:indentSetting ==# l:bufferIndentSetting
 	    let l:userString .= ' <- buffer setting'
 	    let l:isBufferIndentSettingInRatings = 1
 	endif
@@ -1649,7 +1651,7 @@ function! s:IndentBufferConsistencyCop( startLineNum, endLineNum, consistentInde
     let l:isEntireBuffer = s:IsEntireBuffer(a:startLineNum, a:endLineNum)
     if a:isBufferSettingsCheck
 	let l:userMessage = s:CheckConsistencyWithBufferSettings( l:consistentIndentSetting )
-	if ! empty( l:userMessage ) && ! s:IsEnoughIndentForSolidAssessment() && s:GetSettingFromIndentSetting(l:consistentIndentSetting) == 'spc'
+	if ! empty( l:userMessage ) && ! s:IsEnoughIndentForSolidAssessment() && s:GetSettingFromIndentSetting(l:consistentIndentSetting) ==# 'spc'
 	    " Space indents of up to 7 spaces can be either softtabstop or
 	    " space-indent, lacking larger indents or other hints they cannot be
 	    " told apart, so s:GetPrecedence() defaults to 'spc'. To avoid
@@ -1707,20 +1709,20 @@ function! s:IsLineCorrect( lineNum, correctIndentSetting ) " {{{2
 	return 1
     endif
 
-    if a:correctIndentSetting == 'tab'
-	return l:beginningWhitespace =~ '^\t\+$'
-    elseif s:GetSettingFromIndentSetting( a:correctIndentSetting ) == 'spc'
-	return l:beginningWhitespace =~ '^ \+$' && s:IsIndentProduceableWithIndentSetting( len( l:beginningWhitespace ), a:correctIndentSetting )
-    elseif s:GetSettingFromIndentSetting( a:correctIndentSetting ) == 'sts'
+    if a:correctIndentSetting ==# 'tab'
+	return l:beginningWhitespace =~# '^\t\+$'
+    elseif s:GetSettingFromIndentSetting( a:correctIndentSetting ) ==# 'spc'
+	return l:beginningWhitespace =~# '^ \+$' && s:IsIndentProduceableWithIndentSetting( len( l:beginningWhitespace ), a:correctIndentSetting )
+    elseif s:GetSettingFromIndentSetting( a:correctIndentSetting ) ==# 'sts'
 	let l:beginningSpaces = substitute( l:beginningWhitespace, '\t', '        ', 'g' )
-	return l:beginningWhitespace =~ '^\t* \{0,7}$' && s:IsIndentProduceableWithIndentSetting( len( l:beginningSpaces ), a:correctIndentSetting )
-    elseif a:correctIndentSetting == 'notbad'
-	return l:beginningWhitespace =~ '^\(\t\+ \{0,7}\| \+\)$'
-    elseif a:correctIndentSetting == 'badsts'
-	return l:beginningWhitespace =~ '^\t* \{8,}$'
-    elseif a:correctIndentSetting == 'badmix'
-	return l:beginningWhitespace =~ ' \t'
-    elseif a:correctIndentSetting == 'badset'
+	return l:beginningWhitespace =~# '^\t* \{0,7}$' && s:IsIndentProduceableWithIndentSetting( len( l:beginningSpaces ), a:correctIndentSetting )
+    elseif a:correctIndentSetting ==# 'notbad'
+	return l:beginningWhitespace =~# '^\(\t\+ \{0,7}\| \+\)$'
+    elseif a:correctIndentSetting ==# 'badsts'
+	return l:beginningWhitespace =~# '^\t* \{8,}$'
+    elseif a:correctIndentSetting ==# 'badmix'
+	return l:beginningWhitespace =~# ' \t'
+    elseif a:correctIndentSetting ==# 'badset'
 	throw 'cannot evaluate lines with badset'
     else
 	throw 'unknown indent setting "' . a:indentSetting . '"'
@@ -2025,12 +2027,12 @@ function! s:InitResults() "{{{2
 endfunction
 
 function! s:ReportIndentSetting( indentSetting ) "{{{2
-    if a:indentSetting == 'tab'
+    if a:indentSetting ==# 'tab'
 	" Internally, there is only one 'tab' indent setting; the actual indent
 	" multiplier (as specified by the 'tabstop' setting) isn't important.
 	" For reporting, we want to include this information, however.
 	return a:indentSetting . &l:tabstop
-    elseif a:indentSetting == 'badset'
+    elseif a:indentSetting ==# 'badset'
 	" Translate the internal 'badset' to something more meaningful to the
 	" user.
 	return '???'
@@ -2055,7 +2057,7 @@ function! s:ReportBufferSettingsConsistency( indentSetting ) "{{{2
 "   none
 "*******************************************************************************
     let l:indentSetting = s:GetIndentSettingForBufferSettings()
-    if ! empty(a:indentSetting) && a:indentSetting != l:indentSetting
+    if ! empty(a:indentSetting) && a:indentSetting !=# l:indentSetting
 	throw 'ASSERT: Passed buffer settings are equal to actual indent settings. '
     endif
     let b:indentconsistencycop_result.bufferSettings = s:ReportIndentSetting(l:indentSetting)
@@ -2145,7 +2147,7 @@ function! s:IndentBufferInconsistencyCop( startLineNum, endLineNum, inconsistent
 	let l:isBestGuessEqualToBufferIndent = 1 " Suppress best guess option if no guess available.
 	if ! empty( s:ratings )
 	    let l:bestGuessIndentSetting = s:GetBestRatedIndentSetting()
-	    let l:isBestGuessEqualToBufferIndent = (l:bestGuessIndentSetting == l:bufferIndentSetting)
+	    let l:isBestGuessEqualToBufferIndent = (l:bestGuessIndentSetting ==# l:bufferIndentSetting)
 	endif
 	if l:action =~? '^Highlight'
 	    let l:highlightMessage = 'What kind of inconsistent indents do you want to highlight?'
