@@ -1,0 +1,10 @@
+Found inconsistent indentation in this buffer; generated from these conflicting settings: 
+- 2 spaces (9 of 29 lines)
+- bad mix of spaces and tabs (3 of 29 lines)
+- soft tabstop with too many trailing spaces (2 of 29 lines)
+Some minor / inconclusive potential settings have been omitted. 
+The buffer setting is 2 characters soft tabstop. 
+[I]gnore, (H)ighlight wrong indents...: 
+What kind of inconsistent indents do you want to highlight?
+Not [b]uffer settings (sts2), Not best (g)uess (spc2), Not (c)hosen setting..., (I)llegal indents only: 
+Marked 5 incorrect lines. 
