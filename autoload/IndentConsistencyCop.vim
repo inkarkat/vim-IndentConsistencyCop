@@ -1687,9 +1687,17 @@ function! s:IndentBufferConsistencyCop( startLineNum, endLineNum, consistentInde
 		call s:ReportBufferSettingsConsistency( l:consistentIndentSetting )
 		call s:PrintBufferSettings( 'The buffer settings have been changed: ' )
 	    elseif l:action =~? '^Wrong'
-		let l:chosenIndentSetting = s:QueryIndentSetting(0)
+		let l:chosenIndentSetting = s:QueryIndentSetting(1)
 		if ! empty( l:chosenIndentSetting )
-		    call s:HighlightInconsistentIndents( a:startLineNum, a:endLineNum, l:chosenIndentSetting, '')
+		    let l:bufferSettingsMessage = ''
+		    if l:chosenIndentSetting !=# s:GetIndentSettingForBufferSettings()
+			call s:MakeBufferSettingsConsistentWith( l:chosenIndentSetting )
+			call s:ReportConsistencyWithBufferSettingsResult( s:IsEntireBuffer(a:startLineNum, a:endLineNum), 1 )
+			call s:ReportBufferSettingsConsistency( l:chosenIndentSetting )
+			let l:bufferSettingsMessage = s:GetBufferSettingsMessage( 'The buffer settings have been changed: ' )
+		    endif
+
+		    call s:HighlightInconsistentIndents( a:startLineNum, a:endLineNum, s:StripTabstopValueFromIndentSetting( l:chosenIndentSetting ), l:bufferSettingsMessage)
 		else
 		    call s:PrintBufferSettings( 'The buffer settings remain ' . (s:IsEnoughIndentForSolidAssessment() ? 'inconsistent' : 'at') . ': ' )
 		endif
