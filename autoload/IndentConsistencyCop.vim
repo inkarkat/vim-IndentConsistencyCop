@@ -11,6 +11,12 @@
 " Maintainer:	Ingo Karkat <ingo@karkat.de>
 "
 " REVISION	DATE		REMARKS  {{{1
+"   1.50.016	20-Mar-2015	Factor out s:GetBufferSettingsMessage().
+"				When choosing "Highlight wrong indents..."
+"				followed by "Not best guess" or "Not chosen
+"				setting", also adapt the buffer settings to that
+"				indent setting, as the user has indicated that
+"				this is the right one.
 "   1.46.015	20-Feb-2015	Replace explicit regexp engine workaround with
 "				ingo/compat/regexp.vim.
 "   1.45.014	12-Dec-2014	Minor: Highlight action checks are dependent on
@@ -1489,12 +1495,14 @@ function! s:RatingsToUserString( lineCnt ) " {{{2
     return l:userString
 endfunction
 
-function! s:PrintBufferSettings( messageIntro ) " {{{2
+function! s:GetBufferSettingsMessage( messageIntro ) " {{{2
     let l:userMessage = a:messageIntro
     let l:userMessage .= 'tabstop=' . &l:tabstop . ' softtabstop=' . &l:softtabstop . ' shiftwidth=' . &l:shiftwidth
     let l:userMessage .= (&l:expandtab ? ' expandtab' : ' noexpandtab')
-
-    call s:EchoUserMessage( l:userMessage )
+    return l:userMessage
+endfunction
+function! s:PrintBufferSettings( messageIntro ) " {{{2
+    call s:EchoUserMessage(s:GetBufferSettingsMessage(a:messageIntro))
 endfunction
 
 function! s:GetInsufficientIndentUserMessage() " {{{2
@@ -1667,7 +1675,7 @@ function! s:IndentBufferConsistencyCop( startLineNum, endLineNum, consistentInde
 	    elseif l:action =~? '^Wrong'
 		let l:chosenIndentSetting = s:QueryIndentSetting()
 		if ! empty( l:chosenIndentSetting )
-		    call s:HighlightInconsistentIndents( a:startLineNum, a:endLineNum, l:chosenIndentSetting )
+		    call s:HighlightInconsistentIndents( a:startLineNum, a:endLineNum, l:chosenIndentSetting, '')
 		else
 		    call s:PrintBufferSettings( 'The buffer settings remain ' . (s:IsEnoughIndentForSolidAssessment() ? 'inconsistent' : 'at') . ': ' )
 		endif
@@ -1919,7 +1927,7 @@ function! s:GetInconsistentIndents( startLineNum, endLineNum, correctIndentSetti
     return l:lineNumbers
 endfunction
 
-function! s:HighlightInconsistentIndents( startLineNum, endLineNum, correctIndentSetting ) " {{{2
+function! s:HighlightInconsistentIndents( startLineNum, endLineNum, correctIndentSetting, appendixMessage ) " {{{2
     " Patterns for correct tabstops and space indents are easy to come up with.
     " The softtabstops of 1,2,4 are easy, too. The softtabstop indents of 3, 5,
     " 7 are very difficult to express, because you have to consider the number
@@ -1948,7 +1956,7 @@ function! s:HighlightInconsistentIndents( startLineNum, endLineNum, correctInden
 	call s:ReportConsistencyWithBufferSettingsResult( l:isEntireBuffer, s:IsConsistentWithBufferSettings(a:correctIndentSetting) )	" If different settings have been chosen by the user, this may have resulted in a consistency with buffer settings, too.
 	call s:ReportConsistencyResult( l:isEntireBuffer, 1, a:correctIndentSetting )
 
-	call s:EchoUserMessage("No incorrect lines found for setting '" . s:IndentSettingToUserString( a:correctIndentSetting ) . "'!")
+	call s:EchoUserMessage("No incorrect lines found for setting '" . s:IndentSettingToUserString( a:correctIndentSetting ) . "'! " . a:appendixMessage)
     else
 	call s:SetHighlighting( l:lineNumbers )
 	let s:perfectIndentSetting = ''	" Invalidate the consistency rating.
@@ -1956,7 +1964,7 @@ function! s:HighlightInconsistentIndents( startLineNum, endLineNum, correctInden
 	" Update report, now that we have found out the range / buffer has inconsistent indent.
 	call s:ReportConsistencyResult( l:isEntireBuffer, 0, '' )
 
-	call s:EchoUserMessage( 'Marked ' . len( l:lineNumbers ) . ' incorrect lines. ' )
+	call s:EchoUserMessage( 'Marked ' . len( l:lineNumbers ) . ' incorrect lines. ' . a:appendixMessage)
     endif
 endfunction
 
@@ -2151,16 +2159,28 @@ function! s:IndentBufferInconsistencyCop( startLineNum, endLineNum, inconsistent
 	    " User canceled.
 	    call s:EchoUserMessage('Be careful when modifying the inconsistent indents! ')
 	elseif l:highlightAction =~? 'buffer settings'
-	    call s:HighlightInconsistentIndents( a:startLineNum, a:endLineNum, l:bufferIndentSetting )
+	    call s:HighlightInconsistentIndents( a:startLineNum, a:endLineNum, l:bufferIndentSetting, '' )
 	elseif l:highlightAction =~? 'best guess'
-	    call s:HighlightInconsistentIndents( a:startLineNum, a:endLineNum, l:bestGuessIndentSetting )
+	    call s:MakeBufferSettingsConsistentWith( l:bestGuessIndentSetting )
+	    call s:ReportConsistencyWithBufferSettingsResult( s:IsEntireBuffer(a:startLineNum, a:endLineNum), 1 )
+	    call s:ReportBufferSettingsConsistency( l:bestGuessIndentSetting )
+
+	    call s:HighlightInconsistentIndents( a:startLineNum, a:endLineNum, l:bestGuessIndentSetting, s:GetBufferSettingsMessage( 'The buffer settings have been changed: ' ) )
 	elseif l:highlightAction =~? 'chosen setting'
 	    let l:chosenIndentSetting = s:QueryIndentSetting()
 	    if ! empty( l:chosenIndentSetting )
-		call s:HighlightInconsistentIndents( a:startLineNum, a:endLineNum, l:chosenIndentSetting )
+		let l:bufferSettingsMessage = ''
+		if l:chosenIndentSetting !=# s:GetIndentSettingForBufferSettings()
+		    call s:MakeBufferSettingsConsistentWith( l:chosenIndentSetting )
+		    call s:ReportConsistencyWithBufferSettingsResult( s:IsEntireBuffer(a:startLineNum, a:endLineNum), 1 )
+		    call s:ReportBufferSettingsConsistency( l:chosenIndentSetting )
+		    let l:bufferSettingsMessage = s:GetBufferSettingsMessage( 'The buffer settings have been changed: ' )
+		endif
+
+		call s:HighlightInconsistentIndents( a:startLineNum, a:endLineNum, l:chosenIndentSetting, l:bufferSettingsMessage )
 	    endif
 	elseif l:highlightAction ==? 'Illegal indents only'
-	    call s:HighlightInconsistentIndents( a:startLineNum, a:endLineNum, 'notbad' )
+	    call s:HighlightInconsistentIndents( a:startLineNum, a:endLineNum, 'notbad', '' )
 	else
 	    throw 'ASSERT: Unhandled l:highlightAction: ' . l:highlightAction
 	endif
