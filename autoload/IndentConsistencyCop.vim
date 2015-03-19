@@ -359,6 +359,9 @@ endfunction
 function! s:GetSettingFromIndentSetting( indentSetting ) " {{{2
     return strpart( a:indentSetting, 0, 3 )
 endfunction
+function! s:StripTabstopValueFromIndentSetting( indentSetting ) " {{{2
+    return (s:GetSettingFromIndentSetting( a:indentSetting ) ==# 'tab' ? 'tab' : a:indentSetting)
+endfunction
 
 function! s:IsBadIndentSetting( indentSetting ) " {{{2
     return s:GetSettingFromIndentSetting( a:indentSetting ) ==# 'bad'
@@ -1256,7 +1259,7 @@ function! s:GetCorrectTabstopSetting( indentSetting ) " {{{2
 	" places.
 	return &l:tabstop
     elseif s:GetSettingFromIndentSetting( a:indentSetting ) ==# 'tab'
-	return &l:tabstop
+	return (a:indentSetting ==# 'tab' ? &l:tabstop : s:GetMultiplierFromIndentSetting( a:indentSetting ))
     elseif s:GetSettingFromIndentSetting( a:indentSetting ) ==# 'sts'
 	return 8
     elseif s:GetSettingFromIndentSetting( a:indentSetting ) ==# 'spc'
@@ -1296,7 +1299,7 @@ endfunction
 
 function! s:GetCorrectShiftwidthSetting( indentSetting ) " {{{2
     if s:GetSettingFromIndentSetting( a:indentSetting ) ==# 'tab'
-	return &l:tabstop
+	return (a:indentSetting ==# 'tab' ? &l:tabstop : s:GetMultiplierFromIndentSetting( a:indentSetting ))
     else
 	return s:GetMultiplierFromIndentSetting( a:indentSetting )
     endif
@@ -1419,7 +1422,7 @@ function! s:IndentSettingToUserString( indentSetting ) " {{{2
 	elseif l:setting ==# 'spc'
 	    let l:userString = l:multiplier . ' spaces'
 	else
-	    throw 'unknown indent setting "' . a:indentSetting . '"'
+	    throw 'Unknown indent setting: ' . string(a:indentSetting)
 	endif
     endif
 
@@ -1608,7 +1611,7 @@ function! s:UnindentedBufferConsistencyCop( isEntireBuffer, isBufferSettingsChec
 	    if empty(l:action) || l:action ==? 'Ignore'
 		call s:PrintBufferSettings( 'The buffer settings remain inconsistent: ' )
 	    elseif l:action =~? '^Correct'
-		let l:chosenIndentSetting = s:QueryIndentSetting()
+		let l:chosenIndentSetting = s:QueryIndentSetting(1)
 		if ! empty( l:chosenIndentSetting )
 		    call s:MakeBufferSettingsConsistentWith( l:chosenIndentSetting )
 		    call s:ReportConsistencyWithBufferSettingsResult( a:isEntireBuffer, 1 )
@@ -1684,7 +1687,7 @@ function! s:IndentBufferConsistencyCop( startLineNum, endLineNum, consistentInde
 		call s:ReportBufferSettingsConsistency( l:consistentIndentSetting )
 		call s:PrintBufferSettings( 'The buffer settings have been changed: ' )
 	    elseif l:action =~? '^Wrong'
-		let l:chosenIndentSetting = s:QueryIndentSetting()
+		let l:chosenIndentSetting = s:QueryIndentSetting(0)
 		if ! empty( l:chosenIndentSetting )
 		    call s:HighlightInconsistentIndents( a:startLineNum, a:endLineNum, l:chosenIndentSetting, '')
 		else
@@ -1723,9 +1726,9 @@ function! s:IsLineCorrect( lineNum, correctIndentSetting ) " {{{2
     elseif a:correctIndentSetting ==# 'badmix'
 	return l:beginningWhitespace =~# ' \t'
     elseif a:correctIndentSetting ==# 'badset'
-	throw 'cannot evaluate lines with badset'
+	throw 'Cannot evaluate lines with badset'
     else
-	throw 'unknown indent setting "' . a:indentSetting . '"'
+	throw 'Unknown indent setting: ' . string(a:indentSetting)
     endif
 endfunction
 
@@ -1979,24 +1982,25 @@ function! s:HighlightInconsistentIndents( startLineNum, endLineNum, correctInden
     endif
 endfunction
 
-function! s:QueryIndentSetting() " {{{2
+function! s:QueryIndentSetting( isQueryTabstopValue ) " {{{2
 "*******************************************************************************
 "* PURPOSE:
-"	? What the procedure does (not how).
+"   Query the user for the indent setting and multiplier value.
 "* ASSUMPTIONS / PRECONDITIONS:
-"	? List of any external variable, control, or other element whose state affects this procedure.
+"   None.
 "* EFFECTS / POSTCONDITIONS:
-"	? List of the procedure's effect on each external variable, control, or other element.
+"   Queries user.
 "* INPUTS:
-"	? Explanation of each argument that isn't obvious.
+"   a:isQueryTabstopValue   Flag whether to also query for a 'tabstop'
+"			    multiplier value if that setting is chosen.
 "* RETURN VALUES:
 "   Queried indent setting (e.g. 'spc4'), or empty string if user has canceled.
 "*******************************************************************************
     let l:setting = ingo#query#ConfirmAsText('Choose the indent setting:', ['&tabstop', '&soft tabstop', 'spa&ces'], 0, 'Question')
     if empty(l:setting)
 	return ''
-    elseif l:setting !=? 'tabstop'
-	let l:indentValue = ingo#query#ConfirmAsText('Choose indent value:', ['&1', '&2', '&3', '&4', '&5', '&6', '&7', '&8'], 0, 'Question')
+    elseif a:isQueryTabstopValue || l:setting !=? 'tabstop'
+	let l:indentValue = ingo#query#ConfirmAsText(printf('Choose %s value:', l:setting ==? 'tabstop' ? 'tabstop' : 'indent'), ['&1', '&2', '&3', '&4', '&5', '&6', '&7', '&8'], 0, 'Question')
 	if empty(l:indentValue)
 	    return ''
 	endif
@@ -2007,7 +2011,7 @@ function! s:QueryIndentSetting() " {{{2
     endif
 
     if l:setting ==? 'tabstop'
-	return 'tab'
+	return 'tab' . (a:isQueryTabstopValue ? l:multiplier : '')
     elseif l:setting ==? 'soft tabstop'
 	return 'sts' . l:multiplier
     elseif l:setting ==? 'spaces'
@@ -2057,7 +2061,7 @@ function! s:ReportBufferSettingsConsistency( indentSetting ) "{{{2
 "   none
 "*******************************************************************************
     let l:indentSetting = s:GetIndentSettingForBufferSettings()
-    if ! empty(a:indentSetting) && a:indentSetting !=# l:indentSetting
+    if ! empty(a:indentSetting) && a:indentSetting !=# l:indentSetting && (l:indentSetting !=# 'tab' || s:GetSettingFromIndentSetting(a:indentSetting) !=# 'tab')
 	throw 'ASSERT: Passed buffer settings are equal to actual indent settings. '
     endif
     let b:indentconsistencycop_result.bufferSettings = s:ReportIndentSetting(l:indentSetting)
@@ -2178,7 +2182,7 @@ function! s:IndentBufferInconsistencyCop( startLineNum, endLineNum, inconsistent
 
 		call s:HighlightInconsistentIndents( a:startLineNum, a:endLineNum, l:bestGuessIndentSetting, s:GetBufferSettingsMessage( 'The buffer settings have been changed: ' ) )
 	    elseif l:highlightAction =~? 'chosen setting'
-		let l:chosenIndentSetting = s:QueryIndentSetting()
+		let l:chosenIndentSetting = s:QueryIndentSetting(1)
 		if ! empty( l:chosenIndentSetting )
 		    let l:bufferSettingsMessage = ''
 		    if l:chosenIndentSetting !=# l:bufferIndentSetting
@@ -2188,7 +2192,7 @@ function! s:IndentBufferInconsistencyCop( startLineNum, endLineNum, inconsistent
 			let l:bufferSettingsMessage = s:GetBufferSettingsMessage( 'The buffer settings have been changed: ' )
 		    endif
 
-		    call s:HighlightInconsistentIndents( a:startLineNum, a:endLineNum, l:chosenIndentSetting, l:bufferSettingsMessage )
+		    call s:HighlightInconsistentIndents( a:startLineNum, a:endLineNum, s:StripTabstopValueFromIndentSetting( l:chosenIndentSetting ), l:bufferSettingsMessage )
 		endif
 	    elseif l:highlightAction ==? 'Illegal indents only'
 		call s:HighlightInconsistentIndents( a:startLineNum, a:endLineNum, 'notbad', '' )
@@ -2220,7 +2224,7 @@ function! s:IndentBufferInconsistencyCop( startLineNum, endLineNum, inconsistent
 
 		call s:PrintBufferSettings( 'The buffer settings have been changed: ' )
 	    elseif l:changeAction =~? 'chosen setting'
-		let l:chosenIndentSetting = s:QueryIndentSetting()
+		let l:chosenIndentSetting = s:QueryIndentSetting(1)
 		if ! empty( l:chosenIndentSetting )
 		    if l:chosenIndentSetting !=# l:bufferIndentSetting
 			call s:MakeBufferSettingsConsistentWith( l:chosenIndentSetting )
