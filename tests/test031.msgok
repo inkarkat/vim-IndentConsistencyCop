@@ -1,0 +1,11 @@
+Found inconsistent indentation in this buffer; generated from these conflicting settings: 
+- tabstop (75 of 198 lines) <- buffer setting
+- 6 characters soft tabstop (69 of 198 lines)
+- 2 characters soft tabstop (8 of 198 lines)
+- 4 characters soft tabstop (29 of 198 lines)
+- bad mix of spaces and tabs (14 of 198 lines)
+Some minor / inconclusive potential settings have been omitted. 
+[I]gnore, (H)ighlight wrong indents...: 
+What kind of inconsistent indents do you want to highlight?
+Not [b]uffer settings / best guess (tab), Not (c)hosen setting..., (I)llegal indents only: 
+Marked 101 incorrect lines. 
