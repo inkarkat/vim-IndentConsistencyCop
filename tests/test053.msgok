@@ -5,7 +5,9 @@ How do you want to deal with the inconsistency?
 [I]gnore, (C)hange, (W)rong, choose correct setting...: 
 Choose the indent setting:
 (t)abstop, (s)oft tabstop, spa(c)es: 
-Marked 8 incorrect lines. 
+Choose tabstop value:
+(1), (2), (3), [4], (5), (6), (7), (8): 
+Marked 8 incorrect lines. The buffer settings have been changed: tabstop=4 softtabstop=0 shiftwidth=4 noexpandtab
 The buffer's indent settings are inconsistent with the used indent '4 characters soft tabstop'; these settings must be changed: 
 - tabstop from 4 to 8
 - softtabstop from 0 to 4
