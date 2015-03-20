@@ -28,6 +28,11 @@
 "				incorrect lines".
 "				Cosmetics: Use case-insensitive string
 "				comparisons / matching instead of == / =~.
+"				ENH: Also query the value (multiplier) of
+"				'tabstop' when querying for the indent setting.
+"				Though this doesn't affect the consistent /
+"				inconsistent verdict, it's often an important
+"				aspect of a correct visualization.
 "   1.46.015	20-Feb-2015	Replace explicit regexp engine workaround with
 "				ingo/compat/regexp.vim.
 "   1.45.014	12-Dec-2014	Minor: Highlight action checks are dependent on
@@ -2008,7 +2013,7 @@ function! s:QueryIndentSetting( isQueryTabstopValue ) " {{{2
     if empty(l:setting)
 	return ''
     elseif a:isQueryTabstopValue || l:setting !=? 'tabstop'
-	let l:indentValue = ingo#query#ConfirmAsText(printf('Choose %s value:', l:setting ==? 'tabstop' ? 'tabstop' : 'indent'), ['&1', '&2', '&3', '&4', '&5', '&6', '&7', '&8'], 0, 'Question')
+	let l:indentValue = ingo#query#ConfirmAsText(printf('Choose %s value:', l:setting ==? 'tabstop' ? 'tabstop' : 'indent'), ['&1', '&2', '&3', '&4', '&5', '&6', '&7', '&8'], (l:setting ==? 'tabstop' ? &l:tabstop : 0), 'Question')
 	if empty(l:indentValue)
 	    return ''
 	endif
