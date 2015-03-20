@@ -11,6 +11,9 @@
 " Maintainer:	Ingo Karkat <ingo@karkat.de>
 "
 " REVISION	DATE		REMARKS  {{{1
+"   1.50.017	21-Mar-2015	Support buffer-local
+"				b:indentconsistencycop_non_indent_pattern
+"				configuration, too.
 "   1.50.016	20-Mar-2015	Factor out s:GetBufferSettingsMessage().
 "				When choosing "Highlight wrong indents..."
 "				followed by "Not best guess" or "Not chosen
@@ -404,7 +407,7 @@ function! s:CountBadMixOfSpacesAndTabs( string ) " {{{2
 endfunction
 
 function! s:GetBeginningWhitespace( lineNum ) " {{{2
-    return matchstr(getline(a:lineNum), ingo#compat#regexp#GetOldEnginePrefix() . '^\s\{-}\ze\($\|\S\|' . g:indentconsistencycop_non_indent_pattern . '\)')
+    return matchstr(getline(a:lineNum), ingo#compat#regexp#GetOldEnginePrefix() . '^\s\{-}\ze\($\|\S\|' . ingo#plugin#setting#GetBufferLocal('indentconsistencycop_non_indent_pattern') . '\)')
 endfunction
 
 function! s:UpdateIndentMinMax( beginningWhitespace ) " {{{2
