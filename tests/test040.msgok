@@ -1,0 +1,5 @@
+The buffer's indent settings are inconsistent with the used indent '8 spaces'; these settings must be changed: 
+- noexpandtab to expandtab
+How do you want to deal with the inconsistency?
+[I]gnore, (C)hange, (W)rong, choose correct setting...: 
+The buffer settings have been changed: tabstop=8 softtabstop=0 shiftwidth=8 expandtab
