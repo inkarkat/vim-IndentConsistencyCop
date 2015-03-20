@@ -35,7 +35,8 @@ locating the offenders - just like a friendly policeman: >
     - tabstop (1838 of 3711 lines) <- buffer setting ~
     - 4 spaces (33 of 3711 lines) ~
     - bad mix of spaces and tabs (4 of 3711 lines) ~
-	[I]gnore, (H)ighlight wrong indents...: h ~
+	[I]gnore, (J)ust change buffer settings..., (H)ighlight wrong ~
+	indents...:  h ~
     What kind of inconsistent indents do you want to highlight? ~
 	Not [b]uffer settings (sts4), Not best (g)uess (tab), Not (c)hosen ~
 	setting..., (I)llegal indents only: g ~
@@ -258,9 +259,20 @@ IDEAS						  *IndentConsistencyCop-ideas*
 ==============================================================================
 HISTORY						*IndentConsistencyCop-history*
 
-1.46	RELEASEME
+1.50	RELEASEME
+- When choosing "Highlight wrong indents..." followed by "Not best guess" or
+  "Not chosen setting", also adapt the buffer settings to that indent setting,
+  as the user has indicated that this is the right one.
+- ENH: Add "Just change buffer settings" alternative for "Highlight wrong
+  indents..." search that only adapts the buffer settings, but does not (in
+  fact clears any) highlight. Often, I must not fix existing wrong
+  indentation, but still would like to adapt my buffer settings to cause no
+  addition harm to the file's indent.
+- ENH: Also query the value (multiplier) of 'tabstop' when querying for the
+  indent setting. Though this doesn't affect the consistent / inconsistent
+  verdict, it's often an important aspect of a correct visualization.
 - Minor: Replace explicit regexp engine workaround with ingo/compat/regexp.vim.
-*** You need to update to ingo-library (vimscript #4433) version 1.024! ***
+  *** You need to update to ingo-library (vimscript #4433) version 1.024! ***
 
 1.45	12-Dec-2014
 - Minor: Highlight action checks are dependent on 'iskeyword' setting, and
