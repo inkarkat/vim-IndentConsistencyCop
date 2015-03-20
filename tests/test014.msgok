@@ -1,0 +1,7 @@
+The buffer's indent settings are inconsistent with the used indent '2 characters soft tabstop'; these settings must be changed: 
+- tabstop from 4 to 8
+- softtabstop from 0 to 2
+- shiftwidth from 4 to 2
+How do you want to deal with the inconsistency?
+[I]gnore, (C)hange, (W)rong, choose correct setting...: 
+The buffer settings have been changed: tabstop=8 softtabstop=2 shiftwidth=2 noexpandtab
