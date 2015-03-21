@@ -2180,6 +2180,7 @@ function! s:IndentBufferInconsistencyCop( startLineNum, endLineNum, inconsistent
     let b:indentconsistencycop_result.isIgnore = (l:action ==# 'Ignore')
     if empty(l:action) || l:action ==# 'Ignore'
 	" User chose to ignore the inconsistencies.
+	call IndentConsistencyCop#ClearHighlighting()
 	call s:EchoUserMessage('Be careful when modifying the inconsistent indents! ')
     else
 	let l:bufferIndentSetting = s:GetIndentSettingForBufferSettings()
