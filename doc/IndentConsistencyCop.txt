@@ -157,6 +157,7 @@ removed via :IndentConsistencyCopOff.
 >
     let g:indentconsistencycop_highlighting = 'sglmf:3'
 <
+				   *b:indentconsistencycop_non_indent_pattern*
 				   *g:indentconsistencycop_non_indent_pattern*
 Some comment styles use additional whitespace characters inside the comment
 block to neatly left-align the comment block, e.g. this is often used in Java
@@ -168,7 +169,8 @@ The IndentConsistencyCop would be confused by these special indents, so the
 non-indent pattern defined in g:indentconsistencycop_non_indent_pattern
 removes these additional whitespaces from the indent when evaluating lines. >
     let g:indentconsistencycop_non_indent_pattern = ' \*\%([*/ \t]\|$\)'
-<
+(You can also override / set this for certain files with a buffer-local var.)
+
 ==============================================================================
 INTEGRATION				    *IndentConsistencyCop-integration*
 					       *b:indentconsistencycop_result*
@@ -200,6 +202,12 @@ checks.)
     b:indentconsistencycop_result.isDefinite
 Flag whether there has been enough indent to make a definite judgement about
 the buffer indent settings. (Not set by range checks.)
+>
+    b:indentconsistencycop_result.isDefiniteOrAcknowledgedByUser
+Flag whether there either has been enough indent to make a definite judgement
+about the buffer indent settings, or whether the user has explicitly
+acknowledged the current indent settings in its interaction with the cop (by
+answering "Wrong" or "Change" in one of the dialogs).
 >
     b:indentconsistencycop_result.bufferSettings
 String representing the buffer settings. One of 'tabN', 'spcN', 'stsN' (where
@@ -271,6 +279,12 @@ HISTORY						*IndentConsistencyCop-history*
 - ENH: Also query the value (multiplier) of 'tabstop' when querying for the
   indent setting. Though this doesn't affect the consistent / inconsistent
   verdict, it's often an important aspect of a correct visualization.
+- Support buffer-local b:indentconsistencycop_non_indent_pattern
+  configuration, too.
+- Introduce additional
+  b:indentconsistencycop_result.isDefiniteOrAcknowledgedByUser reporting flag.
+- Offer "Wrong, use buffer settings" in addition to the existing "Wrong,
+  choose correct setting" if the buffer settings are consistent.
 - Minor: Replace explicit regexp engine workaround with ingo/compat/regexp.vim.
   *** You need to update to ingo-library (vimscript #4433) version 1.024! ***
 
