@@ -17,6 +17,9 @@
 "				Introduce additional
 "				b:indentconsistencycop_result.isDefiniteOrAcknowledgedByUser
 "				reporting flag.
+"				Offer "Wrong, use buffer settings" in addition
+"				to the existing "Wrong, choose correct setting"
+"				if the buffer settings are consistent.
 "   1.50.016	20-Mar-2015	Factor out s:GetBufferSettingsMessage().
 "				When choosing "Highlight wrong indents..."
 "				followed by "Not best guess" or "Not chosen
@@ -1428,7 +1431,9 @@ function! s:IndentSettingToUserString( indentSetting ) " {{{2
     else
 	let l:setting = s:GetSettingFromIndentSetting( a:indentSetting )
 	let l:multiplier = s:GetMultiplierFromIndentSetting( a:indentSetting )
-	if l:setting ==# 'sts'
+	if l:setting ==# 'tab'
+	    let l:userString = 'tabstop, ' . l:multiplier . ' wide'
+	elseif l:setting ==# 'sts'
 	    let l:userString = l:multiplier . ' characters soft tabstop'
 	elseif l:setting ==# 'spc'
 	    let l:userString = l:multiplier . ' spaces'
@@ -1689,7 +1694,11 @@ function! s:IndentBufferConsistencyCop( startLineNum, endLineNum, consistentInde
 	    let l:userMessage .= "\nHow do you want to deal with the "
 	    let l:userMessage .= (s:IsEnoughIndentForSolidAssessment() ? '' : 'potential ')
 	    let l:userMessage .= 'inconsistency?'
-	    let l:action = ingo#query#ConfirmAsText(l:userMessage, ['&Ignore', '&Change', '&Wrong, choose correct setting...'], 1, 'Question')
+	    let l:bufferSettingsChoices = ['&Ignore', '&Change', '&Wrong, choose correct setting...']
+	    if s:IsBufferSettingsConsistent()
+		call insert(l:bufferSettingsChoices, printf('Wrong, use &buffer settings (%s)', s:IndentSettingToUserString(s:GetIndentSettingForBufferSettings())), -1)
+	    endif
+	    let l:action = ingo#query#ConfirmAsText(l:userMessage, l:bufferSettingsChoices, 1, 'Question')
 	    if empty(l:action) || l:action ==? 'Ignore'
 		call s:PrintBufferSettings( 'The buffer settings remain ' . (s:IsEnoughIndentForSolidAssessment() ? 'inconsistent' : 'at') . ': ' )
 	    elseif l:action ==? 'Change'
@@ -1700,7 +1709,13 @@ function! s:IndentBufferConsistencyCop( startLineNum, endLineNum, consistentInde
 
 		let b:indentconsistencycop_result.isDefiniteOrAcknowledgedByUser = 1
 	    elseif l:action =~? '^Wrong'
-		let l:chosenIndentSetting = s:QueryIndentSetting(1)
+		if l:action =~? '^Wrong, choose correct setting'
+		    let l:chosenIndentSetting = s:QueryIndentSetting(1)
+		elseif l:action =~? '^Wrong, use buffer settings'
+		    let l:chosenIndentSetting = s:GetIndentSettingForBufferSettings()
+		else
+		    throw 'ASSERT: Unhandled l:action: ' . l:action
+		endif
 		if ! empty( l:chosenIndentSetting )
 		    let l:bufferSettingsMessage = ''
 		    if l:chosenIndentSetting !=# s:GetIndentSettingForBufferSettings()
