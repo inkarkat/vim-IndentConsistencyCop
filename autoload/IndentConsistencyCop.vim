@@ -11,6 +11,15 @@
 " Maintainer:	Ingo Karkat <ingo@karkat.de>
 "
 " REVISION	DATE		REMARKS  {{{1
+"   1.50.018	22-Mar-2015	When choosing |Ignore| on reported
+"				inconsistencies in the indent, turn off any
+"				previous highlighting by the cop (like
+"				:IndentConsistencyCopOff).
+"				Refactor saving of original buffer settings from
+"				individual buffer-local variables to a single
+"				b:indentconsistencycop_save Dictionary.
+"				Restore last search pattern from history when
+"				turning off the cop.
 "   1.50.017	21-Mar-2015	Support buffer-local
 "				b:indentconsistencycop_non_indent_pattern
 "				configuration, too.
@@ -1789,6 +1798,11 @@ function! s:ClearMatch()
 	2match none
     endif
 endfunction
+function! s:Save( what, value ) " {{{2
+    if ! has_key(b:indentconsistencycop_save, a:what)
+	let b:indentconsistencycop_save[a:what] = a:value
+    endif
+endfunction
 function! s:SetHighlighting( lineNumbers ) " {{{2
 "*******************************************************************************
 "* PURPOSE:
@@ -1811,6 +1825,9 @@ function! s:SetHighlighting( lineNumbers ) " {{{2
     " that case we don't know whether there was any highlighting done
     " beforehand.
     let b:indentconsistencycop_did_highlighting = 1
+    if ! exists('b:indentconsistencycop_save')
+	let b:indentconsistencycop_save = {}
+    endif
 
     " Before modifying any buffer setting, the original value is saved in a
     " buffer-local variable. ClearHighlighting() will use those to restore the
@@ -1863,9 +1880,7 @@ function! s:SetHighlighting( lineNumbers ) " {{{2
     endif
 
     if g:indentconsistencycop_highlighting =~# 'l'
-	if ! exists( 'b:indentconsistencycop_save_list' )
-	    let b:indentconsistencycop_save_list = &l:list
-	endif
+	call s:Save('list', &l:list)
 	setlocal list
     endif
 
@@ -1875,28 +1890,22 @@ function! s:SetHighlighting( lineNumbers ) " {{{2
 	" buffer-scope, because the (buffer-scoped) foldexpr needs access to it.
 	let b:indentconsistencycop_lineNumbers = copy( a:lineNumbers )
 
-	if ! exists( 'b:indentconsistencycop_save_foldexpr' )
-	    let b:indentconsistencycop_save_foldexpr = &l:foldexpr
-	endif
+	call s:Save('foldexpr', &l:foldexpr)
 	let &l:foldexpr='IndentConsistencyCop#FoldExpr(v:lnum,' . l:foldContext . ')'
 
 	" Close all folds, so that only the inconsistent lines (plus context
 	" around it) is visible.
-	if ! exists( 'b:indentconsistencycop_save_foldlevel' )
-	    let b:indentconsistencycop_save_foldlevel = &l:foldlevel
-	endif
+	call s:Save('foldlevel', &l:foldlevel)
 	setlocal foldlevel=0
 
-	if ! exists( 'b:indentconsistencycop_save_foldmethod' )
-	    let b:indentconsistencycop_save_foldmethod = &l:foldmethod
-	endif
+	call s:Save('foldmethod', &l:foldmethod)
 	setlocal foldmethod=expr
 
 	" Enable folding to be effective.
-	if ! &l:foldenable && ! exists( 'b:indentconsistencycop_save_foldenable' )
-	    let b:indentconsistencycop_save_foldenable = &l:foldenable
+	if ! &l:foldenable
+	    call s:Save('foldenable', &l:foldenable)
+	    setlocal foldenable
 	endif
-	setlocal foldenable
     endif
 endfunction
 
@@ -1923,43 +1932,17 @@ function! IndentConsistencyCop#ClearHighlighting() " {{{2
     unlet b:indentconsistencycop_did_highlighting
 
     if g:indentconsistencycop_highlighting =~# 's'
-	let @/ = ''
+	let @/ = histget('search', -1)
     endif
 
-    " 'g' : There's no need to undo this.
+    for [l:optionName, l:value] in items(get(b:, 'indentconsistencycop_save', {}))
+	execute 'let &l:' . l:optionName . '= l:value'
+    endfor
+    unlet! b:indentconsistencycop_save
 
-    if g:indentconsistencycop_highlighting =~# 'l'
-	if exists( 'b:indentconsistencycop_save_list' )
-	    let &l:list = b:indentconsistencycop_save_list
-	    unlet b:indentconsistencycop_save_list
-	endif
-    endif
-
-    if ! empty( matchstr( g:indentconsistencycop_highlighting, '\Cf:\zs\d' ) )
-	if exists( 'b:indentconsistencycop_save_foldenable' )
-	    let &l:foldenable = b:indentconsistencycop_save_foldenable
-	    unlet b:indentconsistencycop_save_foldenable
-	endif
-
-	if exists( 'b:indentconsistencycop_save_foldmethod' )
-	    let &l:foldmethod = b:indentconsistencycop_save_foldmethod
-	    unlet b:indentconsistencycop_save_foldmethod
-	endif
-
-	if exists( 'b:indentconsistencycop_save_foldlevel' )
-	    let &l:foldlevel = b:indentconsistencycop_save_foldlevel
-	    unlet b:indentconsistencycop_save_foldlevel
-	endif
-
-	if exists( 'b:indentconsistencycop_save_foldexpr' )
-	    let &l:foldexpr = b:indentconsistencycop_save_foldexpr
-	    unlet b:indentconsistencycop_save_foldexpr
-	endif
-
-	if exists( 'b:indentconsistencycop_lineNumbers' )
-	    " Just free the memory here.
-	    unlet b:indentconsistencycop_lineNumbers
-	endif
+    if exists( 'b:indentconsistencycop_lineNumbers' )
+	" Just free the memory here.
+	unlet b:indentconsistencycop_lineNumbers
     endif
 endfunction
 
