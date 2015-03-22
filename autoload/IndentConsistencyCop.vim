@@ -1,6 +1,7 @@
 " IndentConsistencyCop.vim: Is the buffer's indentation consistent and does it conform to tab settings?
 "
 " DEPENDENCIES:
+"   - ingo/compat.vim autoload script
 "   - ingo/compat/regexp.vim autoload script
 "   - ingo/plugin/setting.vim autoload script
 "   - ingo/query.vim autoload script
@@ -11,6 +12,10 @@
 " Maintainer:	Ingo Karkat <ingo@karkat.de>
 "
 " REVISION	DATE		REMARKS  {{{1
+"   1.50.019	23-Mar-2015	When there are bad mixes of spaces and tabstop,
+"				the individual character widths can't be simply
+"				accumulated; need to use strdisplaywidth() to
+"				arrive at the correct indent width.
 "   1.50.018	22-Mar-2015	When choosing |Ignore| on reported
 "				inconsistencies in the indent, turn off any
 "				previous highlighting by the cop (like
@@ -472,7 +477,7 @@ function! s:InspectLine(lineNum) " {{{2
     let l:beginningWhitespace = s:GetBeginningWhitespace( a:lineNum )
     if empty(l:beginningWhitespace)
 	return
-    elseif match( l:beginningWhitespace, '^\t\+$' ) != -1
+    elseif l:beginningWhitespace =~# '^\t\+$'
 	call s:CountTabs( l:beginningWhitespace )
 	" Tabs-only can also be interpreted as a softtabstop-line without
 	" balancing spaces.
@@ -480,18 +485,22 @@ function! s:InspectLine(lineNum) " {{{2
 	" (= 80 characters) as 16 * sts5 (the 10 * sts8 will be dropped by the
 	" preference of tab over sts8, though).
 	call s:CountSofttabstops( l:beginningWhitespace )
-    elseif match( l:beginningWhitespace, '^ \{1,7}$' ) != -1
+    elseif l:beginningWhitespace =~# '^ \{1,7}$'
 	" Spaces-only (up to 7) can also be interpreted as a softtabstop-line
 	" without tabs.
 	call s:CountDoubtful( l:beginningWhitespace )
-    elseif match( l:beginningWhitespace, '^ \{8,}$' ) != -1
+    elseif l:beginningWhitespace =~# '^ \{8,}$'
 	call s:CountSpaces( l:beginningWhitespace )
-    elseif match( l:beginningWhitespace, '^\t\+ \{1,7}$' ) != -1
+    elseif l:beginningWhitespace =~# '^\t\+ \{1,7}$'
 	call s:CountSofttabstops( l:beginningWhitespace )
-    elseif match( l:beginningWhitespace, '^\t\+ \{8,}$' ) != -1
+    elseif l:beginningWhitespace =~# '^\t\+ \{8,}$'
 	call s:CountBadSofttabstop( l:beginningWhitespace )
     else
 	call s:CountBadMixOfSpacesAndTabs( l:beginningWhitespace )
+
+	" Because of the bad combination of spaces followed by tabstop, we must
+	" render the actual tabstop width to arrive at the correct indent width.
+	let l:beginningWhitespace = repeat(' ', ingo#compat#strdisplaywidth(l:beginningWhitespace))
     endif
 
     call s:UpdateIndentMinMax( l:beginningWhitespace )
