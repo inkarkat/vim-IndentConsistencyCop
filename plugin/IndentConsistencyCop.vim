@@ -4,12 +4,20 @@
 "   - Requires Vim 7.0 or higher.
 "   - Requires IndentConsistencyCop.vim autoload script.
 "
-" Copyright: (C) 2006-2013 by Ingo Karkat
+" Copyright: (C) 2006-2014 by Ingo Karkat
 "   The VIM LICENSE applies to this script; see ':help copyright'.
 "
 " Maintainer:	Ingo Karkat <ingo@karkat.de>
 "
 " REVISION	DATE		REMARKS
+"   1.44.024	08-Jan-2014	BUG: The version 1.43 workaround for the Vim 7.4
+"				new regexp engine was ineffective, because the
+"				\%#=1 atom needs to be prepended to the entire
+"				regular expression, but that's not possible with
+"				the configuration value alone. (Also, the
+"				workaround mistakenly specified auto-select (0)
+"				instead of old engine (1).) Move the workaround
+"				to s:GetBeginningWhitespace() instead.
 "   1.43.024	14-Dec-2013	XXX: Switch default
 "				g:indentconsistencycop_non_indent_pattern to old
 "				regexp engine in Vim 7.4; the new NFA-based one
@@ -34,17 +42,13 @@ let g:loaded_indentconsistencycop = 1
 
 
 "- configuration --------------------------------------------------------------
+
 if ! exists('g:indentconsistencycop_highlighting')
     let g:indentconsistencycop_highlighting = 'sglmf:3'
 endif
 
 if ! exists('g:indentconsistencycop_non_indent_pattern')
     let g:indentconsistencycop_non_indent_pattern = ' \*\%([*/ \t]\|$\)'
-    " XXX: The new NFA-based regexp engine has a problem with the pattern; cp.
-    " http://article.gmane.org/gmane.editors.vim.devel/43712
-    if exists('+regexpengine')
-	let g:indentconsistencycop_non_indent_pattern = '\%#=0' . g:indentconsistencycop_non_indent_pattern
-    endif
 endif
 
 if g:indentconsistencycop_highlighting =~# 'm'
@@ -53,6 +57,7 @@ endif
 
 
 "- commands ------------------------------------------------------------------
+
 " Ensure indent consistency within the range / buffer, and - if achieved -, also
 " check consistency with buffer indent settings.
 command! -bar -range=% IndentConsistencyCop call IndentConsistencyCop#IndentConsistencyCop(<line1>, <line2>, 1)
