@@ -3,7 +3,7 @@ Found inconsistent indentation in this buffer; generated from these conflicting 
 - tabstop (1838 of 3711 lines) <- buffer setting
 +- bad mix of spaces and tabs (47 of 3711 lines)\n- soft tabstop with too many trailing spaces (3 of 3711 lines)\|- soft tabstop with too many trailing spaces (3 of 3711 lines)\n- bad mix of spaces and tabs (47 of 3711 lines)+
 Some minor / inconclusive potential settings have been omitted. 
-[I]gnore, (H)ighlight wrong indents...: 
+[I]gnore, (J)ust change buffer settings..., (H)ighlight wrong indents...: 
 What kind of inconsistent indents do you want to highlight?
 Not [b]uffer settings / best guess (tab), Not (c)hosen setting..., (I)llegal indents only: 
 Marked 857 incorrect lines. 
