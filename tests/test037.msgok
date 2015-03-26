@@ -5,22 +5,21 @@ Some minor / inconclusive potential settings have been omitted.
 
 The buffer's indent settings are inconsistent:
 The value of softtabstop (4) should equal the value of shiftwidth (2). 
-[I]gnore, (H)ighlight wrong indents...: 
+[I]gnore, (J)ust change buffer settings..., (H)ighlight wrong indents...: 
 What kind of inconsistent indents do you want to highlight?
 Not best [g]uess (spc4), Not (c)hosen setting...: 
-Marked 125 incorrect lines. 
+Marked 125 incorrect lines. The buffer settings have been changed: tabstop=8 softtabstop=4 shiftwidth=4 expandtab
+
 Found inconsistent indentation in this buffer; generated from these conflicting settings: 
-- 4 spaces (110 of 468 lines)
+- 4 spaces (110 of 468 lines) <- buffer setting
 - 2 characters soft tabstop (119 of 468 lines)
 Some minor / inconclusive potential settings have been omitted. 
 
-The buffer's indent settings are inconsistent:
-The value of softtabstop (4) should equal the value of shiftwidth (2). 
-[I]gnore, (H)ighlight wrong indents...: 
+[I]gnore, (J)ust change buffer settings..., (H)ighlight wrong indents...: 
 What kind of inconsistent indents do you want to highlight?
-Not best [g]uess (spc4), Not (c)hosen setting...: 
+Not [b]uffer settings / best guess (spc4), Not (c)hosen setting...: 
 Choose the indent setting:
 (t)abstop, (s)oft tabstop, spa(c)es: 
 Choose indent value:
 (1), (2), (3), (4), (5), (6), (7), (8): 
-Marked 1 incorrect lines. 
+Marked 1 incorrect line. The buffer settings have been changed: tabstop=8 softtabstop=2 shiftwidth=2 expandtab
