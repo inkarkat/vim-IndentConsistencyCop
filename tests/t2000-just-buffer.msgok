@@ -1,0 +1,24 @@
+Found inconsistent indentation in this buffer; generated from these conflicting settings: 
+- 4 characters soft tabstop (13 of 58 lines)
+- 2 characters soft tabstop (2 of 58 lines)
+- tabstop (22 of 58 lines)
+Some minor / inconclusive potential settings have been omitted. 
+
+The buffer's indent settings are inconsistent:
+The value of softtabstop (4) should equal the value of shiftwidth (8). 
+[I]gnore, (J)ust change buffer settings..., (H)ighlight wrong indents...: 
+How do you want to change the buffer settings?
+To best [g]uess (sts4), To (c)hosen setting...: 
+The buffer settings have been changed: tabstop=8 softtabstop=4 shiftwidth=4 noexpandtab
+
+Found inconsistent indentation in this buffer; generated from these conflicting settings: 
+- 4 characters soft tabstop (13 of 58 lines) <- buffer setting
+- 2 characters soft tabstop (2 of 58 lines)
+- tabstop (22 of 58 lines)
+Some minor / inconclusive potential settings have been omitted. 
+[I]gnore, (J)ust change buffer settings..., (H)ighlight wrong indents...: 
+Choose the indent setting:
+(t)abstop, (s)oft tabstop, spa(c)es: 
+Choose indent value:
+(1), (2), (3), (4), (5), (6), (7), (8): 
+The buffer settings have been changed: tabstop=8 softtabstop=2 shiftwidth=2 noexpandtab
