@@ -5,6 +5,7 @@
 "   - ingo/compat/regexp.vim autoload script
 "   - ingo/plugin/setting.vim autoload script
 "   - ingo/query.vim autoload script
+"   - ingo/range.vim autoload script
 "
 " Copyright: (C) 2006-2015 Ingo Karkat
 "   The VIM LICENSE applies to this script; see ':help copyright'.
@@ -12,10 +13,24 @@
 " Maintainer:	Ingo Karkat <ingo@karkat.de>
 "
 " REVISION	DATE		REMARKS  {{{1
-"   1.50.019	23-Mar-2015	When there are bad mixes of spaces and tabstop,
+"   2.00.019	23-Mar-2015	When there are bad mixes of spaces and tabstop,
 "				the individual character widths can't be simply
 "				accumulated; need to use strdisplaywidth() to
 "				arrive at the correct indent width.
+"				FIX: :.IndentConsistencyCop on a closed fold
+"				only considers the current line, not all lines
+"				inside the fold. Need to use
+"				ingo#range#NetStart/End().
+"				Expose
+"				IndentConsistencyCop#GetBeginningWhitespace(),
+"				handle empty
+"				g:indentconsistencycop_non_indent_pattern, and
+"				allow to ignore that via new boolean flag.
+"				Add IndentConsistencyCop#IsBadIndent() for
+"				potential use in line filter.
+"				Allow to filter out certain lines via new
+"				g:indentconsistencycop_line_filters
+"				configuration.
 "   1.50.018	22-Mar-2015	When choosing |Ignore| on reported
 "				inconsistencies in the indent, turn off any
 "				previous highlighting by the cop (like
@@ -179,7 +194,7 @@
 "				rating is not represented by a negative number;
 "				this simplified the logic.
 "				RF: In s:...BufferIndentConsistencyCop(), only
-"				passing either a:startLineNum/a:endLineNum or
+"				passing either a:startLnum/a:endLnum or
 "				a:isEntireBuffer, not both.
 "				RF: Cleaning up dictionaries with script scope
 "				by assigning empty dictionary instead of
@@ -426,8 +441,9 @@ function! s:CountBadMixOfSpacesAndTabs( string ) " {{{2
     call s:IncreaseKeyed( s:occurrences, 'badmix')
 endfunction
 
-function! s:GetBeginningWhitespace( lineNum ) " {{{2
-    return matchstr(getline(a:lineNum), ingo#compat#regexp#GetOldEnginePrefix() . '^\s\{-}\ze\($\|\S\|' . ingo#plugin#setting#GetBufferLocal('indentconsistencycop_non_indent_pattern') . '\)')
+function! IndentConsistencyCop#GetBeginningWhitespace( lnum, isApplyNonIndentPattern ) " {{{2
+    let l:nonIndentPattern = (a:isApplyNonIndentPattern ? ingo#plugin#setting#GetBufferLocal('indentconsistencycop_non_indent_pattern') : '')
+    return matchstr(getline(a:lnum), ingo#compat#regexp#GetOldEnginePrefix() . '^\s\{-}\ze\($\|\S' . (empty(l:nonIndentPattern) ? '' : '\|' . l:nonIndentPattern) . '\)')
 endfunction
 
 function! s:UpdateIndentMinMax( beginningWhitespace ) " {{{2
@@ -448,7 +464,7 @@ function! s:IsEnoughIndentForSolidAssessment() " {{{2
     return (s:indentMin == s:indentMax ? (s:indentMax > 8) : (s:indentMax >= 8))
 endfunction
 
-function! s:InspectLine(lineNum) " {{{2
+function! s:InspectLine( lnum ) " {{{2
 "*******************************************************************************
 "* PURPOSE:
 "   Count the whitespace at the beginning of the passed line (until the first
@@ -469,12 +485,12 @@ function! s:InspectLine(lineNum) " {{{2
 "   updates s:occurrences, s:tabstops, s:spaces, s:softtabstops, s:doubtful
 "   updates s:indentMin, s:indentMax
 "* INPUTS:
-"   lineNum: number of line in the current buffer
+"   lnum: number of line in the current buffer
 "* RETURN VALUES:
 "   none
 "*******************************************************************************
-"****D echo getline(a:lineNum)
-    let l:beginningWhitespace = s:GetBeginningWhitespace( a:lineNum )
+"****D echo getline(a:lnum)
+    let l:beginningWhitespace = IndentConsistencyCop#GetBeginningWhitespace(a:lnum, 1)
     if empty(l:beginningWhitespace)
 	return
     elseif l:beginningWhitespace =~# '^\t\+$'
@@ -504,6 +520,9 @@ function! s:InspectLine(lineNum) " {{{2
     endif
 
     call s:UpdateIndentMinMax( l:beginningWhitespace )
+endfunction
+function! IndentConsistencyCop#IsBadIndent( beginningWhitespace )
+    return a:beginningWhitespace =~# '\t \{8,}\|\t '
 endfunction
 " }}}2
 
@@ -564,7 +583,7 @@ function! s:RemoveSts8() " {{{1
     call s:RemoveKey( s:occurrences, 'sts8' )
 endfunction
 
-function! s:GetPrecedence(indentSetting) " {{{1
+function! s:GetPrecedence( indentSetting ) " {{{1
 "*******************************************************************************
 "* PURPOSE:
 "   Converts doubtful indent settings to actual indent settings; the other
@@ -1083,7 +1102,7 @@ endfunction
 
 " }}}1
 
-function! s:CheckBufferConsistency( startLineNum, endLineNum ) " {{{1
+function! s:CheckBufferConsistency( startLnum, endLnum ) " {{{1
 "*******************************************************************************
 "* PURPOSE:
 "   Checks the consistency of the indents in the current buffer, range of
@@ -1096,15 +1115,15 @@ function! s:CheckBufferConsistency( startLineNum, endLineNum ) " {{{1
 "   Fills the s:ratings dictionary; key: indent setting; value: rating
 "   percentage (with low percentages removed).
 "* INPUTS:
-"   a:startLineNum
-"   a:endLineNum
+"   a:startLnum
+"   a:endLnum
 "* RETURN VALUES:
 "   -1: checked range does not contain indents
 "    0: checked range is not consistent
 "    1: checked range is consistent
 "*******************************************************************************
-    if a:startLineNum > a:endLineNum
-	throw 'ASSERT: startLineNum <= a:endLineNum'
+    if a:startLnum > a:endLnum
+	throw 'ASSERT: startLnum <= a:endLnum'
     endif
 
     " These variables store the minimum / maximum indent encountered.
@@ -1121,10 +1140,13 @@ function! s:CheckBufferConsistency( startLineNum, endLineNum ) " {{{1
     let s:softtabstops = {} " key: number of indent softtabstops (converted to spaces); value: number of lines that have the number of spaces.
     let s:doubtful = {}	    " key: number of indent spaces (<8) which may be either spaces or softtabstops; value: number of lines that have the number of spaces.
 
-    let l:lineNum = a:startLineNum
-    while l:lineNum <= a:endLineNum
-	call s:InspectLine(l:lineNum)
-	let l:lineNum += 1
+    let l:lnum = a:startLnum
+    while l:lnum <= a:endLnum
+	if ! has_key(s:filteredLnums, l:lnum)
+	    call s:InspectLine(l:lnum)
+	endif
+
+	let l:lnum += 1
     endwhile
 
     " No need to continue if no indents were found.
@@ -1614,8 +1636,8 @@ function! s:Query( msg, choices, default ) "{{{2
 
     return l:choice
 endfunction
-function! s:IsEntireBuffer( startLineNum, endLineNum ) "{{{2
-    return (a:startLineNum == 1 && a:endLineNum == line('$'))
+function! s:IsEntireBuffer( startLnum, endLnum ) "{{{2
+    return (a:startLnum == 1 && a:endLnum == line('$'))
 endfunction
 
 function! s:UnindentedBufferConsistencyCop( isEntireBuffer, isBufferSettingsCheck ) " {{{2
@@ -1664,7 +1686,7 @@ function! s:UnindentedBufferConsistencyCop( isEntireBuffer, isBufferSettingsChec
     endif
 endfunction
 " }}}2
-function! s:IndentBufferConsistencyCop( startLineNum, endLineNum, consistentIndentSetting, isBufferSettingsCheck ) " {{{2
+function! s:IndentBufferConsistencyCop( startLnum, endLnum, consistentIndentSetting, isBufferSettingsCheck ) " {{{2
 "*******************************************************************************
 "* PURPOSE:
 "   Reports buffer consistency and (if desired) triggers the consistency check
@@ -1674,18 +1696,18 @@ function! s:IndentBufferConsistencyCop( startLineNum, endLineNum, consistentInde
 "* EFFECTS / POSTCONDITIONS:
 "	? List of the procedure's effect on each external variable, control, or other element.
 "* INPUTS:
-"   a:startLineNum, a:endLineNum: range in the current buffer that was to be
-"	checked.
-"   a:consistentIndentSetting: determined consistent indent setting of the
-"      buffer
-"   a:isBufferSettingsCheck: flag whether consistency with the buffer
-"	settings should also be checked.
+"   a:startLnum, a:endLnum: range in the current buffer that was to be
+"			    checked.
+"   a:consistentIndentSetting:  determined consistent indent setting of the
+"				buffer
+"   a:isBufferSettingsCheck:    flag whether consistency with the buffer
+"				settings should also be checked.
 "* RETURN VALUES:
 "   none
 "*******************************************************************************
     let l:userMessage = ''
     let l:consistentIndentSetting = a:consistentIndentSetting
-    let l:isEntireBuffer = s:IsEntireBuffer(a:startLineNum, a:endLineNum)
+    let l:isEntireBuffer = s:IsEntireBuffer(a:startLnum, a:endLnum)
     if a:isBufferSettingsCheck
 	let l:userMessage = s:CheckConsistencyWithBufferSettings( l:consistentIndentSetting )
 	if ! empty( l:userMessage ) && ! s:IsEnoughIndentForSolidAssessment() && s:GetSettingFromIndentSetting(l:consistentIndentSetting) ==# 'spc'
@@ -1738,12 +1760,12 @@ function! s:IndentBufferConsistencyCop( startLineNum, endLineNum, consistentInde
 		    let l:bufferSettingsMessage = ''
 		    if l:chosenIndentSetting !=# s:GetIndentSettingForBufferSettings()
 			call s:MakeBufferSettingsConsistentWith( l:chosenIndentSetting )
-			call s:ReportConsistencyWithBufferSettingsResult( s:IsEntireBuffer(a:startLineNum, a:endLineNum), 1 )
+			call s:ReportConsistencyWithBufferSettingsResult( s:IsEntireBuffer(a:startLnum, a:endLnum), 1 )
 			call s:ReportBufferSettingsConsistency( l:chosenIndentSetting )
 			let l:bufferSettingsMessage = s:GetBufferSettingsMessage( 'The buffer settings have been changed: ' )
 		    endif
 
-		    call s:HighlightInconsistentIndents( a:startLineNum, a:endLineNum, s:StripTabstopValueFromIndentSetting( l:chosenIndentSetting ), l:bufferSettingsMessage, 1)
+		    call s:HighlightInconsistentIndents( a:startLnum, a:endLnum, s:StripTabstopValueFromIndentSetting( l:chosenIndentSetting ), l:bufferSettingsMessage, 1)
 		else
 		    call s:PrintBufferSettings( 'The buffer settings remain ' . (s:IsEnoughIndentForSolidAssessment() ? 'inconsistent' : 'at') . ': ' )
 		endif
@@ -1760,8 +1782,8 @@ endfunction
 " }}}1
 
 "- highlight functions-----------------------------------------------------{{{1
-function! s:IsLineCorrect( lineNum, correctIndentSetting ) " {{{2
-    let l:beginningWhitespace = s:GetBeginningWhitespace( a:lineNum )
+function! s:IsLineCorrect( lnum, correctIndentSetting ) " {{{2
+    let l:beginningWhitespace = IndentConsistencyCop#GetBeginningWhitespace(a:lnum, 1)
     if empty( l:beginningWhitespace )
 	return 1
     endif
@@ -1786,9 +1808,9 @@ function! s:IsLineCorrect( lineNum, correctIndentSetting ) " {{{2
     endif
 endfunction
 
-function! IndentConsistencyCop#FoldExpr( lineNum, foldContext ) " {{{2
-    let l:lineCnt = a:lineNum - a:foldContext
-    while l:lineCnt <= a:lineNum + a:foldContext
+function! IndentConsistencyCop#FoldExpr( lnum, foldContext ) " {{{2
+    let l:lineCnt = a:lnum - a:foldContext
+    while l:lineCnt <= a:lnum + a:foldContext
 	if index( b:indentconsistencycop_lineNumbers, l:lineCnt ) != -1
 	    return 0
 	endif
@@ -1849,8 +1871,8 @@ function! s:SetHighlighting( lineNumbers ) " {{{2
 
     if g:indentconsistencycop_highlighting  =~# '[sm]'
 	let l:linePattern = ''
-	for l:lineNum in a:lineNumbers
-	    let l:linePattern .= '\|\%' . l:lineNum . 'l'
+	for l:lnum in a:lineNumbers
+	    let l:linePattern .= '\|\%' . l:lnum . 'l'
 	endfor
 	let l:linePattern = '\(' . strpart( l:linePattern, 2) . '\)\&^\s\+'
 
@@ -1955,21 +1977,21 @@ function! IndentConsistencyCop#ClearHighlighting() " {{{2
     endif
 endfunction
 
-function! s:GetInconsistentIndents( startLineNum, endLineNum, correctIndentSetting ) " {{{2
+function! s:GetInconsistentIndents( startLnum, endLnum, correctIndentSetting ) " {{{2
     let l:lineNumbers = []
 
-    let l:lineNum = a:startLineNum
-    while l:lineNum <= a:endLineNum
-	if ! s:IsLineCorrect( l:lineNum, a:correctIndentSetting )
-	    let l:lineNumbers += [ l:lineNum ]
+    let l:lnum = a:startLnum
+    while l:lnum <= a:endLnum
+	if ! has_key(s:filteredLnums, l:lnum) && ! s:IsLineCorrect( l:lnum, a:correctIndentSetting )
+	    call add(l:lineNumbers, l:lnum)
 	endif
-	let l:lineNum += 1
+	let l:lnum += 1
     endwhile
 
     return l:lineNumbers
 endfunction
 
-function! s:HighlightInconsistentIndents( startLineNum, endLineNum, correctIndentSetting, appendixMessage, isAcknowledgedByUser ) " {{{2
+function! s:HighlightInconsistentIndents( startLnum, endLnum, correctIndentSetting, appendixMessage, isAcknowledgedByUser ) " {{{2
     " Patterns for correct tabstops and space indents are easy to come up with.
     " The softtabstops of 1,2,4 are easy, too. The softtabstop indents of 3, 5,
     " 7 are very difficult to express, because you have to consider the number
@@ -1986,8 +2008,8 @@ function! s:HighlightInconsistentIndents( startLineNum, endLineNum, correctInden
     " Another benefit of storing the line numbers versus creating a pattern is
     " that this allows different methods of visualization (highlighting,
     " folding, quickfix, ...).
-    let l:isEntireBuffer = s:IsEntireBuffer(a:startLineNum, a:endLineNum)
-    let l:lineNumbers = s:GetInconsistentIndents( a:startLineNum, a:endLineNum, a:correctIndentSetting )
+    let l:isEntireBuffer = s:IsEntireBuffer(a:startLnum, a:endLnum)
+    let l:lineNumbers = s:GetInconsistentIndents( a:startLnum, a:endLnum, a:correctIndentSetting )
     if len( l:lineNumbers ) == 0
 	" All lines are correct.
 	call IndentConsistencyCop#ClearHighlighting()
@@ -2149,7 +2171,7 @@ function! s:ReportConsistencyResult( isEntireBuffer, isConsistent, consistentInd
 endfunction
 " }}}1
 
-function! s:IndentBufferInconsistencyCop( startLineNum, endLineNum, inconsistentIndentationMessage ) " {{{1
+function! s:IndentBufferInconsistencyCop( startLnum, endLnum, inconsistentIndentationMessage ) " {{{1
 "*******************************************************************************
 "* PURPOSE:
 "   Reports buffer inconsistency and offers steps to tackle the problem.
@@ -2161,10 +2183,11 @@ function! s:IndentBufferInconsistencyCop( startLineNum, endLineNum, inconsistent
 "* EFFECTS / POSTCONDITIONS:
 "	? List of the procedure's effect on each external variable, control, or other element.
 "* INPUTS:
-"   a:startLineNum, a:endLineNum: range in the current buffer that is to be
-"	checked.
-"   a:inconsistentIndentationMessage: user message about the inconsistent
-"	indentation and possible conflicting indent settings
+"   a:startLnum, a:endLnum: range in the current buffer that is to be
+"			    checked.
+"   a:inconsistentIndentationMessage:   user message about the inconsistent
+"					indentation and possible conflicting
+"					indent settings
 "* RETURN VALUES:
 "   none
 "*******************************************************************************
@@ -2206,28 +2229,28 @@ function! s:IndentBufferInconsistencyCop( startLineNum, endLineNum, inconsistent
 		" User canceled.
 		call s:EchoUserMessage('Be careful when modifying the inconsistent indents! ')
 	    elseif l:highlightAction =~? 'buffer settings'
-		call s:HighlightInconsistentIndents( a:startLineNum, a:endLineNum, l:bufferIndentSetting, '', 1 )
+		call s:HighlightInconsistentIndents( a:startLnum, a:endLnum, l:bufferIndentSetting, '', 1 )
 	    elseif l:highlightAction =~? 'best guess'
 		call s:MakeBufferSettingsConsistentWith( l:bestGuessIndentSetting )
-		call s:ReportConsistencyWithBufferSettingsResult( s:IsEntireBuffer(a:startLineNum, a:endLineNum), 1 )
+		call s:ReportConsistencyWithBufferSettingsResult( s:IsEntireBuffer(a:startLnum, a:endLnum), 1 )
 		call s:ReportBufferSettingsConsistency( l:bestGuessIndentSetting )
 
-		call s:HighlightInconsistentIndents( a:startLineNum, a:endLineNum, l:bestGuessIndentSetting, s:GetBufferSettingsMessage( 'The buffer settings have been changed: ' ), 1 )
+		call s:HighlightInconsistentIndents( a:startLnum, a:endLnum, l:bestGuessIndentSetting, s:GetBufferSettingsMessage( 'The buffer settings have been changed: ' ), 1 )
 	    elseif l:highlightAction =~? 'chosen setting'
 		let l:chosenIndentSetting = s:QueryIndentSetting(1)
 		if ! empty( l:chosenIndentSetting )
 		    let l:bufferSettingsMessage = ''
 		    if l:chosenIndentSetting !=# l:bufferIndentSetting
 			call s:MakeBufferSettingsConsistentWith( l:chosenIndentSetting )
-			call s:ReportConsistencyWithBufferSettingsResult( s:IsEntireBuffer(a:startLineNum, a:endLineNum), 1 )
+			call s:ReportConsistencyWithBufferSettingsResult( s:IsEntireBuffer(a:startLnum, a:endLnum), 1 )
 			call s:ReportBufferSettingsConsistency( l:chosenIndentSetting )
 			let l:bufferSettingsMessage = s:GetBufferSettingsMessage( 'The buffer settings have been changed: ' )
 		    endif
 
-		    call s:HighlightInconsistentIndents( a:startLineNum, a:endLineNum, s:StripTabstopValueFromIndentSetting( l:chosenIndentSetting ), l:bufferSettingsMessage, 1 )
+		    call s:HighlightInconsistentIndents( a:startLnum, a:endLnum, s:StripTabstopValueFromIndentSetting( l:chosenIndentSetting ), l:bufferSettingsMessage, 1 )
 		endif
 	    elseif l:highlightAction ==? 'Illegal indents only'
-		call s:HighlightInconsistentIndents( a:startLineNum, a:endLineNum, 'notbad', '', 0 )
+		call s:HighlightInconsistentIndents( a:startLnum, a:endLnum, 'notbad', '', 0 )
 	    else
 		throw 'ASSERT: Unhandled l:highlightAction: ' . l:highlightAction
 	    endif
@@ -2251,7 +2274,7 @@ function! s:IndentBufferInconsistencyCop( startLineNum, endLineNum, inconsistent
 		call s:EchoUserMessage('Be careful when modifying the inconsistent indents! ')
 	    elseif l:changeAction =~? 'best guess'
 		call s:MakeBufferSettingsConsistentWith( l:bestGuessIndentSetting )
-		call s:ReportConsistencyWithBufferSettingsResult( s:IsEntireBuffer(a:startLineNum, a:endLineNum), 1 )
+		call s:ReportConsistencyWithBufferSettingsResult( s:IsEntireBuffer(a:startLnum, a:endLnum), 1 )
 		call s:ReportBufferSettingsConsistency( l:bestGuessIndentSetting )
 
 		call s:PrintBufferSettings( 'The buffer settings have been changed: ' )
@@ -2260,7 +2283,7 @@ function! s:IndentBufferInconsistencyCop( startLineNum, endLineNum, inconsistent
 		if ! empty( l:chosenIndentSetting )
 		    if l:chosenIndentSetting !=# l:bufferIndentSetting
 			call s:MakeBufferSettingsConsistentWith( l:chosenIndentSetting )
-			call s:ReportConsistencyWithBufferSettingsResult( s:IsEntireBuffer(a:startLineNum, a:endLineNum), 1 )
+			call s:ReportConsistencyWithBufferSettingsResult( s:IsEntireBuffer(a:startLnum, a:endLnum), 1 )
 			call s:ReportBufferSettingsConsistency( l:chosenIndentSetting )
 			call s:PrintBufferSettings( 'The buffer settings have been changed: ' )
 		    else
@@ -2278,7 +2301,7 @@ function! s:IndentBufferInconsistencyCop( startLineNum, endLineNum, inconsistent
     endif
 endfunction
 
-function! s:IsBufferConsistentWithBufferSettings( startLineNum, endLineNum ) " {{{1
+function! s:IsBufferConsistentWithBufferSettings( startLnum, endLnum ) " {{{1
 "*******************************************************************************
 "* PURPOSE:
 "   Examines the buffer settings to possibly turn around the verdict of
@@ -2299,8 +2322,8 @@ function! s:IsBufferConsistentWithBufferSettings( startLineNum, endLineNum ) " {
 "* EFFECTS / POSTCONDITIONS:
 "	? List of the procedure's effect on each external variable, control, or other element.
 "* INPUTS:
-"   a:startLineNum, a:endLineNum: range in the current buffer that is to be
-"	checked.
+"   a:startLnum, a:endLnum: range in the current buffer that is to be
+"			    checked.
 "* RETURN VALUES:
 "   1 if the uncertainty of small maximum indents has been resolved to
 "	"consistent" by examining the buffer settings.
@@ -2308,7 +2331,7 @@ function! s:IsBufferConsistentWithBufferSettings( startLineNum, endLineNum ) " {
 "*******************************************************************************
     let l:bufferIndentSetting = s:GetIndentSettingForBufferSettings()
     if ! s:IsBadIndentSetting( l:bufferIndentSetting )
-	let l:lineNumbers = s:GetInconsistentIndents( a:startLineNum, a:endLineNum, l:bufferIndentSetting )
+	let l:lineNumbers = s:GetInconsistentIndents( a:startLnum, a:endLnum, l:bufferIndentSetting )
 	if len( l:lineNumbers ) == 0
 	    " All lines conform to the buffer indent setting, nothing is
 	    " inconsistent.
@@ -2322,7 +2345,7 @@ function! s:IsBufferConsistentWithBufferSettings( startLineNum, endLineNum ) " {
     return 0
 endfunction
 
-function! IndentConsistencyCop#IndentConsistencyCop( startLineNum, endLineNum, isBufferSettingsCheck ) " {{{1
+function! IndentConsistencyCop#IndentConsistencyCop( startLnum, endLnum, isBufferSettingsCheck ) " {{{1
 "*******************************************************************************
 "* PURPOSE:
 "   Triggers the indent consistency check and presents the results to the user.
@@ -2331,21 +2354,28 @@ function! IndentConsistencyCop#IndentConsistencyCop( startLineNum, endLineNum, i
 "* EFFECTS / POSTCONDITIONS:
 "	? List of the procedure's effect on each external variable, control, or other element.
 "* INPUTS:
-"   a:startLineNum, a:endLineNum: range in the current buffer that is to be
-"	checked.
-"   a:isBufferSettingsCheck: flag whether consistency with the buffer
-"	settings should also be checked.
+"   a:startLnum, a:endLnum: range in the current buffer that is to be
+"			    checked.
+"   a:isBufferSettingsCheck:    flag whether consistency with the buffer
+"				settings should also be checked.
 "* RETURN VALUES:
 "   none
 "*******************************************************************************
-    let l:isEntireBuffer = s:IsEntireBuffer(a:startLineNum, a:endLineNum)
-    let l:lineCnt = a:endLineNum - a:startLineNum + 1
+    let [l:startLnum, l:endLnum] = [ingo#range#NetStart(a:startLnum), ingo#range#NetEnd(a:endLnum)]
+    let l:isEntireBuffer = s:IsEntireBuffer(l:startLnum, l:endLnum)
+
+    let s:filteredLnums = {}
+    for l:Filter in ingo#plugin#setting#GetBufferLocal('indentconsistencycop_line_filters', [])
+	call extend(s:filteredLnums, call(l:Filter, [l:startLnum, l:endLnum])
+    endfor
+
+    let l:lineCnt = l:endLnum - l:startLnum + 1 - len(s:filteredLnums)
 
     call s:EchoStartupMessage( l:lineCnt, l:isEntireBuffer )
 
     let s:occurrences = {}
     let s:ratings = {}
-    let [l:isConsistent, l:hadPerfectOrAuthoritativeRating] = s:CheckBufferConsistency( a:startLineNum, a:endLineNum )
+    let [l:isConsistent, l:hadPerfectOrAuthoritativeRating] = s:CheckBufferConsistency( l:startLnum, l:endLnum )
     call s:ReportConsistencyResult( l:isEntireBuffer, l:isConsistent, '', 0 )
     call s:ReportBufferSettingsConsistency('')
 
@@ -2355,7 +2385,7 @@ function! IndentConsistencyCop#IndentConsistencyCop( startLineNum, endLineNum, i
 	call s:ReportConsistencyWithBufferSettingsResult( l:isEntireBuffer, 1 )
     elseif l:isConsistent == 0
 	if l:hadPerfectOrAuthoritativeRating || ! s:IsEnoughIndentForSolidAssessment()
-	    let l:isConsistent = s:IsBufferConsistentWithBufferSettings( a:startLineNum, a:endLineNum )
+	    let l:isConsistent = s:IsBufferConsistentWithBufferSettings( l:startLnum, l:endLnum )
 	endif
 	call s:ReportConsistencyWithBufferSettingsResult( l:isEntireBuffer, l:isConsistent )
 	if l:isConsistent
@@ -2363,19 +2393,19 @@ function! IndentConsistencyCop#IndentConsistencyCop( startLineNum, endLineNum, i
 
 	    let l:consistentIndentSetting = s:GetIndentSettingForBufferSettings()
 	    call s:ReportConsistencyResult( l:isEntireBuffer, l:isConsistent, l:consistentIndentSetting, 0 )	" Update report, now that the verdict has been turned around and we have the consistent indent setting.
-	    call s:IndentBufferConsistencyCop( a:startLineNum, a:endLineNum, l:consistentIndentSetting, 0 ) " Pass isBufferSettingsCheck = 0 here (though a:isBufferSettingsCheck == 1) because we've already ensured that the buffer is consistent with the buffer settings, and just want the function to print the user message.
+	    call s:IndentBufferConsistencyCop( l:startLnum, l:endLnum, l:consistentIndentSetting, 0 ) " Pass isBufferSettingsCheck = 0 here (though a:isBufferSettingsCheck == 1) because we've already ensured that the buffer is consistent with the buffer settings, and just want the function to print the user message.
 	else
 	    let l:inconsistentIndentationMessage = 'Found ' . ( s:IsEnoughIndentForSolidAssessment() ? '' : 'potentially ')
 	    let l:inconsistentIndentationMessage .= 'inconsistent indentation in this ' . s:GetScopeUserString(l:isEntireBuffer) . '; generated from these conflicting settings: '
 	    let l:inconsistentIndentationMessage .= s:RatingsToUserString( l:lineCnt )
 	    let l:inconsistentIndentationMessage .= s:GetInsufficientIndentUserMessage()
-	    call s:IndentBufferInconsistencyCop( a:startLineNum, a:endLineNum, l:inconsistentIndentationMessage )
+	    call s:IndentBufferInconsistencyCop( l:startLnum, l:endLnum, l:inconsistentIndentationMessage )
 	endif
     elseif l:isConsistent == 1
 	call IndentConsistencyCop#ClearHighlighting()
 
 	call s:ReportConsistencyResult( l:isEntireBuffer, l:isConsistent, s:perfectIndentSetting, 0 )	" Update report, now that we have the consistent (perfect) indent setting.
-	call s:IndentBufferConsistencyCop( a:startLineNum, a:endLineNum, s:perfectIndentSetting, a:isBufferSettingsCheck )
+	call s:IndentBufferConsistencyCop( l:startLnum, l:endLnum, s:perfectIndentSetting, a:isBufferSettingsCheck )
     else
 	throw 'ASSERT: Unhandled l:isConsistent: ' . l:isConsistent
     endif
@@ -2384,6 +2414,7 @@ function! IndentConsistencyCop#IndentConsistencyCop( startLineNum, endLineNum, i
 "****D echo 'Nrm. Ratings:  ' . string( s:ratings )
 
     " Cleanup remaining dictionaries with script-scope to free memory.
+    let s:filteredLnums = {}
     let s:occurrences = {}
     let s:ratings = {}
 endfunction
