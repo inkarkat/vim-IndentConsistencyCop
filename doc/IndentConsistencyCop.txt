@@ -268,6 +268,7 @@ IDEAS						  *IndentConsistencyCop-ideas*
 HISTORY						*IndentConsistencyCop-history*
 
 1.50	RELEASEME
+- Minor: Replace explicit regexp engine workaround with ingo/compat/regexp.vim.
 - When choosing "Highlight wrong indents..." followed by "Not best guess" or
   "Not chosen setting", also adapt the buffer settings to that indent setting,
   as the user has indicated that this is the right one.
@@ -288,7 +289,11 @@ HISTORY						*IndentConsistencyCop-history*
 - When choosing |Ignore| on reported inconsistencies in the indent, turn off
   any previous highlighting by the cop (like :IndentConsistencyCopOff).
 - Restore last search pattern from history when turning off the cop.
-- Minor: Replace explicit regexp engine workaround with ingo/compat/regexp.vim.
+- When there are bad mixes of spaces and tabstop, the individual character
+  widths can't be simply accumulated; need to use strdisplaywidth() to arrive
+  at the correct indent width.
+- FIX: :.IndentConsistencyCop on a closed fold only considers the current
+  line, not all lines inside the fold. Need to use ingo#range#NetStart/End().
   *** You need to update to ingo-library (vimscript #4433) version 1.024! ***
 
 1.45	12-Dec-2014
