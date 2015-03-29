@@ -13,6 +13,13 @@
 " Maintainer:	Ingo Karkat <ingo@karkat.de>
 "
 " REVISION	DATE		REMARKS  {{{1
+"   2.00.020	27-Mar-2015	When the best guess is equal to the buffer
+"				indent, already indicate that in the |Ignore|
+"				action choice. This wasn't made clear enough by
+"				the full description, and users are tempted to
+"				choose |Just change buffer settings|, where then
+"				the buffer setting isn't available, and the
+"				setting would have to be tediously re-chosen.
 "   2.00.019	23-Mar-2015	When there are bad mixes of spaces and tabstop,
 "				the individual character widths can't be simply
 "				accumulated; need to use strdisplaywidth() to
@@ -2191,113 +2198,112 @@ function! s:IndentBufferInconsistencyCop( startLnum, endLnum, inconsistentIndent
 "* RETURN VALUES:
 "   none
 "*******************************************************************************
-    let l:action = ingo#query#ConfirmAsText(a:inconsistentIndentationMessage, ['&Ignore', '&Just change buffer settings...', '&Highlight wrong indents...'], 1, 'Question')
+    let l:bufferIndentSetting = s:GetIndentSettingForBufferSettings()
+    " The buffer indent settings may be 'badset', which cannot be
+    " highlighted. So we need to suppress this option if it is bad.
+    let l:isBadBufferIndent = (s:IsBadIndentSetting( l:bufferIndentSetting ) ? 1 : 0)
+
+    let l:isBestGuessEqualToBufferIndent = 1 " Suppress best guess option if no guess available.
+    if ! empty( s:ratings )
+	let l:bestGuessIndentSetting = s:GetBestRatedIndentSetting()
+	let l:isBestGuessEqualToBufferIndent = (l:bestGuessIndentSetting ==# l:bufferIndentSetting)
+    endif
+
+    let l:action = ingo#query#ConfirmAsText(a:inconsistentIndentationMessage, ['&Ignore' . (l:isBestGuessEqualToBufferIndent ? ', best guess equals buffer settings (' . l:bufferIndentSetting . ')' : ''), '&Just change buffer settings...', '&Highlight wrong indents...'], 1, 'Question')
     let b:indentconsistencycop_result.isIgnore = (l:action ==# 'Ignore')
-    if empty(l:action) || l:action ==# 'Ignore'
+    if empty(l:action) || l:action =~# '^Ignore'
 	" User chose to ignore the inconsistencies.
 	call IndentConsistencyCop#ClearHighlighting()
 	call s:EchoUserMessage('Be careful when modifying the inconsistent indents! ')
-    else
-	let l:bufferIndentSetting = s:GetIndentSettingForBufferSettings()
-	" The buffer indent settings may be 'badset', which cannot be
-	" highlighted. So we need to suppress this option if it is bad.
-	let l:isBadBufferIndent = (s:IsBadIndentSetting( l:bufferIndentSetting ) ? 1 : 0)
-
-	let l:isBestGuessEqualToBufferIndent = 1 " Suppress best guess option if no guess available.
-	if ! empty( s:ratings )
-	    let l:bestGuessIndentSetting = s:GetBestRatedIndentSetting()
-	    let l:isBestGuessEqualToBufferIndent = (l:bestGuessIndentSetting ==# l:bufferIndentSetting)
-	endif
-	if l:action =~? '^Highlight'
-	    let l:highlightMessage = 'What kind of inconsistent indents do you want to highlight?'
-	    if l:isBestGuessEqualToBufferIndent && l:isBadBufferIndent
-		let l:highlightChoices = []
-	    elseif l:isBestGuessEqualToBufferIndent && ! l:isBadBufferIndent
-		let l:highlightChoices = ['Not &buffer settings / best guess (' . l:bufferIndentSetting . ')']
-	    elseif ! l:isBestGuessEqualToBufferIndent && l:isBadBufferIndent
-		let l:highlightChoices = ['Not best &guess (' . l:bestGuessIndentSetting . ')']
-	    else
-		let l:highlightChoices = ['Not &buffer settings (' . l:bufferIndentSetting . ')', 'Not best &guess (' . l:bestGuessIndentSetting . ')']
-	    endif
-	    call add(l:highlightChoices, 'Not &chosen setting...')
-	    if s:GetKeyedValue( s:occurrences, 'badmix' ) + s:GetKeyedValue( s:occurrences, 'badsts' ) > 0
-		call add(l:highlightChoices, '&Illegal indents only')
-	    endif
-
-	    let l:highlightAction = ingo#query#ConfirmAsText(l:highlightMessage, l:highlightChoices, 1, 'Question')
-	    if empty(l:highlightAction)
-		" User canceled.
-		call s:EchoUserMessage('Be careful when modifying the inconsistent indents! ')
-	    elseif l:highlightAction =~? 'buffer settings'
-		call s:HighlightInconsistentIndents( a:startLnum, a:endLnum, l:bufferIndentSetting, '', 1 )
-	    elseif l:highlightAction =~? 'best guess'
-		call s:MakeBufferSettingsConsistentWith( l:bestGuessIndentSetting )
-		call s:ReportConsistencyWithBufferSettingsResult( s:IsEntireBuffer(a:startLnum, a:endLnum), 1 )
-		call s:ReportBufferSettingsConsistency( l:bestGuessIndentSetting )
-
-		call s:HighlightInconsistentIndents( a:startLnum, a:endLnum, l:bestGuessIndentSetting, s:GetBufferSettingsMessage( 'The buffer settings have been changed: ' ), 1 )
-	    elseif l:highlightAction =~? 'chosen setting'
-		let l:chosenIndentSetting = s:QueryIndentSetting(1)
-		if ! empty( l:chosenIndentSetting )
-		    let l:bufferSettingsMessage = ''
-		    if l:chosenIndentSetting !=# l:bufferIndentSetting
-			call s:MakeBufferSettingsConsistentWith( l:chosenIndentSetting )
-			call s:ReportConsistencyWithBufferSettingsResult( s:IsEntireBuffer(a:startLnum, a:endLnum), 1 )
-			call s:ReportBufferSettingsConsistency( l:chosenIndentSetting )
-			let l:bufferSettingsMessage = s:GetBufferSettingsMessage( 'The buffer settings have been changed: ' )
-		    endif
-
-		    call s:HighlightInconsistentIndents( a:startLnum, a:endLnum, s:StripTabstopValueFromIndentSetting( l:chosenIndentSetting ), l:bufferSettingsMessage, 1 )
-		endif
-	    elseif l:highlightAction ==? 'Illegal indents only'
-		call s:HighlightInconsistentIndents( a:startLnum, a:endLnum, 'notbad', '', 0 )
-	    else
-		throw 'ASSERT: Unhandled l:highlightAction: ' . l:highlightAction
-	    endif
-	elseif l:action =~? 'change buffer settings'
-	    let l:changeMessage = 'How do you want to change the buffer settings?'
-	    if l:isBestGuessEqualToBufferIndent
-		let l:changeChoices = []
-	    else
-		let l:changeChoices = ['To best &guess (' . l:bestGuessIndentSetting . ')']
-	    endif
-	    call add(l:changeChoices, 'To &chosen setting...')
-
-	    if len(l:changeChoices) > 1
-		let l:changeAction = ingo#query#ConfirmAsText(l:changeMessage, l:changeChoices, 1, 'Question')
-	    else
-		let l:changeAction = substitute(get(l:changeChoices, 0, ''), '&', '', 'g')
-	    endif
-
-	    if empty(l:changeAction)
-		" User canceled.
-		call s:EchoUserMessage('Be careful when modifying the inconsistent indents! ')
-	    elseif l:changeAction =~? 'best guess'
-		call s:MakeBufferSettingsConsistentWith( l:bestGuessIndentSetting )
-		call s:ReportConsistencyWithBufferSettingsResult( s:IsEntireBuffer(a:startLnum, a:endLnum), 1 )
-		call s:ReportBufferSettingsConsistency( l:bestGuessIndentSetting )
-
-		call s:PrintBufferSettings( 'The buffer settings have been changed: ' )
-	    elseif l:changeAction =~? 'chosen setting'
-		let l:chosenIndentSetting = s:QueryIndentSetting(1)
-		if ! empty( l:chosenIndentSetting )
-		    if l:chosenIndentSetting !=# l:bufferIndentSetting
-			call s:MakeBufferSettingsConsistentWith( l:chosenIndentSetting )
-			call s:ReportConsistencyWithBufferSettingsResult( s:IsEntireBuffer(a:startLnum, a:endLnum), 1 )
-			call s:ReportBufferSettingsConsistency( l:chosenIndentSetting )
-			call s:PrintBufferSettings( 'The buffer settings have been changed: ' )
-		    else
-			call s:EchoUserMessage('Be careful when modifying the inconsistent indents! ')
-		    endif
-		endif
-	    else
-		throw 'ASSERT: Unhandled l:changeAction: ' . l:changeAction
-	    endif
-
-	    call IndentConsistencyCop#ClearHighlighting()
+    elseif l:action =~? '^Highlight'
+	let l:highlightMessage = 'What kind of inconsistent indents do you want to highlight?'
+	if l:isBestGuessEqualToBufferIndent && l:isBadBufferIndent
+	    let l:highlightChoices = []
+	elseif l:isBestGuessEqualToBufferIndent && ! l:isBadBufferIndent
+	    let l:highlightChoices = ['Not &buffer settings / best guess (' . l:bufferIndentSetting . ')']
+	elseif ! l:isBestGuessEqualToBufferIndent && l:isBadBufferIndent
+	    let l:highlightChoices = ['Not best &guess (' . l:bestGuessIndentSetting . ')']
 	else
-	    throw 'ASSERT: Unhandled l:action: ' . l:action
+	    let l:highlightChoices = ['Not &buffer settings (' . l:bufferIndentSetting . ')', 'Not best &guess (' . l:bestGuessIndentSetting . ')']
 	endif
+	call add(l:highlightChoices, 'Not &chosen setting...')
+	if s:GetKeyedValue( s:occurrences, 'badmix' ) + s:GetKeyedValue( s:occurrences, 'badsts' ) > 0
+	    call add(l:highlightChoices, '&Illegal indents only')
+	endif
+
+	let l:highlightAction = ingo#query#ConfirmAsText(l:highlightMessage, l:highlightChoices, 1, 'Question')
+	if empty(l:highlightAction)
+	    " User canceled.
+	    call s:EchoUserMessage('Be careful when modifying the inconsistent indents! ')
+	elseif l:highlightAction =~? 'buffer settings'
+	    call s:HighlightInconsistentIndents( a:startLnum, a:endLnum, l:bufferIndentSetting, '', 1 )
+	elseif l:highlightAction =~? 'best guess'
+	    call s:MakeBufferSettingsConsistentWith( l:bestGuessIndentSetting )
+	    call s:ReportConsistencyWithBufferSettingsResult( s:IsEntireBuffer(a:startLnum, a:endLnum), 1 )
+	    call s:ReportBufferSettingsConsistency( l:bestGuessIndentSetting )
+
+	    call s:HighlightInconsistentIndents( a:startLnum, a:endLnum, l:bestGuessIndentSetting, s:GetBufferSettingsMessage( 'The buffer settings have been changed: ' ), 1 )
+	elseif l:highlightAction =~? 'chosen setting'
+	    let l:chosenIndentSetting = s:QueryIndentSetting(1)
+	    if ! empty( l:chosenIndentSetting )
+		let l:bufferSettingsMessage = ''
+		if l:chosenIndentSetting !=# l:bufferIndentSetting
+		    call s:MakeBufferSettingsConsistentWith( l:chosenIndentSetting )
+		    call s:ReportConsistencyWithBufferSettingsResult( s:IsEntireBuffer(a:startLnum, a:endLnum), 1 )
+		    call s:ReportBufferSettingsConsistency( l:chosenIndentSetting )
+		    let l:bufferSettingsMessage = s:GetBufferSettingsMessage( 'The buffer settings have been changed: ' )
+		endif
+
+		call s:HighlightInconsistentIndents( a:startLnum, a:endLnum, s:StripTabstopValueFromIndentSetting( l:chosenIndentSetting ), l:bufferSettingsMessage, 1 )
+	    endif
+	elseif l:highlightAction ==? 'Illegal indents only'
+	    call s:HighlightInconsistentIndents( a:startLnum, a:endLnum, 'notbad', '', 0 )
+	else
+	    throw 'ASSERT: Unhandled l:highlightAction: ' . l:highlightAction
+	endif
+    elseif l:action =~? 'change buffer settings'
+	let l:changeMessage = 'How do you want to change the buffer settings?'
+	if l:isBestGuessEqualToBufferIndent
+	    let l:changeChoices = []
+	else
+	    let l:changeChoices = ['To best &guess (' . l:bestGuessIndentSetting . ')']
+	endif
+	call add(l:changeChoices, 'To &chosen setting...')
+
+	if len(l:changeChoices) > 1
+	    let l:changeAction = ingo#query#ConfirmAsText(l:changeMessage, l:changeChoices, 1, 'Question')
+	else
+	    let l:changeAction = substitute(get(l:changeChoices, 0, ''), '&', '', 'g')
+	endif
+
+	if empty(l:changeAction)
+	    " User canceled.
+	    call s:EchoUserMessage('Be careful when modifying the inconsistent indents! ')
+	elseif l:changeAction =~? 'best guess'
+	    call s:MakeBufferSettingsConsistentWith( l:bestGuessIndentSetting )
+	    call s:ReportConsistencyWithBufferSettingsResult( s:IsEntireBuffer(a:startLnum, a:endLnum), 1 )
+	    call s:ReportBufferSettingsConsistency( l:bestGuessIndentSetting )
+
+	    call s:PrintBufferSettings( 'The buffer settings have been changed: ' )
+	elseif l:changeAction =~? 'chosen setting'
+	    let l:chosenIndentSetting = s:QueryIndentSetting(1)
+	    if ! empty( l:chosenIndentSetting )
+		if l:chosenIndentSetting !=# l:bufferIndentSetting
+		    call s:MakeBufferSettingsConsistentWith( l:chosenIndentSetting )
+		    call s:ReportConsistencyWithBufferSettingsResult( s:IsEntireBuffer(a:startLnum, a:endLnum), 1 )
+		    call s:ReportBufferSettingsConsistency( l:chosenIndentSetting )
+		    call s:PrintBufferSettings( 'The buffer settings have been changed: ' )
+		else
+		    call s:EchoUserMessage('Be careful when modifying the inconsistent indents! ')
+		endif
+	    endif
+	else
+	    throw 'ASSERT: Unhandled l:changeAction: ' . l:changeAction
+	endif
+
+	call IndentConsistencyCop#ClearHighlighting()
+    else
+	throw 'ASSERT: Unhandled l:action: ' . l:action
     endif
 endfunction
 
