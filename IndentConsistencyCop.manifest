@@ -1,0 +1,3 @@
+autoload/IndentConsistencyCop.vim
+plugin/IndentConsistencyCop.vim
+doc/IndentConsistencyCop.txt
