@@ -13,6 +13,8 @@
 " Maintainer:	Ingo Karkat <ingo@karkat.de>
 "
 " REVISION	DATE		REMARKS  {{{1
+"   2.00.021	30-Mar-2015	Fix flag b:indentconsistencycop_result.isIgnore
+"				broken by the previous change.
 "   2.00.020	27-Mar-2015	When the best guess is equal to the buffer
 "				indent, already indicate that in the |Ignore|
 "				action choice. This wasn't made clear enough by
@@ -2210,7 +2212,7 @@ function! s:IndentBufferInconsistencyCop( startLnum, endLnum, inconsistentIndent
     endif
 
     let l:action = ingo#query#ConfirmAsText(a:inconsistentIndentationMessage, ['&Ignore' . (l:isBestGuessEqualToBufferIndent ? ', best guess equals buffer settings (' . l:bufferIndentSetting . ')' : ''), '&Just change buffer settings...', '&Highlight wrong indents...'], 1, 'Question')
-    let b:indentconsistencycop_result.isIgnore = (l:action ==# 'Ignore')
+    let b:indentconsistencycop_result.isIgnore = (l:action =~# 'Ignore')
     if empty(l:action) || l:action =~# '^Ignore'
 	" User chose to ignore the inconsistencies.
 	call IndentConsistencyCop#ClearHighlighting()
