@@ -62,11 +62,14 @@ tables, equals signs in variable assignments, etc. Neither does it know any
 specifics about programming languages, or your personal preferred indentation
 style.
 
-RELATED WORKS								     *
+SEE ALSO								     *
 
 - IndentConsistencyCopAutoCmds (vimscript #1691) complements this plugin. It
   automatically triggers the IndentConsistencyCop for certain filetypes when
   loading the buffer and optionally also on each write
+
+RELATED WORKS								     *
+
 - Indent Finder (vimscript #513) is a Python script and Vim plugin that scans
   any loaded buffer and configures the appropriate indent settings
 - yaifa.vim (vimscript #3096) is a port to vimscript of the above
@@ -86,6 +89,8 @@ RELATED WORKS								     *
 - filestyle (vimscript #5065) highlights tabs when 'expandtab' is set,
   trailing spaces, and lines longer than 'textwidth', but doesn't actually
   check conformance to indent
+- ShowSpaces (vimscript #5148) highlights spaces inside indentation, per
+  buffer / filetype.
 
 ==============================================================================
 USAGE						  *IndentConsistencyCop-usage*
@@ -170,6 +175,18 @@ non-indent pattern defined in g:indentconsistencycop_non_indent_pattern
 removes these additional whitespaces from the indent when evaluating lines. >
     let g:indentconsistencycop_non_indent_pattern = ' \*\%([*/ \t]\|$\)'
 (You can also override / set this for certain files with a buffer-local var.)
+
+			*g:IndentConsistencyCop_line_filters*
+Some com,ment styles use irregularly indented blocks, for example aligment to
+a start of a keyword or construct in the previous line, without regard to
+whether that aligns with the indent width. To avoid annoying false positives
+on those lines, you can implement custom function(s) that detect these, so
+that they will be excluded from the cop's checking. Define a List of Funcrefs: >
+    let g:IndentConsistencyCop_line_filters =
+    \	[function('MyBlockFilter'), function('MyBoilerplateFilter')]
+The function must take two startLnum, endLnum arguments and return a
+Dictionary whose keys represent the filtered out line numbers. The cop ignores
+the union of all returned Sets.
 
 ==============================================================================
 INTEGRATION				    *IndentConsistencyCop-integration*
@@ -294,6 +311,11 @@ HISTORY						*IndentConsistencyCop-history*
   at the correct indent width.
 - FIX: :.IndentConsistencyCop on a closed fold only considers the current
   line, not all lines inside the fold. Need to use ingo#range#NetStart/End().
+- ENH: Add g:IndentConsistencyCop_line_filters configuration to exclude
+  certain, irregular lines from checking. This is a more powerful variant of
+  g:indentconsistencycop_non_indent_pattern. Use
+  IndentConsistencyCop#Filter#BlockAlignment() by default, which handles
+  alignment to previous keywords, brackets, and quotes.
   *** You need to update to ingo-library (vimscript #4433) version 1.024! ***
 
 1.45	12-Dec-2014
