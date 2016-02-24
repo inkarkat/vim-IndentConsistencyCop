@@ -1,6 +1,6 @@
-" Test Very inconsistent large C source code. 
+" Test Very inconsistent large C source code.
 
-let g:indentconsistencycop_choices = ['highlight', 'not buffer settings']
+let g:IngoLibrary_ConfirmChoices = ['highlight', 'not buffer settings']
 
 edit test034.txt
 IndentConsistencyCop
