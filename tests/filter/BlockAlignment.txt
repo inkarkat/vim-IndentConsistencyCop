@@ -1,0 +1,31 @@
+// vim: set ft= ts=8 sts=4 sw=4 expandtab :
+# Align to keyword.
+<foo bar="baz"
+     quux="new"
+     class="special">
+
+# Align to common constructs.
+function foo([1, 2, 3],
+             baz,
+             quux)
+{
+    // Implementation
+}
+void boo("here",
+         'i',
+         there)
+
+# Misaligned
+function foo(hi,
+             ho {
+               no
+             },
+             haha)
+# Bad mix.
+void bad(ha,
+   	 he,
+         hi)
+# Consistent indent, but inconsistent indent characters.
+void bad(ha,
+	 he,
+         hi)
