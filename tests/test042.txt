@@ -1,0 +1,11 @@
+// vim: set ft=cpp ts=4 sts=0 sw=4 expandtab:
+// Consistent with '4 spaces' and buffer settings. 
+foo
+    bar
+    baz
+quux
+    quuux
+        q
+        q
+    q
+q
