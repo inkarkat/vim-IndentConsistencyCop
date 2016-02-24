@@ -1,6 +1,6 @@
-" Test Consistent indentation 'sts4'. 
+" Test Consistent indentation 'sts4'.
 
-let g:indentconsistencycop_choices = []
+let g:IngoLibrary_ConfirmChoices = []
 
 edit test055.txt
 IndentConsistencyCop
