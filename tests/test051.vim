@@ -1,6 +1,6 @@
-" Test Contains two wrong sts2 indents. 
+" Test Contains two wrong sts2 indents.
 
-let g:indentconsistencycop_choices = ['highlight', 'not best guess']
+let g:IngoLibrary_ConfirmChoices = ['highlight', 'not best guess']
 
 edit test051.txt
 IndentConsistencyCop
