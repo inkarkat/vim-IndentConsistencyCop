@@ -1,0 +1,3711 @@
+/* vim: set ft=c: */
+/* Inconsistent. */
+/*--------------------------------------------------------------------------*/
+/* STANDARD HEADERFILES                                                     */
+/*--------------------------------------------------------------------------*/
+#include <sys/types.h>
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <signal.h>
+#include <errno.h>
+#include <time.h>
+#include <unistd.h>
+/**** fix for NSMbb71355 ****/
+#include <locale.h>
+
+/*--------------------------------------------------------------------------*/
+/* HEADERFILES                                                              */
+/*--------------------------------------------------------------------------*/
+#ifdef WIN32
+#include "saprfc.h"
+#include "windows.h"
+#endif
+#include "alxxapir.h"
+
+
+
+
+#include "r3snmp.h"
+#include "define.h"
+#include "tools.h"
+#include "readcfg.h"
+
+#include "r3monal.h"
+
+/* add rfc interface to r3monal*/
+#include "rfctool.h"
+#include "saprfc.h"
+#include "sapitab.h"
+#include "OvDPQueueCheck.h"
+
+char *except = NULL;
+char* function = NULL;
+RFC_RC rfc_rc;
+static char host[256];
+static char* szCCMSInterfaceUsed = "XAL";
+/*extern int SAPSHMCheck; switch SHM check on or off */
+
+/* current SAP R/3 release */
+static char szRelease[10] = "";
+
+/* only for XAL certification */
+extern int monitor_set; /* print all saved monitor sets for XAL certification */
+extern int monitor_list; /* print all monitors of a monitor set for XAL cerfication */
+extern char szMonitorSet[61]; /* name of monitor set */
+
+/* static LOGON *curr_sap_logon;
+static char  *curr_sap_host; */
+
+static void rfc_param(RFC_PARAMETER *rfc_param,
+					  char      *abap_field_name,
+					  unsigned  data_type,
+					  void      *data_addr,
+					  unsigned 	data_len);
+
+void setDPQueueCheckFlag( LOGON* );
+
+
+#define MAX_ALERT_CHUNK 1024
+
+/* defines for the return values of checking functions */
+#define INVALID 0
+#define VALID 1
+#define SID_IS_LOCAL 2
+#define SID_IS_NOT_LOCAL 3
+
+/*---------------------------------------------------------------------------
+** STATIC DATA
+static char* sapdirenv;
+**-------------------------------------------------------------------------*/
+static char* configfileenv;
+static char* cfgfileenv;
+static char* historyenv;
+/* static char* sapmsgfileenv; */
+static int RFCTimeOut = 120; /* 120 seconds before a RFC timeout is reached */
+
+/* fix for QXCM1000209956 / QXCR1000214383                                       ***/
+/* scan time is only updated if all alerts for one system in one run were ack.ed ***/
+/* if one alert was in state "action req", "action running" or "action failed"   ***/
+/* the scan time keeps old value to ack. the alert in one of the next runs       ***/
+
+/* fix for QXCR1000294598 */
+extern RFCLoginTimeOut;
+
+
+static int UpdateScanTime = 1;
+#define XMI_MODE "XmiSyslogMode"
+int XMI_Mode = 0;
+
+
+SEVERITY_STRUCT severity[MAX_SEVERITY];
+int             maxseverity;
+
+MONAL_CONF_STRUCT monalconf[MAX_MONAL_CONF];
+int               maxmonalconf  = 0;
+
+MONAL_HISTORY_STRUCT  monalhis[MAX_SYSTEM_NR+1];
+int            maxmonalhis = 0;
+
+MONAL_HISTORY_STRUCT  newMonalhis[MAX_SYSTEM_NR+1];
+int            newMaxmonalhis = 0;
+
+MONAL_SYSLOG_STRUCT monalsyslog[MAX_MONAL_CONF];
+int            maxmonalsyslog = 0;
+
+MONITOR_SET_STRUCT monitorSet[MAX_MONI_SETS];
+int				maxmonitorSet = 0;
+
+MONITOR_SET_STRUCT PerfMonitorSet[MAX_MONI_SETS];
+int				PerfMaxmonitorSet = 0;
+
+ACKNOWLEDGE_STRUCT acknowledge[MAX_ACKNOWLEDGE];
+int				maxacknowledge = 0;
+
+REMOTE_HOST_STRUCT remotehosts[MAX_REMOTE_HOSTS];
+int				maxremotehosts = 0;
+
+/* Alxx lib */
+AlSID_T  SessionHandle;
+
+/* BAPI API as abstract datatype */
+
+#define MAX_EXPORTPARAMS 6
+#define MAX_IMPORTPARAMS 4
+#define MAX_TABLES 4
+
+#define GETCHAR(var,str) sprintf(str,"%.*s",sizeof(var),var)
+#define GETINT(var,str) sprintf(str,"%ld",var);
+#define GETDATE(var,str) sprintf(str,"%.*s",sizeof(var),var)
+#define GETTIME(var,str) sprintf(str,"%.*s",sizeof(var),var)
+
+static RFC_HANDLE rfc_handle;
+static RFC_PARAMETER exporting[MAX_EXPORTPARAMS + 1];
+static RFC_PARAMETER importing[MAX_IMPORTPARAMS + 1];
+static RFC_TABLE tables[MAX_TABLES + 1];
+
+extern unsigned char* lpogetpwd (unsigned char* passconfig);
+static void DLL_CALL_BACK_FUNCTION rfc_error(char *operation,  LOGON *l);
+
+void OUTS(const char *text,const unsigned pos,const unsigned len,char *str)
+{
+	if (trace.TraceFP) {
+		fprintf(trace.TraceFP,"=%s >>> %s\n",text,str);
+		fflush  (trace.TraceFP);
+	}
+}
+
+
+char* RTRIM(char* str)
+{
+   char* wrk = str;
+
+   while ( *++wrk);
+   for ( wrk--; wrk >= str ; wrk--)         /* remove spaces */
+        if ( *wrk == ' ' || *wrk == '\t' ) *wrk = '\0';
+        else break;
+
+  return str;
+}
+
+char* LTRIM(char* str)
+{
+   char* wrk = str;
+
+   while ( *wrk && (*wrk == ' ' || *wrk == '\t'))
+	   wrk++;
+
+  return wrk;
+}
+
+/*--------------------------------------------------------------------*/
+/* initHostName                                                        */
+/*--------------------------------------------------------------------*/
+static void initHostName()
+{
+
+#ifdef WIN32
+   TCHAR szName[256];
+   DWORD dwSize=256;
+   int i;
+#endif
+
+#ifdef _DEBUG
+   fprintf(stderr, "initHostName\n");
+#endif
+
+   if (!strcmp (host, "")) {
+#ifdef WIN32
+           GetComputerName (szName, &dwSize);
+           for (i = 0; i <= (int)dwSize; i++) {
+                   if (isupper(szName[i]))
+                           host[i] = tolower(szName[i]);
+                   else
+                           host[i] = szName[i];
+           }
+#else
+           gethostname (host, sizeof (host));
+#endif
+   }
+
+#ifdef _DEBUG
+   fprintf(stderr, "initHostName: host=%s\n", host);
+#endif
+
+   return;
+
+}
+
+/*--------------------------------------------------------------------*/
+/* Error Cleanup because of a RFC-Error                               */
+/* Because of Windows DLL function must not be defined as static      */
+/*--------------------------------------------------------------------*/
+static void DLL_CALL_BACK_FUNCTION rfc_error(char *operation, LOGON *l)
+{
+    RFC_ERROR_INFO error_info;
+	char msg[1024];
+	char *szMsgHost;
+
+	memset(&error_info, 0, sizeof(error_info));
+
+	RfcLastError(&error_info);
+
+  if (trace.TraceFP)
+  {
+	  if (function != NULL)
+		  fprintf(trace.TraceFP, "\nFUNCTION: %s", function);
+
+	  if (except != NULL)
+		  fprintf(trace.TraceFP, "\nEXCEPTION: %s", except);
+
+
+	  switch (rfc_rc) {
+	  case RFC_FAILURE:
+		  RfcLastError(&error_info);
+		  if (trace.TraceFP) {
+			  fprintf(trace.TraceFP, "RFC CALL ERROR.KEY    : %s\n", error_info.key);
+			  fprintf(trace.TraceFP, "RFC CALL ERROR.STATUS : %s\n", error_info.status);
+			  fprintf(trace.TraceFP, "RFC CALL ERROR.MESSAGE: %s\n", error_info.message);
+			  fprintf(trace.TraceFP, "RFC CALL ERROR.INTSTAT: %s\n", error_info.intstat);
+			  fflush  (trace.TraceFP);
+		  }
+		  sprintf (msg, "SAPOPC: %s nr=%s host=%s name=%s",
+  			error_info.message,
+	  		l->nr,
+		  	l->host,
+			  l->sid);
+        findMappingHost(l->sid, l->nr, l->host, &szMsgHost);
+		  lpoopcmsg (OPC_SEV_CRITICAL,
+			  OPC_APPLICATION_R3,
+  			"XMI/XAL",
+	  		msg,
+		  	"R3_CCMS",
+			  szMsgHost);
+		  break;
+	  case RFC_EXCEPTION:
+		  fprintf (trace.TraceFP, "RFC CALL EXECPTION: %s\n", except);
+  		break;
+	  case RFC_SYS_EXCEPTION:
+		  fprintf (trace.TraceFP, "RFC CALL EXECPTION: %s\n", except);
+  		RfcLastError(&error_info);
+	  	fprintf(trace.TraceFP, "RFC CALL ERROR.KEY    : %s\n", error_info.key);
+		  fprintf(trace.TraceFP, "RFC CALL ERROR.STATUS : %s\n", error_info.status);
+  		fprintf(trace.TraceFP, "RFC CALL ERROR.MESSAGE: %s\n", error_info.message);
+	  	fprintf(trace.TraceFP, "RFC CALL ERROR.INTSTAT: %s\n", error_info.intstat);
+
+		  sprintf (msg, "SAPOPC: %s nr=%s host=%s name=%s",
+			  error_info.message,
+  			l->nr,
+	  		l->host,
+		  	l->sid);
+
+        findMappingHost(l->sid, l->nr, l->host, &szMsgHost);
+  		lpoopcmsg (OPC_SEV_CRITICAL,
+	  		OPC_APPLICATION_R3,
+		  	"XMI/XAL",
+			  msg,
+  			"R3_CCMS",
+	  		szMsgHost);
+
+  		break;
+	  default:
+  		fprintf (trace.TraceFP, "RFC CALL EXECPTION: unknown error\n");
+	  	break;
+    }
+	}
+
+	RfcClose(RFC_HANDLE_NULL);
+}
+
+/*----------------------------------------------------------------*/
+/* set up RFC parameters                                       */
+/*----------------------------------------------------------------*/
+static void rfc_param(RFC_PARAMETER *rfc_param,
+	       char       	  *abap_field_name,
+	       unsigned  	  data_type,
+	       void      	 *data_addr,
+	       unsigned 	data_len)
+{
+  RFC_PARAMETER *p = rfc_param;
+
+  p->name = (void *)abap_field_name;
+  p->nlen = abap_field_name == NULL ? 0 : strlen(abap_field_name);
+  p->type = data_type;
+  p->addr = data_addr;
+  p->leng = data_len;
+
+  /* init next parameter for no more parameter */
+
+  p++;
+  p->name = NULL;
+  p->nlen = 0;
+  p->type = 0;
+  p->addr = NULL;
+  p->leng = 0;
+
+  return;
+}
+
+
+int RFC_CallFunction(RFC_HANDLE rfc_handle, RFC_PARAMETER exporting[], RFC_PARAMETER importing[], RFC_TABLE tables[], LOGON *l)
+{
+	char msg[1024];
+	char *szMsgHost;
+
+	time_t start_t, now_t;
+
+	if (trace.TraceFP) {
+		fprintf (trace.TraceFP, "RfcCallReceive %s called\n", function);
+		fflush  (trace.TraceFP);
+	}
+
+	rfc_rc = RfcCall(rfc_handle, function, exporting, tables);
+
+	if (rfc_rc != RFC_OK) {
+
+		if (trace.TraceFP) {
+			fprintf (trace.TraceFP, ">>> Error: Can't open RFC connection\n");
+			fflush  (trace.TraceFP);
+		}
+		/*
+        sprintf (msg, "SAPOPC: %s nr=%s host=%s name=%s rel=%s instance=%s dbname=%s dbhost=%s",
+                "System is not reachable.",
+                l->nr,
+                l->host,
+                l->sid,
+                "XXX",
+                "XXX",
+                "XXX",
+                "XXX");
+        findMappingHost(l->sid, l->nr, l->host, &szMsgHost);
+		lpoopcmsg (OPC_SEV_CRITICAL,
+			OPC_APPLICATION_R3,
+			"SAPsysDown",
+			msg,
+			"R3_State",
+			szMsgHost);
+			*/
+		return FALSE; /* Can't connect to system */
+	}
+
+	start_t = time(NULL);
+	do
+	{
+		rfc_rc = RfcListen (rfc_handle);
+
+		if (rfc_rc == RFC_RETRY)
+#ifdef WIN32
+		Sleep(10); /*10 milli seconds*/
+#else
+		 sleep(1);
+#endif
+
+		now_t = time(NULL);
+
+		if ( difftime(now_t, start_t) > RFCTimeOut) /* wait RFCTimeOut seconds */
+		{
+			if (trace.TraceFP) {
+				fprintf (trace.TraceFP, ">>> Error: RFC timeout occured\n");
+				fflush  (trace.TraceFP);
+			}
+
+			sprintf (msg, "SAPOPC: System didn't responding in %d seconds. nr=%s host=%s name=%s rel=%s instance=%s dbname=%s dbhost=%s",
+				RFCTimeOut,
+				l->nr,
+                l->host,
+                l->sid,
+                "XXX",
+                "XXX",
+                "XXX",
+                "XXX");
+            findMappingHost(l->sid, l->nr, l->host, &szMsgHost);
+			lpoopcmsg (OPC_SEV_CRITICAL,
+				OPC_APPLICATION_R3,
+				"SAPsysDown",
+				msg,
+				"R3_State",
+				szMsgHost);
+			return FALSE;
+		}
+	} while (rfc_rc == RFC_RETRY);
+
+	/* receive results */
+	rfc_rc = RfcReceive(rfc_handle, importing, tables, &except);
+
+	switch (rfc_rc) {
+		case RFC_SYS_EXCEPTION :
+		case RFC_EXCEPTION :
+
+		   rfc_error(except, l);
+		   return FALSE;
+	}
+
+	return TRUE;
+}
+
+
+int CCMS_BAPICallFunction(RFC_HANDLE rfc_handle, RFC_PARAMETER exporting[], RFC_PARAMETER importing[], RFC_TABLE tables[], BAPIRET2* iReturn, LOGON *l)
+{
+
+	char msg[1024], msg1[1024];
+	time_t start_t, now_t;
+	char* szMsgHost;
+
+	if (trace.TraceFP) {
+		fprintf (trace.TraceFP, "RfcCallReceive %s called\n", function);
+		fflush  (trace.TraceFP);
+	}
+
+	rfc_rc = RfcCall(rfc_handle, function, exporting, tables);
+
+	if (rfc_rc != RFC_OK) {
+
+		if (trace.TraceFP) {
+			fprintf (trace.TraceFP, ">>> Error: Can't open RFC connection\n");
+			fflush  (trace.TraceFP);
+		}
+		/*
+        sprintf (msg, "SAPOPC: %s nr=%s host=%s name=%s rel=%s instance=%s dbname=%s dbhost=%s",
+                "System is not reachable.",
+                l->nr,
+                l->host,
+                l->sid,
+                "XXX",
+                "XXX",
+                "XXX",
+                "XXX");
+        findMappingHost(l->sid, l->nr, l->host, &szMsgHost);
+		lpoopcmsg (OPC_SEV_CRITICAL,
+			OPC_APPLICATION_R3,
+			"SAPsysDown",
+			msg,
+			"R3_State",
+			szMsgHost);
+			*/
+		return FALSE; /* Can't connect to system */
+	}
+
+	start_t = time(NULL);
+	do
+	{
+		rfc_rc = RfcListen (rfc_handle);
+
+		if (rfc_rc == RFC_RETRY)
+#ifdef WIN32
+		Sleep(10); /*10 milli seconds*/
+#else
+		sleep(1);
+#endif
+
+		now_t = time(NULL);
+
+		if ( difftime(now_t, start_t) > RFCTimeOut) /* wait RFCTimeOut seconds */
+		{
+			if (trace.TraceFP) {
+				fprintf (trace.TraceFP, ">>> Error: RFC timeout occured\n");
+				fflush  (trace.TraceFP);
+			}
+
+			sprintf (msg, "SAPOPC: System didn't responding in %d seconds. nr=%s host=%s name=%s rel=%s instance=%s dbname=%s dbhost=%s",
+				RFCTimeOut,
+				l->nr,
+                l->host,
+                l->sid,
+                "XXX",
+                "XXX",
+                "XXX",
+                "XXX");
+	        findMappingHost(l->sid, l->nr, l->host, &szMsgHost);
+   		    lpoopcmsg (OPC_SEV_CRITICAL,
+				OPC_APPLICATION_R3,
+				"SAPsysDown",
+				msg,
+				"R3_State",
+				szMsgHost);
+			return FALSE;
+		}
+	} while (rfc_rc == RFC_RETRY);
+
+	/* receive results */
+	rfc_rc = RfcReceive(rfc_handle, importing, tables, &except);
+
+	switch (rfc_rc) {
+		case RFC_SYS_EXCEPTION :
+		case RFC_EXCEPTION :
+
+		   rfc_error(except, l);
+		   return FALSE;
+	}
+
+	/**** fix for QXCM1000212006 ************************/
+	if (iReturn->Type[0] != 'S' && iReturn->Type[0] != ' ' && atoi(RTRIM(iReturn->Number)) != 367 && atoi(RTRIM(iReturn->Number)) != 596){
+		/* fix for NSMbb52399/NSMbb57546: do not execute this section when no Alert in CCMS */
+		/* (i.e. when Number = 367) */
+
+		strncpy(msg, iReturn->Message, sizeof (iReturn->Message));
+		msg[sizeof (iReturn->Message)] = '\0';
+
+		if (trace.TraceFP) {
+			fprintf (trace.TraceFP, ">>> Error: %s\n", RTRIM(msg));
+			fflush  (trace.TraceFP);
+		}
+
+		sprintf (msg1, "SAPOPC: %s %s nr=%s host=%s name=%s",
+			RTRIM(iReturn->Type),
+			msg,
+			l->nr,
+            l->host,
+			l->sid);
+        findMappingHost(l->sid, l->nr, l->host, &szMsgHost);
+		lpoopcmsg (OPC_SEV_CRITICAL,
+			OPC_APPLICATION_R3,
+			"XMI/XAL",
+			msg1,
+			"R3_CCMS",
+			szMsgHost);
+
+		return FALSE;
+	}
+
+	return TRUE;
+}
+
+
+int CCMS_BAPILogon(RFC_HANDLE rfc_handle, RFC_PARAMETER exporting[], RFC_PARAMETER importing[], RFC_TABLE tables[], LOGON *l) {
+
+	char company[32];
+	char agent[32];
+	char smapi_short[4];
+	char version[4];
+	char session_id[25];
+	BAPIRET2 iReturn;
+
+	/********************* logon call to external Sytemmanagement interface XMI/XAL *******************/
+	function="BAPI_XMI_LOGON";
+
+	strcpy(company, "Hewlett Packard");
+	strcpy(agent,"R3MONAL");
+	strcpy(smapi_short,"XAL");
+	strcpy(version,"1.0");
+
+	rfc_param(&exporting[0], "EXTCOMPANY", TYPC, &company, strlen(company));
+	rfc_param(&exporting[1], "EXTPRODUCT", TYPC, &agent, strlen(agent));
+	rfc_param(&exporting[2], "INTERFACE", TYPC, &smapi_short, strlen(smapi_short));
+	rfc_param(&exporting[3], "VERSION", TYPC, &version, strlen(version));
+
+	exporting[4].name = NULL;
+
+	/* no table ---> terminate array */
+	tables[0].name = NULL;
+
+    rfc_rc = RfcInstallStructure("BAPIRET2",
+                               typeOfBAPIRET2,
+                               ENTRIES(typeOfBAPIRET2),
+                               &handleOfBAPIRET2);
+	if (rfc_rc != RFC_OK)
+	{
+		rfc_error("RfcInstallStructure", l);
+		return FALSE;
+	}
+
+	rfc_param(&importing[0], "SESSIONID", TYPC, &session_id, 24);
+    rfc_param(&importing[1], "RETURN", handleOfBAPIRET2, &iReturn, sizeof(BAPIRET2));
+	importing[2].name = NULL;
+
+    if (CCMS_BAPICallFunction(rfc_handle, exporting, importing, tables, &iReturn, l) == FALSE)
+		return FALSE;
+
+	return TRUE;
+}
+
+
+int CCMS_BAPILogoff(RFC_HANDLE rfc_handle, RFC_PARAMETER exporting[], RFC_PARAMETER importing[], RFC_TABLE tables[], LOGON *l)
+{
+
+	char smapi_short[4];
+	BAPIRET2 iReturn;
+
+    /********************* logoff call to XMI *******************/
+
+	function = "BAPI_XMI_LOGOFF";
+
+	strcpy(smapi_short,"XAL");
+	rfc_param(&exporting[0], "INTERFACE", TYPC, &smapi_short, 3);
+	exporting[1].name = NULL;
+    rfc_param(&importing[0], "RETURN", handleOfBAPIRET2, &iReturn, sizeof(BAPIRET2));
+	importing[1].name = NULL;
+
+	/* no table ---> terminate array */
+	tables[0].name = NULL;
+
+	CCMS_BAPICallFunction(rfc_handle, exporting, importing, tables, &iReturn, l);
+
+/*	ItDelete(tables[0].ithandle); */
+	RfcClose(rfc_handle);
+	return TRUE;
+}
+
+
+int CCMS_BAPI_SYSTEM_MON_GETTREE(char*  eExternalUserName, ITAB_H thTreeNodes, MONITOR_SET_STRUCT* monitorSet, LOGON *l) {
+
+   /* BAPIPARAMS_MAXLEVEL eMaxTreeDepth; */
+   BAPIMNNAME eMonitorName;
+   /* BAPIPARAMS_VISUSRLEV eVisOnUsrLevel; */
+   BAPIRET2 iReturn;
+/*
+ BAPITNDEXT *tTreeNodes;
+   char s[1024];
+   int linenr;
+*/
+   /* eMaxTreeDepth = 0; */
+   memset(eMonitorName.MoniName, ' ', sizeof(eMonitorName.MoniName));
+   strncpy(eMonitorName.MoniName, monitorSet->monitor, strlen(monitorSet->monitor));
+   memset(eMonitorName.MsName, ' ', sizeof(eMonitorName.MsName));
+   strncpy(eMonitorName.MsName, monitorSet->monitorset, strlen(monitorSet->monitorset));
+
+   if (trace.TraceFP) {
+         fprintf (trace.TraceFP, "Reading data from CCMS: Monitor Set:'%s' Monitor:'%s'\n", monitorSet->monitorset, monitorSet->monitor);
+		 fflush (trace.TraceFP);
+   }
+
+   /* eVisOnUsrLevel = 1; */
+
+   rfc_rc = RfcInstallStructure("BAPIMNNAME",
+                                typeOfBAPIMNNAME,
+                                ENTRIES(typeOfBAPIMNNAME),
+                                &handleOfBAPIMNNAME);
+    if (rfc_rc != RFC_OK)
+	{
+		rfc_error("RfcInstallStructure", l);
+		return FALSE;
+	}
+
+
+    rfc_rc = RfcInstallStructure("BAPIRET2",
+                               typeOfBAPIRET2,
+                               ENTRIES(typeOfBAPIRET2),
+                               &handleOfBAPIRET2);
+
+    if (rfc_rc != RFC_OK)
+	{
+		rfc_error("RfcInstallStructure", l);
+		return FALSE;
+	}
+
+    rfc_rc = RfcInstallStructure("BAPITNDEXT",
+                               typeOfBAPITNDEXT,
+                               ENTRIES(typeOfBAPITNDEXT),
+                               &handleOfBAPITNDEXT);
+
+    if (rfc_rc != RFC_OK)
+	{
+		rfc_error("RfcInstallStructure", l);
+		return FALSE;
+	}
+
+  /* define export params */
+
+  rfc_param(&exporting[0], "EXTERNAL_USER_NAME", TYPC, eExternalUserName, strlen(eExternalUserName));
+/*  rfc_param(&exporting[1], "MAX_TREE_DEPTH", TYPINT, &eMaxTreeDepth, sizeof(BAPIPARAMS_MAXLEVEL));*/
+  rfc_param(&exporting[1], "MONITOR_NAME", handleOfBAPIMNNAME, &eMonitorName, sizeof(BAPIMNNAME));
+/*  rfc_param(&exporting[3], "VIS_ON_USR_LEVEL", TYPINT, &eVisOnUsrLevel, sizeof(BAPIPARAMS_VISUSRLEV));*/
+  exporting[2].name = NULL;
+  rfc_param(&importing[0], "RETURN", handleOfBAPIRET2, &iReturn, sizeof(BAPIRET2));
+  importing[1].name = NULL;
+
+  /* define internal tables */
+
+  tables[0].name     = "TREE_NODES";
+  tables[0].nlen     = 10;
+  tables[0].type     = handleOfBAPITNDEXT;
+  tables[0].ithandle = thTreeNodes;
+  tables[1].name = NULL;
+
+  /* call CCMS GetAlert Data BAPI */
+  function = "BAPI_SYSTEM_MON_GETTREE";
+
+  if (CCMS_BAPICallFunction(rfc_handle, exporting, importing, tables, &iReturn, l) == FALSE)
+ 	return FALSE;
+/*
+  for (linenr = 1; ; linenr++)
+	{
+		tTreeNodes =  ItGetLine(thTreeNodes,linenr);
+
+		if (tTreeNodes == NULL) break;
+
+        GETCHAR(tTreeNodes->Mtsysid,s);
+        OUTS("MTSYSID",10,30,s);
+        GETCHAR(tTreeNodes->Mtmcname,s);
+        OUTS("MTMCNAME",10,30,s);
+        GETCHAR(tTreeNodes->Mtnumrange,s);
+        OUTS("MTNUMRANGE",10,30,s);
+        GETCHAR(tTreeNodes->Mtuid,s);
+        OUTS("MTUID",10,30,s);
+        GETCHAR(tTreeNodes->Mtclass,s);
+        OUTS("MTCLASS",10,30,s);
+        GETCHAR(tTreeNodes->Mtindex,s);
+        OUTS("MTINDEX",10,30,s);
+        GETCHAR(tTreeNodes->Extindex,s);
+        OUTS("EXTINDEX",10,30,s);
+  		GETINT(tTreeNodes->Altreenum,s);
+        OUTS("ALTREENUM",10,30,s);
+        GETINT(tTreeNodes->Alidxintre,s);
+        OUTS("ALIDXINTRE",10,30,s);
+        GETINT(tTreeNodes->Allevintre,s);
+        OUTS("ALLEVINTRE",10,30,s);
+        GETINT(tTreeNodes->Alparintre,s);
+        OUTS("ALPARINTRE",10,30,s);
+        GETCHAR(tTreeNodes->Objectname,s);
+        OUTS("OBJECTNAME",10,30,s);
+        GETCHAR(tTreeNodes->Mtnameshrt,s);
+        OUTS("MTNAMESHRT",10,30,s);
+        GETCHAR(tTreeNodes->Cusgrpname,s);
+        OUTS("CUSGRPNAME",10,30,s);
+        GETINT(tTreeNodes->Deliversta,s);
+        OUTS("DELIVERSTA",10,30,s);
+        GETINT(tTreeNodes->Highalval,s);
+        OUTS("HIGHALVAL",10,30,s);
+        GETINT(tTreeNodes->Highalsev,s);
+        OUTS("HIGHALSEV",10,30,s);
+        GETCHAR(tTreeNodes->Alsysid,s);
+        OUTS("ALSYSID",10,30,s);
+        GETCHAR(tTreeNodes->Msegname,s);
+        OUTS("MSEGNAME",10,30,s);
+        GETCHAR(tTreeNodes->Aluniqnum,s);
+        OUTS("ALUNIQNUM",10,30,s);
+        GETCHAR(tTreeNodes->Alindex,s);
+        OUTS("ALINDEX",10,30,s);
+        GETDATE(tTreeNodes->Alertdate,s);
+        OUTS("ALERTDATE",10,30,s);
+        GETTIME(tTreeNodes->Alerttime,s);
+        OUTS("ALERTTIME",10,30,s);
+        GETCHAR(tTreeNodes->Dummyalign,s);
+        OUTS("DUMMYALIGN",10,30,s);
+        GETDATE(tTreeNodes->Lastvaldat,s);
+        OUTS("LASTVALDAT",10,30,s);
+        GETTIME(tTreeNodes->Lastvaltim,s);
+        OUTS("LASTVALTIM",10,30,s);
+        GETCHAR(tTreeNodes->Lastvaldum,s);
+        OUTS("LASTVALDUM",10,30,s);
+        GETINT(tTreeNodes->Actualval,s);
+        OUTS("ACTUALVAL",10,30,s);
+        GETINT(tTreeNodes->Actualsev,s);
+        OUTS("ACTUALSEV",10,30,s);
+        GETCHAR(tTreeNodes->Valsysid,s);
+        OUTS("VALSYSID",10,30,s);
+        GETCHAR(tTreeNodes->Vmsegname,s);
+        OUTS("VMSEGNAME",10,30,s);
+        GETCHAR(tTreeNodes->Valuniqnum,s);
+        OUTS("VALUNIQNUM",10,30,s);
+        GETCHAR(tTreeNodes->Valindex,s);
+        OUTS("VALINDEX",10,30,s);
+        GETDATE(tTreeNodes->Valertdate,s);
+        OUTS("VALERTDATE",10,30,s);
+        GETTIME(tTreeNodes->Valerttime,s);
+        OUTS("VALERTTIME",10,30,s);
+        GETCHAR(tTreeNodes->Valertdum,s);
+        OUTS("VALERTDUM",10,30,s);
+        GETINT(tTreeNodes->Countofact,s);
+        OUTS("COUNTOFACT",10,30,s);
+        GETINT(tTreeNodes->Countsum,s);
+        OUTS("COUNTSUM",10,30,s);
+        GETINT(tTreeNodes->Visuserlev,s);
+        OUTS("VISUSERLEV",10,30,s);
+        GETINT(tTreeNodes->Tdstatus,s);
+        OUTS("TDSTATUS",10,30,s);
+	}
+*/
+  return TRUE;
+}
+
+
+/*
+------------------------------------------------------------------------
+
+  Call function BAPI_SYSTEM_MS_GETLIST
+      exporting
+        EXTERNAL_USER_NAME like BAPIXMLOGR_EXTUSER  type RFC_CHAR length 16
+      importing
+        RETURN structure BAPIRET2 length 548 number of fields 14
+      tables
+        MONITOR_SETS structure BAPIMSNAME length 60 number of fields 1
+      exceptions
+
+------------------------------------------------------------------------
+*/
+int CCMS_BAPI_SYSTEM_MS_GETLIST(char*  eExternalUserName, ITAB_H thMonitorSets, LOGON *l) {
+
+	BAPIRET2 iReturn;
+
+	if (trace.TraceFP) {
+		fprintf (trace.TraceFP, "Reading all saved Monitor Sets\n");
+		fflush (trace.TraceFP);
+	}
+
+	rfc_rc = RfcInstallStructure("BAPIMSNAME",
+		typeOfBAPIMSNAME,
+		ENTRIES(typeOfBAPIMSNAME),
+		&handleOfBAPIMSNAME);
+
+	if (rfc_rc != RFC_OK)
+	{
+		rfc_error("RfcInstallStructure", l);
+		return FALSE;
+	}
+
+	rfc_rc = RfcInstallStructure("BAPIRET2",
+		typeOfBAPIRET2,
+		ENTRIES(typeOfBAPIRET2),
+		&handleOfBAPIRET2);
+
+	if (rfc_rc != RFC_OK)
+	{
+		rfc_error("RfcInstallStructure", l);
+		return FALSE;
+	}
+
+	/* define export params */
+
+	rfc_param(&exporting[0], "EXTERNAL_USER_NAME", TYPC, eExternalUserName, strlen(eExternalUserName));
+	exporting[1].name = NULL;
+	rfc_param(&importing[0], "RETURN", handleOfBAPIRET2, &iReturn, sizeof(BAPIRET2));
+	importing[1].name = NULL;
+
+	/* define internal tables */
+
+	tables[0].name     = "MONITOR_SETS";
+	tables[0].nlen     = 12;
+	tables[0].type     = handleOfBAPIMSNAME;
+	tables[0].ithandle = thMonitorSets;
+
+	tables[1].name = NULL;
+
+	/* call CCMS Get Monitor Sets BAPI */
+	function = "BAPI_SYSTEM_MS_GETLIST";
+
+	if (CCMS_BAPICallFunction(rfc_handle, exporting, importing, tables, &iReturn, l) == FALSE)
+		return FALSE;
+
+	return TRUE;
+}
+
+
+int CCMS_BAPI_SYSTEM_MON_GETLIST(char*  eExternalUserName, ITAB_H thMonitorNames, char* szMonitorSet, LOGON *l) {
+
+	BAPIMSNAME eMonitorSetName;
+	BAPIRET2 iReturn;
+
+	if (trace.TraceFP) {
+		fprintf (trace.TraceFP, "Reading all Monitors of a Monitor Set");
+		fflush (trace.TraceFP);
+	}
+
+	rfc_rc = RfcInstallStructure("BAPIMSNAME",
+		typeOfBAPIMSNAME,
+		ENTRIES(typeOfBAPIMSNAME),
+		&handleOfBAPIMSNAME);
+
+	if (rfc_rc != RFC_OK)
+	{
+		rfc_error("RfcInstallStructure", l);
+		return FALSE;
+	}
+
+	rfc_rc = RfcInstallStructure("BAPIMNNAME",
+		typeOfBAPIMNNAME,
+		ENTRIES(typeOfBAPIMNNAME),
+		&handleOfBAPIMNNAME);
+
+	if (rfc_rc != RFC_OK)
+	{
+		rfc_error("RfcInstallStructure", l);
+		return FALSE;
+	}
+
+	rfc_rc = RfcInstallStructure("BAPIRET2",
+		typeOfBAPIRET2,
+		ENTRIES(typeOfBAPIRET2),
+		&handleOfBAPIRET2);
+
+	if (rfc_rc != RFC_OK)
+	{
+		rfc_error("RfcInstallStructure", l);
+		return FALSE;
+	}
+
+	/* define export params */
+
+    memset(eMonitorSetName.Name, ' ', sizeof(eMonitorSetName.Name));
+    strncpy(eMonitorSetName.Name, szMonitorSet, strlen(szMonitorSet));
+
+    rfc_param(&exporting[0], "EXTERNAL_USER_NAME", TYPC, eExternalUserName, strlen(eExternalUserName));
+	rfc_param(&exporting[1], "MONI_SET_NAME", handleOfBAPIMSNAME, &eMonitorSetName, sizeof(BAPIMSNAME));
+	exporting[2].name = NULL;
+	rfc_param(&importing[0], "RETURN", handleOfBAPIRET2, &iReturn, sizeof(BAPIRET2));
+	importing[1].name = NULL;
+
+	/* define internal tables */
+
+	tables[0].name     = "MONITOR_NAMES";
+	tables[0].nlen     = 13;
+	tables[0].type     = handleOfBAPIMNNAME;
+	tables[0].ithandle = thMonitorNames;
+	tables[1].name = NULL;
+
+	/* call CCMS Get Monitor Sets BAPI */
+	function = "BAPI_SYSTEM_MON_GETLIST";
+
+	if (CCMS_BAPICallFunction(rfc_handle, exporting, importing, tables, &iReturn, l) == FALSE)
+		return FALSE;
+
+	return TRUE;
+}
+
+
+int CCMS_BAPI_SYSTEM_ALERT_ACKNOWLEDGE(char*  eExternalUserName, BAPIAID *eAid, LOGON *l) {
+
+	BAPIRET2 iReturn;
+
+	rfc_rc = RfcInstallStructure("BAPIAID",
+						   typeOfBAPIAID,
+						   ENTRIES(typeOfBAPIAID),
+						   &handleOfBAPIAID);
+
+	if (rfc_rc != RFC_OK)
+	{
+		rfc_error("RfcInstallStructure", l);
+		return FALSE;
+	}
+
+	rfc_rc = RfcInstallStructure("BAPIRET2",
+						   typeOfBAPIRET2,
+						   ENTRIES(typeOfBAPIRET2),
+						   &handleOfBAPIRET2);
+
+	if (rfc_rc != RFC_OK)
+	{
+		rfc_error("RfcInstallStructure", l);
+		return FALSE;
+	}
+
+	rfc_param(&exporting[0], "AID", handleOfBAPIAID, eAid, sizeof(BAPIAID));
+	rfc_param(&exporting[1], "EXTERNAL_USER_NAME", TYPC, eExternalUserName, strlen(eExternalUserName));
+	exporting[2].name = NULL;
+	rfc_param(&importing[0], "RETURN", handleOfBAPIRET2, &iReturn, sizeof(BAPIRET2));
+	importing[1].name = NULL;
+	tables[0].name = NULL;
+
+	/* call CCMS Acknowledge Message */
+	function = "BAPI_SYSTEM_ALERT_ACKNOWLEDGE";
+
+	if (CCMS_BAPICallFunction(rfc_handle, exporting, importing, tables, &iReturn, l) == FALSE)
+		return FALSE;
+
+	return TRUE;
+}
+
+
+void CCMSAcknowledge(char* eExternalUserName, char* sid, BAPIALEXT *tAlertData, int filterMessage, LOGON *l) {
+
+	int i;
+	int CCMSStatus;
+	char s[1000];
+	BAPIAID Aid;
+
+	/* Acknowledge sent messages in CCMS */
+	for (i = 0; i < maxacknowledge; i++) {
+           if (((strcmp(acknowledge[i].sapsystem, "ALL") == 0 ||
+			   strcmp(acknowledge[i].sapsystem, sid) == 0) && acknowledge[i].enable > 0) &&
+			   (filterMessage == FALSE || filterMessage == TRUE && acknowledge[i].sendfiltered > 0)) {
+
+
+
+
+
+
+
+
+				/**** fix for QXCM1000209956 ****/
+		        /**** create BAPIAID structure and initialize the complete structure ****/
+
+				memcpy(&(Aid.Alsysid), &(tAlertData->Alsysid), sizeof(tAlertData->Alsysid));
+		        memcpy(&(Aid.Msegname), &(tAlertData->Msegname), sizeof(tAlertData->Msegname));
+				memcpy(&(Aid.Aluniqnum), &(tAlertData->Aluniqnum), sizeof(tAlertData->Aluniqnum));
+				memcpy(&(Aid.Alindex), &(tAlertData->Alindex), sizeof(tAlertData->Alindex));
+				memcpy(&(Aid.Alertdate), &(tAlertData->Alertdate), sizeof(tAlertData->Alertdate));
+				memcpy(&(Aid.Alerttime), &(tAlertData->Alerttime), sizeof(tAlertData->Alerttime));
+
+
+
+				/*CCMS_BAPI_SYSTEM_ALERT_ACKNOWLEDGE(eExternalUserName, (BAPIAID*) &tAlertData->Alsysid, l);*/
+
+				/***** Determine status of CCMS message ****/
+				GETINT(tAlertData->Status,s);
+				CCMSStatus = atoi(s);
+
+
+				/**** Ack. only if status is not one of ACTION REQUIRED, ACTION RUNNING, ACTION FAILED) ***/
+				/**** this is to prevent error CCMS_SYSTEM_ALERT_ACKNOWLEDGE Invalid C function call ****/
+
+				if (CCMSStatus != 30 && CCMSStatus != 31 && CCMSStatus != 38){
+					CCMS_BAPI_SYSTEM_ALERT_ACKNOWLEDGE(eExternalUserName, &Aid, l);
+				} else {
+					UpdateScanTime = 0;
+				}
+				/**** end of fix for QXCM1000209956 ****/
+		   }
+
+
+
+	}
+
+
+}
+
+
+int CCMS_BAPI_SYSTEM_MT_GETALERTDATA(char*  eExternalUserName, ITAB_H thTreeNodes, int nr, char *sid, time_t lastScanTime, time_t* newScanTime, LOGON *l) {
+
+  BAPIPARAMS_BOOL_PARA eGetAlertHistory;
+  ITAB_H thAlertData = ITAB_NULL;
+  ITAB_H thRootNodes = ITAB_NULL;
+  BAPIALEXT *tAlertData;
+  BAPIRET2 iReturn;
+  struct tm timeptr, *lt;
+  time_t st, utc_time;
+  /* fix for QXCR1000293348 */
+  time_t CurrentTime;
+  struct tm tmst;
+  char s[1024];
+  int linenr, i, bSkipMessage;
+  char buf, *str;
+  int OpCSeverity;
+  int found = FALSE;
+  char OpCMsg[CHAR_SIZE_OPCMSG];
+  char szParameter1[1024]="";
+  char szParameter2[1024]="";
+  char szParameter3[1024]="";
+  char szParameter4[1024]="";
+  char szTraceSegName[1024]="";
+
+  char szAlertDate[11];
+  char szAlertTime[9];
+  char szSystem[10];
+  char szContext[41];
+  char szObjectName[41];
+  char szClient[4];
+  char szUser[13];
+  char szShortName[41];
+  char szSeverity[11];
+  char szMsgID[31];
+  char szMsg[256];
+  char szStatus[11];
+  char szNameStatus[41];
+  char szMSegName[41];
+  char szMtClass[50];
+  /* fix for QXCR1000244720 */
+  char szMSegHost[256];
+  /* end of fix for QXCR1000244720 */
+  char szMSegSID[11];
+  char szMSegNr[11];
+  char *szMsgHost;
+  char eDate[11];
+  char eTime[9];
+  char *szCategory;
+  int time_diff;
+  struct tm	*gmt;
+  int iResult  = 0;
+  int iResult2 = 0;
+  int iResult3 = 0;
+
+  char* szMsgGroup;
+  eGetAlertHistory[0] = ' ';
+
+  /* init tables */
+    if (thAlertData==ITAB_NULL) {
+      thAlertData = ItCreate("ALERT_DATA",sizeof( BAPIALEXT),0,0);
+      if (thAlertData==ITAB_NULL) rfc_error("ItCreate ALERT_DATA", l); }
+    else {
+      if (ItFree(thAlertData) != 0) rfc_error("ItFree ALERT_DATA", l); }
+
+	if (thRootNodes==ITAB_NULL) {
+      thRootNodes = ItCreate("ROOT_NODES",sizeof( ALGLOBTID),0,0);
+      if (thRootNodes==ITAB_NULL) rfc_error("ItCreate ROOT_NODES", l); }
+    else {
+      if (ItFree(thRootNodes) != 0) rfc_error("ItFree ROOT_NODES", l); }
+
+   rfc_rc = RfcInstallStructure("BAPIRET2",
+                               typeOfBAPIRET2,
+                               ENTRIES(typeOfBAPIRET2),
+                               &handleOfBAPIRET2);
+
+    if (rfc_rc != RFC_OK)
+	{
+		rfc_error("RfcInstallStructure", l);
+		return FALSE;
+	}
+
+    rfc_rc = RfcInstallStructure("BAPIALEXT",
+                               typeOfBAPIALEXT,
+                               ENTRIES(typeOfBAPIALEXT),
+                               &handleOfBAPIALEXT);
+    if (rfc_rc != RFC_OK)
+	{
+		rfc_error("RfcInstallStructure", l);
+		return FALSE;
+	}
+
+
+    rfc_rc = RfcInstallStructure("ALGLOBTID",
+                               typeOfALGLOBTID,
+                               ENTRIES(typeOfALGLOBTID),
+                               &handleOfALGLOBTID);
+
+    if (rfc_rc != RFC_OK)
+	{
+		rfc_error("RfcInstallStructure", l);
+		return FALSE;
+	}
+
+    rfc_rc = RfcInstallStructure("BAPITNDEXT",
+                               typeOfBAPITNDEXT,
+                               ENTRIES(typeOfBAPITNDEXT),
+                               &handleOfBAPITNDEXT);
+
+    if (rfc_rc != RFC_OK)
+	{
+		rfc_error("RfcInstallStructure", l);
+		return FALSE;
+	}
+
+  rfc_param(&exporting[0], "EXTERNAL_USER_NAME", TYPC, eExternalUserName, strlen(eExternalUserName));
+  rfc_param(&exporting[1], "GET_ALERT_HISTORY", TYPC, &eGetAlertHistory, sizeof(BAPIPARAMS_BOOL_PARA));
+  exporting[2].name = NULL;
+  rfc_param(&importing[0], "RETURN", handleOfBAPIRET2, &iReturn, sizeof(BAPIRET2));
+  importing[1].name = NULL;
+
+  /* define internal tables */
+
+  tables[0].name     = "ALERT_DATA";
+  tables[0].nlen     = 10;
+  tables[0].type     = handleOfBAPIALEXT;
+  tables[0].ithandle = thAlertData;
+
+/*
+  tables[1].name     = "ROOT_NODES";
+  tables[1].nlen     = 10;
+  tables[1].type     = handleOfALGLOBTID;
+  tables[1].ithandle = thRootNodes;
+*/
+  tables[1].name     = "TREE_NODES";
+  tables[1].nlen     = 10;
+  tables[1].type     = handleOfBAPITNDEXT;
+  tables[1].ithandle = thTreeNodes;
+
+  tables[2].name = NULL;
+
+  /* call CCMS GetAlert Data BAPI */
+  function = "BAPI_SYSTEM_MT_GETALERTDATA";
+
+  if (CCMS_BAPICallFunction(rfc_handle, exporting, importing, tables, &iReturn, l) == FALSE)
+		return FALSE;
+
+  for (linenr = 1; ; linenr++)	{
+
+	  tAlertData =  ItGetLine(thAlertData, linenr);
+	  if (tAlertData == NULL) break;
+
+		GETDATE(tAlertData->Alertdate,s);
+
+		buf = s[4]; s[4] = '\0'; timeptr.tm_year = atoi(&s[0]) - 1900; s[4] = buf;
+		buf = s[6]; s[6] = '\0'; timeptr.tm_mon = atoi(&s[4]) - 1; s[6] = buf;
+		timeptr.tm_mday = atoi(&s[6]);
+		timeptr.tm_isdst = - 1;
+		timeptr.tm_yday = - 1;
+		timeptr.tm_wday = - 1;
+
+		GETTIME(tAlertData->Alerttime,s);
+
+		buf = s[2]; s[2] = '\0'; timeptr.tm_hour = atoi(&s[0]); s[2] = buf;
+        buf = s[4]; s[4] = '\0'; timeptr.tm_min = atoi(&s[2]); s[4] = buf;
+		timeptr.tm_sec = atoi(&s[4]);
+
+		st = mktime(&timeptr);
+
+		if (st <= lastScanTime)
+			continue;
+
+        if (*newScanTime < st) *newScanTime = st;
+
+		GETDATE(tAlertData->Alertdate,s);
+		strncpy(szAlertDate, s, 4); szAlertDate[4] = '/'; strncpy(&szAlertDate[5], &s[4], 2);
+		szAlertDate[7] = '/'; strcpy(&szAlertDate[8], &s[6]);
+
+		GETTIME(tAlertData->Alerttime,s);
+		strncpy(szAlertTime, s, 2); szAlertTime[2] = ':'; strncpy(&szAlertTime[3], &s[2], 2);
+		szAlertTime[5] = ':'; strcpy(&szAlertTime[6], &s[4]);
+
+	    GETCHAR(tAlertData->Alsysid,szSystem); RTRIM(szSystem);
+		GETCHAR(tAlertData->Mtmcname,szContext); RTRIM(szContext);
+		GETCHAR(tAlertData->Mandt,szClient); RTRIM(szClient);
+		GETCHAR(tAlertData->Userid,szUser); RTRIM(szUser);
+		GETCHAR(tAlertData->Objectname,szObjectName); RTRIM(szObjectName);
+		GETCHAR(tAlertData->Fieldname,szShortName); RTRIM(szShortName);
+		GETINT(tAlertData->Severity, szSeverity); RTRIM(szSeverity);
+		GETCHAR(tAlertData->Msgid,szMsgID); RTRIM(szMsgID);
+		GETCHAR(tAlertData->Msg,szMsg); RTRIM(szMsg);
+		GETCHAR(tAlertData->Msegname,szMSegName); RTRIM(szMSegName);
+		GETCHAR(tAlertData->Mtclass,szMtClass); RTRIM(szMtClass);
+
+
+        strcpy(szMSegHost, host);
+		strcpy(szMSegSID, sid);
+		sprintf(szMSegNr, "%02d", nr);
+
+        /* Style of szMSegName is usually <hostname>_<SID>_<Instance_number>
+		   With SAP 6.40 this has changed and it could be now:
+		       <hostname>_<SID>_<Instance_number>_X (for java instances)*/
+		str = szMSegName;
+		strcpy (szTraceSegName, szMSegName);
+
+
+		while (*str++) ;
+		while (--str >= szMSegName) {
+			if (*str == '_') {
+		     strcpy (szParameter1, &str[1]);
+			 *str = '\0';
+			 break;
+			}
+		}
+        while (--str >= szMSegName) {
+			if (*str == '_') {
+		     strcpy (szParameter2, &str[1]);
+			 *str = '\0';
+			 break;
+			}
+		}
+        while (--str >= szMSegName) {
+			if (*str == '_') {
+		     strcpy (szParameter3, &str[1]);
+			 *str = '\0';
+			 break;
+			}
+		}
+		/*check if szParameter2 is equal to szSystem, which represents the SID of
+		  of the alert system. If the comparison is 0 => szMSegName comes from
+		  an ABAP instance. In other cases => szMSegName comes from a
+		  Java instance.*/
+		iResult = strcmp (szParameter2,szSystem);
+
+		/* check if the segment name comes from an Web AS Java 6.20 or any remote host 
+		   where the sapccmsr agent runs. Then the segment name looks like:
+		   SAP_CCMS_<hostname> */
+		iResult2 = strcmp (szParameter2, "CCMS");
+		iResult3 = strcmp (szMSegName , "SAP");
+		
+
+		if (iResult2 == 0 && iResult3 == 0)
+		{
+			/* only hostname is given in the parameters so use parmeter1 as hostname*/
+			strcpy (szMSegHost, szParameter1);
+			strcpy (szMSegSID, "XXX");
+			strcpy (szMSegNr, "XX");
+		}
+		else if (iResult == 0)
+		{
+			/*last parameter was hostname*/
+			strcpy (szMSegNr,   szParameter1);
+			strcpy (szMSegSID,  szParameter2);
+			strcpy (szMSegHost, szParameter3);
+		}
+		else
+		{
+			/* get next parameter (and hope this is a hostname) */
+			strcpy (szMSegNr,  szParameter2);
+			strcpy (szMSegSID, szParameter3);
+			while (--str >= szMSegName) {
+				if (*str == '_') {
+				strcpy(szMSegHost, &str[1]);
+				*str = '\0';
+				break;
+				}
+			}
+
+		}
+
+
+
+/*
+		AL_STAT_UNKNOWN          TYPE ALALERTRC-STATUS      VALUE 0,
+		AL_STAT_FREE             TYPE ALALERTRC-STATUS      VALUE 1,
+		AL_STAT_PREINIT          TYPE ALALERTRC-STATUS      VALUE 9,
+		AL_STAT_INITIAL          TYPE ALALERTRC-STATUS      VALUE 10,
+		AL_STAT_ACTION_REQUIRED  TYPE ALALERTRC-STATUS      VALUE 30,
+		AL_STAT_ACTION_RUNNING   TYPE ALALERTRC-STATUS      VALUE 31,
+		AL_STAT_ACTION_FAILED    TYPE ALALERTRC-STATUS      VALUE 38,
+		AL_STAT_ACTION_STOPPED   TYPE ALALERTRC-STATUS      VALUE 39,
+		AL_STAT_ACTIVE           TYPE ALALERTRC-STATUS      VALUE 40,
+		AL_AS_WORKFLOW_ACTIVE    TYPE ALALERTRC-STATUS      VALUE 70,
+		AL_AS_WORKITEM_IN_PROCESS TYPE ALALERTRC-STATUS      VALUE 75,
+		AL_STAT_MAX_ACTIVE       TYPE ALALERTRC-STATUS      VALUE 99,
+		AL_STAT_DONE_SET         TYPE ALALERTRC-STATUS      VALUE 100,
+		AL_STAT_DONE_TO_DB       TYPE ALALERTRC-STATUS      VALUE 101,
+		AL_STAT_DONE_DBWAIT      TYPE ALALERTRC-STATUS      VALUE 102,
+		AL_STAT_DONE_DBCOMMITED  TYPE ALALERTRC-STATUS      VALUE 103,
+		AL_STAT_DONE_ALL         TYPE ALALERTRC-STATUS      VALUE 104,
+		AL_STAT_ALERTDB_DONE     TYPE ALALERTRC-STATUS      VALUE 200,
+		AL_STAT_ALERTDB_AUTO_COMPLETED TYPE ALALERTRC-STATUS  VALUE 205,
+		AL_STAT_ALERTDB_PROTECTED TYPE ALALERTRC-STATUS      VALUE 210,
+		AL_STAT_ALERTDB_DELETED   TYPE ALALERTRC-STATUS      VALUE 220.
+*/
+		GETINT(tAlertData->Status,szStatus); RTRIM(szStatus);
+
+		switch (atoi(szStatus)) {
+
+			case   0:	{ strcpy (szNameStatus, "AL_STAT_UNKNOWN"); break; }
+			case   1:	{ strcpy (szNameStatus, "AL_STAT_FREE"); break; }
+			case   9:	{ strcpy (szNameStatus, "AL_STAT_PREINIT"); break; }
+			case  10:	{ strcpy (szNameStatus, "AL_STAT_INITIAL"); break; }
+			case  30:	{ strcpy (szNameStatus, "AL_STAT_ACTION_REQUIRED"); break; }
+			case  31:	{ strcpy (szNameStatus, "AL_STAT_ACTION_RUNNING"); break; }
+			case  38:	{ strcpy (szNameStatus, "AL_STAT_ACTION_FAILE"); break; }
+			case  39:	{ strcpy (szNameStatus, "AL_STAT_ACTION_STOPPED"); break; }
+			case  40:	{ strcpy (szNameStatus, "AL_STAT_ACTIVE"); break; }
+			case  70:	{ strcpy (szNameStatus, "AL_AS_WORKFLOW_ACTIVE"); break; }
+			case  75:	{ strcpy (szNameStatus, "AL_AS_WORKITEM_IN_PROCESS"); break; }
+			case  99:	{ strcpy (szNameStatus, "AL_STAT_MAX_ACTIVE"); break; }
+			case 100:	{ strcpy (szNameStatus, "AL_STAT_DONE_SET"); break; }
+			case 101:	{ strcpy (szNameStatus, "AL_STAT_DONE_TO_DB"); break; }
+			case 102:	{ strcpy (szNameStatus, "AL_STAT_DONE_DBWAIT"); break; }
+			case 103:	{ strcpy (szNameStatus, "AL_STAT_DONE_DBCOMMITED"); break; }
+			case 104:	{ strcpy (szNameStatus, "AL_STAT_DONE_ALL"); break; }
+			case 200:	{ strcpy (szNameStatus, "AL_STAT_ALERTDB_DONE"); break; }
+			case 205:	{ strcpy (szNameStatus, "AL_STAT_ALERTDB_AUTO_COMPLETED"); break; }
+			case 210:	{ strcpy (szNameStatus, "AL_STAT_ALERTDB_PROTECTED"); break; }
+			case 220:	{ strcpy (szNameStatus, "AL_STAT_ALERTDB_DELETED"); break; }
+
+			default:
+				break;
+		}
+
+	   if (trace.TraceFP) {
+         fprintf (trace.TraceFP, "\n=======================================================\n");
+   		 fprintf (trace.TraceFP, "Alert:\tDate/Time(UTC):%s %s System:%s Client:%s User:%s\n", szAlertDate, szAlertTime, szSystem, szClient, szUser);
+		 fprintf (trace.TraceFP, "\tMessage Host:%s SID:%s Nr:%s\n", szMSegHost, szMSegSID, szMSegNr);
+		 fprintf (trace.TraceFP, "\tSegmentName: %s\n",szTraceSegName);
+   		 fprintf (trace.TraceFP, "\tContext:%s ObjectName:%s ShortName:%s\n", szContext, szObjectName, szShortName);
+         fprintf (trace.TraceFP, "\tCCMS Severity:%s MsgID/SyslogID:%s Status:%s\n", szSeverity, szMsgID, szStatus);
+         fprintf (trace.TraceFP, "\tMsg:%s \n", szMsg);
+		 fflush (trace.TraceFP);
+       }
+
+       /* test the difference in seconds from localtime to GMT */
+	   tmst.tm_hour  = 12;
+	   tmst.tm_min   = 00;
+	   tmst.tm_mon   = 6;
+	   tmst.tm_mday  = 6;
+	   tmst.tm_isdst = 0;
+	   tmst.tm_year  = 99;
+	   tmst.tm_sec   = 00;
+
+	   utc_time = mktime(&tmst);
+       gmt = gmtime( &utc_time);
+       time_diff = (((12 - gmt->tm_hour ) * 3600) + ((0 - gmt->tm_min) * 60));
+
+	   GETTIME(tAlertData->Alerttime,s);
+	   tmst.tm_sec   = atoi(&s[4]);
+   	   s[4] = '\0'; tmst.tm_min   = atoi(&s[2]);
+	   s[2] = '\0'; tmst.tm_hour  = atoi(s);
+
+   	   GETDATE(tAlertData->Alertdate,s);
+   	   tmst.tm_mday  = atoi(&s[6]);
+	   s[6] = '\0'; tmst.tm_mon   = atoi(&s[4]) - 1; /* Jan = 0 */
+	   s[4] = '\0'; tmst.tm_year  = atoi(s) - 1900;
+  	   tmst.tm_isdst = 0;
+
+	   utc_time = mktime(&tmst) + time_diff;
+	   lt = localtime(&utc_time);
+
+	   strftime(eDate, 11, "%Y/%m/%d", lt);
+	   strftime(eTime, 9, "%H.%M.%S", lt);
+
+/*
+		AL_VAL_INAKTIV: White MTE, no data reported. Integer value 0
+		AL_VAL_GREEN: Green MTE, no alert created. Integer value 1
+		AL_VAL_YELLOW: Yellow MTE, yellow alert created. Integer value 2
+		AL_VAL_RED: Red MTE, highest possible alert, red alert created. Integer value 3
+*/
+        /* Check severity */
+        bSkipMessage = FALSE;
+	    for (i = 0; i < maxseverity; i++) {
+                if (severity[i].severity == tAlertData->Value) {
+                        if ((!strcmp(severity[i].sapsystem, "ALL")) || (!strcmp(severity[i].sapsystem, sid))) {
+                                if ((!strcmp(severity[i].sapnumber, "ALL")) || nr == atoi(severity[i].sapnumber)) {
+									if (!severity[i].enabled) {
+                                                bSkipMessage = TRUE;
+												break;
+									}
+                                        OpCSeverity = severity[i].opcseverity;
+                                        found = TRUE;
+                                        break;
+                                }
+                        }
+                }
+        }
+
+		if (!found)
+          OpCSeverity = OPC_SEV_UNKNOWN;
+
+        if (bSkipMessage)  {
+		   if (trace.TraceFP) {
+			   switch (tAlertData->Value) {
+			   case 0: strcpy (s, "White MTE");
+				   	break;
+			   case 1: strcpy (s, "Green MTE");
+				   break;
+			   case 2: strcpy(s, "Yellow MTE");
+				   break;
+			   case 3: strcpy(s, "Red MTE");
+				   break;
+			   default: strcpy(s, "Unknown MTE");
+			   }
+			 fprintf (trace.TraceFP, ">>>\tAlert not sent. Severity '%s' isn't enabled.\n", s);
+			 fflush (trace.TraceFP);
+		   }
+		   CCMSAcknowledge(eExternalUserName, sid, tAlertData, TRUE, l);
+		   continue;
+		}
+
+		if (stricmp(szObjectName, "R3Syslog") == 0) {
+/* found syslog ID */
+			bSkipMessage = FALSE;
+			for (i = 0; i < maxmonalsyslog; i++) {
+						if ((!strcmp(monalsyslog[i].sapsystem, "ALL")) || (!strcmp(monalsyslog[i].sapsystem, szMSegSID))) {
+								if ((!strcmp(monalsyslog[i].sapnumber, "ALL")) || atoi(szMSegNr) == atoi(monalsyslog[i].sapnumber)) {
+										if ((strcmp(szMsgID, monalsyslog[i].syslogIdStart) >= 0) &&
+												(strcmp(szMsgID, monalsyslog[i].syslogIdStop) <= 0))
+										{
+												if (monalsyslog[i].enabled) {
+														break;
+												} else {
+														bSkipMessage = TRUE;
+														break;
+												}
+										}
+								}
+						}
+				}
+
+			if (bSkipMessage)  {
+			   if (trace.TraceFP) {
+   				 fprintf (trace.TraceFP, ">>>\tAlert not sent. SysLogID '%s' was filtered.\n", szMsgID);
+				 fflush (trace.TraceFP);
+			   }
+			   CCMSAcknowledge(eExternalUserName, sid, tAlertData, TRUE, l);
+   			   continue;
+			}
+			/* XMI Mode makes the r3monal send syslog messages in r3monxmi style,
+			   so they can be caught by the r3monxmi matching conditions */
+			if ( XMI_Mode == 0) {
+				/*
+					This is the r3monal format
+				*/
+				sprintf (OpCMsg, "SAPOPC: Id: %s %s status=%s severity=%s attribute=%s client=%s sid=%s nr=%s name=%s host=%s date=%s time=%s",
+					    szMsgID,
+ 					    szMsg,
+						szNameStatus,
+						szSeverity,
+						szShortName,
+						szClient[0] == ' ' || szClient[0] == '\0' ? "000" : szClient,
+						szMSegSID,
+						szMSegNr,
+						szContext,
+						szMSegHost,
+						eDate,
+						eTime);
+			} else {
+				/*
+				   This is the r3monxmi format
+				*/
+				if( stricmp( szShortName, "BasisSystem" ) == 0 ) {
+					szCategory = "BS";
+				} else if( stricmp( szShortName, "Database" ) == 0 ) {
+					szCategory = "DB";
+				} else if( stricmp( szShortName, "CCMS" ) == 0 ) {
+					szCategory = "BV";
+				} else if( stricmp( szShortName, "Background" ) == 0 ) {
+					szCategory = "BP";
+				} else if( stricmp( szShortName, "Communication" ) == 0 ) {
+					szCategory = "KO";
+				} else if( stricmp( szShortName, "Spool" ) == 0 ) {
+					szCategory = "SD";
+				} else if( stricmp( szShortName, "Security" ) == 0 ) {
+					szCategory = "SH";
+				} else if( stricmp( szShortName, "TransportSystem" ) == 0 ) {
+					szCategory = "TP";
+				} else if( stricmp( szShortName, "BatchInput" ) == 0 ) {
+					szCategory = "BI";
+				} else if( stricmp( szShortName, "Applications" ) == 0 ) {
+					szCategory = "AW";
+				} else if( stricmp( szShortName, "Customer" ) == 0 ) {
+					szCategory = "KM";
+				} /*else if( stricmp( szShortName, "Miscellaneous" ) == 0 ) {
+					szCategory = "";
+				}*/ else {
+					if (trace.TraceFP) {
+						fprintf (trace.TraceFP, "WARNING, encountered unknown Category %s - skipping\n", szShortName);
+						fflush (trace.TraceFP);
+					}
+					continue;
+				}
+				sprintf (OpCMsg, "SAPOPC: Id:%s Cat:%s User:%s Date:%s %s '%s' nr=%s host=%s name=%s rel=%s instance=%s dbname=%s dbhost=%s",
+						szMsgID,
+						szCategory,
+						szUser,
+						eDate,
+						eTime,
+						szMsg,
+						szMSegNr,
+						szMSegHost,
+						szMSegSID,
+						szRelease,
+						szMSegSID,
+						UNKNOWN,
+						UNKNOWN);
+			}
+		} else
+			sprintf (OpCMsg, "SAPOPC: %s status=%s severity=%s attribute=%s client=%s sid=%s nr=%s name=%s host=%s date=%s time=%s",
+ 					szMsg,
+					szNameStatus,
+					szSeverity,
+					szShortName,
+					szClient[0] == ' ' || szClient[0] == '\0' ? "000" : szClient,
+					szMSegSID,
+					szMSegNr,
+					szContext,
+					szMSegHost,
+					eDate,
+					eTime);
+
+
+		CCMSAcknowledge(eExternalUserName, sid, tAlertData, FALSE, l);
+
+		if( XMI_Mode != 0 )
+			szMsgGroup = "R3_XMI";
+		else
+			szMsgGroup = "R3_CCMS";
+        findMappingHost(szMSegSID, szMSegNr, szMSegHost, &szMsgHost);
+		lpoopcmsg (OpCSeverity,
+                OPC_APPLICATION_R3,
+                szObjectName,
+                OpCMsg,
+                szMsgGroup,
+                szMsgHost);
+
+/*
+		GETINT(tAlertData->Rc,s);
+		OUTS("RC",10,30,s);
+		GETCHAR(tAlertData->Alsysid,s);
+		OUTS("ALSYSID",10,30,s);
+		GETCHAR(tAlertData->Msegname,s);
+		OUTS("MSEGNAME",10,30,s);
+		GETCHAR(tAlertData->Aluniqnum,s);
+		OUTS("ALUNIQNUM",10,30,s);
+		GETCHAR(tAlertData->Alindex,s);
+		OUTS("ALINDEX",10,30,s);
+		GETDATE(tAlertData->Alertdate,s);
+		OUTS("ALERTDATE",10,30,s);
+		GETTIME(tAlertData->Alerttime,s);
+		OUTS("ALERTTIME",10,30,s);
+		GETCHAR(tAlertData->Dummyalign,s);
+		OUTS("DUMMYALIGN",10,30,s);
+		GETCHAR(tAlertData->Mtsysid,s);
+		OUTS("MTSYSID",10,30,s);
+		GETCHAR(tAlertData->Mtmcname,s);
+		OUTS("MTMCNAME",10,30,s);
+		GETCHAR(tAlertData->Mtnumrange,s);
+		OUTS("MTNUMRANGE",10,30,s);
+		GETCHAR(tAlertData->Mtuid,s);
+		OUTS("MTUID",10,30,s);
+		GETCHAR(tAlertData->Mtclass,s);
+		OUTS("MTCLASS",10,30,s);
+		GETCHAR(tAlertData->Mtindex,s);
+		OUTS("MTINDEX",10,30,s);
+		GETCHAR(tAlertData->Extindex,s);
+		OUTS("EXTINDEX",10,30,s);
+		GETINT(tAlertData->Value,s);
+		OUTS("VALUE",10,30,s);
+		GETINT(tAlertData->Severity,s);
+		OUTS("SEVERITY",10,30,s);
+		GETINT(tAlertData->Status,s);
+		OUTS("STATUS",10,30,s);
+		GETCHAR(tAlertData->Objectname,s);
+		OUTS("OBJECTNAME",10,30,s);
+		GETCHAR(tAlertData->Fieldname,s);
+		OUTS("FIELDNAME",10,30,s);
+		GETCHAR(tAlertData->Mandt,s);
+		OUTS("MANDT",10,30,s);
+		GETCHAR(tAlertData->Userid,s);
+		OUTS("USERID",10,30,s);
+		GETDATE(tAlertData->Gonedate,s);
+		OUTS("GONEDATE",10,30,s);
+		GETTIME(tAlertData->Gonetime,s);
+		OUTS("GONETIME",10,30,s);
+		GETCHAR(tAlertData->Gonedummy,s);
+		OUTS("GONEDUMMY",10,30,s);
+		GETCHAR(tAlertData->Reportedby,s);
+		OUTS("REPORTEDBY",10,30,s);
+		GETDATE(tAlertData->Statchgdat,s);
+		OUTS("STATCHGDAT",10,30,s);
+		GETTIME(tAlertData->Statchgtim,s);
+		OUTS("STATCHGTIM",10,30,s);
+		GETCHAR(tAlertData->Statchgdum,s);
+		OUTS("STATCHGDUM",10,30,s);
+		GETCHAR(tAlertData->Statchgby,s);
+		OUTS("STATCHGBY",10,30,s);
+		GETDATE(tAlertData->Timeoutdat,s);
+		OUTS("TIMEOUTDAT",10,30,s);
+		GETTIME(tAlertData->Timeouttim,s);
+		OUTS("TIMEOUTTIM",10,30,s);
+		GETCHAR(tAlertData->Timeoutdum,s);
+		OUTS("TIMEOUTDUM",10,30,s);
+		GETCHAR(tAlertData->Msgclass,s);
+		OUTS("MSGCLASS",10,30,s);
+		GETCHAR(tAlertData->Msgid,s);
+		OUTS("MSGID",10,30,s);
+		GETCHAR(tAlertData->Msgarg1,s);
+		OUTS("MSGARG1",10,30,s);
+		GETCHAR(tAlertData->Argtype1,s);
+		OUTS("ARGTYPE1",10,30,s);
+		GETCHAR(tAlertData->Msgarg2,s);
+		OUTS("MSGARG2",10,30,s);
+		GETCHAR(tAlertData->Argtype2,s);
+		OUTS("ARGTYPE2",10,30,s);
+		GETCHAR(tAlertData->Msgarg3,s);
+		OUTS("MSGARG3",10,30,s);
+		GETCHAR(tAlertData->Argtype3,s);
+		OUTS("ARGTYPE3",10,30,s);
+		GETCHAR(tAlertData->Msgarg4,s);
+		OUTS("MSGARG4",10,30,s);
+		GETCHAR(tAlertData->Argtype4,s);
+		OUTS("ARGTYPE4",10,30,s);
+		GETCHAR(tAlertData->Msgtext,s);
+		OUTS("MSGTEXT",10,30,s);
+		GETCHAR(tAlertData->Msg,s);
+		OUTS("MSG",10,30,s);
+		GETCHAR(tAlertData->Mscglid,s);
+		OUTS("MSCGLID",10,30,s);
+*/
+  }
+
+  return TRUE;
+}
+
+
+int BAPI_SYSTEM_MTE_GETPERFCURVAL(char*  eExternalUserName, BAPITID* eTid, BAPIPACVAL* iCurrentValue, LOGON *l) {
+
+	BAPIRET2 iReturn;
+/*    char s[1024]; */
+
+    rfc_rc = RfcInstallStructure("BAPITID",
+                               typeOfBAPITID,
+                               ENTRIES(typeOfBAPITID),
+                               &handleOfBAPITID);
+    if (rfc_rc != RFC_OK)
+	{
+		rfc_error("RfcInstallStructure", l);
+		return FALSE;
+	}
+
+    rfc_rc = RfcInstallStructure("BAPIPACVAL",
+                               typeOfBAPIPACVAL,
+                               ENTRIES(typeOfBAPIPACVAL),
+                               &handleOfBAPIPACVAL);
+
+    if (rfc_rc != RFC_OK)
+	{
+		rfc_error("RfcInstallStructure", l);
+		return FALSE;
+	}
+
+	rfc_rc = RfcInstallStructure("BAPIRET2",
+		typeOfBAPIRET2,
+		ENTRIES(typeOfBAPIRET2),
+		&handleOfBAPIRET2);
+
+    if (rfc_rc != RFC_OK)
+	{
+		rfc_error("RfcInstallStructure", l);
+		return FALSE;
+	}
+
+	rfc_param(&exporting[0], "EXTERNAL_USER_NAME", TYPC, eExternalUserName, strlen(eExternalUserName));
+	rfc_param(&exporting[1], "TID", handleOfBAPITID, eTid, sizeof(BAPITID));
+	exporting[2].name = NULL;
+
+	tables[0].name = NULL;
+
+    rfc_param(&importing[0], "CURRENT_VALUE", handleOfBAPIPACVAL, iCurrentValue, sizeof(BAPIPACVAL));
+    rfc_param(&importing[1], "RETURN", handleOfBAPIRET2, &iReturn, sizeof(BAPIRET2));
+	importing[2].name = NULL;
+
+	/* call CCMS GetAlert Data BAPI */
+	function = "BAPI_SYSTEM_MTE_GETPERFCURVAL";
+
+/*	if (CCMS_BAPICallFunction(rfc_handle, exporting, importing, tables, &iReturn, l) == FALSE)
+		return FALSE; */
+
+    CCMS_BAPICallFunction(rfc_handle, exporting, importing, tables, &iReturn, l);
+/*
+	GETINT(iCurrentValue->Alrelevval,s);
+	OUTS("ALRELEVVAL",10,30,s);
+	GETDATE(iCurrentValue->Alrelvaldt,s);
+	OUTS("ALRELVALDT",10,30,s);
+	GETTIME(iCurrentValue->Alrelvalti,s);
+	OUTS("ALRELVALTI",10,30,s);
+	GETINT(iCurrentValue->Lastalstat,s);
+	OUTS("LASTALSTAT",10,30,s);
+	GETINT(iCurrentValue->Lastperval,s);
+	OUTS("LASTPERVAL",10,30,s);
+	GETINT(iCurrentValue->Avg01pval,s);
+	OUTS("AVG01PVAL",10,30,s);
+	GETINT(iCurrentValue->Avg05pval,s);
+	OUTS("AVG05PVAL",10,30,s);
+	GETINT(iCurrentValue->Avg15pval,s);
+	OUTS("AVG15PVAL",10,30,s);
+	GETINT(iCurrentValue->Avg01sval,s);
+	OUTS("AVG01SVAL",10,30,s);
+	(iCurrentValue->Avg05sval,s);
+	OUTS("AVG05SVAL",10,30,s);
+	GETINT(iCurrentValue->Avg15sval,s);
+	OUTS("AVG15SVAL",10,30,s);
+	GETINT(iCurrentValue->Avg01cval,s);
+	OUTS("AVG01CVAL",10,30,s);
+	GETINT(iCurrentValue->Avg05cval,s);
+	OUTS("AVG05CVAL",10,30,s);
+	GETINT(iCurrentValue->Avg15cval,s);
+	OUTS("AVG15CVAL",10,30,s);
+	GETINT(iCurrentValue->Maxpfvalue,s);
+	OUTS("MAXPFVALUE",10,30,s);
+	GETDATE(iCurrentValue->Maxpfdate,s);
+	OUTS("MAXPFDATE",10,30,s);
+	GETTIME(iCurrentValue->Maxpftime,s);
+	OUTS("MAXPFTIME",10,30,s);
+	GETINT(iCurrentValue->Minpfvalue,s);
+	OUTS("MINPFVALUE",10,30,s);
+	GETDATE(iCurrentValue->Minpfdate,s);
+	OUTS("MINPFDATE",10,30,s);
+	GETTIME(iCurrentValue->Minpftime,s);
+	OUTS("MINPFTIME",10,30,s);
+*/
+	return TRUE;
+}
+
+
+/*
+------------------------------------------------------------------------
+
+  Call function BAPI_SYSTEM_MTE_GETPERFPROP
+      exporting
+        EXTERNAL_USER_NAME like BAPIXMLOGR_EXTUSER  type RFC_CHAR length 16
+        TID structure BAPITID length84 number of fields 7
+      importing
+        PROPERTIES structure BAPIPAPROP length 124 number of fields 12
+        RETURN structure BAPIRET2 length 548 number of fields 14
+      tables
+      exceptions
+
+------------------------------------------------------------------------
+*/
+int BAPI_SYSTEM_MTE_GETPERFPROP(char*  eExternalUserName, BAPITID* eTid, BAPIPAPROP* iProperties, LOGON *l) {
+
+	BAPIRET2 iReturn;
+/*    char s[1024]; */
+
+    rfc_rc = RfcInstallStructure("BAPITID",
+                               typeOfBAPITID,
+                               ENTRIES(typeOfBAPITID),
+                               &handleOfBAPITID);
+    if (rfc_rc != RFC_OK)
+	{
+		rfc_error("RfcInstallStructure", l);
+		return FALSE;
+	}
+
+    rfc_rc = RfcInstallStructure("BAPIPAPROP",
+                               typeOfBAPIPAPROP,
+                               ENTRIES(typeOfBAPIPAPROP),
+                               &handleOfBAPIPAPROP);
+
+    if (rfc_rc != RFC_OK)
+	{
+		rfc_error("RfcInstallStructure", l);
+		return FALSE;
+	}
+
+	rfc_rc = RfcInstallStructure("BAPIRET2",
+		typeOfBAPIRET2,
+		ENTRIES(typeOfBAPIRET2),
+		&handleOfBAPIRET2);
+
+    if (rfc_rc != RFC_OK)
+	{
+		rfc_error("RfcInstallStructure", l);
+		return FALSE;
+	}
+
+	rfc_param(&exporting[0], "EXTERNAL_USER_NAME", TYPC, eExternalUserName, strlen(eExternalUserName));
+	rfc_param(&exporting[1], "TID", handleOfBAPITID, eTid, sizeof(BAPITID));
+	exporting[2].name = NULL;
+
+	tables[0].name = NULL;
+
+    rfc_param(&importing[0], "PROPERTIES", handleOfBAPIPAPROP, iProperties, sizeof(BAPIPAPROP));
+    rfc_param(&importing[1], "RETURN", handleOfBAPIRET2, &iReturn, sizeof(BAPIRET2));
+	importing[2].name = NULL;
+
+	/* call CCMS GetAlert Data BAPI */
+	function = "BAPI_SYSTEM_MTE_GETPERFPROP";
+
+	if (CCMS_BAPICallFunction(rfc_handle, exporting, importing, tables, &iReturn, l) == FALSE)
+		return FALSE;
+
+/*
+	GETINT(iProperties->Relvaltype,s);
+	OUTS("RELVALTYPE",10,30,s);
+	GETINT(iProperties->Threshdir,s);
+	OUTS("THRESHDIR",10,30,s);
+	GETINT(iProperties->Threshstat,s);
+	OUTS("THRESHSTAT",10,30,s);
+	GETINT(iProperties->Treshg2y,s);
+	OUTS("TRESHG2Y",10,30,s);
+	GETINT(iProperties->Treshy2r,s);
+	OUTS("TRESHY2R",10,30,s);
+	GETINT(iProperties->Treshy2g,s);
+	OUTS("TRESHY2G",10,30,s);
+	GETINT(iProperties->Treshr2y,s);
+	OUTS("TRESHR2Y",10,30,s);
+	GETCHAR(iProperties->Msgclass,s);
+	OUTS("MSGCLASS",10,30,s);
+	GETCHAR(iProperties->Msgid,s);
+	OUTS("MSGID",10,30,s);
+	GETCHAR(iProperties->Attrgroup,s);
+	OUTS("ATTRGROUP",10,30,s);
+	GETCHAR(iProperties->Valunit,s);
+	OUTS("VALUNIT",10,30,s);
+	GETINT(iProperties->Decimals,s);
+	OUTS("DECIMALS",10,30,s);
+*/
+	return TRUE;
+}
+
+
+
+/*---------------------------------------------------------------------------
+** FUNCTION void RFCOpen
+**---------------------------------------------------------------------------
+**
+** Description:      Opens a RFC connection to a SAP system
+**
+**
+**
+** Inputparameter:   None
+** Outputparameter:  None
+** Return Values:    None
+**--------------------------------------------------------------------------*/
+int RFCOpen(char *host, LOGON *l, char* eExternalUserName) {
+
+	int dpqueueResult = 0;
+	/* static RFC_OPTIONS rfc_opt; */
+	/* static RFC_CONNOPT_VERSION_3 rfc_connopt_v3; */
+
+	rfc_char_t connect_param[1024];
+	RFC_ERROR_INFO_EX rfc_error_info;
+	char *ashost;
+	char *sysnr;
+	char *user;
+	char *passwd;
+	char *client;
+	char *lang;
+
+
+
+
+
+	char def_user[80];
+	char def_password[80];
+	char locpassword[80];
+
+	char sVersionToCheck[4];
+	int iVersionToCheck;
+	char msg[1024];
+/*  char OpCMsg[256];
+	char *szMsgHost; */
+	RFCSI rfcsi;
+
+	/* curr_sap_host = host;
+	curr_sap_logon = l; */
+
+	/*-------------------------------------------------*/
+	/* PRINT SAP LOGON CONFIGURATION                   */
+	/*-------------------------------------------------*/
+	if (trace.TraceFP) {
+		fprintf (trace.TraceFP, "\n%s================== RFC LOGON SECTION =================== \n", timestamp());
+		fprintf (trace.TraceFP, "%s System hostname:\t%s \n", timestamp(), l->host);
+		fprintf (trace.TraceFP, "%s System name:\t%s \n", timestamp(), l->sid);
+		fprintf (trace.TraceFP, "%s System number:\t%s \n", timestamp(), l->nr);
+		fprintf (trace.TraceFP, "%s Client:\t%s \n", timestamp(), l->client);
+		fprintf (trace.TraceFP, "%s User:\t\t%s \n", timestamp(), l->user);
+		fprintf (trace.TraceFP, "%s Password:\t%s \n", timestamp(), "*");
+		fprintf (trace.TraceFP, "%s Language:\t%s \n", timestamp(), l->language);
+		fflush (trace.TraceFP);
+	}
+
+	sprintf (def_user    , "%c%c%c%c%c%c%c", 'I','T','O','U','S','E','R');
+    sprintf (def_password, "%c%c%c%c%c%c%c%c", 'H', 'P', 'S', 'A', 'P','_','3','0');
+
+	if (strcmp(l->user, "default"))
+		strcpy(eExternalUserName, l->user);
+	else
+		strcpy(eExternalUserName, def_user);
+
+
+
+	if (strcmp(l->user, "default"))
+		user    = l->user;
+	else
+		user    = def_user;
+
+	lang = l->language;
+
+	if (strcmp(lang, "default") == 0)
+	    strcpy(lang, "EN");
+
+	/*--------------------------*/
+	/* Decode password          */
+	/*--------------------------*/
+	if (strcmp(l->password, "default")) {
+		strcpy (locpassword, (char*)lpogetpwd((unsigned char*)l->password));
+		passwd    = locpassword;
+	} else {
+		passwd    = def_password;
+	}
+
+	/*--------------------------*/
+	/* set client               */
+	/*--------------------------*/
+	client = l->client;
+
+	/*--------------------------*/
+	/* set system no            */
+	/*--------------------------*/
+	sysnr = l->nr;
+
+	/*--------------------------*/
+	/* set hostname of AS       */
+	/*--------------------------*/
+	ashost = l->host;
+
+    sprintf (connect_param,"ashost=%s sysnr=%s user=%s passwd=%s client=%s lang=%s",
+           (const char*) ashost,
+           (const char*) sysnr,
+           (const char*) user,
+           (const char*) passwd,
+           (const char*) client,
+           (const char*) lang);
+
+	/* fix for QXCR1000294598 */
+	RfcSetSystemTimeout( RFCLoginTimeOut );
+	if (trace.TraceFP) {
+		fprintf (trace.TraceFP, "RFCLoginTimeOut is set to %ims\n", RFCLoginTimeOut);
+		fflush  (trace.TraceFP);
+	}
+
+	if( l->enableDPQueueCheck ) {
+		char* virtualHostname;
+		if (trace.TraceFP) {
+			fprintf ( trace.TraceFP, "DPQueueCheck enabled, performing check now!\n" );
+			fflush  (trace.TraceFP);
+		}
+		
+		findMappingHost( l->sid, l->nr, l->host, &virtualHostname );
+		dpqueueResult = checkMonitoring( l->sid, l->nr, l->host, "r3monal", virtualHostname );
+		if( dpqueueResult == 1 ) {
+			if (trace.TraceFP) {
+				fprintf (trace.TraceFP, "dpqueuecheck indicates no free work processes for RFC connection!\n");
+				fprintf (trace.TraceFP, "CONNECTION ERROR!\n");
+				fflush  (trace.TraceFP);
+			}
+			return FALSE;
+		}
+		if (trace.TraceFP) {
+			fprintf ( trace.TraceFP, "DPQueueCheck performed, no threshold violated!\n" );
+			fflush  (trace.TraceFP);
+		}
+	}
+	rfc_handle = RfcOpenEx(connect_param, &rfc_error_info);
+
+	if(rfc_handle == RFC_HANDLE_NULL) {
+		if (trace.TraceFP) {
+			fprintf (trace.TraceFP, "             handle    = %d \n", rfc_handle);
+			fprintf (trace.TraceFP, "CONNECTION ERROR!\n");
+			fflush  (trace.TraceFP);
+		}
+/*      sprintf (OpCMsg, "SAPOPC: %s nr=%s host=%s name=%s rel=%s instance=%s dbname=%s dbhost=%s",
+                "System is not reachable.",
+                l->nr,
+                host,
+                l->sid,
+                "XXX",
+                "XXX",
+                "XXX",
+                "XXX");
+        findMappingHost(l->sid, l->nr, l->host, &szMsgHost);
+		lpoopcmsg (OPC_SEV_CRITICAL,
+			OPC_APPLICATION_R3,
+			"SAPsysDown",
+			OpCMsg,
+			"R3_State",
+			szMsgHost); */
+		return FALSE;
+	}
+	else {
+		if (trace.TraceFP) {
+			fprintf (trace.TraceFP, "             handle    = %d \n", rfc_handle);
+			fprintf (trace.TraceFP, "CONNECTION OK!\n");
+			fflush  (trace.TraceFP);
+		}
+	}
+
+ 	/* -----------------------------------------------
+     * Parameters
+     * ---------------------------------------------*/
+    importing[0].name = "RFCSI_EXPORT";
+    importing[0].nlen = 12;
+    importing[0].addr = &rfcsi;
+    importing[0].leng = sizeof(rfcsi);
+    importing[0].type = RFCTYPE_CHAR;
+
+    importing[1].name = NULL;
+    exporting[0].name = NULL;
+    tables[0].name    = NULL;
+
+   	function="RFC_SYSTEM_INFO";
+
+    rfc_rc = RfcInstallStructure("RFCSI", typeOfRFCSI, ENTRIES(typeOfRFCSI), &handleOfRFCSI);
+
+	if (rfc_rc != RFC_OK)
+	{
+		rfc_error("RfcInstallStructure", l);
+		return FALSE;
+	}
+
+	if (!RFC_CallFunction(rfc_handle, exporting, importing, tables, l))
+		return FALSE;
+
+    GETCHAR(rfcsi.Rfcsaprl,szRelease); RTRIM(szRelease);
+
+	/*check if SAP version is supported (>= 46C)*/
+	sVersionToCheck[0]=szRelease[0];
+	sVersionToCheck[1]=szRelease[1];
+	sVersionToCheck[2]=0;
+	iVersionToCheck = atoi( sVersionToCheck );
+	if( (iVersionToCheck < 46) ||
+		(iVersionToCheck == 46 && (szRelease[2] == 'A' || szRelease[2] == 'B')))
+	{
+		if (trace.TraceFP) {
+			fprintf (trace.TraceFP, "SAP version %s is unsupported!\n", szRelease);
+			fflush  (trace.TraceFP);
+		}
+		sprintf( msg, "Trying to connect to unsupported SAP version! HOST=%s;SID=%s;SYSNO=%s", l->host, l->sid, l->nr );
+		lpoopcmsg (OPC_SEV_WARNING,
+			OPC_APPLICATION_R3,
+  			"r3monal",
+	  		msg,
+		  	"R3_MON_ERROR",
+			getHostname());
+		RfcClose( rfc_handle );
+		return FALSE;
+	}
+	return TRUE;
+}
+
+
+/*---------------------------------------------------------------------------
+** FUNCTION void getAllMonitorsfromMonitorSet
+**---------------------------------------------------------------------------
+**
+** Description:      Delivers a list with all Monitors of a Monitor Set
+**					 This funbction is only for the Certification of the SAP SPI
+**
+**
+** Inputparameter:   None
+** Outputparameter:  None
+** Return Values:    None
+**--------------------------------------------------------------------------*/
+int getAllMonitorsfromMonitorSet(char *host, LOGON *l, char* szMonitorSet) {
+
+    ITAB_H thMonitorNames = ITAB_NULL;
+    char eExternalUserName[17];
+    BAPIMNNAME *tMonitorNames;
+
+	char s[1024];
+	int linenr;
+
+	if (RFCOpen(host, l, eExternalUserName) == FALSE)
+	  return FALSE;
+
+	if (CCMS_BAPILogon(rfc_handle, exporting, importing, tables, l) == FALSE)
+	  return FALSE;
+
+   if (thMonitorNames==ITAB_NULL) {
+	   thMonitorNames = ItCreate("MONITOR_NAMES", sizeof(BAPIMNNAME), 0, 0);
+	   if (thMonitorNames==ITAB_NULL) { rfc_error("ItCreate MONITOR_NAMES", l); return FALSE; }}
+   else {
+	   if (ItFree(thMonitorNames) != 0) { rfc_error("ItFree MONITOR_NAMES", l); return FALSE; }}
+
+   if (CCMS_BAPI_SYSTEM_MON_GETLIST(eExternalUserName, thMonitorNames, szMonitorSet, l) == FALSE)
+     return FALSE;
+
+   printf ("\n%s================== All Monitors of a Monitor Set =================== \n", timestamp());
+   printf ("%s Host       :\t%s \n", timestamp(), host);
+   printf ("%s System name:\t%s \n", timestamp(), l->sid);
+   printf ("%s System number:\t%s \n", timestamp(), l->nr);
+   printf ("%s Client:\t%s \n", timestamp(), l->client);
+   printf ("%s User:\t\t%s \n\n", timestamp(), l->user);
+
+   printf ("%s %s\n", timestamp(), szMonitorSet);
+
+   for (linenr = 1; ; linenr++)
+   {
+	   tMonitorNames =  ItGetLine(thMonitorNames, linenr);
+
+	   if (tMonitorNames == NULL) break;
+
+	   GETCHAR(tMonitorNames->MoniName,s); RTRIM(s);
+	   printf("%s\t%s \n", timestamp(), s);
+   }
+
+   if (linenr == 1)
+     printf ("%s No Monitor found or the name of the Monitor Set is incorrect.\n", timestamp());
+
+
+   if (CCMS_BAPILogoff(rfc_handle, exporting, importing, tables, l) == FALSE)
+	   return FALSE;
+
+   if (thMonitorNames != ITAB_NULL) ItDelete(thMonitorNames);
+
+   return TRUE;
+}
+
+
+/*---------------------------------------------------------------------------
+** FUNCTION void getAllMonitorSets
+**---------------------------------------------------------------------------
+**
+** Description:      Delivers a list with all saved Monitor Sets
+**					 This funbction is only for the Certification of the SAP SPI
+**					 has no sense in an OVO environment.
+**
+** Inputparameter:   None
+** Outputparameter:  None
+** Return Values:    None
+**--------------------------------------------------------------------------*/
+int getAllMonitorSets(char *host, LOGON *l) {
+
+    ITAB_H thMonitorSets = ITAB_NULL;
+	char s[1024];
+	BAPIMSNAME *tMonitorSets;
+    int linenr;
+    char eExternalUserName[17];
+
+	if (RFCOpen(host, l, eExternalUserName) == FALSE)
+	  return FALSE;
+
+	if (CCMS_BAPILogon(rfc_handle, exporting, importing, tables, l) == FALSE)
+	  return FALSE;
+
+   if (thMonitorSets==ITAB_NULL) {
+	   thMonitorSets = ItCreate("MONITOR_SETS",sizeof(BAPIMSNAME), 0, 0);
+	   if (thMonitorSets==ITAB_NULL) { rfc_error("ItCreate BAPIMSNAME", l); return FALSE; }}
+   else {
+	   if (ItFree(thMonitorSets) != 0) { rfc_error("ItFree BAPIMSNAME", l); return FALSE; }}
+
+   if (CCMS_BAPI_SYSTEM_MS_GETLIST(eExternalUserName, thMonitorSets, l) == FALSE)
+	   return FALSE;
+
+   printf ("\n%s================== All Monitor Sets =================== \n", timestamp());
+   printf ("%s Host       :\t%s \n", timestamp(), host);
+   printf ("%s System name:\t%s \n", timestamp(), l->sid);
+   printf ("%s System number:\t%s \n", timestamp(), l->nr);
+   printf ("%s Client:\t%s \n", timestamp(), l->client);
+   printf ("%s User:\t\t%s \n\n", timestamp(), l->user);
+
+   for (linenr = 1; ; linenr++)
+   {
+	   tMonitorSets =  ItGetLine(thMonitorSets,linenr);
+
+	   if (tMonitorSets == NULL) break;
+
+	   GETCHAR(tMonitorSets->Name,s);
+	   printf("%s Monitor Set %02d: %s\n", timestamp(), linenr, RTRIM(s));
+   }
+
+   if (CCMS_BAPILogoff(rfc_handle, exporting, importing, tables, l) == FALSE)
+	   return FALSE;
+
+   if (thMonitorSets != ITAB_NULL) ItDelete(thMonitorSets);
+
+   return TRUE;
+}
+
+
+/*---------------------------------------------------------------------------
+** FUNCTION void getCCMSAlerts
+**---------------------------------------------------------------------------
+**
+** Description:      Parses the r3monsap configuration data.
+**
+** Inputparameter:   None
+** Outputparameter:  None
+** Return Values:    None
+**--------------------------------------------------------------------------*/
+int getCCMSAlerts(char *host, LOGON *l, time_t lastScanTime, time_t* newScanTime, MONITOR_SET_STRUCT* MonitorSet)
+{
+    ITAB_H thTreeNodes = ITAB_NULL;
+    char eExternalUserName[17];
+    char eFromDate[9];
+    char eFromTime[7];
+    struct tm *lt;
+
+	/* fix for QXCR1000293348 */
+	time_t CurrentTime;
+
+	if (lastScanTime == 0) {
+   	/*
+	   Don't start from the beginning
+	*/
+		time(&lastScanTime);
+		lastScanTime -= 24*3600;  /* 24 hours */
+	} else {
+		/* fix for QXCR1000293348 */
+		/* if lastScanTime older than 24hrs, set lastScanTime 24hrs back */
+		time(&CurrentTime);
+		if ((CurrentTime - lastScanTime) > 86400)
+			lastScanTime = CurrentTime - 86400;
+
+	}
+
+	lt = localtime(&lastScanTime);
+	strftime(eFromDate, 9, "%Y%m%d", lt);
+	strftime(eFromTime, 7, "%H%M%S", lt);
+
+	if (RFCOpen(host, l, eExternalUserName) == FALSE)
+	  return FALSE;
+
+	if (CCMS_BAPILogon(rfc_handle, exporting, importing, tables, l) == FALSE)
+	   return FALSE;
+
+	if (trace.TraceFP) {
+		fprintf (trace.TraceFP, "\nGet CCMS alerts from Start Date/Time: %s %s\n", eFromDate, eFromTime);
+		fflush  (trace.TraceFP);
+	}
+
+    /* init tables */
+    if (thTreeNodes==ITAB_NULL) {
+      thTreeNodes = ItCreate("TREE_NODES",sizeof( BAPITNDEXT),0,0);
+	  if (thTreeNodes==ITAB_NULL) { rfc_error("ItCreate TREE_NODES", l); return FALSE; }}
+    else {
+		if (ItFree(thTreeNodes) != 0) { rfc_error("ItFree TREE_NODES", l); return FALSE; }}
+
+	if (CCMS_BAPI_SYSTEM_MON_GETTREE(l->user, thTreeNodes, MonitorSet, l) == FALSE){
+		/**** fix for QXCM1000212006 ************************/
+	   CCMS_BAPILogoff(rfc_handle, exporting, importing, tables, l);
+	   return FALSE;
+	}
+
+	if (CCMS_BAPI_SYSTEM_MT_GETALERTDATA(l->user, thTreeNodes, atoi(l->nr), l->sid, lastScanTime, newScanTime, l) == FALSE){
+		/**** fix for QXCM1000212006 ************************/
+	   CCMS_BAPILogoff(rfc_handle, exporting, importing, tables, l);
+	   return FALSE;
+	}
+
+   if (CCMS_BAPILogoff(rfc_handle, exporting, importing, tables, l) == FALSE)
+     return FALSE;
+
+   if (thTreeNodes != ITAB_NULL) ItFree(thTreeNodes);
+
+
+
+	return TRUE;
+}
+
+
+/*---------------------------------------------------------------------------
+** FUNCTION void getCCMSPerformanceVal
+**---------------------------------------------------------------------------
+**
+** Description:      Parses the r3monsap configuration data.
+**
+** Inputparameter:   None
+** Outputparameter:  None
+** Return Values:    None
+**--------------------------------------------------------------------------*/
+int getCCMSPerformanceVal(char *host, LOGON *l, MONITOR_SET_STRUCT* MonitorSet)
+{
+    ITAB_H thTreeNodes = ITAB_NULL;
+    BAPITNDEXT *tTreeNodes;
+	BAPITID eTid;
+	BAPIPACVAL iCurrentValue;
+	BAPIPAPROP iProperties;
+    char s[1024], szDDFLOGCmd[1024];
+	char perfValues[2048];
+    char eExternalUserName[17];
+	char szMSegName[41];
+	char szMSegNameOld[41] = "";
+	char *str;
+	char szDate[12];
+	char szTime[10];
+	char szCusgrpname[41];
+	FILE* fp, *dsilog;
+	int first = TRUE;
+	int i, nSpc, nParentIDChield = -1, nParentID = -1;
+
+    int linenr;
+
+	if (RFCOpen(host, l, eExternalUserName) == FALSE)
+		return FALSE;
+
+	if (CCMS_BAPILogon(rfc_handle, exporting, importing, tables, l) == FALSE)
+		return FALSE;
+
+	if (trace.TraceFP) {
+		fprintf (trace.TraceFP, "\nGet CCMS Performance metrics:\n");
+		fflush  (trace.TraceFP);
+	}
+
+    /* init tables */
+    if (thTreeNodes==ITAB_NULL) {
+		thTreeNodes = ItCreate("TREE_NODES",sizeof( BAPITNDEXT),0,0);
+		if (thTreeNodes==ITAB_NULL) { rfc_error("ItCreate TREE_NODES", l); return FALSE; }}
+    else {
+		if (ItFree(thTreeNodes) != 0) { rfc_error("ItFree TREE_NODES", l); return FALSE; }}
+
+	if (CCMS_BAPI_SYSTEM_MON_GETTREE(l->user, thTreeNodes, MonitorSet, l) == FALSE)
+		return FALSE;
+
+	if ((fp = fopen (MonitorSet->filename, "r")) == NULL) {
+
+		if ((fp = fopen (MonitorSet->filename, "w")) == NULL) {
+
+			opcfileerror (MonitorSet->filename, getprogname(), agenthost.AgentHostname);
+			return FALSE;
+		}
+
+		/* build up output report header */
+		fprintf(fp, "%-8s %-8s %-20s\t%-20s\t", "Date","Time","DSIClass", "SAP System");
+
+		for (linenr = 1; ; linenr++)
+		{
+
+			tTreeNodes =  ItGetLine(thTreeNodes, linenr);
+
+			if (tTreeNodes == NULL) break;
+
+			GETCHAR(tTreeNodes->Mtsysid,s); RTRIM(s);
+			if (*s == '\0')
+				continue;
+
+			memcpy(&eTid, tTreeNodes, sizeof(BAPITID));
+
+			GETINT(tTreeNodes->Alparintre,s);
+			nParentIDChield = atoi(s);
+
+			GETCHAR(tTreeNodes->Cusgrpname,szCusgrpname);RTRIM(szCusgrpname);
+
+			if (stricmp(szCusgrpname, MonitorSet->MTEClass) == 0) {
+				GETINT(tTreeNodes->Alidxintre,s);
+				nParentID = atoi(s);
+			}
+
+			if (strncmp(tTreeNodes->Mtclass, "100", 3) != 0)
+				continue;
+
+   		    if (nParentID < 0 || nParentIDChield != nParentID)
+  			  continue;
+
+/*			GETCHAR(tTreeNodes->Objectname,s); RTRIM(s);
+			GETCHAR(tTreeNodes->Mtmcname,s); RTRIM(s);
+			if (stricmp(s, MonitorSet->MTEClass) != 0)
+				continue;
+*/
+			if (BAPI_SYSTEM_MTE_GETPERFPROP(eExternalUserName, &eTid, &iProperties, l) == FALSE) {
+				fclose(fp);
+				return FALSE;
+			}
+
+			GETCHAR(tTreeNodes->Mtnameshrt,s); RTRIM(s);
+			fprintf(fp, "%s[%s]\t", s, RTRIM(iProperties.Valunit));
+		}
+		fprintf(fp, "\n");
+
+	} else	{
+		fclose(fp);
+		fp = NULL;
+	}
+
+	if (fp == NULL && (fp = fopen (MonitorSet->filename, "a+")) == NULL) {
+
+		opcfileerror (MonitorSet->filename, getprogname(), agenthost.AgentHostname);
+		return FALSE;
+	}
+
+	nParentIDChield = -1; nParentID = -1;
+	first = TRUE;
+	/* build up performance data line */
+	for (linenr = 1; ; linenr++)
+	{
+
+		tTreeNodes =  ItGetLine(thTreeNodes, linenr);
+
+		if (tTreeNodes == NULL) break;
+
+		GETCHAR(tTreeNodes->Mtsysid,s); RTRIM(s);
+        if (*s == '\0')
+			continue;
+
+		memcpy(&eTid, tTreeNodes, sizeof(BAPITID));
+
+	    GETINT(tTreeNodes->Alparintre,s);
+		nParentIDChield = atoi(s);
+
+		GETCHAR(tTreeNodes->Cusgrpname,szCusgrpname);RTRIM(szCusgrpname);
+
+		if (stricmp(szCusgrpname, MonitorSet->MTEClass) == 0) {
+			GETINT(tTreeNodes->Alidxintre,s);
+			nParentID = atoi(s);
+		}
+
+        if (strncmp(tTreeNodes->Mtclass, "100", 3) != 0)
+			continue;
+
+		if (nParentID < 0 || nParentIDChield != nParentID)
+			continue;
+
+/*
+		GETCHAR(tTreeNodes->Mtsysid,s);
+        OUTS("MTSYSID",10,30,s);
+        GETCHAR(tTreeNodes->Mtmcname,s);
+        OUTS("MTMCNAME",10,30,s);
+        GETCHAR(tTreeNodes->Mtuid,s);
+        OUTS("MTUID",10,30,s);
+        GETCHAR(tTreeNodes->Objectname,s);
+        OUTS("OBJECTNAME",10,30,s);
+        GETCHAR(tTreeNodes->Mtnameshrt,s);
+        OUTS("MTNAMESHRT",10,30,s);
+        GETCHAR(tTreeNodes->Msegname,s);
+        OUTS("MSEGNAME",10,30,s);
+        GETDATE(tTreeNodes->Valertdate,s);
+        OUTS("VALERTDATE",10,30,s);
+        GETTIME(tTreeNodes->Valerttime,s);
+        OUTS("VALERTTIME",10,30,s);
+*/
+		GETCHAR(tTreeNodes->Msegname,szMSegName); RTRIM(szMSegName);
+
+		str = szMSegName;
+		while (*str++) ;
+		while (--str >= szMSegName) if (*str == '_') break;
+        while (--str >= szMSegName) if (*str == '_') break;
+        while (--str >= szMSegName) if (*str == '_') { *str++; break; }
+
+		if (strcmp(szMSegNameOld, szMSegName) != 0) {
+			if (first == FALSE) {
+			  fprintf(fp, "\n");
+			  fprintf(fp, "%s\n", perfValues);
+			}
+
+			first = TRUE;
+		}
+
+		strcpy(szMSegNameOld, szMSegName);
+
+		if (BAPI_SYSTEM_MTE_GETPERFCURVAL(eExternalUserName, &eTid, &iCurrentValue, l) == FALSE) {
+			fclose(fp);
+			return FALSE;
+		}
+
+		if (BAPI_SYSTEM_MTE_GETPERFPROP(eExternalUserName, &eTid, &iProperties, l) == FALSE) {
+			fclose(fp);
+			return FALSE;
+		}
+
+		if (first == TRUE) {
+            GETCHAR(iCurrentValue.Alrelvaldt, szDate); RTRIM(szDate);
+			GETCHAR(iCurrentValue.Alrelvalti, szTime); RTRIM(szTime);
+
+ 			fprintf(fp, "%-8s %-8s %-20s\t%-20s\t", szDate, szTime, MonitorSet->DSIClass, str);
+			/* build up ddflog performance data */
+			sprintf(perfValues, "%s %s", MonitorSet->DSIClass, str);
+
+			first = FALSE;
+		}
+
+		GETCHAR(tTreeNodes->Mtnameshrt,s); RTRIM(s);
+		nSpc = strlen(s) + strlen(RTRIM(iProperties.Valunit)) + 2;
+		GETINT(iCurrentValue.Alrelevval, s);
+		nSpc -= strlen(s);
+		for (i = 0; i < nSpc; i++) fprintf(fp, " ");
+		fprintf(fp, "%s", s);
+		fprintf(fp, "\t");
+		strcat(perfValues, " ");
+		strcat(perfValues, s);
+	}
+
+#ifndef WIN32
+    sprintf(szDDFLOGCmd, "%s/ddflog %s %s", getmondir(), MonitorSet->DSIFile, MonitorSet->DSIClass);
+	dsilog = popen(szDDFLOGCmd, "w" );
+#else
+    sprintf(szDDFLOGCmd, "%s\\ddflog %s %s", getmondir(), MonitorSet->DSIFile, MonitorSet->DSIClass);
+	dsilog = _popen(szDDFLOGCmd, "wt" );
+#endif
+
+	if (trace.TraceFP) {
+		fprintf (trace.TraceFP, "popen: %s\n", szDDFLOGCmd);
+	}
+
+	if ( dsilog != NULL) {
+
+		fprintf(dsilog, "%s\n", perfValues);
+		if (trace.TraceFP) {
+			fprintf (trace.TraceFP, "ddflog: %s\n", perfValues);
+		}
+
+	} else
+		opcfileerror ("dsilog", getprogname(), agenthost.AgentHostname);
+
+#ifndef WIN32
+	pclose(dsilog);
+#else
+	_pclose(dsilog);
+#endif
+
+	fprintf(fp, "\n");
+	fclose(fp);
+
+	if (CCMS_BAPILogoff(rfc_handle, exporting, importing, tables, l) == FALSE)
+		return FALSE;
+
+	if (thTreeNodes != ITAB_NULL) ItFree(thTreeNodes);
+
+	return TRUE;
+}
+
+
+
+/* Check if configured SID is valid an exists on this system or a remote host       */
+/* Input: SID as found in config file, number of systems installed on the node      */
+/* Returns: INVALID is SID is invalid, SID_IS_NOT_LOCAL if SID has valid syntax but */
+/*			does not exist on the node, SID_IS_LOCAL if SID exists on the node      */
+
+static int CheckSID(char *SIDString, int sids){
+
+	char *SapSid;
+	int i;
+	int hit = 0;
+
+	if (SIDString != NULL){
+		/* Strip SID of blanks */
+		SapSid = getstring(SIDString," ");
+
+		/* if SAP SID is defined as ALL the local system is defined*/
+		if (!strcmp(SapSid, "ALL"))
+			return(SID_IS_LOCAL);
+
+		/* SAP SID must always have 3 digits, not less not more*/
+		if (strlen(SapSid) == 3){
+
+			/* Find out if the configured SAP SID is on this system*/
+			for (i = 0; i < sids; i++){
+				if (!strcmp(SapSid,sid[i]))
+					hit++;
+			}
+
+			/* Check SID for remote hosts */
+			for (i = 0; i < maxremotehosts; i++) {
+			    if (!strcmp(SapSid,remotehosts[i].sapsystem))
+					hit++;
+			}
+
+			/* if hit is greater than 0 the SID was found*/
+			if (hit > 0){
+				return(SID_IS_LOCAL);
+			} else {
+				return(SID_IS_NOT_LOCAL);
+			} /* end if hit > 0*/
+
+		} else {
+			return(INVALID);
+		} /* end if strlen... */
+
+
+	} else {
+		return(INVALID);
+	}/* end if SIDString != NULL*/
+}
+
+
+/* Check if configured instance number is valid and exists on this system or a remote host */
+/* Input: Instance as found in config file, number of instances installed on the node      */
+static int CheckInstance(char *InstanceNumber, int instances){
+
+	char *SapInstance;
+	int i;
+	int hit = 0;
+
+	/* an empty instance number is not allowed */
+	if (InstanceNumber != NULL){
+
+		SapInstance = getstring(InstanceNumber," ");
+
+		if (!strcmp(SapInstance, "ALL"))
+			return(VALID);
+
+
+		/* SAP instnace number must always have exactly to digits */
+		if (strlen(SapInstance) == 2){
+
+			/* check if the configured instance exists on this system*/
+			for (i = 0; i < instances; i++){
+				if (!strcmp(SapInstance,instance[i].nr))
+					hit++;
+			}
+
+			/* check if the configured instance exists on a remote host */
+			for (i = 0; i < maxremotehosts; i++){
+				if (!strcmp(SapInstance,remotehosts[i].sapnumber))
+					hit++;
+			}
+
+			/* if the instance number was not found on the system it is invalid.*/
+			if (hit == 0){
+				return(INVALID);
+			} else {
+				return(VALID);
+			}
+
+		} else {
+			return(INVALID);
+		} /*end if strlen... */
+
+	} else {
+		return(INVALID);
+	}/* end if InstanceNumber != NULL */
+
+
+}
+
+
+/*---------------------------------------------------------------------------
+** Description:      Initialize dev specific data
+** Inputparameter:   None
+** Outputparameter:  None
+** Return Values:    None
+**--------------------------------------------------------------------------*/
+static int initSapData (void)
+{
+        /* Get environment variables */
+        static char configfile[255];
+        static char cfgfile[255];
+        static char progconfig[255];
+/*        static char sapmsgfile[255]; */
+
+		int r3itosap = 0;
+		int r3monal = 0;
+		FILE* cfg_file;
+
+        configfileenv = getenv ("SAPOPC_R3MONAL_CONFIGFILE");
+        if (configfileenv == NULL) {
+		/* changed 990217 by uwe from
+		sprintf (configfile, "%s%c%s%s", getmondir(),   FILESEPCHAR,
+			getprogname(), ".cfg"); to */
+            if (szConfigFileName[0] == '\0')
+				sprintf(progconfig, "%s%s", getprogname(), ".cfg");
+			else
+				strcpy(progconfig, szConfigFileName);
+
+			if (makeConfigfileName(configfile, progconfig, getmondir())){
+				configfileenv = configfile;
+				r3monal++;
+			}
+
+        } else {
+			/*** check that file really exists ***/
+			cfg_file = fopen(configfileenv,"r");
+			if (cfg_file != NULL){
+				fclose(cfg_file);
+				r3monal++;
+			}
+		}
+
+        cfgfileenv = getenv ("SAPOPC_R3ITOSAP_CONFIGFILE");
+        if (cfgfileenv == NULL) {
+			if (makeConfigfileName(cfgfile, "r3itosap.cfg", getcmddir())){
+                cfgfileenv = cfgfile;
+				r3itosap++;
+			}
+        } else {
+			/*** check that file really exists ***/
+			cfg_file = NULL;
+			cfg_file = fopen(cfgfileenv,"r");
+			if (cfg_file != NULL){
+				fclose(cfg_file);
+				r3itosap++;
+			}
+		}
+
+/*
+		sapmsgfileenv = getenv ("SAPOPC_R3MONAL_SAPMSGFILE");
+		if (sapmsgfileenv == NULL) {
+			sprintf (sapmsgfile, "%s%c%s%s", getmondir(),   FILESEPCHAR,
+				getprogname(), ".msg");
+			sapmsgfileenv = sapmsgfile;
+		}
+*/
+
+		if (r3itosap == 0)
+			opcfileerror("r3itosap.cfg","r3monal","");
+
+		if (r3monal == 0)
+			opcfileerror("r3monal.cfg","r3monal","");
+
+		if ((r3itosap != 0) && (r3monal != 0)){
+			return(1);
+		} else {
+			return(0);
+		}
+}
+
+/*---------------------------------------------------------------------------
+** FUNCTION void initHistoryData(void)
+**---------------------------------------------------------------------------
+** Description:      Initialize History specific data
+** Inputparameter:   None
+** Outputparameter:  None
+** Return Values:    None
+**--------------------------------------------------------------------------*/
+static void initHistoryData (void)
+{
+        static char  historyfile[256];
+
+        /* Get environment variables */
+        historyenv = getenv ("SAPOPC_HISTORYPATH");
+        if (historyenv == NULL) {
+#ifdef WIN32
+                sprintf (historyfile, "%s%s%s", history.HistoryPathWinNT, FILESEP, "r3monal.his");
+#else
+                sprintf (historyfile, "%s%s%s", history.HistoryPathUnix, FILESEP, "r3monal.his");
+#endif
+        }
+        else {
+                sprintf (historyfile, "%s%s%s", historyenv, FILESEP, "r3monal.his");
+        }
+        historyenv = historyfile;
+}
+
+
+/*---------------------------------------------------------------------------
+** FUNCTION void parseRemoteHosts
+**---------------------------------------------------------------------------
+** Description:      First Parse of SAP Data to get remote hosts
+** Inputparameter:   None
+** Outputparameter:  None
+** Return Values:    None
+**--------------------------------------------------------------------------*/
+static void parseRemoteHosts(void) {
+
+  char* token;
+  char  line[CHAR_SIZE_BIG+1];
+  cfg_line_curr = cfg_line_root;
+
+  while (cfg_line_curr) {
+
+		strncpy (line, cfg_line_curr->line, CHAR_SIZE_BIG);
+		line[CHAR_SIZE_BIG-1] = '\0';
+
+		/*----------------------------------------------------*/
+		/* Get keyword                                        */
+		/*----------------------------------------------------*/
+		token = strtok (line, "=");
+		if (token && strstr (token, "RemoteMonitoring") != NULL) {
+
+		  /*----------------*/
+		  /* SAP Host       */
+		  /*----------------*/
+		  token = strtok (NULL, "=");
+          if (ipcmp(host, getstring(token, NULL))) {
+
+			 if (token = strtok (NULL, "=")) {
+				remotehosts[maxremotehosts].remotehost = strdup(getstring(token, NULL));
+				/*----------------*/
+				/* SAP System     */
+				/*----------------*/
+				if (token = strtok (NULL, "=")) {
+				  remotehosts[maxremotehosts].sapsystem = strdup(getstring(token, NULL));
+				  /*----------------*/
+				  /* SAP Number     */
+				  /*----------------*/
+				  if (token = strtok (NULL, "=")) {
+					 remotehosts[maxremotehosts].sapnumber = strdup(getstring(token, NULL));
+					 maxremotehosts++;
+				  }
+				}
+			 }
+		  }
+		}
+      /*-------------------------------------------------*/
+      /* GET NEXT LINE                                   */
+      /*-------------------------------------------------*/
+      cfg_line_curr = cfg_line_curr->next;
+  }
+}
+
+
+/*---------------------------------------------------------------------------
+** FUNCTION void parseSapData
+**---------------------------------------------------------------------------
+**
+** Description:      Parses the r3monsap configuration data.
+**
+** Inputparameter:   None
+** Outputparameter:  None
+** Return Values:    None
+**--------------------------------------------------------------------------*/
+static void parseAlertData (void)
+{
+	/* Variables to check valid config file entries */
+
+	SEVERITY_STRUCT		 SAPSeverity;	/* temp. severity entry */
+	MONAL_CONF_STRUCT	 SAPMonal;		/* temp. r3monal config. entries */
+	MONAL_SYSLOG_STRUCT  SAPSyslog;     /* temp. r3monal syslog entries */
+
+	/*int	SIDValid;						 flag for valid SID */
+	/*int InstanceValid;					 flag for valid Instance */
+
+
+	char* token;
+	char* nrtoken = NULL;
+	char* sidtoken = NULL;
+	char  line[CHAR_SIZE_BIG+1];
+
+	cfg_line_curr = cfg_line_root;
+	while (cfg_line_curr) {
+
+		strncpy (line, cfg_line_curr->line, CHAR_SIZE_BIG);
+		line[CHAR_SIZE_BIG-1] = '\0';
+
+		/*----------------------------------------------------*/
+		/* Get keyword                                        */
+		/*----------------------------------------------------*/
+		token = strtok (line, "=");
+		if (token) {
+			/*-------------------------------------------------*/
+			/* KEYWORD: Severity                               */
+			/*-------------------------------------------------*/
+			if (strstr (token, "Severity") != NULL) {
+				/*----------------*/
+				/* Severity VALUE */
+				/*----------------*/
+				SAPSeverity.key = strdup (getstring(token, NULL));
+				if (!strcmp(SAPSeverity.key, "SeverityNull"))
+					SAPSeverity.severity = AL_TD_VL_WHITE;
+				if (!strcmp(SAPSeverity.key, "SeverityNormal"))
+					SAPSeverity.severity = AL_TD_VL_GREEN;
+				if (!strcmp(SAPSeverity.key, "SeverityWarning"))
+					SAPSeverity.severity = AL_TD_VL_YELLOW;
+				if (!strcmp(SAPSeverity.key, "SeverityCritical"))
+					SAPSeverity.severity = AL_TD_VL_RED;
+
+				/*----------------*/
+				/* SAP System     */
+				/*----------------*/
+				sidtoken = strtok (NULL, "=");
+				if (sidtoken)
+					SAPSeverity.sapsystem = strdup (getstring(sidtoken, NULL));
+				/*----------------*/
+				/* SAP Number     */
+				/*----------------*/
+				nrtoken = strtok (NULL, "=");
+				if (nrtoken)
+					SAPSeverity.sapnumber = strdup (getstring(nrtoken, NULL));
+
+				/* Now it can be determined if entry is valid for this system */
+				/* only if entry is valid initialize the severity struct. */
+				if (sidtoken && nrtoken) {
+					severity[maxseverity].key = strdup(SAPSeverity.key);
+					severity[maxseverity].severity = SAPSeverity.severity;
+					severity[maxseverity].sapsystem = strdup(SAPSeverity.sapsystem);
+					severity[maxseverity].sapnumber = strdup(SAPSeverity.sapnumber);
+
+
+					/*----------------*/
+					/* Enable/Disable */
+					/*----------------*/
+					token = strtok (NULL, "=");
+					if (token)
+						severity[maxseverity].enabled = atoi (token);
+					/*----------------*/
+					/* OpCValue       */
+					/*----------------*/
+					token = strtok (NULL, "=");
+					if (token) {
+						if (strstr (token, "UNKNOWN") != NULL)
+							severity[maxseverity].opcseverity = OPC_SEV_UNKNOWN;
+						if (strstr (token, "NORMAL") != NULL)
+							severity[maxseverity].opcseverity = OPC_SEV_NORMAL;
+						if (strstr (token, "WARNING") != NULL)
+							severity[maxseverity].opcseverity = OPC_SEV_WARNING;
+						if (strstr (token, "CRITICAL") != NULL)
+							severity[maxseverity].opcseverity = OPC_SEV_CRITICAL;
+						if (strstr (token, "MINOR") != NULL)
+							severity[maxseverity].opcseverity = OPC_SEV_MINOR;
+						if (strstr (token, "MAJOR") != NULL)
+							severity[maxseverity].opcseverity = OPC_SEV_MAJOR;
+						maxseverity++;
+						/* Checking for violation of array limits*/
+						CheckArrayLimits(maxseverity,MAX_SEVERITY);
+					}
+				} /* end if (systoken && sidtoken) */
+			/*-------------------------------------------------*/
+			/* KEYWORD: RFCTimeOut		                       */
+			/*-------------------------------------------------*/
+			} else if (strstr (token, "RFCTimeOut") != NULL) {
+				token = strtok (NULL, "=");
+				if (token) RFCTimeOut = atoi(token);
+			} else if (strstr (token, XMI_MODE) != NULL) {
+				token = strtok (NULL, "=");
+				if (token) XMI_Mode = atoi(token);
+				if (trace.TraceFP){
+					fprintf(trace.TraceFP,"XMI compatibility mode set to %i\n", XMI_Mode);
+					fflush(trace.TraceFP);
+				}
+			}
+			/*-------------------------------------------------*/
+			/* KEYWORD: PerformanceData	                       */
+			/*-------------------------------------------------*/
+			else if (strstr (token, "PerformanceData") != NULL) {
+				/*----------------*/
+				/* SAP System     */
+				/*----------------*/
+				sidtoken = strtok (NULL, "=");
+				if (sidtoken)
+					SAPMonal.sapsystem = strdup (getstring(sidtoken, NULL));
+				/*----------------*/
+				/* SAP Number     */
+				/*----------------*/
+				nrtoken = strtok (NULL, "=");
+				if (nrtoken)
+					SAPMonal.sapnumber = strdup (getstring(nrtoken, NULL));
+
+				if (sidtoken && nrtoken) {
+					if (token = strtok (NULL, "=")) {
+						/* MTEClass name */
+						PerfMonitorSet[PerfMaxmonitorSet].MTEClass = strdup(getstring(token,NULL));
+						if (token = strtok (NULL, "=")) {
+							/* DSIClass name */
+							PerfMonitorSet[PerfMaxmonitorSet].DSIClass = strdup(getstring(token,NULL));
+							if (token = strtok (NULL, "=")) {
+								/* DSI datafile location */
+								PerfMonitorSet[PerfMaxmonitorSet].DSIFile = strdup(getstring(token,NULL));
+								if (token = strtok (NULL, "=")) {
+									/* filename */
+									PerfMonitorSet[PerfMaxmonitorSet].filename = strdup(getstring(token,NULL));
+									if (token = strtok (NULL, "=")) {
+										/* Monitor Set */
+										PerfMonitorSet[PerfMaxmonitorSet].monitorset = strdup(getstring(token,NULL));
+										if (token = strtok (NULL, "=")) {
+											/* Monitor */
+											PerfMonitorSet[PerfMaxmonitorSet].monitor = strdup(getstring(token,NULL));
+											PerfMonitorSet[PerfMaxmonitorSet].sapsystem = strdup(SAPMonal.sapsystem);
+											PerfMonitorSet[PerfMaxmonitorSet].sapnumber = strdup(SAPMonal.sapnumber);
+											PerfMaxmonitorSet++;
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+			/*-------------------------------------------------*/
+			/* KEYWORD: CCMSMonitorSet                         */
+			/*-------------------------------------------------*/
+			else if (strstr (token, "CCMSMonitorSet") != NULL) {
+				/*----------------*/
+				/* SAP System     */
+				/*----------------*/
+				sidtoken = strtok (NULL, "=");
+				if (sidtoken)
+					SAPMonal.sapsystem = strdup (getstring(sidtoken, NULL));
+				/*----------------*/
+				/* SAP Number     */
+				/*----------------*/
+				nrtoken = strtok (NULL, "=");
+				if (nrtoken)
+					SAPMonal.sapnumber = strdup (getstring(nrtoken, NULL));
+
+				if (sidtoken && nrtoken) {
+					if (token = strtok (NULL, "=")) {
+						/* Monitor Set */
+						monitorSet[maxmonitorSet].monitorset = strdup(getstring(token,NULL));
+						if (token = strtok (NULL, "=")) {
+							/* Monitor */
+							monitorSet[maxmonitorSet].monitor = strdup(getstring(token,NULL));
+							monitorSet[maxmonitorSet].sapsystem = strdup(SAPMonal.sapsystem);
+							monitorSet[maxmonitorSet].sapnumber = strdup(SAPMonal.sapnumber);
+							maxmonitorSet++;
+						}
+					}
+				}
+			}
+			/*-------------------------------------------------*/
+			/* KEYWORD: CCMSAcknowledgeMessage                 */
+			/*-------------------------------------------------*/
+			else if (strstr (token, "CCMSAcknowledgeMessage") != NULL) {
+				/*----------------*/
+				/* SAP System     */
+				/*----------------*/
+				sidtoken = strtok (NULL, "=");
+				if (sidtoken)
+					SAPMonal.sapsystem = strdup (getstring(sidtoken, NULL));
+				if (token = strtok (NULL, "=")) {
+					acknowledge[maxacknowledge].sendfiltered = atoi(token);
+					if (token && sidtoken) {
+						if (token = strtok (NULL, "=")) {
+							/* Achnowledge enable/disable */
+							acknowledge[maxacknowledge].enable = atoi(token);
+							acknowledge[maxacknowledge].sapsystem = strdup (SAPMonal.sapsystem);
+							maxacknowledge++;
+						}
+					}
+				}
+
+			}
+			/*-------------------------------------------------*/
+			/* KEYWORD: AlertMonObj                            */
+			/*-------------------------------------------------*/
+			else if (strstr (token, "AlertMonObj") != NULL) {
+				/*----------------*/
+				/* SAP System     */
+				/*----------------*/
+				sidtoken = strtok (NULL, "=");
+				if (sidtoken)
+					SAPMonal.sapsystem = strdup (getstring(sidtoken, NULL));
+				/*----------------*/
+				/* SAP Number     */
+				/*----------------*/
+				nrtoken = strtok (NULL, "=");
+				if (nrtoken)
+					SAPMonal.sapnumber = strdup (getstring(nrtoken, NULL));
+
+				/* Now it can be determined if entry is valid for this system */
+				/* only if entry is valid initialize the monalconf struct. */
+				if (sidtoken && nrtoken){
+					monalconf[maxmonalconf].sapsystem = strdup (SAPMonal.sapsystem);
+					monalconf[maxmonalconf].sapnumber = strdup (SAPMonal.sapnumber);
+
+
+					/*----------------*/
+					/* Mon. Tree      */
+					/*----------------*/
+					token = strtok (NULL, "=");
+					if (token) {
+						int i, l;
+						char *s;
+
+						s = monalconf[maxmonalconf].montree = strdup (getstring(token, NULL));
+						monalconf[maxmonalconf].treeElements[0] = monalconf[maxmonalconf].montree;
+						monalconf[maxmonalconf].numTreeElements = 0;
+						l = (int)strlen(s);
+						for (i = 0; i < l; i++) {
+							if (s[i] == '\\') {
+								s[i] = '\0';
+								monalconf[maxmonalconf].treeElements[monalconf[maxmonalconf].numTreeElements] =
+									&(s[i + 1]);
+								monalconf[maxmonalconf].numTreeElements++;
+								/**** Check if array limits are violated ***/
+								/*CheckArrayLimits(monalconf[maxmonalconf].numTreeElements,MAX_TREE_ELEMENTS);*/
+							}
+						}
+					}
+					/*----------------*/
+					/* Enable/Disable */
+					/*----------------*/
+					token = strtok (NULL, "=");
+					if (token)
+						monalconf[maxmonalconf].enabled = atoi (token);
+					/*----------------*/
+					/* OpC Group      */
+					/*----------------*/
+					token = strtok (NULL, "=");
+					if (token) {
+						monalconf[maxmonalconf].OpcGroup = strdup (getstring(token, NULL));
+						maxmonalconf++;
+						/* Checking for violation of array limits*/
+						CheckArrayLimits(maxmonalconf,MAX_MONAL_CONF);
+					}
+				} /* end if ((SIDValid == SID_IS_LOCAL).... */
+			}
+
+
+			else if (strstr (token, "AlerMonSyslog") != NULL || strstr (token, "AlertMonSyslog") != NULL) {
+				/*----------------*/
+				/* SAP System     */
+				/*----------------*/
+				sidtoken = strtok (NULL, "=");
+				if (sidtoken)
+					SAPSyslog.sapsystem = strdup (getstring(sidtoken, NULL));
+				/*----------------*/
+				/* SAP Number     */
+				/*----------------*/
+				nrtoken = strtok (NULL, "=");
+				if (nrtoken)
+					SAPSyslog.sapnumber = strdup (getstring(nrtoken, NULL));
+
+				/* Now it can be determined if entry is valid for this system */
+				/* only if entry is valid initialize the monalconf struct. */
+				if (sidtoken && nrtoken){
+					monalsyslog[maxmonalsyslog].sapsystem = strdup (SAPSyslog.sapsystem);
+					monalsyslog[maxmonalsyslog].sapnumber = strdup (SAPSyslog.sapnumber);
+
+					/*----------------*/
+					/* SyslogIdStart  */
+					/*----------------*/
+					token = strtok (NULL, "=");
+					if (token)
+						monalsyslog[maxmonalsyslog].syslogIdStart = strdup (getstring(token, NULL));
+					/*----------------*/
+					/* SyslogIdStop   */
+					/*----------------*/
+					token = strtok (NULL, "=");
+					if (token)
+						monalsyslog[maxmonalsyslog].syslogIdStop = strdup (getstring(token, NULL));
+					/*----------------*/
+					/* Enable/Disable */
+					/*----------------*/
+					token = strtok (NULL, "=");
+					if (token) {
+						monalsyslog[maxmonalsyslog].enabled = atoi (token);
+						maxmonalsyslog++;
+					}
+				} /* end if ((SIDValid == SID_IS_LOCAL*/
+
+			}
+			/*-------------------------------------------------*/
+			/* KEYWORD: LastScannedSystem                      */
+			/*-------------------------------------------------*/
+			else if (strstr (token, "LastScannedSystem") != NULL) {
+
+				/*----------------*/
+				/* SAP Hostname   */
+				/*----------------*/
+				token = strtok (NULL, "=");
+				if (token)
+					monalhis[maxmonalhis].saphostname  = strdup (getstring(token, NULL));
+				/*----------------*/
+				/* SAP System     */
+				/*----------------*/
+				token = strtok (NULL, "=");
+				if (token)
+					monalhis[maxmonalhis].sapsystem  = strdup (getstring(token, NULL));
+				/*----------------*/
+				/* SAP Number     */
+				/*----------------*/
+				token = strtok (NULL, "=");
+				if (token)
+					monalhis[maxmonalhis].sapnumber	 = strdup (getstring(token, NULL));
+				/*----------------*/
+				/* SAP Instance   */
+				/*----------------*/
+				token = strtok (NULL, "=");
+				if (token) {
+					monalhis[maxmonalhis].instance = strdup (getstring(token, NULL));
+				}
+				/*----------------*/
+				/* Last scan time */
+				/*----------------*/
+				token = strtok (NULL, "=");
+				if (token) {
+					monalhis[maxmonalhis].lastScanTime = atol(getstring(token, NULL));
+					maxmonalhis++;
+				}
+
+			}
+      }
+
+      /*-------------------------------------------------*/
+      /* GET NEXT LINE                                   */
+      /*-------------------------------------------------*/
+      cfg_line_curr = cfg_line_curr->next;
+   }
+}
+
+/*---------------------------------------------------------------------------
+** FUNCTION void checkAlHistory
+**---------------------------------------------------------------------------
+**
+** Description:      Check if all systems are in the history, extend if neccessary
+**
+** Inputparameter:   None
+** Outputparameter:  None
+** Return Values:    None
+**--------------------------------------------------------------------------*/
+static void checkAlHistory()
+{
+        int i,j;
+        int found = FALSE;
+
+        newMaxmonalhis = 0;
+
+		/* add remote hosts in history file */
+		if (maxremotehosts > 0) {
+			for (i = 0; i < maxremotehosts; i++) {
+				/*** fix for JAGaf 24271 ***/
+				newMonalhis[newMaxmonalhis].saphostname = remotehosts[i].remotehost;
+				newMonalhis[newMaxmonalhis].sapsystem = remotehosts[i].sapsystem;
+				newMonalhis[newMaxmonalhis].sapnumber = remotehosts[i].sapnumber;
+				newMonalhis[newMaxmonalhis].instance = "Unkown";
+				newMonalhis[newMaxmonalhis].lastScanTime = 0;
+
+				for (j=0; j < maxmonalhis; j++) {
+						if ((!strcmp(monalhis[j].sapsystem, remotehosts[i].sapsystem)) &&
+								(!strcmp(monalhis[j].sapnumber, remotehosts[i].sapnumber)) &&
+								(!strcmp(monalhis[j].saphostname, remotehosts[i].remotehost)))
+									newMonalhis[newMaxmonalhis].lastScanTime = monalhis[j].lastScanTime;
+				}
+
+				newMaxmonalhis++;
+			}
+		}
+
+		/* Fill configured system into the history */
+		for (i=0; i < maxlogon; i++) {
+			    newMonalhis[newMaxmonalhis].saphostname = host;
+				newMonalhis[newMaxmonalhis].sapsystem = logon[i].sid;
+				newMonalhis[newMaxmonalhis].sapnumber = logon[i].nr;
+				newMonalhis[newMaxmonalhis].instance = logon[i].instance;
+				newMonalhis[newMaxmonalhis].lastScanTime = 0;
+
+				for (j=0; j < maxmonalhis; j++) {
+						if ((!strcmp(monalhis[j].sapsystem, logon[i].sid)) &&
+								(!strcmp(monalhis[j].sapnumber, logon[i].nr)) &&
+								(!strcmp(monalhis[j].saphostname, host)))
+									newMonalhis[newMaxmonalhis].lastScanTime = monalhis[j].lastScanTime;
+				}
+
+				newMaxmonalhis++;
+		}
+}
+/*--------------------------------------------------------------------------
+**
+** Description:      Saves the history file
+**
+** Inputparameter:   filename
+**
+** Outputparameter:  None
+**
+** Return Values:    None
+**
+**--------------------------------------------------------------------------*/
+static int saveHistoryFile (char* filename)
+{
+        FILE* fp;
+        int   i;
+        int   retval=TRUE;
+		time_t CurrentSystemTime;
+
+
+
+		time(&CurrentSystemTime);
+
+
+        /*-------------------------------------------------------*/
+        /* History file opened                                   */
+        /*-------------------------------------------------------*/
+        if ((fp = fopen (filename, "w")) != NULL) {
+
+                /*-------------------------------------------------------*/
+                /* Print Header                                          */
+                /*-------------------------------------------------------*/
+                fprintf (fp, "");
+                fprintf (fp, "#--------------------------------------------------------------------\n");
+                fprintf (fp, "#--------------------------------------------------------------------\n");
+                fprintf (fp, "# Keyword        SAP system  SAP number  SAP instance LastScanTime\n");
+                fprintf (fp, "#      \n");
+                for (i = 0 ; i < newMaxmonalhis; i++)  {
+
+                        /*newMonalhis[i].lastScanTime = CurrentSystemTime;*/
+                        fprintf (fp, "LastScannedSystem  =%s     =%s   =%s   =%s   =%lu\n",
+							    /*** fix for JAGaf24271 ***/
+							    newMonalhis[i].saphostname,
+                                newMonalhis[i].sapsystem,
+                                newMonalhis[i].sapnumber,
+                                newMonalhis[i].instance,
+                                newMonalhis[i].lastScanTime);
+						fflush(fp);
+
+
+                }
+                fclose (fp);
+        }
+
+        /*-------------------------------------------------------*/
+        /* ERROR: Configuration file not opened                  */
+        /*-------------------------------------------------------*/
+        else {
+                opcfileerror (filename, getprogname(), agenthost.AgentHostname);
+                retval = 0;
+        }
+        return (retval);
+
+}
+
+
+static void BAPICheckSAP40Alerts(void) {
+
+    int currInst;
+
+	time_t lastScanTime;
+    time_t newScanTime;
+    int  i, j, nr1, nr2, found = FALSE;
+    /* , sysDown = FALSE; */
+	char *newhost;
+	LOGON sapLogon;
+	int checkResult = 0;
+	int enableDPQueueCheck = 0;
+
+    for (currInst = 0; currInst < newMaxmonalhis; currInst++)
+    {
+		if (trace.TraceFP){
+			fprintf(trace.TraceFP,"processing host=%s SID=%s sysNr=%s\n", newMonalhis[currInst].saphostname, newMonalhis[currInst].sapsystem, newMonalhis[currInst].sapnumber);
+			fflush(trace.TraceFP);
+		}
+		/**** fix for QXCM1000209956 / QXCR1000214383 ***/
+		/* if all alerts were ack.ed or no ack. is required set new scantime       */
+		/* if min. one alert was not ack.ed keep old scan time to ack. in next try */
+		/* if alert has correct status                                             */
+		UpdateScanTime = 1;
+		/***************************************************************************/
+        atoi(newMonalhis[currInst].sapnumber);
+        newMonalhis[currInst].sapsystem;
+        newMonalhis[currInst].instance;
+        lastScanTime = newMonalhis[currInst].lastScanTime;
+        newScanTime = lastScanTime;
+
+		newhost = host;
+
+		/* Add new CCMS RFC interface */
+
+        found = FALSE;
+		if (trace.TraceFP){
+			fprintf(trace.TraceFP,"looking in configuration for local host...\n");
+			fflush(trace.TraceFP);
+		}
+		for (i = 0; i < maxlogon; i++) {
+            if ((!strcmp(newMonalhis[currInst].sapsystem, logon[i].sid)) &&
+                (!strcmp(newMonalhis[currInst].sapnumber, logon[i].nr))) {
+
+
+				/* sysDown = FALSE; */
+				/*for (j = 0 ; j < maxinstance; j++)  {
+
+					if (!strcmp(instance[j].sid, logon[i].sid) &&
+						!strcmp(instance[j].nr, logon[i].nr) &&
+						instance[j].state == STAT_INST_DOWN) {
+						sysDown = TRUE;
+						break;
+					}
+				}*/
+
+
+				strcpy (sapLogon.host,	 logon[i].host);
+				strcpy (sapLogon.sid,      logon[i].sid);
+				strcpy (sapLogon.instance, logon[i].instance);
+				strcpy (sapLogon.nr,       logon[i].nr);
+				strcpy (sapLogon.client,   logon[i].client);
+				strcpy (sapLogon.user,     logon[i].user);
+				strcpy (sapLogon.password, logon[i].password);
+				strcpy (sapLogon.language, logon[i].language);
+
+				found = TRUE;
+				if (trace.TraceFP){
+					fprintf(trace.TraceFP,"found instance...\n");
+					fflush(trace.TraceFP);
+				}
+				break;
+            }
+		}
+
+		if (!found) {
+			if (trace.TraceFP){
+				fprintf(trace.TraceFP,"looking in remote monitoring configuration...\n");
+				fflush(trace.TraceFP);
+			}
+			for (i = 0; i < maxremotehosts; i++) {
+
+				if ((!strcmp(newMonalhis[currInst].saphostname, remotehosts[i].remotehost)) &&
+					(!strcmp(newMonalhis[currInst].sapsystem, remotehosts[i].sapsystem)) &&
+					(!strcmp(newMonalhis[currInst].sapnumber, remotehosts[i].sapnumber))) {
+
+					 newhost = remotehosts[i].remotehost;
+
+					  /*-------------------------------------------------------------*/
+					  /* Get data of hostsap configuration                           */
+					  /*-------------------------------------------------------------*/
+					  for (j = 0; j < maxhostsaps; j++) {
+
+						  nr1 = atoi (remotehosts[i].sapnumber);
+						  nr2 = atoi (hostsap[j].sapnumber);
+
+						  if ((ipcmp (newhost, hostsap[j].host)) &&
+							  (!strcmp (remotehosts[i].sapsystem, hostsap[j].sapsystem)) &&
+							  (nr1 == nr2)) {
+
+    						  strcpy (sapLogon.host,	 newhost);
+							  strcpy (sapLogon.sid,      hostsap[j].sapsystem);
+							  strcpy (sapLogon.instance, "");
+							  strcpy (sapLogon.nr,       hostsap[j].sapnumber);
+							  strcpy (sapLogon.client,   hostsap[j].client);
+							  strcpy (sapLogon.user,     hostsap[j].user);
+							  strcpy (sapLogon.password, hostsap[j].password);
+							  strcpy (sapLogon.language, hostsap[j].language);
+							  found = TRUE;
+							  if (trace.TraceFP){
+								fprintf(trace.TraceFP,"found instance...\n");
+								fflush(trace.TraceFP);
+							  }
+							  break;
+						  }
+					  }
+					break;
+				}
+			}
+		}
+			if (found)  {
+				for (j = 0; j < maxmonitorSet; j++) {
+					if ((strcmp(monitorSet[j].sapsystem, "ALL") == 0 ||
+						strcmp(monitorSet[j].sapsystem, sapLogon.sid) == 0) &&
+						(strcmp(monitorSet[j].sapnumber, "ALL") == 0 ||
+						!strcmp(monitorSet[j].sapnumber, sapLogon.nr))) {
+
+						setDPQueueCheckFlag( &sapLogon );
+
+						if (monitor_list) {
+							getAllMonitorsfromMonitorSet(newhost, &sapLogon, szMonitorSet);
+							break; /* only one instance per SAP system is necessary for reading data;
+									  doesn't work with more SIDs on one host !!!
+									  ONLY USE FOR XAL certification */
+						}
+						else if (monitor_set) {
+							getAllMonitorSets(newhost, &sapLogon);
+							break; /* only one instance per SAP system is necessary for reading data;
+									  doesn't work with more SIDs on one host !!!
+									  ONLY FOR USE OF THE SAP XAL certification */
+						}
+						else
+							getCCMSAlerts(newhost, &sapLogon, lastScanTime, &newScanTime, &monitorSet[j]);
+					}
+				}
+
+				/* ONLY FOR USE OF THE SAP XAL certification; not documented in the manual yet */
+				for (j = 0; j < PerfMaxmonitorSet; j++) {
+					if ((strcmp(PerfMonitorSet[j].sapsystem, "ALL") == 0 ||
+						strcmp(PerfMonitorSet[j].sapsystem, sapLogon.sid) == 0) &&
+						(strcmp(PerfMonitorSet[j].sapnumber, "ALL") == 0 ||
+						!strcmp(PerfMonitorSet[j].sapnumber, sapLogon.nr))) {
+
+						getCCMSPerformanceVal(newhost, &sapLogon, &PerfMonitorSet[j]);
+					}
+				}
+
+			} else {
+				if (trace.TraceFP){
+					fprintf(trace.TraceFP,"CONFIGURATION PROBLEM: did not find logon information for configured host!\n");
+					fflush(trace.TraceFP);
+				}
+			}
+		/**** fix for QXCM1000209956 / QXCR1000214383 ***/
+        if (UpdateScanTime == 1)
+			newMonalhis[currInst].lastScanTime = newScanTime;
+	}
+}
+
+/*---------------------------------------------------------------------------
+** FUNCTION setDPQueueCheckFlag
+** checks the dpqueuecheck array whether the dpqueuecheck should be performed
+** for this SAP instance
+**-------------------------------------------------------------------------*/
+void setDPQueueCheckFlag( LOGON* sapLogon )
+{
+	int i;
+	int assignedPrio = 9;
+	int rulePrio = 9;
+	sapLogon->enableDPQueueCheck = 0;
+	if (trace.TraceFP){
+		fprintf(trace.TraceFP,"checking if system %s,%s:%s has DPQueueCheck enabled...\n", sapLogon->host, sapLogon->sid, sapLogon->nr);
+		fflush(trace.TraceFP);
+	}
+	for( i = 0; i < maxdpqueuechecks; i++ )
+	{
+		if( stricmp( dpqueuecheck[i].host, "ALL" ) == 0 || ipcmp( sapLogon->host, dpqueuecheck[i].host ))
+		{
+			rulePrio = 9;
+			if( stricmp( dpqueuecheck[i].host, "ALL" ) == 0 ) /* no host specified */
+			{
+				if( stricmp( dpqueuecheck[i].sapsystem, "ALL" ) == 0 && stricmp( dpqueuecheck[i].sapnumber, "ALL" ) == 0 )
+				{
+					rulePrio = 8;
+				} else if ( stricmp( dpqueuecheck[i].sapsystem, "ALL" ) == 0 && stricmp( dpqueuecheck[i].sapnumber, sapLogon->nr ) == 0 )
+				{
+					rulePrio = 7;
+				} else if ( stricmp( dpqueuecheck[i].sapnumber, "ALL" ) == 0 && stricmp( dpqueuecheck[i].sapsystem, sapLogon->sid ) == 0 )
+				{
+					rulePrio = 6;
+				} else if ( stricmp( dpqueuecheck[i].sapnumber, sapLogon->nr ) == 0 && stricmp( dpqueuecheck[i].sapsystem, sapLogon->sid ) == 0 )
+				{
+					rulePrio = 5;
+				}
+			} else /*host specified*/
+			{
+				if( stricmp( dpqueuecheck[i].sapsystem, "ALL" ) == 0 && stricmp( dpqueuecheck[i].sapnumber, "ALL" ) == 0 )
+				{
+					rulePrio = 4;
+				} else if ( stricmp( dpqueuecheck[i].sapsystem, "ALL" ) == 0 && stricmp( dpqueuecheck[i].sapnumber, sapLogon->nr ) == 0 )
+				{
+					rulePrio = 3;
+				} else if ( stricmp( dpqueuecheck[i].sapnumber, "ALL" ) == 0 && stricmp( dpqueuecheck[i].sapsystem, sapLogon->sid ) == 0 )
+				{
+					rulePrio = 2;
+				} else if ( stricmp( dpqueuecheck[i].sapnumber, sapLogon->nr ) == 0 && stricmp( dpqueuecheck[i].sapsystem, sapLogon->sid ) == 0 )
+				{
+					rulePrio = 1;
+				}
+			}
+			if( rulePrio < assignedPrio )
+			{
+				assignedPrio = rulePrio;
+				sapLogon->enableDPQueueCheck = dpqueuecheck[i].enable;
+			}
+		}
+	}
+}
+
+/*---------------------------------------------------------------------------
+** FUNCTION void main
+**--------------------------------------------------------------------------*/
+int main (int argc, char *argv[ ])
+{
+	int   okflag;
+	char OpCMsg[256];
+	char szTemplateName[256];
+	int iterator;
+	int counter = 0;
+
+#ifdef WIN32
+
+	WSADATA WsaData;
+	int     err;
+
+	err = WSAStartup (0x0101, &WsaData);
+	if (err == SOCKET_ERROR)
+	{
+		fprintf (stdout, "WSAStartup() failed: %ld\n", GetLastError ());
+		return 1;
+	}
+#endif
+
+
+/**** fix for NSMbb71355 ***/
+#ifndef WIN32
+	setlocale(LC_ALL,"");
+#endif
+
+	setprogname(argv[0]);
+	parseCmdLineForNoOpcmsg (argc, argv);
+
+	/* Initialize Section */
+	initConfigData();
+
+
+	/*** fix for NSMbb52232 ****/
+	/*** if one or both config files are missing -> go home ***/
+	if (!initSapData()){
+		/** template name wurde geaendert ***
+		if (GetTemplateName(argc, argv, szTemplateName)){
+			lpoopcmon (szTemplateName, 0.0);
+		} else {
+			/** wenn nicht, dann standardweg **
+			lpoopcmon (getprogname(), 0.0);
+		}*/
+		return(0);
+	}
+
+
+	/* Read SAP config data */
+	okflag = readConfigData(cfgfileenv, CFG_DATA);
+
+	/* Read config and history data */
+	okflag = readConfigData(configfileenv, CFG_DATA);
+	if (okflag) parseConfigData();
+
+	if (okflag) {
+		initHistoryData();
+		okflag = readConfigData(historyenv, HIS_DATA);
+	}
+
+	/* Print config and history data */
+	printConfigData();
+
+	/*** fix for NSMbb40128 ****/
+	/*printToolData();*/
+	/*** end of fix for NSMbb40128 ****/
+
+	/** fix for NSM bb40130 **/
+   	/* Get the running instances from shared memory */
+
+
+    initHostName();
+
+	parseRemoteHosts();
+
+	/* Read sap logons - check contents of r3itosap vs. local hostname */
+    if (okflag) read_sap_logons(host, cfgfileenv);
+
+/* dpmon queue check added by eklotz */
+/* checking at this point in time makes not that much sense: peterk !!!!
+	for (iterator = 0; iterator < maxinstance; ++iterator)
+		if (instance[iterator].state == STAT_INST_UP &&
+			checkMonitoring(instance[iterator].sid, instance[iterator].nr, getHostname(), argv[0]) == 0)
+		{
+
+			strcpy (instance[counter].name, instance[iterator].name);
+			strcpy (instance[counter].nr, instance[iterator].nr);
+			strcpy (instance[counter].sid, instance[iterator].sid);
+			instance[counter].state = instance[iterator].state;
+
+			++counter;
+		}
+
+	maxinstance = counter;
+*/
+
+
+
+
+
+	/* Parse config, history and mon data */
+	parseAlertData();
+
+
+	/* not required for XAL interface */
+	/* Initialize the SAP messages */
+/*    sysmsg_init (sapmsgfileenv); */
+
+	/* Check history */
+    checkAlHistory();
+
+
+	BAPICheckSAP40Alerts();
+
+    /* Write historyfile */
+    saveHistoryFile(historyenv);
+
+	/** template name wurde geaendert ***
+	if (GetTemplateName(argc, argv, szTemplateName)){
+		lpoopcmon (szTemplateName, 0.0);
+	} else {
+		/** wenn nicht, dann standardweg **
+		lpoopcmon (getprogname(), 0.0);
+	}*/
+	/*lpoopcmon (getprogname(), 0.0);*/
+	return 0;
+
+}
