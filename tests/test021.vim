@@ -1,6 +1,6 @@
-" Test Also includes some badtab and badsts. 
+" Test Also includes some badtab and badsts.
 
-let g:indentconsistencycop_choices = ['highlight', 'not best guess']
+let g:IngoLibrary_ConfirmChoices = ['highlight', 'not best guess']
 
 edit test021.txt
 IndentConsistencyCop
