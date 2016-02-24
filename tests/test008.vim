@@ -1,6 +1,6 @@
-" Test Contains some badsts. 
+" Test Contains some badsts.
 
-let g:indentconsistencycop_choices = ['highlight', 'illegal indents only']
+let g:IngoLibrary_ConfirmChoices = ['highlight', 'illegal indents only']
 
 edit test008.txt
 IndentConsistencyCop
