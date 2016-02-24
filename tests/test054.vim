@@ -1,6 +1,6 @@
-" Test Contains one spc2 line, rest is spc4. 
+" Test Contains one spc2 line, rest is spc4.
 
-let g:indentconsistencycop_choices = ['highlight', 'not buffer settings']
+let g:IngoLibrary_ConfirmChoices = ['highlight', 'not buffer settings']
 
 edit test054.txt
 IndentConsistencyCop
