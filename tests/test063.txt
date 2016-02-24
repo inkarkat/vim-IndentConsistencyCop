@@ -1,0 +1,20435 @@
+// vim: set ft=cpp ts=8 sts=4 sw=4 expandtab:
+// Long file with 20434 lines. 
+// Inconsistent: spc4 with one badmix. 
+// BUG: The normalized rating for 'spc4' is only 5!
+X
+X
+X
+X
+X
+X
+X
+    X
+X
+    X
+X
+        X
+        X
+        X
+X
+        X
+        X
+        X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+    X
+        X
+    X
+X
+    X
+X
+    X
+    X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+X
+    X
+        X
+X
+        X
+        X
+    X
+        X
+        X
+            X
+        X
+X
+        X
+        X
+        X
+X
+        X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+        X
+        X
+        X
+        X
+    X
+        X
+        X
+        X
+        X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+    X
+        X
+            X
+        X
+        X
+    X
+X
+    X
+    X
+    X
+X
+    X
+    X
+    X
+X
+    X
+    X
+    X
+X
+    X
+    X
+        X
+        X
+        X
+    X
+X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+X
+    X
+    X
+X
+    X
+    X
+X
+    X
+    X
+    X
+X
+    X
+    X
+    X
+        X
+        X
+    X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+    X
+    X
+    X
+X
+    X
+    X
+    X
+    X
+    X
+        X
+        X
+X
+X
+X
+X
+X
+X
+X
+    X
+X
+    X
+X
+        X
+        X
+        X
+X
+        X
+        X
+        X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+    X
+        X
+    X
+X
+    X
+X
+    X
+    X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+X
+    X
+        X
+X
+        X
+        X
+    X
+        X
+        X
+            X
+        X
+X
+        X
+        X
+        X
+X
+        X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+        X
+        X
+        X
+        X
+    X
+        X
+        X
+        X
+        X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+    X
+        X
+            X
+        X
+        X
+    X
+X
+    X
+    X
+    X
+X
+    X
+    X
+    X
+X
+    X
+    X
+    X
+X
+    X
+    X
+        X
+        X
+        X
+    X
+X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+X
+    X
+    X
+X
+    X
+    X
+X
+    X
+    X
+    X
+X
+    X
+    X
+    X
+        X
+        X
+    X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+    X
+    X
+    X
+X
+    X
+    X
+    X
+    X
+    X
+        X
+        X
+X
+X
+X
+X
+X
+X
+X
+    X
+X
+    X
+X
+        X
+        X
+        X
+X
+        X
+        X
+        X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+    X
+        X
+    X
+X
+    X
+X
+    X
+    X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+X
+    X
+        X
+X
+        X
+        X
+    X
+        X
+        X
+            X
+        X
+X
+        X
+        X
+        X
+X
+        X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+        X
+        X
+        X
+        X
+    X
+        X
+        X
+        X
+        X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+    X
+        X
+            X
+        X
+        X
+    X
+X
+    X
+    X
+    X
+X
+    X
+    X
+    X
+X
+    X
+    X
+    X
+X
+    X
+    X
+        X
+        X
+        X
+    X
+X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+X
+    X
+    X
+X
+    X
+    X
+X
+    X
+    X
+    X
+X
+    X
+    X
+    X
+        X
+        X
+    X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+    X
+    X
+    X
+X
+    X
+    X
+    X
+    X
+    X
+        X
+        X
+X
+X
+X
+X
+X
+X
+X
+    X
+X
+    X
+X
+        X
+        X
+        X
+X
+        X
+        X
+        X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+    X
+        X
+    X
+X
+    X
+X
+    X
+    X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+X
+    X
+        X
+X
+        X
+        X
+    X
+        X
+        X
+            X
+        X
+X
+        X
+        X
+        X
+X
+        X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+        X
+        X
+        X
+        X
+    X
+        X
+        X
+        X
+        X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+    X
+        X
+            X
+        X
+        X
+    X
+X
+    X
+    X
+    X
+X
+    X
+    X
+    X
+X
+    X
+    X
+    X
+X
+    X
+    X
+        X
+        X
+        X
+    X
+X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+X
+    X
+    X
+X
+    X
+    X
+X
+    X
+    X
+    X
+X
+    X
+    X
+    X
+        X
+        X
+    X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+    X
+    X
+    X
+X
+    X
+    X
+    X
+    X
+    X
+        X
+        X
+X
+X
+X
+X
+X
+X
+X
+    X
+X
+    X
+X
+        X
+        X
+        X
+X
+        X
+        X
+        X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+    X
+        X
+    X
+X
+    X
+X
+    X
+    X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+X
+    X
+        X
+X
+        X
+        X
+    X
+        X
+        X
+            X
+        X
+X
+        X
+        X
+        X
+X
+        X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+        X
+        X
+        X
+        X
+    X
+        X
+        X
+        X
+        X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+    X
+        X
+            X
+        X
+        X
+    X
+X
+    X
+    X
+    X
+X
+    X
+    X
+    X
+X
+    X
+    X
+    X
+X
+    X
+    X
+        X
+        X
+        X
+    X
+X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+X
+    X
+    X
+X
+    X
+    X
+X
+    X
+    X
+    X
+X
+    X
+    X
+    X
+        X
+        X
+    X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+    X
+    X
+    X
+X
+    X
+    X
+    X
+    X
+    X
+        X
+        X
+X
+X
+X
+X
+X
+X
+X
+    X
+X
+    X
+X
+        X
+        X
+        X
+X
+        X
+        X
+        X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+    X
+        X
+    X
+X
+    X
+X
+    X
+    X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+X
+    X
+        X
+X
+        X
+        X
+    X
+        X
+        X
+            X
+        X
+X
+        X
+        X
+        X
+X
+        X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+        X
+        X
+        X
+        X
+    X
+        X
+        X
+        X
+        X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+    X
+        X
+            X
+        X
+        X
+    X
+X
+    X
+    X
+    X
+X
+    X
+    X
+    X
+X
+    X
+    X
+    X
+X
+    X
+    X
+        X
+        X
+        X
+    X
+X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+X
+    X
+    X
+X
+    X
+    X
+X
+    X
+    X
+    X
+X
+    X
+    X
+    X
+        X
+        X
+    X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+    X
+    X
+    X
+X
+    X
+    X
+    X
+    X
+    X
+        X
+        X
+X
+X
+X
+X
+X
+X
+X
+    X
+X
+    X
+X
+        X
+        X
+        X
+X
+        X
+        X
+        X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+    X
+        X
+    X
+X
+    X
+X
+    X
+    X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+X
+    X
+        X
+X
+        X
+        X
+    X
+        X
+        X
+            X
+        X
+X
+        X
+        X
+        X
+X
+        X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+        X
+        X
+        X
+        X
+    X
+        X
+        X
+        X
+        X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+    X
+        X
+            X
+        X
+        X
+    X
+X
+    X
+    X
+    X
+X
+    X
+    X
+    X
+X
+    X
+    X
+    X
+X
+    X
+    X
+        X
+        X
+        X
+    X
+X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+X
+    X
+    X
+X
+    X
+    X
+X
+    X
+    X
+    X
+X
+    X
+    X
+    X
+        X
+        X
+    X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+    X
+    X
+    X
+X
+    X
+    X
+    X
+    X
+    X
+        X
+        X
+X
+X
+X
+X
+X
+X
+X
+    X
+X
+    X
+X
+        X
+        X
+        X
+X
+        X
+        X
+        X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+    X
+        X
+    X
+X
+    X
+X
+    X
+    X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+X
+    X
+        X
+X
+        X
+        X
+    X
+        X
+        X
+            X
+        X
+X
+        X
+        X
+        X
+X
+        X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+        X
+        X
+        X
+        X
+    X
+        X
+        X
+        X
+        X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+    X
+        X
+            X
+        X
+        X
+    X
+X
+    X
+    X
+    X
+X
+    X
+    X
+    X
+X
+    X
+    X
+    X
+X
+    X
+    X
+        X
+        X
+        X
+    X
+X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+X
+    X
+    X
+X
+    X
+    X
+X
+    X
+    X
+    X
+X
+    X
+    X
+    X
+        X
+        X
+    X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+    X
+    X
+    X
+X
+    X
+    X
+    X
+    X
+    X
+        X
+        X
+X
+X
+X
+X
+X
+X
+X
+    X
+X
+    X
+X
+        X
+        X
+        X
+X
+        X
+        X
+        X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+    X
+        X
+    X
+X
+    X
+X
+    X
+    X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+X
+    X
+        X
+X
+        X
+        X
+    X
+        X
+        X
+            X
+        X
+X
+        X
+        X
+        X
+X
+        X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+        X
+        X
+        X
+        X
+    X
+        X
+        X
+        X
+        X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+    X
+        X
+            X
+        X
+        X
+    X
+X
+    X
+    X
+    X
+X
+    X
+    X
+    X
+X
+    X
+    X
+    X
+X
+    X
+    X
+        X
+        X
+        X
+    X
+X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+X
+    X
+    X
+X
+    X
+    X
+X
+    X
+    X
+    X
+X
+    X
+    X
+    X
+        X
+        X
+    X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+    X
+    X
+    X
+X
+    X
+    X
+    X
+    X
+    X
+        X
+        X
+X
+X
+X
+X
+X
+X
+X
+    X
+X
+    X
+X
+        X
+        X
+        X
+X
+        X
+        X
+        X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+    X
+        X
+    X
+X
+    X
+X
+    X
+    X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+X
+    X
+        X
+X
+        X
+        X
+    X
+        X
+        X
+            X
+        X
+X
+        X
+        X
+        X
+X
+        X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+        X
+        X
+        X
+        X
+    X
+        X
+        X
+        X
+        X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+    X
+        X
+            X
+        X
+        X
+    X
+X
+    X
+    X
+    X
+X
+    X
+    X
+    X
+X
+    X
+    X
+    X
+X
+    X
+    X
+        X
+        X
+        X
+    X
+X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+X
+    X
+    X
+X
+    X
+    X
+X
+    X
+    X
+    X
+X
+    X
+    X
+    X
+        X
+        X
+    X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+    X
+    X
+    X
+X
+    X
+    X
+    X
+    X
+    X
+        X
+        X
+X
+X
+X
+X
+X
+X
+X
+    X
+X
+    X
+X
+        X
+        X
+        X
+X
+        X
+        X
+        X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+    X
+        X
+    X
+X
+    X
+X
+    X
+    X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+X
+    X
+        X
+X
+        X
+        X
+    X
+        X
+        X
+            X
+        X
+X
+        X
+        X
+        X
+X
+        X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+        X
+        X
+        X
+        X
+    X
+        X
+        X
+        X
+        X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+    X
+        X
+            X
+        X
+        X
+    X
+X
+    X
+    X
+    X
+X
+    X
+    X
+    X
+X
+    X
+    X
+    X
+X
+    X
+    X
+        X
+        X
+        X
+    X
+X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+X
+    X
+    X
+X
+    X
+    X
+X
+    X
+    X
+    X
+X
+    X
+    X
+    X
+        X
+        X
+    X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+    X
+    X
+    X
+X
+    X
+    X
+    X
+    X
+    X
+        X
+        X
+X
+X
+X
+X
+X
+X
+X
+    X
+X
+    X
+X
+        X
+        X
+        X
+X
+        X
+        X
+        X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+    X
+        X
+    X
+X
+    X
+X
+    X
+    X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+X
+    X
+        X
+X
+        X
+        X
+    X
+        X
+        X
+            X
+        X
+X
+        X
+        X
+        X
+X
+        X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+        X
+        X
+        X
+        X
+    X
+        X
+        X
+        X
+        X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+    X
+        X
+            X
+        X
+        X
+    X
+X
+    X
+    X
+    X
+X
+    X
+    X
+    X
+X
+    X
+    X
+    X
+X
+    X
+    X
+        X
+        X
+        X
+    X
+X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+X
+    X
+    X
+X
+    X
+    X
+X
+    X
+    X
+    X
+X
+    X
+    X
+    X
+        X
+        X
+    X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+    X
+    X
+    X
+X
+    X
+    X
+    X
+    X
+    X
+        X
+        X
+X
+X
+X
+X
+X
+X
+X
+    X
+X
+    X
+X
+        X
+        X
+        X
+X
+        X
+        X
+        X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+    X
+        X
+    X
+X
+    X
+X
+    X
+    X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+X
+    X
+        X
+X
+        X
+        X
+    X
+        X
+        X
+            X
+        X
+X
+        X
+        X
+        X
+X
+        X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+        X
+        X
+        X
+        X
+    X
+        X
+        X
+        X
+        X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+    X
+        X
+            X
+        X
+        X
+    X
+X
+    X
+    X
+    X
+X
+    X
+    X
+    X
+X
+    X
+    X
+    X
+X
+    X
+    X
+        X
+        X
+        X
+    X
+X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+X
+    X
+    X
+X
+    X
+    X
+X
+    X
+    X
+    X
+X
+    X
+    X
+    X
+        X
+        X
+    X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+    X
+    X
+    X
+X
+    X
+    X
+    X
+    X
+    X
+        X
+        X
+X
+X
+X
+X
+X
+X
+X
+    X
+X
+    X
+X
+        X
+        X
+        X
+X
+        X
+        X
+        X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+    X
+        X
+    X
+X
+    X
+X
+    X
+    X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+X
+    X
+        X
+X
+        X
+        X
+    X
+        X
+        X
+            X
+        X
+X
+        X
+        X
+        X
+X
+        X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+        X
+        X
+        X
+        X
+    X
+        X
+        X
+        X
+        X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+    X
+        X
+            X
+        X
+        X
+    X
+X
+    X
+    X
+    X
+X
+    X
+    X
+    X
+X
+    X
+    X
+    X
+X
+    X
+    X
+        X
+        X
+        X
+    X
+X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+X
+    X
+    X
+X
+    X
+    X
+X
+    X
+    X
+    X
+X
+    X
+    X
+    X
+        X
+        X
+    X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+    X
+    X
+    X
+X
+    X
+    X
+    X
+    X
+    X
+        X
+        X
+X
+X
+X
+X
+X
+X
+X
+    X
+X
+    X
+X
+        X
+        X
+        X
+X
+        X
+        X
+        X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+    X
+        X
+    X
+X
+    X
+X
+    X
+    X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+X
+    X
+        X
+X
+        X
+        X
+    X
+        X
+        X
+            X
+        X
+X
+        X
+        X
+        X
+X
+        X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+        X
+        X
+        X
+        X
+    X
+        X
+        X
+        X
+        X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+    X
+        X
+            X
+        X
+        X
+    X
+X
+    X
+    X
+    X
+X
+    X
+    X
+    X
+X
+    X
+    X
+    X
+X
+    X
+    X
+        X
+        X
+        X
+    X
+X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+X
+    X
+    X
+X
+    X
+    X
+X
+    X
+    X
+    X
+X
+    X
+    X
+    X
+        X
+        X
+    X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+    X
+    X
+    X
+X
+    X
+    X
+    X
+    X
+    X
+        X
+        X
+X
+X
+X
+X
+X
+X
+X
+    X
+X
+    X
+X
+        X
+        X
+        X
+X
+        X
+        X
+        X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+    X
+        X
+    X
+X
+    X
+X
+    X
+    X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+X
+    X
+        X
+X
+        X
+        X
+    X
+        X
+        X
+            X
+        X
+X
+        X
+        X
+        X
+X
+        X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+        X
+        X
+        X
+        X
+    X
+        X
+        X
+        X
+        X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+    X
+        X
+            X
+        X
+        X
+    X
+X
+    X
+    X
+    X
+X
+    X
+    X
+    X
+X
+    X
+    X
+    X
+X
+    X
+    X
+        X
+        X
+        X
+    X
+X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+X
+    X
+    X
+X
+    X
+    X
+X
+    X
+    X
+    X
+X
+    X
+    X
+    X
+        X
+        X
+    X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+    X
+    X
+    X
+X
+    X
+    X
+    X
+    X
+    X
+        X
+        X
+X
+X
+X
+X
+X
+X
+X
+    X
+X
+    X
+X
+        X
+        X
+        X
+X
+        X
+        X
+        X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+    X
+        X
+    X
+X
+    X
+X
+    X
+    X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+X
+    X
+        X
+X
+        X
+        X
+    X
+        X
+        X
+            X
+        X
+X
+        X
+        X
+        X
+X
+        X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+        X
+        X
+        X
+        X
+    X
+        X
+        X
+        X
+        X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+    X
+        X
+            X
+        X
+        X
+    X
+X
+    X
+    X
+    X
+X
+    X
+    X
+    X
+X
+    X
+    X
+    X
+X
+    X
+    X
+        X
+        X
+        X
+    X
+X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+X
+    X
+    X
+X
+    X
+    X
+X
+    X
+    X
+    X
+X
+    X
+    X
+    X
+        X
+        X
+    X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+    X
+    X
+    X
+X
+    X
+    X
+    X
+    X
+    X
+        X
+        X
+X
+X
+X
+X
+X
+X
+X
+    X
+X
+    X
+X
+        X
+        X
+        X
+X
+        X
+        X
+        X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+    X
+        X
+    X
+X
+    X
+X
+    X
+    X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+X
+    X
+        X
+X
+        X
+        X
+    X
+        X
+        X
+            X
+        X
+X
+        X
+        X
+        X
+X
+        X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+        X
+        X
+        X
+        X
+    X
+        X
+        X
+        X
+        X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+    X
+        X
+            X
+        X
+        X
+    X
+X
+    X
+    X
+    X
+X
+    X
+    X
+    X
+X
+    X
+    X
+    X
+X
+    X
+    X
+        X
+        X
+        X
+    X
+X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+X
+    X
+    X
+X
+    X
+    X
+X
+    X
+    X
+    X
+X
+    X
+    X
+    X
+        X
+        X
+    X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+    X
+    X
+    X
+X
+    X
+    X
+    X
+    X
+    X
+        X
+        X
+X
+X
+X
+X
+X
+X
+X
+    X
+X
+    X
+X
+        X
+        X
+        X
+X
+        X
+        X
+        X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+    X
+        X
+    X
+X
+    X
+X
+    X
+    X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+X
+    X
+        X
+X
+        X
+        X
+    X
+        X
+        X
+            X
+        X
+X
+        X
+        X
+        X
+X
+        X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+        X
+        X
+        X
+        X
+    X
+        X
+        X
+        X
+        X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+    X
+        X
+            X
+        X
+        X
+    X
+X
+    X
+    X
+    X
+X
+    X
+    X
+    X
+X
+    X
+    X
+    X
+X
+    X
+    X
+        X
+        X
+        X
+    X
+X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+X
+    X
+    X
+X
+    X
+    X
+X
+    X
+    X
+    X
+X
+    X
+    X
+    X
+        X
+        X
+    X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+    X
+    X
+    X
+X
+    X
+    X
+    X
+    X
+    X
+        X
+        X
+X
+X
+X
+X
+X
+X
+X
+    X
+X
+    X
+X
+        X
+        X
+        X
+X
+        X
+        X
+        X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+    X
+        X
+    X
+X
+    X
+X
+    X
+    X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+X
+    X
+        X
+X
+        X
+        X
+    X
+        X
+        X
+            X
+        X
+X
+        X
+        X
+        X
+X
+        X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+        X
+        X
+        X
+        X
+    X
+        X
+        X
+        X
+        X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+    X
+        X
+            X
+        X
+        X
+    X
+X
+    X
+    X
+    X
+X
+    X
+    X
+    X
+X
+    X
+    X
+    X
+X
+    X
+    X
+        X
+        X
+        X
+    X
+X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+X
+    X
+    X
+X
+    X
+    X
+X
+    X
+    X
+    X
+X
+    X
+    X
+    X
+        X
+        X
+    X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+    X
+    X
+    X
+X
+    X
+    X
+    X
+    X
+    X
+        X
+        X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+X
+X
+X
+X
+X
+X
+X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+        X
+        X
+    X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+X
+    X
+X
+        X
+        X
+        X
+X
+        X
+        X
+        X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+    X
+        X
+    X
+X
+    X
+X
+    X
+    X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+        X
+X
+    X
+        X
+X
+        X
+        X
+    X
+        X
+        X
+            X
+        X
+X
+        X
+        X
+        X
+X
+        X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+        X
+        X
+        X
+        X
+    X
+        X
+        X
+        X
+        X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+    X
+        X
+            X
+        X
+        X
+    X
+X
+    X
+    X
+    X
+X
+    X
+    X
+    X
+X
+    X
+    X
+    X
+X
+    X
+    X
+        X
+        X
+        X
+    X
+X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+X
+    X
+    X
+X
+    X
+    X
+X
+    X
+    X
+    X
+X
+    X
+    X
+    X
+        X
+        X
+    X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+    X
+    X
+    X
+X
+    X
+    X
+    X
+    X
+    X
+        X
+        X
+        X
+        X
+  	     X
+        X
+            X
+        X
+X
+        X
+        X
+        X
+        X
+    X
+X
+    X
+    X
+    X
+        X
+        X
+        X
+    X
+    X
+        X
+        X
+        X
+    X
+X
+    X
+    X
+    X
+    X
+X
+    X
+    X
+        X
+        X
+        X
+    X
+        X
+        X
+    X
+X
+X
+    X
+    X
+    X
+X
+    X
+    X
+X
+    X
+    X
+X
+    X
+    X
+    X
+    X
+X
+        X
+        X
+X
+            X
+            X
+            X
+            X
+                X
+            X
+X
+            X
+            X
+            X
+X
+                X
+                X
+                X
+                X
+                X
+                X
+                X
+X
+                X
+                X
+                X
+                X
+                X
+                    X
+                X
+                X
+                X
+                    X
+                X
+X
+                X
+                X
+                    X
+                X
+                X
+                X
+                    X
+                X
+X
+                X
+                X
+                    X
+                X
+                X
+                X
+                    X
+                X
+X
+                X
+                X
+                    X
+                X
+                X
+                X
+                    X
+                X
+X
+                X
+                    X
+                    X
+                    X
+                    X
+X
+                    X
+                    X
+                        X
+                    X
+                    X
+                    X
+                        X
+                    X
+X
+                    X
+                    X
+                        X
+                    X
+                    X
+                    X
+                        X
+                    X
+                X
+X
+                X
+                X
+                X
+                X
+                X
+                X
+X
+                    X
+                    X
+X
+                    X
+                    X
+X
+                    X
+                    X
+                    X
+                    X
+                        X
+X
+                        X
+                        X
+X
+                        X
+                        X
+                        X
+                        X
+X
+                        X
+                        X
+                        X
+                        X
+                        X
+                            X
+                            X
+X
+                            X
+                            X
+                            X
+X
+                            X
+                            X
+                        X
+X
+                    X
+X
+X
+                X
+            X
+X
+            X
+            X
+                X
+            X
+X
+            X
+        X
+X
+X
+        X
+        X
+    X
+X
+    X
+    X
+        X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+    X
+    X
+    X
+X
+    X
+    X
+    X
+X
+    X
+    X
+    X
+X
+        X
+        X
+        X
+        X
+        X
+            X
+            X
+            X
+                X
+            X
+X
+            X
+            X
+            X
+X
+            X
+            X
+                X
+                    X
+                X
+                    X
+                X
+                X
+                    X
+                X
+                    X
+                X
+            X
+        X
+X
+        X
+        X
+            X
+        X
+X
+        X
+        X
+        X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+        X
+    X
+X
+    X
+    X
+    X
+        X
+    X
+X
+    X
+    X
+    X
+X
+    X
+    X
+    X
+    X
+        X
+        X
+        X
+        X
+    X
+X
+    X
+    X
+    X
+    X
+    X
+    X
+        X
+    X
+    X
+X
+    X
+    X
+    X
+    X
+    X
+    X
+        X
+    X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+X
+    X
+    X
+        X
+    X
+X
+    X
+    X
+        X
+    X
+X
+X
+    X
+    X
+X
+X
+    X
+    X
+X
+    X
+    X
+    X
+    X
+        X
+X
+        X
+        X
+        X
+        X
+            X
+        X
+        X
+        X
+        X
+            X
+        X
+        X
+X
+        X
+        X
+        X
+        X
+            X
+        X
+        X
+        X
+        X
+            X
+        X
+        X
+    X
+X
+        X
+        X
+        X
+        X
+X
+        X
+        X
+        X
+        X
+        X
+X
+    X
+X
+    X
+    X
+    X
+    X
+        X
+        X
+        X
+        X
+            X
+        X
+X
+        X
+X
+        X
+        X
+X
+        X
+            X
+        X
+X
+X
+        X
+        X
+        X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+    X
+X
+        X
+        X
+        X
+        X
+        X
+X
+            X
+            X
+            X
+                X
+            X
+X
+            X
+            X
+        X
+X
+        X
+        X
+            X
+        X
+X
+        X
+        X
+        X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+    X
+X
+    X
+    X
+        X
+        X
+        X
+    X
+        X
+        X
+    X
+X
+    X
+    X
+        X
+X
+    X
+    X
+        X
+        X
+        X
+        X
+        X
+        X
+            X
+        X
+X
+        X
+        X
+        X
+        X
+X
+    X
+X
+    X
+    X
+X
+    X
+    X
+        X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+    X
+        X
+X
+        X
+X
+        X
+        X
+            X
+            X
+X
+        X
+        X
+            X
+            X
+            X
+            X
+X
+            X
+            X
+            X
+X
+        X
+        X
+            X
+            X
+        X
+X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+    X
+X
+    X
+        X
+        X
+        X
+        X
+    X
+        X
+        X
+    X
+X
+    X
+X
+    X
+X
+    X
+        X
+            X
+        X
+            X
+        X
+            X
+        X
+X
+    X
+        X
+        X
+        X
+X
+    X
+        X
+X
+    X
+        X
+            X
+        X
+            X
+        X
+            X
+        X
+X
+    X
+        X
+X
+        X
+            X
+        X
+            X
+        X
+X
+    X
+        X
+            X
+        X
+            X
+        X
+            X
+        X
+X
+    X
+        X
+        X
+        X
+X
+    X
+        X
+X
+    X
+        X
+X
+    X
+        X
+X
+    X
+        X
+X
+    X
+        X
+            X
+        X
+            X
+        X
+            X
+        X
+        X
+    X
+X
+    X
+X
+X
+X
+X
+X
+X
+    X
+    X
+    X
+X
+    X
+    X
+X
+    X
+    X
+    X
+    X
+    X
+X
+    X
+    X
+X
+    X
+X
+    X
+    X
+    X
+X
+    X
+    X
+    X
+        X
+        X
+    X
+        X
+X
+        X
+        X
+        X
+        X
+            X
+        X
+    X
+    X
+X
+    X
+    X
+    X
+        X
+        X
+        X
+    X
+X
+    X
+X
+X
+X
+X
+X
+X
+    X
+    X
+    X
+X
+    X
+    X
+X
+X
+    X
+    X
+X
+    X
+    X
+    X
+        X
+    X
+        X
+    X
+X
+    X
+    X
+    X
+        X
+        X
+    X
+    X
+X
+    X
+    X
+    X
+    X
+        X
+    X
+X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+    X
+    X
+X
+    X
+X
+    X
+X
+    X
+    X
+    X
+        X
+X
+        X
+        X
+        X
+            X
+        X
+    X
+X
+    X
+    X
+    X
+        X
+X
+        X
+        X
+        X
+            X
+        X
+    X
+X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+    X
+    X
+    X
+        X
+        X
+    X
+X
+    X
+    X
+    X
+X
+        X
+        X
+        X
+X
+            X
+            X
+            X
+            X
+X
+            X
+            X
+            X
+            X
+            X
+X
+            X
+            X
+            X
+            X
+            X
+X
+        X
+        X
+            X
+            X
+                X
+            X
+                X
+            X
+            X
+        X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+X
+X
+    X
+    X
+    X
+        X
+    X
+X
+    X
+    X
+X
+    X
+    X
+X
+    X
+    X
+    X
+X
+    X
+    X
+    X
+    X
+    X
+        X
+X
+        X
+        X
+        X
+        X
+            X
+        X
+            X
+        X
+X
+        X
+X
+        X
+X
+        X
+        X
+        X
+    X
+X
+    X
+    X
+    X
+X
+    X
+    X
+X
+    X
+    X
+        X
+        X
+        X
+X
+    X
+    X
+X
+        X
+        X
+        X
+        X
+            X
+        X
+            X
+        X
+        X
+        X
+    X
+X
+    X
+    X
+X
+    X
+    X
+        X
+        X
+X
+    X
+    X
+        X
+        X
+        X
+        X
+            X
+        X
+            X
+        X
+X
+        X
+        X
+        X
+X
+            X
+            X
+            X
+            X
+                X
+            X
+                X
+            X
+        X
+X
+        X
+        X
+    X
+X
+X
+X
+X
+X
+X
+X
+    X
+X
+    X
+    X
+X
+    X
+    X
+        X
+X
+    X
+    X
+        X
+X
+    X
+    X
+    X
+        X
+        X
+        X
+        X
+        X
+X
+        X
+        X
+            X
+        X
+            X
+        X
+X
+        X
+        X
+            X
+        X
+            X
+        X
+    X
+X
+X
+    X
+    X
+    X
+X
+    X
+    X
+    X
+X
+    X
+    X
+    X
+        X
+        X
+    X
+X
+X
+    X
+    X
+    X
+    X
+        X
+            X
+        X
+    X
+        X
+            X
+        X
+X
+    X
+X
+    X
+X
+    X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+        X
+        X
+        X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+X
+X
+X
+X
+X
+X
+    X
+    X
+    X
+    X
+        X
+    X
+X
+    X
+X
+X
+X
+X
+X
+    X
+        X
+    X
+        X
+    X
+X
+X
+X
+X
+X
+    X
+        X
+    X
+X
+        X
+        X
+        X
+        X
+        X
+X
+        X
+        X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+        X
+    X
+X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+        X
+    X
+X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+        X
+    X
+X
+    X
+        X
+    X
+X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+X
+    X
+    X
+        X
+        X
+        X
+X
+        X
+        X
+        X
+            X
+        X
+            X
+        X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+        X
+        X
+            X
+        X
+        X
+    X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+        X
+            X
+        X
+            X
+        X
+    X
+    X
+X
+X
+X
+X
+X
+X
+    X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+        X
+    X
+X
+X
+    X
+    X
+X
+    X
+    X
+X
+    X
+    X
+    X
+X
+        X
+        X
+        X
+        X
+            X
+                X
+            X
+        X
+X
+        X
+        X
+        X
+        X
+X
+        X
+        X
+        X
+        X
+            X
+        X
+            X
+        X
+    X
+X
+    X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+    X
+    X
+        X
+        X
+    X
+        X
+        X
+    X
+        X
+    X
+X
+    X
+X
+    X
+    X
+    X
+X
+    X
+    X
+        X
+X
+        X
+        X
+            X
+            X
+X
+        X
+        X
+            X
+X
+        X
+        X
+            X
+X
+        X
+        X
+        X
+X
+            X
+            X
+            X
+                X
+            X
+X
+        X
+X
+        X
+        X
+            X
+        X
+        X
+            X
+        X
+X
+    X
+X
+    X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+X
+    X
+    X
+        X
+    X
+X
+    X
+    X
+        X
+    X
+X
+    X
+X
+    X
+    X
+        X
+    X
+X
+    X
+    X
+        X
+    X
+X
+    X
+X
+X
+X
+X
+X
+    X
+    X
+    X
+        X
+            X
+        X
+        X
+    X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+        X
+    X
+X
+    X
+    X
+        X
+    X
+X
+    X
+    X
+        X
+    X
+X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+        X
+    X
+X
+    X
+X
+    X
+    X
+    X
+    X
+    X
+X
+    X
+    X
+X
+        X
+        X
+        X
+X
+        X
+        X
+        X
+            X
+        X
+X
+        X
+        X
+X
+    X
+X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+X
+    X
+    X
+    X
+    X
+        X
+    X
+X
+    X
+    X
+X
+        X
+        X
+        X
+X
+        X
+        X
+        X
+        X
+            X
+        X
+            X
+        X
+    X
+X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+X
+    X
+    X
+    X
+X
+        X
+        X
+        X
+        X
+            X
+                X
+                X
+                X
+                X
+                X
+                    X
+                X
+            X
+        X
+X
+        X
+        X
+    X
+X
+    X
+        X
+    X
+        X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+X
+    X
+        X
+            X
+        X
+            X
+        X
+    X
+    X
+        X
+    X
+X
+    X
+        X
+    X
+X
+    X
+        X
+    X
+X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+X
+    X
+        X
+            X
+        X
+            X
+        X
+    X
+    X
+        X
+    X
+X
+    X
+        X
+    X
+X
+    X
+        X
+    X
+X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+X
+    X
+    X
+    X
+X
+        X
+        X
+        X
+        X
+X
+            X
+X
+                X
+                X
+                X
+                X
+                    X
+                X
+            X
+        X
+X
+        X
+        X
+    X
+X
+    X
+X
+X
+X
+X
+X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+X
+    X
+    X
+X
+        X
+        X
+        X
+            X
+        X
+            X
+            X
+            X
+            X
+            X
+            X
+            X
+                X
+            X
+                X
+            X
+                X
+            X
+X
+            X
+            X
+        X
+    X
+X
+    X
+        X
+    X
+X
+    X
+        X
+    X
+X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+    X
+X
+    X
+    X
+        X
+    X
+        X
+        X
+            X
+        X
+            X
+        X
+            X
+        X
+    X
+X
+    X
+        X
+    X
+X
+    X
+        X
+    X
+X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+    X
+X
+    X
+    X
+        X
+    X
+        X
+        X
+            X
+        X
+            X
+        X
+            X
+        X
+    X
+X
+    X
+        X
+    X
+X
+    X
+        X
+    X
+X
+    X
+X
+X
+X
+X
+X
+    X
+    X
+    X
+        X
+        X
+    X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+    X
+X
+X
+X
+X
+    X
+X
+X
+X
+X
+X
+    X
+X
+X
+X
+X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+        X
+        X
+        X
+    X
+        X
+        X
+        X
+    X
+        X
+        X
+        X
+        X
+    X
+X
+    X
+    X
+X
+    X
+    X
+    X
+    X
+        X
+        X
+        X
+        X
+            X
+            X
+            X
+                X
+                X
+                    X
+                    X
+                    X
+                    X
+                X
+            X
+        X
+    X
+X
+    X
+    X
+        X
+    X
+X
+    X
+    X
+    X
+    X
+    X
+X
+    X
+    X
+        X
+    X
+X
+    X
+    X
+        X
+    X
+        X
+    X
+X
+    X
+    X
+    X
+    X
+X
+    X
+    X
+    X
+X
+    X
+    X
+X
+    X
+    X
+    X
+X
+    X
+    X
+    X
+    X
+X
+    X
+    X
+X
+    X
+    X
+    X
+    X
+X
+    X
+    X
+    X
+X
+    X
+    X
+    X
+    X
+X
+    X
+    X
+X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+X
+    X
+    X
+        X
+    X
+X
+    X
+    X
+        X
+    X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+        X
+    X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+    X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+    X
+    X
+    X
+    X
+X
+    X
+    X
+        X
+        X
+            X
+        X
+X
+        X
+    X
+        X
+        X
+            X
+        X
+    X
+        X
+    X
+X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+X
+    X
+    X
+    X
+X
+    X
+    X
+    X
+    X
+        X
+    X
+    X
+        X
+    X
+    X
+        X
+    X
+X
+X
+    X
+    X
+        X
+    X
+X
+    X
+    X
+    X
+    X
+        X
+            X
+        X
+X
+        X
+        X
+        X
+            X
+        X
+X
+        X
+        X
+X
+        X
+        X
+            X
+        X
+X
+        X
+        X
+        X
+            X
+        X
+    X
+X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+    X
+X
+    X
+    X
+    X
+X
+        X
+        X
+        X
+        X
+X
+    X
+X
+    X
+    X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+    X
+    X
+        X
+        X
+    X
+        X
+        X
+    X
+        X
+    X
+X
+    X
+    X
+    X
+    X
+        X
+        X
+    X
+X
+    X
+    X
+        X
+    X
+X
+    X
+    X
+        X
+    X
+X
+    X
+    X
+        X
+    X
+X
+    X
+    X
+        X
+    X
+X
+    X
+    X
+    X
+        X
+    X
+X
+    X
+X
+    X
+    X
+    X
+    X
+        X
+X
+        X
+            X
+        X
+X
+        X
+        X
+        X
+            X
+        X
+X
+        X
+    X
+X
+    X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+        X
+        X
+        X
+    X
+        X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+    X
+    X
+X
+    X
+    X
+    X
+        X
+        X
+    X
+X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+    X
+X
+    X
+    X
+X
+    X
+    X
+    X
+        X
+    X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+        X
+    X
+X
+    X
+    X
+    X
+X
+X
+X
+X
+X
+X
+    X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+    X
+    X
+X
+    X
+X
+    X
+    X
+    X
+        X
+X
+    X
+    X
+    X
+        X
+    X
+X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+    X
+        X
+        X
+    X
+        X
+        X
+    X
+X
+    X
+    X
+X
+X
+X
+X
+X
+X
+X
+    X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+    X
+    X
+        X
+    X
+        X
+    X
+        X
+    X
+X
+    X
+    X
+X
+    X
+    X
+X
+    X
+    X
+X
+    X
+    X
+X
+    X
+X
+    X
+    X
+X
+    X
+    X
+X
+    X
+    X
+X
+    X
+    X
+X
+    X
+X
+    X
+    X
+X
+    X
+    X
+X
+    X
+    X
+X
+    X
+X
+    X
+    X
+X
+    X
+X
+    X
+X
+X
+    X
+X
+    X
+X
+    X
+X
+X
+X
+X
+X
+X
+X
