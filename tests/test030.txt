@@ -1,0 +1,875 @@
+# vim: set ft=perl:
+# Inconsistent. 
+###########################################################################HP##
+##
+# FILE: 	OvSAPProfileDiscoverer.pm
+# PRODUCT:	SAP-SPI
+# AUTHOR: 	/^--
+# DATE CREATED:	16 Sep 2002
+#
+###############################################################################
+# CONTENTS: 
+#	Perl module for the actual SAP service discovery based on SAP profiles 
+#	into an internal data structure.	
+# REMARKS: 
+#	This file must be preprocessed because it contains platform-dependent 
+#	statements. 
+# REVISION	DATE		REMARKS 
+#	0.18    27-Oct-2005     Changing OvSAPEnumerateSAPPaths.vbs to
+#				executable OvSAPEnumerateSAPPaths.exe
+#	0.17	05-Mar-2004	JAGae99343: problem with hostnames containing
+#				'_': fixed parsing in
+#				get_profile_path_from_sapstart_log()
+#	0.16	16-Jan-2004	Added trace_...() helper functions and
+#				(disabled) trace statements. 
+#	0.15	15-Jan-2004	BF: correct handling of return codes (ignored)
+#				and exceptions (rethrown) of &$writer(); 
+#				Separated fileglob and looping over instance
+#				profiles for testcases. 
+#	0.14	15-Jan-2004	Added tracing of discovered SAP data. 
+#	0.13	14-Jan-2004	Refactored OvSAPService::SAP... into
+#				theSAPService->SAP... global object
+#	0.12	12-Jan-2004	Process flow doesn't die() any more if no
+#				profile directories are found. 
+#	0.11	16-Dec-2003	Improved syntax checking of start profile path
+#				while parsing sapstart.log
+#				Improved trace messages. 
+#	0.10	10-Dec-2003	BF: On Windows foundation managed node, call to
+#				helper VBScript OvSAPEnumerateSAPPaths.vbs must
+#				be quoted, because agent path contains spaces. 
+#	0.09	11-Mar-2003	BF: NSMbb48872: more graceful handling of invalid
+#				registry key. 
+#	0.08	22-Jan-2003	BF: On Windows, open() on pipe to call VBScript
+#				updates the error status $? not on open(), but
+#				on close(). This is important when WSH is not
+#				installed, and the call to cscript fails. 
+#	0.07	13-Jan-2003	BF: Multiple instances belonging to the same SID
+#				caused multiple discovery of instances because
+#				profile directories appeared multiple times in
+#				list. Directory must only be added if not
+#				already in list.
+#				Refactored code from discover_profile_directories()
+#				into discover_profile_directories_from_SAP_SID_dir()
+#				to be able to test it. 
+#	0.06	14-Nov-2002	Fixed failing Windows registry parsing of
+#				'REG_EXPAND_SZ' PATH values by replacing
+#				registry dump via 'regedit.exe' with VBScript
+#				'OvSAPEnumerateSAPPaths.vbs'. 
+#	0.05	16 Oct 2002	Unix profile paths are not resolved through simple file glob (</sapmnt/???/profile/>) any more;
+#				now, as on Windows, we're parsing the sapstart.log file for the profile path. 
+#				This way, additional hostnames (in a cluster environment) are detected on Unix, too. 
+#	0.04	15 Oct 2002	added Windows cluster support: detection and 
+#				consideration of multiple hostnames. 
+#	0.03	02 Oct 2002	implemented Windows part of discover_profile_directories
+#	0.02	20 Sep 2002	first working HP-UX version
+#	0.01	16 Sep 2002	file creation
+###############################################################################
+#FILE_SCCS = "@(#)OvSAPProfileDiscoverer.pm	0.16	(16-Jan-2004)	SAP-SPI";
+
+BEGIN { require 5.006; }
+
+package OvSAPProfileDiscoverer;
+use strict;
+
+use FindBin;
+use Sys::Hostname;
+use OvSAPService;
+
+use Exporter ();
+our @ISA = qw(Exporter);
+our @EXPORT = qw( discover );
+our @EXPORT_OK = qw(initialize_profile_directories 
+		initialize_hostnames
+		discover_profile_directories
+		discover_profile_directories_from_SAP_SID_dir
+		discover_SAP_system
+		is_SAP_service_information_valid
+		get_SAP_SID_directories
+		get_log_paths_from_SAP_SID_dir
+		get_profile_path_from_sapstart_log
+		@profile_directories
+		@hostnames
+		$isAddHostnames
+		);
+our @EXPORT_TAGS = ();
+
+
+our @profile_directories = "";
+###############################################################################
+#	PURPOSE:
+#	List of discovered profile directories. 
+#	ASSUMPTIONS	/ PRECONDITIONS:
+#	?? List of any external variable, control, or other element whose state affects this procedure.
+#	EFFECTS		/ POSTCONDITIONS:
+#	?? List of the procedure's effect on each external variable, control, or other element.
+###############################################################################
+
+
+
+our @hostnames = "";
+our $isAddHostnames = 1;
+###############################################################################
+#	PURPOSE:
+#	List of local hostnames; both the physical and in a cluster environment 
+#	possible relocatable hostnames.
+#	Flag whether discovered relocatable hostnames are added to the list of hostnames. 
+#	ASSUMPTIONS	/ PRECONDITIONS:
+#	?? List of any external variable, control, or other element whose state affects this procedure.
+#	EFFECTS		/ POSTCONDITIONS:
+#	?? List of the procedure's effect on each external variable, control, or other element.
+###############################################################################
+
+
+
+sub discover($)
+###############################################################################
+#	PURPOSE:
+#	Trigger the entire process of service discovery. 
+#	This routine is the single entry point into this module. 
+#	ASSUMPTIONS	/ PRECONDITIONS:
+#	?? List of any external variable, control, or other element whose state affects this procedure.
+#	EFFECTS		/ POSTCONDITIONS:
+#	?? List of the procedure's effect on each external variable, control, or other element.
+#	INPUTS:
+#	$writer:    sub that writes the service information for one discovered instance
+#		    in the required service output format.
+#		    The return code of the function is ignored. The function can
+#		    abort the discovery process by raising any exception. 
+#	RETURN VALUES: 
+#	none
+###############################################################################
+{
+    my $writer = $_[0];
+
+    print STDERR "SAP profile discovery started at ".scalar localtime().".\n";
+    print STDERR "Service discovery output routine (which determines the discovery information syntax) is \"$writer\"\n";
+
+    initialize_hostnames();
+    initialize_profile_directories(); 
+    discover_profile_directories() if (@profile_directories == 0);
+
+    if( @profile_directories > 0 )
+    {
+	print STDERR "SAP profile discovery considers the following hostnames: \n\t".join( "\n\t", @hostnames )."\n"; 
+	my $profile_directory;
+	foreach $profile_directory ( @profile_directories )
+	{
+	    discover_SAP_system( $profile_directory, $writer );
+	}
+    }
+    else
+    {
+	 warn "No profile directory has been specified or found! No SAP installation has been discovered. \n"; 
+    }
+
+    print STDERR "SAP profile discovery ended successfully at ".scalar localtime().".\n";
+}
+
+sub initialize_hostnames()
+{
+###############################################################################
+#	PURPOSE:
+#	Initialize the list of hostnames that are considered; only SAP instance 
+#	profiles that match one of these hostnames are discovered. If no hostnames 
+#	are enforced through the environment variable, only the physical hostname is 
+#	added. 
+#	ASSUMPTIONS	/ PRECONDITIONS:
+#	?? List of any external variable, control, or other element whose state affects this procedure.
+#	EFFECTS		/ POSTCONDITIONS:
+#	Initialized @hostnames with all values read from the environment variable or 
+#	the physical hostname. 
+#	INPUTS:
+#	none
+#	RETURN VALUES: 
+#	none
+###############################################################################
+
+    if( defined $ENV{SAPOPC_HOSTNAMES} )
+    {
+	@hostnames = split / /, $ENV{SAPOPC_HOSTNAMES};
+    }
+    else
+    {
+	undef @hostnames;
+    }
+
+    if( @hostnames > 0 )
+    {
+	# Solely use user-provided hostnames. 
+	print STDERR "Using only hostnames from environment variable SAPOPC_HOSTNAMES: \n\t".join( "\n\t", @hostnames )."\n";
+
+	# Do not add discovered relocatable hostnames to list later.
+	$isAddHostnames = 0;
+    }
+    else
+    {
+	# Initialize list with physical hostname. 
+	@hostnames = hostname();
+
+	# Add discovered relocatable hostnames to list later.
+	$isAddHostnames = 1;
+    }
+}
+
+sub initialize_profile_directories()
+###############################################################################
+#	PURPOSE:
+#	Initialize list of directories that are searched for SAP profiles 
+#	with user-provided values to skip self-detection. 
+#	ASSUMPTIONS	/ PRECONDITIONS:
+#	?? List of any external variable, control, or other element whose state affects this procedure.
+#	EFFECTS		/ POSTCONDITIONS:
+#	Initializes @profile_directories with all values read from the 
+#	environment variable, or with an empty array if the environment variable 
+#	has not been set.
+#	INPUTS:
+#	none
+#	RETURN VALUES: 
+#	none
+###############################################################################
+{
+#ifdef WINNT
+    my $FILE_PATH_SEPARATOR = ";";
+#elseif
+    my $FILE_PATH_SEPARATOR = ":";
+#endif
+
+    if( defined $ENV{SAPOPC_SAPPROFILEDIR} )
+    {
+	@profile_directories = split /${FILE_PATH_SEPARATOR}/, $ENV{SAPOPC_SAPPROFILEDIR};
+    }
+    else
+    {
+	undef @profile_directories;
+    }
+
+    (@profile_directories > 0) and print STDERR "Skipping detection and using SAP profile directories from environment variable SAPOPC_SAPPROFILEDIR:\n\t".join( "\n\t", @profile_directories )."\n";
+}
+
+sub discover_profile_directories()
+###############################################################################
+# PURPOSE:
+#   Assemble a list of directory paths that probably contain SAP profiles. 
+#   It is not checked yet whether the directories really contain default and
+#   instance profiles; this is done by the other discovery subroutines. 
+# ASSUMPTIONS / PRECONDITIONS:
+#ifdef WINNT
+#   helper executable 'OvSAPEnumerateSAPPaths.exe' resides in the same directory as the Perl script. 
+#endif
+# EFFECT / POSTCONDITIONS:
+#   ?? List of the procedure's effect on each external variable, control, or other element.
+# INPUTS:
+#   none
+# RETURN VALUES: 
+#   @profile_directories contains the full path to all discovered profile directories.
+#   path separator is forward slash
+#   @profile_directories is empty if no profile directories have been
+#   discovered. 
+#ifdef WINNT
+#   throws exception if helper executable cannot be executed
+#endif
+###############################################################################
+{
+#ifdef WINNT
+    # Call helper executable to export the SAP paths from the Windows registry. 
+
+#   All processing is done in Perl; the executable simply acts as a necessary
+#   accessor to the Windows registry; the Win32 Perl modules for registy access
+#   are not delivered by the Windows foundation, and the export of the
+#   interesting registry subtree via 'regedit' causes problems when the 'PATH'
+#   registry key is not of type 'REG_SZ', but 'REG_EXPAND_SZ', which causes
+#   regedit to export the value in hex format, which is very awkward to convert
+#   to a string in Perl. 
+#   Furthermore, in order to support the x64 and IA64 Windows versions, both 32
+#   and 64 bit branches of the registry need to be inspected, as SAP may be
+#   installed in either 32 or 64 bit mode. 
+
+    open( REGISTRY_EXPORT, "\"${FindBin::Bin}\\OvSAPEnumerateSAPPaths.exe\"|" ) or die "Cannot fork OvSAPEnumerateSAPPaths.exe: \"$!\"\n";
+
+    # Parse exported registry subtree for possible SAP SID directories.
+    my @directories = get_SAP_SID_directories( \*REGISTRY_EXPORT );
+
+    close( REGISTRY_EXPORT ) or die( "Cannot open helper program OvSAPEnumerateSAPPaths.exe to export SAP paths from registry: \"$!\", return code \"$?\"\n" );
+#else
+    # Retrieve SAP SID directories from the local filesystem. 
+    my @directories = get_SAP_SID_directories( "/usr/sap/" );
+#endif
+
+    my $directory;
+    foreach $directory (@directories)
+    {
+	discover_profile_directories_from_SAP_SID_dir( $directory );
+    }
+    if( @profile_directories == 0 ) { warn "No SAP profile directory has been discovered!\n"; }
+}
+
+sub discover_profile_directories_from_SAP_SID_dir( $ )
+###############################################################################
+# PURPOSE:
+#	Assemble a list of directory paths that probably contain SAP profiles. 
+#	Based on the passed SAP SID directory, the 'sapstart.log' log files for 
+#	all found instances are searched for SAP profile paths. 
+# ASSUMPTIONS / PRECONDITIONS:
+#	? List of any external variable, control, or other element whose state affects this procedure.
+# EFFECTS / POSTCONDITIONS:
+#	? List of the procedure's effect on each external variable, control, or other element.
+# INPUTS:
+#	$directory: path to SAP SID directory (e.g. '/sapmnt/SP6')
+# RETURN VALUES:
+#	@profile_directories contains the full path to all discovered profile directories.
+#	path separator is forward slash
+###############################################################################
+{
+    my $directory = $_[0];
+
+    my @log_paths = get_log_paths_from_SAP_SID_dir( $directory );
+    my $log_path;
+    foreach $log_path (@log_paths)
+    {
+	my $profile_directory = get_profile_path_from_sapstart_log( $log_path );
+	if( (defined $profile_directory) and ($profile_directory ne "") )
+	{
+	    # If the profile directory is not yet in the list of profile
+	    # directories (i.e. sapstart.log has been parsed for the first
+	    # instance), add it. 
+	    # Each profile directory must occur only once in the list;
+	    # otherwise, instances will be discovered multiple times!
+	    my $dir;
+	    my $is_already_discovered = 0;
+	    foreach $dir (@profile_directories)
+	    {
+		if( $dir eq $profile_directory )
+		{
+		    $is_already_discovered = 1;
+		}
+	    }
+	    if( ! $is_already_discovered )
+	    {
+		print STDERR "Discovered SAP profile directory \"$profile_directory\" from sapstart.log\n";
+		push @profile_directories, $profile_directory;
+	    }
+	}
+    }
+}
+
+sub discover_SAP_system( $$ )
+###############################################################################
+#	PURPOSE:
+#	Discover instance-independent service elements of one SAP system and 
+#	trigger discovery of all my SAP instances. 
+#	ASSUMPTIONS	/ PRECONDITIONS:
+#	@hostnames contains the list of hostnames to be considered when searching for instance profiles. 
+#	EFFECTS		/ POSTCONDITIONS:
+#	Service information for the current SAP system is stored in SAPSystem_... members of global $theSAPService object. 
+#	INPUTS:
+#	$profile_directory: path to the directory that (potentially) holds 
+#			    the profiles for one SAP system. 
+#	$writer:	    sub that writes the service information for one discovered instance
+#			    in the required service output format.
+#	RETURN VALUES: 
+#	none
+###############################################################################
+{
+    my $profile_directory = $_[0];
+    $profile_directory =~ s+(.*[^/])/?$+$1/+;   # Enforce trailing slash
+    my $writer = $_[1];
+    my $default_profile = $profile_directory."DEFAULT.PFL";
+
+    $theSAPService->SAPSystem_SystemName( "" );
+    $theSAPService->SAPSystem_DBHostname( "" );
+
+    print STDERR "Discovering \"$profile_directory\"\n";
+    #### &trace_directory( $profile_directory );
+
+    open( DEFAULTPROFILE, $default_profile ) or warn "Cannot open default profile \"$default_profile\"!\n";
+    while( <DEFAULTPROFILE> ) 
+    {
+	# ASSUMPTION: Each profile element appears only *once* in a profile. 
+	# We do not check whether a particular element has already been set; 
+	# the last occurrence wins. 
+	if( m/^\s*SAPSYSTEMNAME\s*=\s*(\S+)/ )	    { $theSAPService->SAPSystem_SystemName( $1 ); }
+	elsif( m/^\s*SAPDBHOST\s*=\s*(\S+)/ )	    { $theSAPService->SAPSystem_DBHostname( $1 ); }
+	
+    }
+    close( DEFAULTPROFILE );
+
+    # Search for instance profiles that match the discovered SID and any hostname that must be considered and discover the instance. 
+
+    # Perform the directory glob subsequently for all hostnames; this is still easier and safer 
+    # than getting the list of files in the profile directory and performing the file match on 
+    # our own. 
+    for( my $i = 0; $i < @hostnames; $i++ )
+    {
+	$theSAPService->SAPInstance_Hostname( $hostnames[$i] );
+	my $instance_profile_directory_filter = $profile_directory.$theSAPService->SAPSystem_SystemName."_*_".$theSAPService->SAPInstance_Hostname;
+
+	# QXCR1000284757: Convert backslashes in forward slashes.
+	# otherwise profile paths in windowd UNC notation will not be processed
+        $instance_profile_directory_filter =~ s+\\+/+g;
+	
+	####20040115 Separated file glob and looping over file list because the
+	# file glob contained state information that lead to test case failures
+	# when the discovery was deliberately aborted through an exception. 
+	my @instance_profiles = <${instance_profile_directory_filter}>;
+	foreach my $instance_profile ( @instance_profiles )
+	{
+	    print STDERR "Found instance profile \"$instance_profile\".\n";
+	    discover_SAP_instance( $instance_profile, $writer );
+	}
+    }
+}
+
+sub discover_SAP_instance( $$ )
+###############################################################################
+#	PURPOSE:
+#	Discover instance-dependent service elements for one particular SAP 
+#	instance and write the complete service information for that instance. 
+#	ASSUMPTIONS	/ PRECONDITIONS:
+#	none
+#	EFFECTS		/ POSTCONDITIONS:
+#	Service information for the current SAP instance is stored in SAPInstance_... members of global $theSAPService object. 
+#	INPUTS:
+#	$instance_profile:  file path and name of the instance profile
+#	$writer:	    sub that writes the service information for one discovered instance
+#			    in the required service output format.
+#	RETURN VALUES: 
+#	none
+#	propagates exceptions from $writer
+###############################################################################
+{
+    my $instance_profile = $_[0];
+    my $writer = $_[1];
+
+    $theSAPService->SAPInstance_SystemName( "" );
+    $theSAPService->SAPInstance_InstanceName( "" );
+    $theSAPService->SAPInstance_Number( "" );
+    $theSAPService->SAPInstance_Process_Dialog( 0 );
+    $theSAPService->SAPInstance_Process_Update( 0 );
+    $theSAPService->SAPInstance_Process_Update2( 0 );
+    $theSAPService->SAPInstance_Process_Enqueue( 0 );
+    $theSAPService->SAPInstance_Process_Batch( 0 );
+    $theSAPService->SAPInstance_Process_Spool( 0 );
+
+    print STDERR "Discovering instance profile \"$instance_profile\"\n";
+    open( INSTANCEPROFILE, $instance_profile ) or warn "Cannot open instance profile \"$instance_profile\"!\n";
+    while( <INSTANCEPROFILE> )
+    {
+	# ASSUMPTION: Each profile element appears only *once* in a profile. 
+	# We do not check whether a particular element has already been set; 
+	# the last occurrence wins. 
+	if( m/^\s*SAPSYSTEMNAME\s*=\s*(\S+)/ )		{ $theSAPService->SAPInstance_SystemName( $1 ); }
+	if( m/^\s*INSTANCE_NAME\s*=\s*(\S+)/ )		{ $theSAPService->SAPInstance_InstanceName( $1 ); }
+	elsif( m/^\s*SAPSYSTEM\s*=\s*(\S+)/ )		{ $theSAPService->SAPInstance_Number( $1 ); }
+	elsif( m/^\s*rdisp\/wp_no_dia\s*=\s*(\S+)/ )	{ $theSAPService->SAPInstance_Process_Dialog( $1 ); }
+	elsif( m/^\s*rdisp\/wp_no_vb\s*=\s*(\S+)/ )	{ $theSAPService->SAPInstance_Process_Update( $1 ); }
+	elsif( m/^\s*rdisp\/wp_no_vb2\s*=\s*(\S+)/ )	{ $theSAPService->SAPInstance_Process_Update2( $1 ); }
+	elsif( m/^\s*rdisp\/wp_no_enq\s*=\s*(\S+)/ )	{ $theSAPService->SAPInstance_Process_Enqueue( $1 ); }
+	elsif( m/^\s*rdisp\/wp_no_btc\s*=\s*(\S+)/ )	{ $theSAPService->SAPInstance_Process_Batch( $1 ); }
+	elsif( m/^\s*rdisp\/wp_no_spo\s*=\s*(\S+)/ )	{ $theSAPService->SAPInstance_Process_Spool( $1 ); }
+    }
+    close( INSTANCEPROFILE );
+
+    if( is_SAP_service_information_valid() )
+    { 
+	print STDERR "Discovered SAP service information is valid. \n";
+	$theSAPService->trace();
+	print STDERR "Writing service information through custom writer function. \n";
+	eval
+	{
+	    &$writer();
+	};
+	if( $@ )
+	{
+	    print STDERR "Could not write service information thru \"$writer\": writer threw exception! \n";
+	    die; # re-throw exception
+	}
+    }
+    else
+    {
+	warn "Inconsistent or insufficient service information found!\n";
+    }
+}
+
+sub is_SAP_service_information_valid()
+###############################################################################
+#	PURPOSE:
+#	Check the consistency and completeness of the discovered service information. 
+#	ASSUMPTIONS	/ PRECONDITIONS:
+#	Service information for the current SAP instance is stored in global $theSAPService object. 
+#	EFFECTS		/ POSTCONDITIONS:
+#	none
+#	INPUTS:
+#	none
+#	RETURN VALUES: 
+#	true if information is valid.
+###############################################################################
+{
+    # Obligatory elements must not be empty.
+    ( $theSAPService->SAPInstance_Hostname ne "" ) and 
+    ( $theSAPService->SAPSystem_SystemName ne "" ) and 
+    ( $theSAPService->SAPSystem_DBHostname ne "" ) and 
+    ( $theSAPService->SAPInstance_InstanceName ne "" ) and 
+    ( $theSAPService->SAPInstance_Number ne "" ) and 
+
+    # SIDs from default and instance profile must be equal.
+    # (Equalness to SID part of instance profile file name is automatically ensured by selective file globbing.)
+    ( $theSAPService->SAPSystem_SystemName eq $theSAPService->SAPInstance_SystemName )
+}
+
+#ifdef WINNT
+sub get_SAP_SID_directories($)
+###############################################################################
+#	PURPOSE:
+#	Parse the exported SAP Paths and collect all directory paths of all
+#	'PATH' values that contain the SAP SID in its directory path. 
+#	The output is created by 'OvSAPEnumerateSAPPaths.exe'. 
+#	The '\sys\exe\run' subpath is cut off the path; if there is no such subpath, 
+#	the directory probably is no SAP directory (but e.g. an Oracle dir 
+#	'C:\oracle\WA1\817\bin') and is discarded. 
+#
+#	This routine does not check whether the path is valid or exists. 
+#	ASSUMPTIONS	/ PRECONDITIONS:
+#	An SAP SID directory always contains its SID as part of the path.
+#	Syntax of output is (<sid>:<path>\n)*
+#	EFFECTS		/ POSTCONDITIONS:
+#	?? List of the procedure's effect on each external variable, control, or other element.
+#	INPUTS:
+#	registry_export: file handle to the output of OvSAPEnumerateSAPPaths.exe
+#	RETURN VALUES: 
+#	list of SAP SID directory paths (e.g. C:/usr/sap/WA1/) with trailing slash.
+#	path separator is forward slash
+###############################################################################
+{
+    my $registry_export = $_[0];
+    my %found_directories;    # Use an associative array to add only if not already inside the list. 
+
+    while( <$registry_export> )
+    {
+	chomp;
+	my $current_SID;
+	my $path;
+	if( not m/^(...)=(.*)$/ )
+	{
+	    # NSMbb48872
+	    # Do not abort if one exported registry key is invalid, but simply
+	    # skip this one and continue gracefully. 
+	    warn( "Internal error: encountered invalid registry export format! Invalid line was \"${_}\"\n" );
+	    next;
+	}
+	$current_SID = $1;
+	$path = $2;
+
+	# Registry strings are exported with backslashes;
+	# convert them to portable forward slashes to get valid paths.
+	$path =~ s+\\+/+g;
+
+	# Split the environment path into separate directory paths. 
+	my @directories = split /;/, $path;
+
+	# Weed out the directory paths that do not contain the current SID as a path component, 
+	# or that do not end in '\sys\exe\run'; 
+	# those definitely are not SAP SID directories but belong to other applications. 
+	my $directory;
+	foreach $directory (@directories)
+	{
+	    # fix for QXCR1000133971: ignore network paths
+	    # enhancement for WebAS7 support (stst - 072006)
+	    if(( $directory =~ m+^//.*+i)) {
+              if ( $directory =~ m/sapmnt\/$current_SID\/{1,2}SYS\/{1,2}exe\/{1,2}run/i )
+              {
+                $directory = resolveSAPNetShare_SID($current_SID,"sapmnt","\\SYS\\exe\\run");
+                if ($directory eq "")
+                {
+                  print STDERR "cannot resolve network share sapmnt, skipping...\n";
+                }
+                else
+                {
+                  # this is it
+                  $found_directories{$directory} = "";
+                }
+              }
+              else
+              {
+                print STDERR "found network path other than sapmnt, skipping...\n";
+              }
+            }
+	    elsif(( $directory =~ m+.*/$current_SID/sys/exe/run+i ))
+	    {
+		# Strip tailing '\sys\exe\run'
+		$directory =~ s+(.*/)sys/exe/run+$1+i;
+
+		# Use an associative array to add only if not already inside the list. 
+		$found_directories{$directory} = "";
+
+		print STDERR "Found SAP installation directory \"$directory\" in SAP PATH. \n";
+	    }
+	    # fix for QXCR1000133974: also accept appserver directory structure
+	    elsif(( $directory =~ m+.*/$current_SID/D\d\d/exe+i ))
+	    {
+		# Strip tailing 'D??\exe'
+		$directory =~ s+(.*/)D\d\d/exe+$1+i;
+		# Use an associative array to add only if not already inside the list. 
+		$found_directories{$directory} = "";
+		print STDERR "Found SAP installation directory \"$directory\" in SAP PATH. \n";
+	    }
+	}
+    }
+
+    # Return list of directories
+    keys( %found_directories );
+}
+
+#else
+
+sub get_SAP_SID_directories($)
+###############################################################################
+#	PURPOSE:
+#	Get all SAP SID paths under the base SAP installation directory 
+#	(i.e. '/usr/sap/'). 
+#
+#	ASSUMPTIONS	/ PRECONDITIONS:
+#	none
+#	EFFECTS		/ POSTCONDITIONS:
+#	?? List of the procedure's effect on each external variable, control, or other element.
+#	INPUTS:
+#	$sap_base_dir:	path to the base SAP installation directory, with trailing slash
+#	RETURN VALUES: 
+#	list of SAP SID directory paths (e.g. /usr/sap/WA1/) with trailing slash.
+#	path separator is forward slash
+###############################################################################
+{
+    my $sap_base_dir = $_[0];
+    my $sap_sid_directory_glob = $sap_base_dir."???/";
+    my @sap_sid_directories = <${sap_sid_directory_glob}>;
+    @sap_sid_directories;
+}
+
+#endif
+
+sub get_log_paths_from_SAP_SID_dir( $ )
+###############################################################################
+#	PURPOSE:
+#	Use the directory path to the SAP SID directory 
+#	(e.g. 'C:\usr\sap\WA1\') to resolve the SAP log directories
+#	(e.g. 'C:\usr\sap\WA1\DVEBMSG10\work\'). 
+#	ASSUMPTIONS	/ PRECONDITIONS:
+#	?? List of any external variable, control, or other element whose state affects this procedure.
+#	EFFECTS		/ POSTCONDITIONS:
+#	?? List of the procedure's effect on each external variable, control, or other element.
+#	INPUTS:
+#	SAP_SID_dir:	directory path
+#	RETURN VALUES: 
+#	list of sapstart.log file paths
+#	path separator is forward slash
+###############################################################################
+{
+    my $directory = $_[0];
+    my @log_paths;
+
+    ####O previously used file globbing: my $log_path_filter = $directory."*/work/sapstart.log";
+    opendir( SAPSIDDIR, $directory ) or warn "Cannot open directory \"$directory\"!\n";
+    my $instance_dir;
+    while( $instance_dir = readdir( SAPSIDDIR ) )
+    {
+	# Check whether current subdirectory conforms to instance naming scheme.
+	if( $instance_dir =~ m/[DVEBMGS]*\d\d/i )
+	{
+	    # Check whether the log file exists.
+	    my $log_path = $directory.$instance_dir."/work/sapstart.log";
+	    if( -e $log_path )
+	    {
+		print STDERR "Found sapstart.log file at \"$log_path\"\n";
+		push @log_paths, $log_path;
+	    }
+	}
+    }
+
+    @log_paths;
+}
+
+sub get_profile_path_from_sapstart_log( $ )
+###############################################################################
+#	PURPOSE:
+#	Read the passed 'sapstart.log' file and parse for profile path. 
+#	ASSUMPTIONS	/ PRECONDITIONS:
+#	@hostnames contains the list of hostnames to be considered when searching for instance profiles. 
+#	$isAddHostnames flags whether hostnames should be added. 
+#	EFFECTS		/ POSTCONDITIONS:
+#	Adds hostnames to @hostnames.
+#	INPUTS:
+#	sapstart_log_path: file path
+#	RETURN VALUES: 
+#	profile path or 'undef' on failure
+#	path separator is forward slash
+###############################################################################
+{
+    my $file_path = $_[0];
+    my $start_profile_path;
+    my $profile_path;
+    my $profile_host;
+
+    #### &trace_filecontents( $file_path );
+    open( SAPSTARTLOG, $file_path ) or warn "Cannot open \"$file_path\"!\n";
+    while( <SAPSTARTLOG> ) 
+    {
+	# ASSUMPTION: Each profile element appears only *once* in a profile. 
+	# We do not check whether a particular element has already been set; 
+	# the last occurrence wins. 
+	if( m/^\s*Startup Profile:\s*"(.*)"/ )	    { $start_profile_path = $1; }
+    }
+    close( SAPSTARTLOG );
+
+    # Convert backslashes in forward slashes.
+    $start_profile_path =~ s+\\+/+g;
+
+    # Remove start profile file name from path and remember hostname part of start profile file name. 
+    $start_profile_path =~ m/(^.*)START_[^_]*_(.*$)/ or (warn "Start profile path \"$start_profile_path\" does not conform to syntax '<SID>_<InstanceName>_<hostname>'!\n" and return undef);
+    $profile_path = $1;
+    $profile_host = $2 or warn "Parsed empty hostname from start profile path!\n";
+    print STDERR "Found profile directory \"$profile_path\" in sapstart.log\n" unless( $profile_path eq "");
+
+    if( $isAddHostnames )
+    {
+	# If the hostname is not yet in the list of hostnames to be considered, add it.
+	####I: Ensuring that the list contains no duplicates is done through an associative array. 
+	my %temp_hostnames; 
+	foreach (@hostnames) { $temp_hostnames{$_} = ""; }  # Build up the associative array element by element. 
+	$temp_hostnames{$profile_host} = "";	# Possibly add current hostname. 
+	@hostnames = keys( %temp_hostnames );	# Update list. 
+    }
+
+    return $profile_path;
+}
+
+
+#- helper functions -----------------------------------------------------------
+
+sub trace_directory( $ )
+###############################################################################
+# PURPOSE:
+#   Write the directory listing of the passed directory to the log. 
+# ASSUMPTIONS / PRECONDITIONS:
+#   ? List of any external variable, control, or other element whose state affects this procedure.
+# EFFECTS / POSTCONDITIONS:
+#   Writes to STDERR. 
+# INPUTS:
+#   directory_path: file system location
+# RETURN VALUES:
+#   none
+###############################################################################
+{
+    my $directory_path = $_[0];
+#ifdef WINNT
+    $directory_path =~ s+/+\\+g;
+    &trace_dump( "dir \"$directory_path\"" );
+#else
+    &trace_dump( "ls -l \"$directory_path\"" );
+#endif
+}
+
+sub trace_filecontents( $ )
+###############################################################################
+# PURPOSE:
+#   Write the contents of the passed text file to the log.
+# ASSUMPTIONS / PRECONDITIONS:
+#   ? List of any external variable, control, or other element whose state affects this procedure.
+# EFFECTS / POSTCONDITIONS:
+#   Writes to STDERR. 
+# INPUTS:
+#   file_path:	file system location
+# RETURN VALUES:
+#   none
+###############################################################################
+{
+    my $file_path = $_[0];
+#ifdef WINNT
+    $file_path =~ s+/+\\+g;
+    &trace_dump( "type \"$file_path\"" );
+#else
+    &trace_dump( "cat \"$file_path\"" );
+#endif
+}
+
+sub trace_dump( $ )
+###############################################################################
+# PURPOSE:
+#   Execute the passed external command and write the command's STDOUT output to
+#   the log (enclosed in a header and footer). 
+# ASSUMPTIONS / PRECONDITIONS:
+#   ? List of any external variable, control, or other element whose state affects this procedure.
+# EFFECTS / POSTCONDITIONS:
+#   Writes to STDERR. 
+# INPUTS:
+#   dump_command:  external command to be executed. 
+# RETURN VALUES:
+#   none
+###############################################################################
+{
+    my $dump_command = $_[0];
+    print STDERR "Dump of \"$dump_command\": \n"; 
+    print STDERR "- dump -----------------------------------------------------------------------\n";
+    # Execute external function only now to capture possible error output to
+    # STDERR at the right place in the logfile. 
+    my $dump_output = `$dump_command`;
+    print STDERR $dump_output;
+    print STDERR "- dump end -------------------------------------------------------------------\n";
+}
+
+
+# this function is solely used on windows for webas7 support (stst-072006)
+#ifdef WINNT
+
+#
+# sub: resolveSAPNetShare_SID
+# des: attempts to resolve a sap specific net share (sapmnt, saploc) to its
+#      physical resource (drive letter + folder)
+#
+# arg: arg[0] sapsid       - the SID of the SAP system
+#      arg[1] netShareName - name of the net share
+#      arg[2] validatorStr - name of subfolder(s) to validate the existence of the resource
+#                            to be appended to the resolved resource (e.g. \\SYS\\exe\\run)
+#                            ! use backslashes as the first chars
+#
+sub resolveSAPNetShare_SID
+{
+  my $sapspid  = @_[0];
+  my $netShareName = @_[1];
+  my $validatorStr = @_[2];
+  my @cmd_data = ();
+  my $win_netcmd = "net share";
+  my $line2check;
+  my $drv_letter;
+  my $checkpath;
+  my $resolvedPath = "";
+
+  @cmd_data = `$win_netcmd`;
+  foreach $line2check (@cmd_data)
+  {
+    if ( $line2check =~ m/^\s*$netShareName\s*([A-Z]):\\(usr\\sap|\s*)/i )
+    {
+      # extract the drive letter (resource) from the line
+      $drv_letter = $1;
+      $resolvedPath = $drv_letter . ":\\usr\\sap\\" . $sapspid;
+      $checkpath = $resolvedPath . $validatorStr;
+      # is this the directory ?
+      if ( -e $checkpath && -d $checkpath )
+      {
+        #substitute backslashes
+        $resolvedPath =~ s+\\+/+g;
+        #add trailing / if not already there
+        $resolvedPath =~ s+(.*[^/])/?$+$1/+;
+	print STDERR "resolved network share $netShareName to: $resolvedPath\n";
+        return $resolvedPath;
+      }
+      else
+      {
+        $resolvedPath = "";
+      }
+    }
+  }
+  return $resolvedPath;
+}
+
+#endif
+
+1;
