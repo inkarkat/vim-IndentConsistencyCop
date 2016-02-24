@@ -1,0 +1,99 @@
+// vim: set ft=java:
+// Inconsistent. 
+package com.hp.ov.ictex.util.checker;
+
+import java.text.MessageFormat;
+
+import com.hp.ov.common.tracing.XTrace;
+import com.hp.ov.ictex.util.Constants;
+
+public abstract class Check {
+    private static final XTrace s_tracer = XTrace.getXTrace(Constants.OVICTEX_XPL_COMPONENT, Check.class.getName());
+    private static int s_checkCnt = 0;
+    private int m_index = 0;
+    private String m_name;
+    private String m_problem;
+    private boolean m_isSuccessful = false;
+
+    protected Check(String name) {
+        m_index = s_checkCnt++;
+        m_name = name;
+    }
+
+    public abstract Check run();
+    
+    public String toString() {
+        return (m_index + 1) + ":" + m_name;
+    }
+
+    public void prepare() {
+	final int outputWidth = 70;
+	StringBuffer output = new StringBuffer(MessageFormat.format("><{0}) {1}..", new Object[] { new Integer(m_index + 1), m_name }));
+        if (output.length() > outputWidth) { output = new StringBuffer(output.substring(0,outputWidth)); }
+        while (output.length() < outputWidth) { output.append('.'); }
+        System.out.print( output );
+    }
+
+    public Check skip() {
+        s_tracer.info_operation("Check #" + getNumber() + ": " + m_name + " skipped.");
+        m_isSuccessful = true; // Treat skipped checks as successful, even though they haven't run. By explicitly skipping a check, the client has shown that he treats this check as not important. 
+        System.out.println("><SKIP");
+        return this;
+    }
+
+    protected void successful() {
+        s_tracer.info_operation("Check #" + getNumber() + ": " + m_name + " successful.");
+        m_isSuccessful = true;
+        System.out.println("><OK");
+    }
+
+    protected void failed(String problem) {
+        s_tracer.err_operation("Check #" + getNumber() + ": " + m_name + " failed with problem: " + problem);
+        m_isSuccessful = false;
+        m_problem = problem;
+        System.out.println("><FAIL");
+    }
+
+    protected void error(String problem) {
+        s_tracer.err_operation("Check #" + getNumber() + ": " + m_name + " encountered error; problem: " + problem);
+        m_isSuccessful = false;
+        m_problem = problem;
+        System.out.println("><ERROR");
+    }
+    protected void error(Exception problem) {
+        s_tracer.err_operation("Check #" + getNumber() + ": " + m_name + " encountered exception. ", problem );
+        error(problem.toString());
+    }
+
+    protected void conclude(boolean isSuccessful, String problem) {
+        if (isSuccessful) {
+	    successful();
+        } else {
+	    failed(problem);
+        }
+    }
+
+    public boolean isSuccessful() {
+        return m_isSuccessful;
+    }
+
+    public int getNumber() {
+        return m_index + 1;
+    }
+
+    public void printReport() {
+        if (!m_isSuccessful) {
+            String punctation;
+            String details;
+            if (m_problem == null || m_problem.equals("")) {
+                punctation = "><. ";
+                details = "";
+            } else {
+                punctation = "><: \n";
+                details = m_problem + "\n";
+            }
+            System.out.println(MessageFormat.format("><{0}) Check {1} failed{2}{3}", new Object[] { new Integer(m_index + 1), m_name, punctation,
+                    details }));
+        }
+    }
+}
