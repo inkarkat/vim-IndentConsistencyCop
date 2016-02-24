@@ -2,11 +2,11 @@ Found inconsistent indentation in this buffer; generated from these conflicting 
 - 8 spaces (7 of 14 lines)
 - 4 spaces (2 of 14 lines)
 The buffer setting is 4 characters soft tabstop. 
-[I]gnore, (H)ighlight wrong indents...: 
+[I]gnore, (J)ust change buffer settings..., (H)ighlight wrong indents...: 
 What kind of inconsistent indents do you want to highlight?
 Not [b]uffer settings (sts4), Not best (g)uess (spc8), Not (c)hosen setting...: 
 Choose the indent setting:
 (t)abstop, (s)oft tabstop, spa(c)es: 
 Choose indent value:
 (1), (2), (3), (4), (5), (6), (7), (8): 
-No incorrect lines found for setting '4 spaces'!
+No incorrect lines found for setting '4 spaces'! The buffer settings have been changed: tabstop=8 softtabstop=4 shiftwidth=4 expandtab
