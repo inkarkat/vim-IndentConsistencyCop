@@ -1,0 +1,77 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!-- vim: set ft=html ts=4 sts=0 sw=4 noexpandtab: -->
+<!-- Consistent, but guessed wrong setting: This is tab, not sts4. -->
+
+<html>
+<head>
+	<meta http-equiv="content-language" content="en-us">
+	<meta http-equiv="content-type" content="text/html; charset=windows-1252">
+	<meta name="author" content="ingo">
+	<meta name="description" content="homepage of the Karkat family with a group portrait and links to the homepages of the individual members.">
+	<meta name="keywords" content="Karkat, family homepage">
+
+    <style type="text/css">
+	<!--
+		/* embed the used styles to avoid loading the huge style sheet file on the site's start page */
+
+		/* fonts */
+		H1, H2
+		{
+			font-family: 'Gill Sans', Arial, sans-serif;
+		}
+
+		BODY
+		{
+			font-family: Verdana, Arial, Helvetica, sans-serif;	/* common font: Verdana is a web-enhanced version of Tahoma */
+		}
+
+		BODY, TD
+		{
+			font-size: small;	/* set the default font size */
+		}
+
+		H1.banner
+		{
+			background-color: transparent;
+		}
+	//-->
+	</style>
+
+	<title>karkat.de family homepage</title>
+</head>
+<body bgcolor=#FFFBF0>
+	<div align=center>
+		<h1 class="banner">karkat.de</h1>
+
+	    <map name="family">
+		    <area href="ingo/index.html" 		title="ingo"	shape="polygon" coords="79, 35, 166, 35, 186, 219, 141, 253, 138, 331, 23, 316, 16, 163, 94, 125">
+		    <area href="irmi/index.html" 		title="Irmi"	shape="polygon" coords="204, 121, 253, 118, 275, 175, 253, 209, 315, 247, 329, 340, 144, 337, 145, 257, 202, 211, 183, 167">
+		    <area nohref		title="Gerd"	shape="polygon" coords="262, 32, 319, 39, 315, 122, 339, 140, 325, 248, 259, 209, 280, 175, 246, 76">
+		    <area nohref		title="Benjamin"	shape="polygon" coords="385, 51, 435, 48, 455, 79, 442, 146, 496, 178, 495, 328, 346, 338, 330, 250, 342, 164, 389, 157, 372, 84">
+	    </map>
+	    <img src="Karkat%20family.jpg" alt="group portrait of the Karkat family" usemap="#family" width="524" height="348" border=0>
+
+		<table width=524>
+			<tr>
+				<td align=center width="25%" rowspan=2><a href="ingo/index.html">ingo</a></td>
+				<td align=right width="25%">Gerd</td>
+				<td align=center width="25%" rowspan=2>Benjamin</td>
+			</tr>
+			<tr>
+				<td align=center><a href="irmi/index.html">Irmi</a></td>
+			</tr>
+		</table>
+
+		<hr>
+
+		<table>
+			<tr>
+				<td align=center>family news</td>
+				<td width=50>&nbsp;</td>
+				<td align=center>Is your surname also "Karkat"?<br>Then please reply!</td>
+			</tr>
+		</table>
+
+	</div>
+</body>
+</html>
