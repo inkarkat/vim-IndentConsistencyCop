@@ -1,0 +1,29 @@
+// vim: set ft=cpp ts=8 sts=4 sw=4 noexpandtab: Also includes many spc2. 
+// Inconsistent indentation. 
+foo
+    bar
+    baz
+quux
+    quuux
+	    q
+	    q
+    q
+q
+0
+  1
+    2
+      3
+        4
+          5
+            6
+              7
+                8
+                  9
+                    10
+                      11
+                        12
+                          13
+                    10
+          5
+  1
+0
