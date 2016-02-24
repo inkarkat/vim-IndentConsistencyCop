@@ -1,6 +1,6 @@
-" Test Inconsistent XSLT file. 
+" Test Inconsistent XSLT file.
 
-let g:indentconsistencycop_choices = ['highlight', 'not buffer settings']
+let g:IngoLibrary_ConfirmChoices = ['highlight', 'not buffer settings']
 
 edit test031.txt
 IndentConsistencyCop
