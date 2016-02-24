@@ -1,0 +1,58 @@
+// vim: set ft=java ts=8 sts=4 sw=4 noexpandtab:
+// Contains two wrong sts1 indents. 
+import java.io.*;
+import java.net.*;
+import java.util.*;
+import org.apache.soap.util.xml.*;
+import org.apache.soap.*;
+import org.apache.soap.rpc.*;
+
+public class TempClient{
+
+    public static float getTemp (URL url, String zipcode) throws Exception {
+
+	Call call = new Call ();
+
+	// Service uses standard SOAP encoding
+	String encodingStyleURI = Constants.NS_URI_SOAP_ENC;
+	call.setEncodingStyleURI(encodingStyleURI);
+
+	// Set service locator parameters
+	call.setTargetObjectURI ("urn:xmethods-Temperature");
+	call.setMethodName ("getTemp");
+
+	// Create input parameter vector
+	Vector params = new Vector ();
+	params.addElement (new Parameter("zipcode", String.class, zipcode, null));
+	call.setParams (params);
+
+	// Invoke the service ....
+	Response resp = call.invoke (url,"");
+
+	// ... and evaluate the response
+	if (resp.generatedFault ()) {
+	     throw new Exception();
+	} else {
+	    // Call was successful. Extract response parameter and return result
+	    Parameter result = resp.getReturnValue ();
+	    Float rate=(Float) result.getValue();
+	    return rate.floatValue();
+	}
+    }
+
+// Driver to illustrate service invocation
+    public static void main(String[] args)
+    {
+	try
+	{
+	    URL url=new URL("http://services.xmethods.net:80/soap/servlet/rpcrouter");
+	    String zipcode= "94041";
+	    float temp = getTemp(url,zipcode);
+	    System.out.println(temp);
+	}
+	catch (Exception e) {
+	   e.printStackTrace();
+	}
+    }
+}
+
