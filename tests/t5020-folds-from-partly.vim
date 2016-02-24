@@ -1,6 +1,6 @@
 " Test highlighting folds away consistent parts and restores partly closed.
 
-let g:indentconsistencycop_choices = ['highlight', 'not buffer settings']
+let g:IngoLibrary_ConfirmChoices = ['highlight', 'not buffer settings']
 
 edit folded.txt
 setlocal foldlevel=1
