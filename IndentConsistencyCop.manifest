@@ -1,3 +1,4 @@
 autoload/IndentConsistencyCop.vim
+autoload/IndentConsistencyCop/Filter.vim
 plugin/IndentConsistencyCop.vim
 doc/IndentConsistencyCop.txt
