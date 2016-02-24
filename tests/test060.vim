@@ -1,6 +1,6 @@
-" Test Inconsistent: Contains one spc8 and some badmix. 
+" Test Inconsistent: Contains one spc8 and some badmix.
 
-let g:indentconsistencycop_choices = ['highlight', 'not buffer settings']
+let g:IngoLibrary_ConfirmChoices = ['highlight', 'not buffer settings']
 
 edit test060.txt
 IndentConsistencyCop
