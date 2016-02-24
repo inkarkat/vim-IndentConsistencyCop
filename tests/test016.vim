@@ -1,6 +1,6 @@
-" Test Contains one spc8. 
+" Test Contains one spc8.
 
-let g:indentconsistencycop_choices = ['highlight', 'not best guess']
+let g:IngoLibrary_ConfirmChoices = ['highlight', 'not best guess']
 
 edit test016.txt
 IndentConsistencyCop
