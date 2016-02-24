@@ -1,0 +1,12 @@
+This buffer does not contain indented text. 
+
+The buffer's indent settings are inconsistent:
+The value of softtabstop (4) should equal the value of shiftwidth (8). 
+When using soft tabstops, tabstop (3) should remain at the standard value of 8. 
+How do you want to deal with the inconsistency?
+[I]gnore, (C)orrect setting...: 
+Choose the indent setting:
+(t)abstop, (s)oft tabstop, spa(c)es: 
+Choose indent value:
+(1), (2), (3), (4), (5), (6), (7), (8): 
+The buffer settings have been changed: tabstop=8 softtabstop=4 shiftwidth=4 noexpandtab
