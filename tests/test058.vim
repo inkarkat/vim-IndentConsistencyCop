@@ -1,6 +1,6 @@
-" Test Contains some badsts. 
+" Test Contains some badsts.
 
-let g:indentconsistencycop_choices = ['highlight', 'not buffer settings']
+let g:IngoLibrary_ConfirmChoices = ['highlight', 'not buffer settings']
 
 edit test058.txt
 IndentConsistencyCop
