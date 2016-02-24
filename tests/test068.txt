@@ -1,0 +1,11 @@
+// vim: set ft=cpp ts=8 sts=4 sw=4 expandtab:
+// With a maximum indent of 8, is clearly spc4.
+{
+    public:
+    public:
+        bool
+        bool
+        bool
+        bool
+        bool
+};
