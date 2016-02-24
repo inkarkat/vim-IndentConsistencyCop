@@ -1,0 +1,31 @@
+// vim: set ft=cpp ts=4 sts=0 sw=4 noexpandtab: 
+// Consistent indentation 'sts2'. 
+// Has inconsistent buffer settings (ts should be 8, sts should be 2, sw should be 2). 
+// Up to IndentConsistencyCop 1.00.010 reported as inconsistent indentation 'spc2' / 'tab'. 
+foo
+  bar
+  baz
+quux
+  quuux
+    q
+    q
+  q
+q
+0
+	1
+		2
+			3
+				4
+					5
+						6
+							7
+								8
+									9
+										10
+											11
+												12
+													13
+										10
+					5
+	1
+0
