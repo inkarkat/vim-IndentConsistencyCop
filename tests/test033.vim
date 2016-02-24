@@ -1,6 +1,6 @@
-" Test Inconsistent buffer settings (noexpandtab should be expandtab). 
+" Test Inconsistent buffer settings (noexpandtab should be expandtab).
 
-let g:indentconsistencycop_choices = ['change']
+let g:IngoLibrary_ConfirmChoices = ['change']
 
 edit test033.txt
 IndentConsistencyCop
