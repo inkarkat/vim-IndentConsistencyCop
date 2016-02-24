@@ -2,7 +2,7 @@ Found inconsistent indentation in this buffer; generated from these conflicting 
 - 4 characters soft tabstop (6 of 17 lines) <- buffer setting
 - bad mix of spaces and tabs (1 of 17 lines)
 Some minor / inconclusive potential settings have been omitted. 
-[I]gnore, (J)ust change buffer settings..., (H)ighlight wrong indents...: 
+[I]gnore, best guess equals buffer settings (sts4), (J)ust change buffer settings..., (H)ighlight wrong indents...: 
 What kind of inconsistent indents do you want to highlight?
 Not [b]uffer settings / best guess (sts4), Not (c)hosen setting..., (I)llegal indents only: 
 Marked 1 incorrect line. The buffer settings have been changed: tabstop=8 softtabstop=4 shiftwidth=4 noexpandtab
