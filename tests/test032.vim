@@ -1,6 +1,6 @@
-" Test Inconsistent Java source code. 
+" Test Inconsistent Java source code.
 
-let g:indentconsistencycop_choices = ['highlight', 'not best guess']
+let g:IngoLibrary_ConfirmChoices = ['highlight', 'not best guess']
 
 edit test032.txt
 IndentConsistencyCop
