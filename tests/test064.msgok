@@ -3,7 +3,7 @@ Found inconsistent indentation in this buffer; generated from these conflicting 
 - 4 spaces (16787 of 37355 lines) <- buffer setting
 - bad mix of spaces and tabs (1 of 37355 lines)
 
-[I]gnore, (J)ust change buffer settings..., (H)ighlight wrong indents...: 
+[I]gnore, best guess equals buffer settings (spc4), (J)ust change buffer settings..., (H)ighlight wrong indents...: 
 What kind of inconsistent indents do you want to highlight?
 Not [b]uffer settings / best guess (spc4), Not (c)hosen setting..., (I)llegal indents only: 
 Marked 1 incorrect line. 
