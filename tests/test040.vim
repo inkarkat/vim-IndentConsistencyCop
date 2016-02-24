@@ -1,6 +1,6 @@
-" Test Inconsistent indent settings. 
+" Test Inconsistent indent settings.
 
-let g:indentconsistencycop_choices = ['change']
+let g:IngoLibrary_ConfirmChoices = ['change']
 
 edit test040.txt
 IndentConsistencyCop
