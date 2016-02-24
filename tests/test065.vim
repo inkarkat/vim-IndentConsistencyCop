@@ -1,9 +1,6 @@
-" Test Inconsistent: spc4 with one badmix. 
+" Test With a maximum indent of 8, is clearly spc4.
 
-let g:indentconsistencycop_choices = ['highlight', 'not buffer settings']
-
-edit test064.txt
+edit test065.txt
 IndentConsistencyCop
 
 call vimtest#Quit()
-
