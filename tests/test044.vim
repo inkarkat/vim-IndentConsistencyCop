@@ -1,6 +1,6 @@
-" Test Contains one badmix, and only small indents. 
+" Test Contains one badmix, and only small indents.
 
-let g:indentconsistencycop_choices = ['highlight', 'not best guess']
+let g:IngoLibrary_ConfirmChoices = ['highlight', 'not best guess']
 
 edit test044.txt
 IndentConsistencyCop
