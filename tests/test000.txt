@@ -1,0 +1,6 @@
+// vim: set ft=cpp ts=8 sts=0 sw=8 noexpandtab:
+// Does not contain indented text. 
+foo
+bar
+baz
+quux
