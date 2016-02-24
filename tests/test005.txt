@@ -1,0 +1,18 @@
+// vim: set ft=cpp ts=8 sts=4 sw=4 noexpandtab:
+// Consistent indentation 'sts4'. 
+// Up to IndentConsistencyCop 1.00.008 reported as possibly consistent indentation 'sts4', or inconsistent 'tab' / 'spc4', but only small indents. 
+// Up to IndentRangeConsistencyCop 1.00.010 :IndentRangeConsistencyCop reported possibly consistent indentation 'sts4', or inconsistent 'tab' / 'spc4', but only small indents. 
+foo
+    bar
+    baz
+quux
+    quuux
+	q
+	q
+    q
+q
+0
+    1
+	2
+    1
+0
