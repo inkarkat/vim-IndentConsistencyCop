@@ -4,12 +4,18 @@
 "   - Requires Vim 7.0 or higher.
 "   - Requires IndentConsistencyCop.vim autoload script.
 "
-" Copyright: (C) 2006-2014 by Ingo Karkat
+" Copyright: (C) 2006-2015 by Ingo Karkat
 "   The VIM LICENSE applies to this script; see ':help copyright'.
 "
 " Maintainer:	Ingo Karkat <ingo@karkat.de>
 "
 " REVISION	DATE		REMARKS
+"   2.00.026	31-Mar-2015	FIX: g:indentconsistencycop_line_filters must be
+"				uppercase because of Funcrefs. Add default
+"				IndentConsistencyCop#Filter#BlockAlignment
+"				filter.
+"   2.00.025	23-Mar-2015	Add g:indentconsistencycop_line_filters
+"				configuration.
 "   1.44.024	08-Jan-2014	BUG: The version 1.43 workaround for the Vim 7.4
 "				new regexp engine was ineffective, because the
 "				\%#=1 atom needs to be prepended to the entire
@@ -49,6 +55,11 @@ endif
 
 if ! exists('g:indentconsistencycop_non_indent_pattern')
     let g:indentconsistencycop_non_indent_pattern = ' \*\%([*/ \t]\|$\)'
+endif
+
+if ! exists('g:IndentConsistencyCop_line_filters')
+    if v:version < 702 | runtime autoload/IndentConsistencyCop/Filter.vim | endif  " The Funcref doesn't trigger the autoload in older Vim versions.
+    let g:IndentConsistencyCop_line_filters = [function('IndentConsistencyCop#Filter#BlockAlignment')]
 endif
 
 if g:indentconsistencycop_highlighting =~# 'm'
