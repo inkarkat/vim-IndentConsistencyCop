@@ -1,6 +1,6 @@
-" Test Inconsistent buffer settings. 
+" Test Inconsistent buffer settings.
 
-let g:indentconsistencycop_choices = ['change']
+let g:IngoLibrary_ConfirmChoices = ['change']
 
 edit test014.txt
 IndentConsistencyCop
