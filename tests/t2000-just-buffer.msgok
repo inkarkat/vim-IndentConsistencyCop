@@ -16,7 +16,7 @@ Found inconsistent indentation in this buffer; generated from these conflicting 
 - 2 characters soft tabstop (2 of 58 lines)
 - tabstop (22 of 58 lines)
 Some minor / inconclusive potential settings have been omitted. 
-[I]gnore, (J)ust change buffer settings..., (H)ighlight wrong indents...: 
+[I]gnore, best guess equals buffer settings (sts4), (J)ust change buffer settings..., (H)ighlight wrong indents...: 
 Choose the indent setting:
 (t)abstop, (s)oft tabstop, spa(c)es: 
 Choose indent value:
