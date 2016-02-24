@@ -1,0 +1,3 @@
+" vim: set ft=vim ts=8 sts=4 sw=4 expandtab:
+" Either spc4 or spc6.
+            let quoted_regexp = quote
