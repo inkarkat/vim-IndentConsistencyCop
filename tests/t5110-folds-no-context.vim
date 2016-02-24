@@ -1,6 +1,6 @@
 " Test reconfiguring no context of folded consistent parts.
 
-let g:indentconsistencycop_choices = ['highlight', 'not buffer settings']
+let g:IngoLibrary_ConfirmChoices = ['highlight', 'not buffer settings']
 
 let g:indentconsistencycop_highlighting = substitute(g:indentconsistencycop_highlighting, 'f:3', 'f:0', '')
 
