@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- vim: set ft=ant: -->
 <!-- Consistent with tabstop. --> 
-<!-- Is inconsistent with buffer settings 'sts4' (softtabstops should be 0, shiftwidth should 8). -->
 
 <project name="ovictex_quality" default="help" basedir=".">
 
