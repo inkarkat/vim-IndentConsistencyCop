@@ -1,0 +1,17 @@
+// vim: set ft=cpp ts=8 sts=4 sw=4 noexpandtab:
+// Contains one badmix, and only small indents. 
+// Up to IndentConsistencyCop ???, small indents were not reported, because badmix were counted in the wrong way. 
+foo
+    bar
+    baz
+quux
+    quuux
+   	q
+	q
+    q
+q
+0
+    1
+	2
+    1
+0
