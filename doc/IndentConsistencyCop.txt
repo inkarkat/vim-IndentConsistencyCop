@@ -91,6 +91,9 @@ RELATED WORKS								     *
   check conformance to indent
 - ShowSpaces (vimscript #5148) highlights spaces inside indentation, per
   buffer / filetype.
+- Indent Detector (vimscript #5195) run when a file is opened or written, has
+  warnings about mixed tab / space indent, and can adapt Vim's corresponding
+  options automatically.
 
 ==============================================================================
 USAGE						  *IndentConsistencyCop-usage*
