@@ -287,7 +287,7 @@ IDEAS						  *IndentConsistencyCop-ideas*
 ==============================================================================
 HISTORY						*IndentConsistencyCop-history*
 
-1.50	RELEASEME
+2.00	RELEASEME
 - Minor: Replace explicit regexp engine workaround with ingo/compat/regexp.vim.
 - When choosing "Highlight wrong indents..." followed by "Not best guess" or
   "Not chosen setting", also adapt the buffer settings to that indent setting,
@@ -319,6 +319,15 @@ HISTORY						*IndentConsistencyCop-history*
   g:indentconsistencycop_non_indent_pattern. Use
   IndentConsistencyCop#Filter#BlockAlignment() by default, which handles
   alignment to previous keywords, brackets, and quotes.
+- When the best guess is equal to the buffer indent, already indicate that in
+  the |Ignore| action choice. This wasn't made clear enough by the full
+  description, and users are tempted to choose |Just change buffer settings|,
+  where then the buffer setting isn't available, and the setting would have to
+  be tediously re-chosen.
+- CHG: Default to |Change| instead of |Ignore| when just the buffer settings
+  are wrong, and the assessment is solid. This is the most common (and
+  sensible) choice. If there's not enough indent for that, don't default to
+  anything.
   *** You need to update to ingo-library (vimscript #4433) version 1.024! ***
 
 1.45	12-Dec-2014
@@ -462,7 +471,7 @@ First published version.
 Started development.
 
 ==============================================================================
-Copyright: (C) 2006-2015 Ingo Karkat
+Copyright: (C) 2006-2017 Ingo Karkat
 The VIM LICENSE applies to this plugin; see |copyright|.
 
 Maintainer:	Ingo Karkat <ingo@karkat.de>
