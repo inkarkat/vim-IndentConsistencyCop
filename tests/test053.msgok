@@ -2,7 +2,7 @@ The buffer's indent settings are inconsistent with the used indent '4 characters
 - tabstop from 4 to 8
 - softtabstop from 0 to 4
 How do you want to deal with the inconsistency?
-[I]gnore, (C)hange, Wrong, use (b)uffer settings (tabstop), (W)rong, choose correct setting...: 
+(I)gnore, [C]hange, Wrong, use (b)uffer settings (tabstop), (W)rong, choose correct setting...: 
 Choose the indent setting:
 (t)abstop, (s)oft tabstop, spa(c)es: 
 Choose tabstop value:
@@ -13,12 +13,12 @@ The buffer's indent settings are inconsistent with the used indent '4 characters
 - tabstop from 4 to 8
 - softtabstop from 0 to 4
 How do you want to deal with the inconsistency?
-[I]gnore, (C)hange, Wrong, use (b)uffer settings (tabstop), (W)rong, choose correct setting...: 
+(I)gnore, [C]hange, Wrong, use (b)uffer settings (tabstop), (W)rong, choose correct setting...: 
 Marked 8 incorrect lines. 
 
 The buffer's indent settings are inconsistent with the used indent '4 characters soft tabstop'; these settings must be changed: 
 - tabstop from 4 to 8
 - softtabstop from 0 to 4
 How do you want to deal with the inconsistency?
-[I]gnore, (C)hange, Wrong, use (b)uffer settings (tabstop), (W)rong, choose correct setting...: 
+(I)gnore, [C]hange, Wrong, use (b)uffer settings (tabstop), (W)rong, choose correct setting...: 
 The buffer settings have been changed: tabstop=8 softtabstop=4 shiftwidth=4 noexpandtab
