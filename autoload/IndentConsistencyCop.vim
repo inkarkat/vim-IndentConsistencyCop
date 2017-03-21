@@ -13,6 +13,8 @@
 " Maintainer:	Ingo Karkat <ingo@karkat.de>
 "
 " REVISION	DATE		REMARKS  {{{1
+"   2.00.022	31-Mar-2015	FIX: g:indentconsistencycop_line_filters must be
+"				uppercase because of Funcrefs.
 "   2.00.021	30-Mar-2015	Fix flag b:indentconsistencycop_result.isIgnore
 "				broken by the previous change.
 "   2.00.020	27-Mar-2015	When the best guess is equal to the buffer
@@ -2373,8 +2375,8 @@ function! IndentConsistencyCop#IndentConsistencyCop( startLnum, endLnum, isBuffe
     let l:isEntireBuffer = s:IsEntireBuffer(l:startLnum, l:endLnum)
 
     let s:filteredLnums = {}
-    for l:Filter in ingo#plugin#setting#GetBufferLocal('indentconsistencycop_line_filters', [])
-	call extend(s:filteredLnums, call(l:Filter, [l:startLnum, l:endLnum])
+    for l:Filter in ingo#plugin#setting#GetBufferLocal('IndentConsistencyCop_line_filters', [])
+	call extend(s:filteredLnums, call(l:Filter, [l:startLnum, l:endLnum]), 'keep')
     endfor
 
     let l:lineCnt = l:endLnum - l:startLnum + 1 - len(s:filteredLnums)
