@@ -7,12 +7,17 @@
 "   - ingo/query.vim autoload script
 "   - ingo/range.vim autoload script
 "
-" Copyright: (C) 2006-2015 Ingo Karkat
+" Copyright: (C) 2006-2017 Ingo Karkat
 "   The VIM LICENSE applies to this script; see ':help copyright'.
 "
 " Maintainer:	Ingo Karkat <ingo@karkat.de>
 "
 " REVISION	DATE		REMARKS  {{{1
+"   2.00.023	22-Mar-2017	CHG: Default to |Change| instead of |Ignore|
+"				when just the buffer settings are wrong, and the
+"				assessment is solid. This is the most common
+"				(and sensible) choice. If there's not enough
+"				indent for that, don't default to anything.
 "   2.00.022	31-Mar-2015	FIX: g:indentconsistencycop_line_filters must be
 "				uppercase because of Funcrefs.
 "   2.00.021	30-Mar-2015	Fix flag b:indentconsistencycop_result.isIgnore
@@ -1749,7 +1754,7 @@ function! s:IndentBufferConsistencyCop( startLnum, endLnum, consistentIndentSett
 	    if s:IsBufferSettingsConsistent()
 		call insert(l:bufferSettingsChoices, printf('Wrong, use &buffer settings (%s)', s:IndentSettingToUserString(s:GetIndentSettingForBufferSettings())), -1)
 	    endif
-	    let l:action = ingo#query#ConfirmAsText(l:userMessage, l:bufferSettingsChoices, 1, 'Question')
+	    let l:action = ingo#query#ConfirmAsText(l:userMessage, l:bufferSettingsChoices, (s:IsEnoughIndentForSolidAssessment() ? 2 : 0), 'Question')
 	    if empty(l:action) || l:action ==? 'Ignore'
 		call s:PrintBufferSettings( 'The buffer settings remain ' . (s:IsEnoughIndentForSolidAssessment() ? 'inconsistent' : 'at') . ': ' )
 	    elseif l:action ==? 'Change'
