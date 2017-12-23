@@ -299,7 +299,7 @@ below).
 ==============================================================================
 HISTORY						*IndentConsistencyCop-history*
 
-2.00	RELEASEME
+2.00	23-Dec-2017
 - Minor: Replace explicit regexp engine workaround with ingo/compat/regexp.vim.
 - When choosing "Highlight wrong indents..." followed by "Not best guess" or
   "Not chosen setting", also adapt the buffer settings to that indent setting,

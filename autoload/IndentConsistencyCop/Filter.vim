@@ -3,13 +3,10 @@
 " DEPENDENCIES:
 "   - IndentConsistencyCop.vim autoload script
 "
-" Copyright: (C) 2015 Ingo Karkat
+" Copyright: (C) 2015-2017 Ingo Karkat
 "   The VIM LICENSE applies to this script; see ':help copyright'.
 "
 " Maintainer:	Ingo Karkat <ingo@karkat.de>
-"
-" REVISION	DATE		REMARKS
-"   2.00.001	31-Mar-2015	file creation
 
 function! IndentConsistencyCop#Filter#BlockAlignment( startLnum, endLnum )
 "******************************************************************************
