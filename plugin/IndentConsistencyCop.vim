@@ -2,43 +2,13 @@
 "
 " DEPENDENCIES:
 "   - Requires Vim 7.0 or higher.
-"   - Requires IndentConsistencyCop.vim autoload script.
+"   - IndentConsistencyCop.vim autoload script
+"   - IndentConsistencyCop/Filter.vim autoload script
 "
-" Copyright: (C) 2006-2015 by Ingo Karkat
+" Copyright: (C) 2006-2017 by Ingo Karkat
 "   The VIM LICENSE applies to this script; see ':help copyright'.
 "
 " Maintainer:	Ingo Karkat <ingo@karkat.de>
-"
-" REVISION	DATE		REMARKS
-"   2.00.026	31-Mar-2015	FIX: g:indentconsistencycop_line_filters must be
-"				uppercase because of Funcrefs. Add default
-"				IndentConsistencyCop#Filter#BlockAlignment
-"				filter.
-"   2.00.025	23-Mar-2015	Add g:indentconsistencycop_line_filters
-"				configuration.
-"   1.44.024	08-Jan-2014	BUG: The version 1.43 workaround for the Vim 7.4
-"				new regexp engine was ineffective, because the
-"				\%#=1 atom needs to be prepended to the entire
-"				regular expression, but that's not possible with
-"				the configuration value alone. (Also, the
-"				workaround mistakenly specified auto-select (0)
-"				instead of old engine (1).) Move the workaround
-"				to s:GetBeginningWhitespace() instead.
-"   1.43.024	14-Dec-2013	XXX: Switch default
-"				g:indentconsistencycop_non_indent_pattern to old
-"				regexp engine in Vim 7.4; the new NFA-based one
-"				has a problem with the pattern; cp.
-"				http://article.gmane.org/gmane.editors.vim.devel/43712
-"   1.43.023	22-Nov-2013	Improve
-"				g:indentconsistencycop_non_indent_pattern to
-"				also handle empty comment lines with a sole ' *'
-"				prefix. Thanks to Marcelo Montu for reporting
-"				this.
-"   1.21.022	31-Dec-2010	Moved functions from plugin to separate autoload
-"				script.
-"				Split off documentation into separate help file.
-"	...
-"	0.01	08-Oct-2006	file creation
 
 " Avoid installing twice or when in compatible mode
 if exists('g:loaded_indentconsistencycop') || (v:version < 700)
