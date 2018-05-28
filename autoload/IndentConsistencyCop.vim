@@ -782,8 +782,8 @@ function! s:NormalizeRatings() " {{{2
     else
 	" Any perfect or authoritative ratings didn't pass the majority rule, so
 	" clear them here to signal a definite inconsistency, but return a flag
-	" to allow s:IsBufferConsistentWithBufferSettings() to later turn around
-	" this verdict by examining the buffer settings.
+	" to allow s:IsBufferConsistentWith() to later turn around this verdict
+	" by examining the buffer settings.
 	let l:hadPerfectOrAuthoritativeRating = (! empty(s:perfectIndentSetting) || ! empty(s:authoritativeIndentSetting))
 	let s:perfectIndentSetting = ''
 	let s:authoritativeIndentSetting = ''
@@ -2000,10 +2000,10 @@ function! s:IndentBufferInconsistencyCop( startLnum, endLnum, inconsistentIndent
     endif
 endfunction
 
-function! s:IsBufferConsistentWithBufferSettings( startLnum, endLnum ) " {{{1
+function! s:IsBufferConsistentWith( indentSetting, startLnum, endLnum ) " {{{1
 "*******************************************************************************
 "* PURPOSE:
-"   Examines the buffer settings to possibly turn around the verdict of
+"   Examines the passed indent settings to possibly turn around the verdict of
 "   "inconsistent indent".
 "   When the maximum indent of the buffer is not enough to be sure of the indent
 "   settings (i.e. differentiating between soft tabstops and spaces), an
@@ -2014,23 +2014,23 @@ function! s:IsBufferConsistentWithBufferSettings( startLnum, endLnum ) " {{{1
 "   consistent indents, and only when they are consistent indeed, bother to
 "   (optionally) check the buffer settings, too.
 "   This function bypasses the normal process flow by peeking to the buffer
-"   settings to help solve the uncertainty of its judgement of buffers with
-"   small maximum indents.
+"   settings, or any settings previously set by the user to help solve the
+"   uncertainty of its judgement of buffers with small maximum indents.
 "* ASSUMPTIONS / PRECONDITIONS:
 "   A potential buffer inconsistency has been detected (s:CheckBufferConsistency() == 0).
 "* EFFECTS / POSTCONDITIONS:
-"	? List of the procedure's effect on each external variable, control, or other element.
+"   None.
 "* INPUTS:
+"   a:indentSetting	Indent setting to evaluate against.
 "   a:startLnum, a:endLnum: range in the current buffer that is to be
 "			    checked.
 "* RETURN VALUES:
 "   1 if the uncertainty of small maximum indents has been resolved to
-"	"consistent" by examining the buffer settings.
+"	"consistent" by examining the passed settings.
 "   0 if the verdict is still "inconsistent".
 "*******************************************************************************
-    let l:bufferIndentSetting = s:GetIndentSettingForBufferSettings()
-    if ! s:IsBadIndentSetting( l:bufferIndentSetting )
-	let l:lineNumbers = s:GetInconsistentIndents( a:startLnum, a:endLnum, l:bufferIndentSetting )
+    if ! s:IsBadIndentSetting( a:indentSetting )
+	let l:lineNumbers = s:GetInconsistentIndents( a:startLnum, a:endLnum, a:indentSetting )
 	if len( l:lineNumbers ) == 0
 	    " All lines conform to the buffer indent setting, nothing is
 	    " inconsistent.
@@ -2084,7 +2084,7 @@ function! IndentConsistencyCop#IndentConsistencyCop( startLnum, endLnum, isBuffe
 	call s:ReportConsistencyWithBufferSettingsResult( l:isEntireBuffer, 1 )
     elseif l:isConsistent == 0
 	if l:hadPerfectOrAuthoritativeRating || ! s:IsEnoughIndentForSolidAssessment()
-	    let l:isConsistent = s:IsBufferConsistentWithBufferSettings( l:startLnum, l:endLnum )
+	    let l:isConsistent = s:IsBufferConsistentWith( s:GetIndentSettingForBufferSettings(), l:startLnum, l:endLnum )
 	endif
 	call s:ReportConsistencyWithBufferSettingsResult( l:isEntireBuffer, l:isConsistent )
 	if l:isConsistent
