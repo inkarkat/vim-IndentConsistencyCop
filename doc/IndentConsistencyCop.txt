@@ -229,11 +229,16 @@ checks.)
 Flag whether there has been enough indent to make a definite judgement about
 the buffer indent settings. (Not set by range checks.)
 >
+    b:indentconsistencycop_result.acknowledgedByUserSetting
+Indent setting that the user has explicitly acknowledged in its interaction
+with the cop (by answering "Wrong" or "Change" in one of the dialogs).
+>
     b:indentconsistencycop_result.isDefiniteOrAcknowledgedByUser
-Flag whether there either has been enough indent to make a definite judgement
-about the buffer indent settings, or whether the user has explicitly
-acknowledged the current indent settings in its interaction with the cop (by
-answering "Wrong" or "Change" in one of the dialogs).
+Combination of the above two: Flag whether there either has been enough indent
+to make a definite judgement about the buffer indent settings, or whether the
+user has explicitly acknowledged the current indent settings in its
+interaction with the cop (by answering "Wrong" or "Change" in one of the
+dialogs).
 >
     b:indentconsistencycop_result.bufferSettings
 String representing the buffer settings. One of 'tabN', 'spcN', 'stsN' (where
@@ -298,6 +303,9 @@ below).
 
 ==============================================================================
 HISTORY						*IndentConsistencyCop-history*
+
+2.01	RELEASEME
+- Add b:indentconsistencycop_result.acknowledgedByUserSetting
 
 2.00	23-Dec-2017
 - Minor: Replace explicit regexp engine workaround with ingo/compat/regexp.vim.
@@ -483,7 +491,7 @@ First published version.
 Started development.
 
 ==============================================================================
-Copyright: (C) 2006-2017 Ingo Karkat
+Copyright: (C) 2006-2018 Ingo Karkat
 The VIM LICENSE applies to this plugin; see |copyright|.
 
 Maintainer:	Ingo Karkat <ingo@karkat.de>

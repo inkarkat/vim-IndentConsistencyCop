@@ -161,7 +161,7 @@ removed via :IndentConsistencyCopOff.
         in Vim diff mode).
     TODO:
     q - Populate quickfix list with all incorrect lines. Idea: Use :cgetexpr.
->
+
     let g:indentconsistencycop_highlighting = 'sglmf:3'
 
 Some comment styles use additional whitespace characters inside the comment
@@ -199,16 +199,16 @@ INTEGRATION
 The :IndentConsistencyCop and :IndentRangeConsistencyCop commands fill a
 buffer-scoped dictionary with the results of the check. These results can be
 consumed by other Vim integrations (e.g. for a custom 'statusline').
->
+
     b:indentconsistencycop_result.maxIndent
 Maximum indent (in columns) found in the entire buffer. (Not reduced by range
 checks.)
->
+
     b:indentconsistencycop_result.minIndent
 Minimum indent (in columns, not counting lines that do not start with
 whitespace at all) found in the entire buffer. (Not increased by range
 checks.)
->
+
     b:indentconsistencycop_result.indentSetting
 String representing the actual indent settings. Consistent indent settings are
 represented by 'tabN', 'spcN', 'stsN' (where N is the indent multiplier) or
@@ -216,35 +216,40 @@ represented by 'tabN', 'spcN', 'stsN' (where N is the indent multiplier) or
 settings are shown as 'XXX'; a setting which is almost consistent, with only
 some bad mix of spaces and tabs, is represented by 'BADtabN', 'BADspcN' or
 'BADstsN'.
->
+
     b:indentconsistencycop_result.isConsistent
 Flag whether the indent in the entire buffer is consistent. (Not set by range
 checks.)
->
+
     b:indentconsistencycop_result.isDefinite
 Flag whether there has been enough indent to make a definite judgement about
 the buffer indent settings. (Not set by range checks.)
->
+
+    b:indentconsistencycop_result.acknowledgedByUserSetting
+Indent setting that the user has explicitly acknowledged in its interaction
+with the cop (by answering "Wrong" or "Change" in one of the dialogs).
+
     b:indentconsistencycop_result.isDefiniteOrAcknowledgedByUser
-Flag whether there either has been enough indent to make a definite judgement
-about the buffer indent settings, or whether the user has explicitly
-acknowledged the current indent settings in its interaction with the cop (by
-answering "Wrong" or "Change" in one of the dialogs).
->
+Combination of the above two: Flag whether there either has been enough indent
+to make a definite judgement about the buffer indent settings, or whether the
+user has explicitly acknowledged the current indent settings in its
+interaction with the cop (by answering "Wrong" or "Change" in one of the
+dialogs).
+
     b:indentconsistencycop_result.bufferSettings
 String representing the buffer settings. One of 'tabN', 'spcN', 'stsN' (where
 N is the indent multiplier), or '???' (meaning inconsistent buffer indent
 settings).
->
+
     b:indentconsistencycop_result.isBufferSettingsConsistent
 Flag whether the buffer indent settings (tabstop, softtabstop, shiftwidth,
 expandtab) are consistent with each other.
->
+
     b:indentconsistencycop_result.isConsistentWithBufferSettings
 Flag whether the indent in the entire buffer is consistent with the buffer
 indent settings. (Not set by range checks; :IndentRangeConsistencyCop leaves
 this flag unchanged.)
->
+
     b:indentconsistencycop_result.isIgnore
 Flag whether the user chose to ignore the inconsistent results. This can be
 used by integrations (like IndentConsistencyCopAutoCmds) to cease scheduling
@@ -290,6 +295,9 @@ below).
 
 HISTORY
 ------------------------------------------------------------------------------
+
+##### 2.01    RELEASEME
+- Add b:indentconsistencycop\_result.acknowledgedByUserSetting
 
 ##### 2.00    23-Dec-2017
 - Minor: Replace explicit regexp engine workaround with ingo/compat/regexp.vim.
@@ -475,7 +483,7 @@ IndentBufferConsistencyCop.
 - Started development.
 
 ------------------------------------------------------------------------------
-Copyright: (C) 2006-2017 Ingo Karkat -
+Copyright: (C) 2006-2018 Ingo Karkat -
 The [VIM LICENSE](http://vimdoc.sourceforge.net/htmldoc/uganda.html#license) applies to this plugin.
 
 Maintainer:     Ingo Karkat <ingo@karkat.de>

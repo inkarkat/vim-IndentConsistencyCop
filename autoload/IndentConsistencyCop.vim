@@ -7,7 +7,7 @@
 "   - ingo/query.vim autoload script
 "   - ingo/range.vim autoload script
 "
-" Copyright: (C) 2006-2017 Ingo Karkat
+" Copyright: (C) 2006-2018 Ingo Karkat
 "   The VIM LICENSE applies to this script; see ':help copyright'.
 "
 " Maintainer:	Ingo Karkat <ingo@karkat.de>
@@ -1441,6 +1441,7 @@ function! s:IndentBufferConsistencyCop( startLnum, endLnum, consistentIndentSett
 		call s:ReportBufferSettingsConsistency( l:consistentIndentSetting )
 		call s:PrintBufferSettings( 'The buffer settings have been changed: ' )
 
+		let b:indentconsistencycop_result.acknowledgedByUserSetting = l:consistentIndentSetting
 		let b:indentconsistencycop_result.isDefiniteOrAcknowledgedByUser = 1
 	    elseif l:action =~? '^Wrong'
 		if l:action =~? '^Wrong, choose correct setting'
@@ -1852,6 +1853,9 @@ function! s:ReportConsistencyResult( isEntireBuffer, isConsistent, consistentInd
 	endif
     endif
 
+    if a:isAcknowledgedByUser && ! empty(a:consistentIndentSetting)
+	let b:indentconsistencycop_result.acknowledgedByUserSetting = a:consistentIndentSetting
+    endif
     let b:indentconsistencycop_result.isDefiniteOrAcknowledgedByUser = a:isAcknowledgedByUser || get(b:indentconsistencycop_result, 'isDefinite', 0)
 
     " Update if the entire buffer was checked. Range checks are only allowed to
@@ -1972,6 +1976,7 @@ function! s:IndentBufferInconsistencyCop( startLnum, endLnum, inconsistentIndent
 	    call s:ReportBufferSettingsConsistency( l:bestGuessIndentSetting )
 
 	    call s:PrintBufferSettings( 'The buffer settings have been changed: ' )
+	    let b:indentconsistencycop_result.acknowledgedByUserSetting = l:bestGuessIndentSetting
 	elseif l:changeAction =~? 'chosen setting'
 	    let l:chosenIndentSetting = s:QueryIndentSetting(1)
 	    if ! empty( l:chosenIndentSetting )
@@ -1983,6 +1988,7 @@ function! s:IndentBufferInconsistencyCop( startLnum, endLnum, inconsistentIndent
 		else
 		    call s:EchoUserMessage('Be careful when modifying the inconsistent indents! ')
 		endif
+		let b:indentconsistencycop_result.acknowledgedByUserSetting = l:chosenIndentSetting
 	    endif
 	else
 	    throw 'ASSERT: Unhandled l:changeAction: ' . l:changeAction
