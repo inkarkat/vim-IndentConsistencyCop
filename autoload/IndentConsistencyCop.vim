@@ -1452,6 +1452,7 @@ function! s:IndentBufferConsistencyCop( startLnum, endLnum, consistentIndentSett
 		    throw 'ASSERT: Unhandled l:action: ' . l:action
 		endif
 		if ! empty( l:chosenIndentSetting )
+		    let b:indentconsistencycop_result.acknowledgedByUserSetting = l:chosenIndentSetting
 		    let l:bufferSettingsMessage = ''
 		    if l:chosenIndentSetting !=# s:GetIndentSettingForBufferSettings()
 			call s:MakeBufferSettingsConsistentWith( l:chosenIndentSetting )
