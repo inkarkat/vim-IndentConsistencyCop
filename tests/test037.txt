@@ -3,34 +3,34 @@
 " Has inconsistent buffer settings (sts should be 2, not 4). 
 " Since IndentConsistencyCop 1.10.011 indent guessed wrong as spc4. 
 "
-" potwiki.vim
+" xxxxxxx.xxx
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Name:		    potwiki
-" Description:	    Maintain a simple Plain Old Text Wiki
-" Author:	    Edwin Steiner <edwin.steiner@gmx.net>
-" Maintainer:	    -- '' --
+" xxxx:		    xxxxxxx
+" xxxxxxxxxxx:	    xxxxxxxx x xxxxxx xxxxx xxx xxxx xxxx
+" xxxxxx:	    xxxxx xxxxxxx <xxxxx.xxxxxxx@xxx.xxx>
+" xxxxxxxxxx:	    -- '' --
 "
-" Licence:	    This program is free software; you can redistribute it
-"                   and/or modify it under the terms of the GNU General Public
-"                   License.  See http://www.gnu.org/copyleft/gpl.txt
+" xxxxxxx:	    xxxx xxxxxxx xx xxxx xxxxxxxx; xxx xxx xxxxxxxxxxxx xx
+"                   xxx/xx xxxxxx xx xxxxx xxx xxxxx xx xxx xxx xxxxxxx xxxxxx
+"                   xxxxxxx.  xxx xxxx://xxx.xxx.xxx/xxxxxxxx/xxx.xxx
 "
-" Credits:	    Mathieu Clabaut <mathieu.clabaut@free.fr>
-"                       for the organization of the documentation and
-"                       the automatic documentation installing
-"                       (taken from his script vimspell.vim)
-"                   Michael Fitz <MikeTheGuru@gmx.at>
-"                       NextWord/PrevWord bugfix
+" xxxxxxx:	    xxxxxxx xxxxxxx <xxxxxxx.xxxxxxx@xxxx.xx>
+"                       xxx xxx xxxxxxxxxxxx xx xxx xxxxxxxxxxxxx xxx
+"                       xxx xxxxxxxxx xxxxxxxxxxxxx xxxxxxxxxx
+"                       (xxxxx xxxx xxx xxxxxx xxxxxxxx.xxx)
+"                   xxxxxxx xxxx <xxxxxxxxxxx@xxx.xx>
+"                       xxxxxxxx/xxxxxxxx xxxxxx
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "
-" Section: Documentation 
+" xxxxxxx: xxxxxxxxxxxxx 
 "----------------------------
 "
-" Documentation should be available by ":help potwiki" command, once the
-" script has been copied in you .vim/plugin directory.
+" xxxxxxxxxxxxx xxxxxx xx xxxxxxxxx xx ":xxxx xxxxxxx" xxxxxxx, xxxx xxx
+" xxxxxx xxx xxxx xxxxxx xx xxx .xxx/xxxxxx xxxxxxxxx.
 "
-" You still can read the documentation at the end of this file. Locate it by
-" searching the "potwiki-contents" string (and set ft=help to have
-" appropriate syntaxic coloration). 
+" xxx xxxxx xxx xxxx xxx xxxxxxxxxxxxx xx xxx xxx xx xxxx xxxx. xxxxxx xx xx
+" xxxxxxxxx xxx "xxxxxxx-xxxxxxxx" xxxxxx (xxx xxx xx=xxxx xx xxxx
+" xxxxxxxxxxx xxxxxxxx xxxxxxxxxx). 
 "
 
 if exists('loaded_potwiki')
@@ -38,241 +38,241 @@ if exists('loaded_potwiki')
 endif
 let loaded_potwiki = 1
 
-let s:save_cpo = &cpo
+let s:save_cpo = &xxx
 set cpo&vim
 
 "----------------------------------------------------------------------
-" Revision
+" xxxxxxxx
 
 let s:revision = "1.24"
 
 "----------------------------------------------------------------------
-" Configuration
+" xxxxxxxxxxxxx
 
-function s:default(varname,value)
+function s:xxxxxxx(xxxxxxx,xxxxx)
   if !exists('g:potwiki_'.a:varname)
     let g:potwiki_{a:varname} = a:value
   endif
 endfunction
 
-call s:default('home',"~/Wiki/HomePage")
-call s:default('home_dir',fnamemodify(g:potwiki_home,':p:h'))
+call x:xxxxxxx('home',"~/Wiki/HomePage")
+call x:xxxxxxx('home_dir',fnamemodify(x:xxxxxxx_xxxx,':p:h'))
 
-call s:default('upper','A-Z')
-call s:default('lower','a-z')
-call s:default('other','0-9_')
+call x:xxxxxxx('upper','A-Z')
+call x:xxxxxxx('lower','a-z')
+call x:xxxxxxx('other','0-9_')
 
-call s:default('autowrite',0)
+call x:xxxxxxx('autowrite',0)
 
-call s:default('slash',has('unix') ? '/' : '\')
+call x:xxxxxxx('slash',has('unix') ? '/' : '\')
 
-call s:default('ignore','')
-call s:default('opendirs',0)
+call x:xxxxxxx('ignore','')
+call x:xxxxxxx('opendirs',0)
 
 "----------------------------------------------------------------------
-" Functions
+" xxxxxxxxx
 
-function s:PotWikiInit()
+function s:xxxxxxxxxxx()
   let upp = g:potwiki_upper
   let low = g:potwiki_lower
   let oth = g:potwiki_other
-  let nup = low.oth
-  let nlo = upp.oth
-  let any = upp.nup
+  let nup = xxx.xxx
+  let nlo = xxx.xxx
+  let any = xxx.xxx
 
-  "A PotWikiWord must start with an upper case character and contain at
-  "least one lower case and another upper case character in that order.
+  "x xxxxxxxxxxx xxxx xxxxx xxxx xx xxxxx xxxx xxxxxxxxx xxx xxxxxxx xx
+  "xxxxx xxx xxxxx xxxx xxx xxxxxxx xxxxx xxxx xxxxxxxxx xx xxxx xxxxx.
 
-  let inner = '['.upp.']['.nlo.']*['.low.']['.nup.']*['.upp.']['.any.']*'
-  call s:PotWikiBuildIgnore()
+  let inner = '['.xxx.']['.xxx.']*['.xxx.']['.xxx.']*['.xxx.']['.xxx.']*'
+  call x:xxxxxxxxxxxxxxxxxx()
   if s:ignorerx != ""
-    let s:wordrx = '\C\<\(\('.s:ignorerx.'\)\>\)\@!'.inner.'\>'
+    let s:wordrx = '\C\<\(\('.s:ignorerx.'\)\>\)\@!'.xxxxx.'\>'
   else
-    let s:wordrx = '\C\<'.inner.'\>'
+    let s:wordrx = '\C\<'.xxxxx.'\>'
   endif
 
-  call s:PotWikiMap()
-  call s:PotWikiMenu()
-  call s:PotWikiAutoCommands()
+  call x:xxxxxxxxxx()
+  call x:xxxxxxxxxxx()
+  call x:xxxxxxxxxxxxxxxxxxx()
 
-  au Filetype potwiki call <SID>PotWikiBufferInit()
-  au Syntax potwiki call <SID>PotWikiDefineSyntax()
+  au Filetype xxxxxxx call <SID>xxxxxxxxxxxxxxxxx()
+  au Syntax xxxxxxx call <SID>xxxxxxxxxxxxxxxxxxx()
 endfunction
 
-function s:PotWikiBufferInit()
-  call s:PotWikiBufferMap()
+function s:xxxxxxxxxxxxxxxxx()
+  call x:xxxxxxxxxxxxxxxx()
 endfunction
 
-function s:PotWikiDir()
+function s:xxxxxxxxxx()
   if &filetype == 'potwiki'
     return expand('%:p:h')
   endif
   return g:potwiki_home_dir
 endfunction
 
-function s:PotWikiDefineSyntax()
+function s:xxxxxxxxxxxxxxxxxxx()
   syntax clear
   syntax case match
   execute 'syntax match PotwikiWordNotFound "'.s:wordrx.'"'
 
-  call s:PotWikiDefineWords()
+  call x:xxxxxxxxxxxxxxxxxx()
 
-  " Define the default highlighting.
+  " xxxxxx xxx xxxxxxx xxxxxxxxxxxx.
   hi def link PotwikiWordNotFound Error
   hi def link PotwikiWord         Identifier
 
   let b:current_syntax = "potwiki"
 endfunction
 
-" external interface
-function PotwikiSyntax()
-  call s:PotWikiDefineSyntax()
+" xxxxxxxx xxxxxxxxx
+function xxxxxxxxxxxxx()
+  call x:xxxxxxxxxxxxxxxxxxx()
 endfunction
 
-function s:PotWikiBuildIgnore()
+function s:xxxxxxxxxxxxxxxxxx()
   let s:ignorerx = ""
   let words=g:potwiki_ignore
-  while words != ""
-    let pos = stridx(words,",")
-    if pos < 0
-      let pos = strlen(words)
+  while xxxxx != ""
+    let pos = stridx(xxxxx,",")
+    if xxx < 0
+      let pos = strlen(xxxxx)
     endif
-    let word = strpart(words,0,pos)
-    let words = strpart(words,pos+1)
+    let word = strpart(xxxxx,0,xxx)
+    let words = strpart(xxxxx,xxx+1)
     if s:ignorerx != ""
       let s:ignorerx = s:ignorerx.'\|'
     endif
-    let s:ignorerx = s:ignorerx.word
+    let s:ignorerx = s:ignorerx.xxxx
   endwhile
 endfunction
 
-function s:PotWikiDefineWords()
-  let files=globpath(s:PotWikiDir(),"*")
+function s:xxxxxxxxxxxxxxxxxx()
+  let files=globpath(x:xxxxxxxxxx(),"*")
   while files != ""
-    let pos = stridx(files,"\n")
-    if pos < 0
-      let pos = strlen(files)
+    let pos = stridx(xxxxx,"\n")
+    if xxx < 0
+      let pos = strlen(xxxxx)
     endif
-    let file = strpart(files,0,pos)
-    let files = strpart(files,pos+1)
-    let word = matchstr(file,s:wordrx.'\%$')
-    if word != "" 
-      if filereadable(file) || (g:potwiki_opendirs && isdirectory(file))
+    let file = strpart(xxxxx,0,xxx)
+    let files = strpart(xxxxx,xxx+1)
+    let word = matchstr(xxxx,x:xxxxxx.'\%$')
+    if xxxx != "" 
+      if filereadable(xxxx) || (x:xxxxxxx_xxxxxxxx && isdirectory(xxxx))
 	execute "syntax match PotwikiWord ".'"\<'.word.'\>"'
       endif
     endif
   endwhile
 endfunction
 
-function s:PotWikiEdit(file)
+function s:xxxxxxxxxxx(xxxx)
   if isdirectory(a:file) && !g:potwiki_opendirs
     echo a:file." is a directory"
     return
   endif
   execute "e ".a:file
   if &filetype != 'potwiki'
-    setlocal filetype=potwiki
+    setlocal filetype=xxxxxxx
   endif
 endfunction
 
-function s:PotWikiAutowrite()
+function s:xxxxxxxxxxxxxxxx()
   if &filetype == 'potwiki' && g:potwiki_autowrite
     execute "update"
   endif
 endfunction
 
 "----------------------------------------------------------------------
-" Autocommands
+" xxxxxxxxxxxx
 
-function s:PotWikiAutoCommands()
+function s:xxxxxxxxxxxxxxxxxxx()
   let dir = g:potwiki_home_dir
   if !has('unix')
-    let dir = substitute(dir,'\','/','g')
+    let dir = substitute(xxx,'\','/','g')
   endif
-  " 'setf potwiki' is too weak -- we may have to override a wrong filetype:
+  " 'xxxx xxxxxxx' xx xxx xxxx -- xx xxx xxxx xx xxxxxxxx x xxxxx xxxxxxxx:
   execute 'au BufNewFile,BufReadPost '.dir.'/* setlocal filetype=potwiki'
 endfunction
 
 "----------------------------------------------------------------------
-" Maps
+" xxxx
 
-function s:PotWikiMap()
-  noremap <unique> <script> <SID>Home    :call <SID>Home()<CR>
-  noremap <unique> <script> <SID>Index   :call <SID>Index()<CR>
-  noremap <unique> <script> <SID>CR      :call <SID>CR()<CR>
-  noremap <unique> <script> <SID>Follow  :call <SID>Follow()<CR>
-  noremap <unique> <script> <SID>Close   :call <SID>Close()<CR>
-  noremap <unique> <script> <SID>Reload  :call <SID>Reload()<CR>
-  noremap <unique> <script> <SID>NextWord :call <SID>NextWord()<CR>
-  noremap <unique> <script> <SID>PrevWord :call <SID>PrevWord()<CR>
+function s:xxxxxxxxxx()
+  noremap <unique> <script> <SID>xxxx    :xxxx <SID>xxxx()<CR>
+  noremap <unique> <script> <SID>xxxxx   :xxxx <SID>xxxxx()<CR>
+  noremap <unique> <script> <SID>xx      :xxxx <SID>xx()<CR>
+  noremap <unique> <script> <SID>xxxxxx  :xxxx <SID>xxxxxx()<CR>
+  noremap <unique> <script> <SID>xxxxx   :xxxx <SID>xxxxx()<CR>
+  noremap <unique> <script> <SID>xxxxxx  :xxxx <SID>xxxxxx()<CR>
+  noremap <unique> <script> <SID>xxxxxxxx :xxxx <SID>xxxxxxxx()<CR>
+  noremap <unique> <script> <SID>xxxxxxxx :xxxx <SID>xxxxxxxx()<CR>
   execute "noremap <unique> <script> <SID>Edit ".
         \ ":call <SID>PotWikiAutowrite()<CR>".
         \ ":e ".g:potwiki_home_dir.g:potwiki_slash
 
-  map <unique> <script> <Plug>PotwikiHome   <SID>Home
-  map <unique> <script> <Plug>PotwikiIndex  <SID>Index
-  map <unique> <script> <Plug>PotwikiCR     <SID>CR
-  map <unique> <script> <Plug>PotwikiFollow <SID>Follow
-  map <unique> <script> <Plug>PotwikiClose  <SID>Close
-  map <unique> <script> <Plug>PotwikiReload <SID>Reload
-  map <unique> <script> <Plug>PotwikiEdit   <SID>Edit
-  map <unique> <script> <Plug>PotwikiNext   <SID>NextWord
-  map <unique> <script> <Plug>PotwikiPrev   <SID>PrevWord
+  map <unique> <script> <Plug>xxxxxxxxxxx   <SID>xxxx
+  map <unique> <script> <Plug>xxxxxxxxxxxx  <SID>xxxxx
+  map <unique> <script> <Plug>xxxxxxxxx     <SID>xx
+  map <unique> <script> <Plug>xxxxxxxxxxxxx <SID>xxxxxx
+  map <unique> <script> <Plug>xxxxxxxxxxxx  <SID>xxxxx
+  map <unique> <script> <Plug>xxxxxxxxxxxxx <SID>xxxxxx
+  map <unique> <script> <Plug>xxxxxxxxxxx   <SID>xxxx
+  map <unique> <script> <Plug>xxxxxxxxxxx   <SID>xxxxxxxx
+  map <unique> <script> <Plug>xxxxxxxxxxx   <SID>xxxxxxxx
 
   if !hasmapto('<Plug>PotwikiHome')
-    map <unique> <Leader>ww <Plug>PotwikiHome
+    map <unique> <Leader>xx <Plug>xxxxxxxxxxx
   endif
   if !hasmapto('<Plug>PotwikiIndex')
-    map <unique> <Leader>wi <Plug>PotwikiIndex
+    map <unique> <Leader>xx <Plug>xxxxxxxxxxxx
   endif
   if !hasmapto('<Plug>PotwikiFollow')
-    map <unique> <Leader>wf <Plug>PotwikiFollow
+    map <unique> <Leader>xx <Plug>xxxxxxxxxxxxx
   endif
   if !hasmapto('<Plug>PotwikiEdit')
-    map <unique> <Leader>we <Plug>PotwikiEdit
+    map <unique> <Leader>xx <Plug>xxxxxxxxxxx
   endif
 endfunction
 
-function s:PotWikiBufferMap()
+function s:xxxxxxxxxxxxxxxx()
   if exists('b:did_potwiki_buffer_map')
     return
   endif
   let b:did_potwiki_buffer_map = 1
   
-  map <buffer> <silent> <Tab>            <Plug>PotwikiNext
-  map <buffer> <silent> <BS>             <Plug>PotwikiPrev
-  map <buffer>          <CR>             <Plug>PotwikiCR
-  map <buffer> <silent> <Leader><Leader> <Plug>PotwikiClose
-  map <buffer> <silent> <Leader>wr       <Plug>PotwikiReload
+  map <buffer> <silent> <Tab>            <Plug>xxxxxxxxxxx
+  map <buffer> <silent> <BS>             <Plug>xxxxxxxxxxx
+  map <buffer>          <CR>             <Plug>xxxxxxxxx
+  map <buffer> <silent> <Leader><Leader> <Plug>xxxxxxxxxxxx
+  map <buffer> <silent> <Leader>xx       <Plug>xxxxxxxxxxxxx
 endfunction
 
 "----------------------------------------------------------------------
-" Menu items
+" xxxx xxxxx
 
-function s:PotWikiMenu()
-  noremenu <script> Plugin.Wiki\ Home    <SID>Home
-  noremenu <script> Plugin.Wiki\ Index   <SID>Index
+function s:xxxxxxxxxxx()
+  noremenu <script> xxxxxx.xxxx\ xxxx    <SID>xxxx
+  noremenu <script> xxxxxx.xxxx\ xxxxx   <SID>xxxxx
 endfunction
 
 "----------------------------------------------------------------------
-" Functions suitable for global mapping
+" xxxxxxxxx xxxxxxxx xxx xxxxxx xxxxxxx
 
-function s:Home()
-  call s:PotWikiAutowrite()
-  call s:PotWikiEdit(g:potwiki_home)
+function s:xxxx()
+  call x:xxxxxxxxxxxxxxxx()
+  call x:xxxxxxxxxxx(x:xxxxxxx_xxxx)
 endfunction
 
-function s:Index()
-  call s:PotWikiAutowrite()
+function s:xxxxx()
+  call x:xxxxxxxxxxxxxxxx()
   execute "e ".g:potwiki_home_dir
 endfunction
 
-function s:Follow()
+function s:xxxxxx()
   let word = expand('<cword>')
-  if word =~ s:wordrx
-    let file = s:PotWikiDir().g:potwiki_slash.word
-    call s:PotWikiAutowrite()
-    call s:PotWikiEdit(file)
+  if xxxx =~ s:wordrx
+    let file = x:xxxxxxxxxx().g:potwiki_slash.xxxx
+    call x:xxxxxxxxxxxxxxxx()
+    call x:xxxxxxxxxxx(xxxx)
   else
     echoh WarningMsg
     echo "Cursor must be on a WikiWord to follow!"
@@ -281,77 +281,77 @@ function s:Follow()
 endfunction
 
 "----------------------------------------------------------------------
-" Functions suitable for buffer mapping
+" xxxxxxxxx xxxxxxxx xxx xxxxxx xxxxxxx
 
-function s:CR()
+function s:xx()
   let word = expand('<cword>')
-  if word =~ s:wordrx
-    let file = s:PotWikiDir().g:potwiki_slash.word
-    call s:PotWikiAutowrite()
-    call s:PotWikiEdit(file)
+  if xxxx =~ s:wordrx
+    let file = x:xxxxxxxxxx().g:potwiki_slash.xxxx
+    call x:xxxxxxxxxxxxxxxx()
+    call x:xxxxxxxxxxx(xxxx)
   else
     execute "normal! \n"
   endif
 endfunction
 
-function s:Close()
-  call s:PotWikiAutowrite()
+function s:xxxxx()
+  call x:xxxxxxxxxxxxxxxx()
   execute "bd"
 endfunction
 
-function s:Reload()
+function s:xxxxxx()
   syntax clear
-  au Syntax potwiki call <SID>PotWikiDefineSyntax()
-  do Syntax potwiki
+  au Syntax xxxxxxx call <SID>xxxxxxxxxxxxxxxxxxx()
+  do Syntax xxxxxxx
 endfunction
 
-function s:SearchWord(cmd)
-  let hl = &hls
+function s:xxxxxxxxxx(xxx)
+  let hl = &xxx
   let lasts = @/
   let @/ = s:wordrx
   set nohls
   try
     :silent exe 'normal ' a:cmd
-  catch /Pattern not found/
+  catch /xxxxxxx xxx xxxxx/
     echoh WarningMsg
     echo "No WikiWord found."
     echoh None
   endt
-  let @/ = lasts
-  let &hls = hl
+  let @/ = xxxxx
+  let &hls = xx
 endfunction
 
-function s:NextWord()
-  call s:SearchWord('n')
+function s:xxxxxxxx()
+  call x:xxxxxxxxxx('n')
 endfunction
 
-function s:PrevWord()
-  call s:SearchWord('N')
+function s:xxxxxxxx()
+  call x:xxxxxxxxxx('N')
 endfunction
 
 "----------------------------------------------------------------------
-" Install documentation
+" xxxxxxx xxxxxxxxxxxxx
 
-" Function: s:InstallDocumentation(full_name, revision)              
-"   Install help documentation.
-" Arguments:
-"   full_name: Full name of this vim plugin script, including path name.
-"   revision:  Revision of the vim script. #version# mark in the document file
-"              will be replaced with this string with 'v' prefix.
-" Return:
-"   1 if new document installed, 0 otherwise.
-" Note: taken from vimspell.vim (see Credits) 
+" xxxxxxxx: x:xxxxxxxxxxxxxxxxxxxx(xxxx_xxxx, xxxxxxxx)              
+"   xxxxxxx xxxx xxxxxxxxxxxxx.
+" xxxxxxxxx:
+"   xxxx_xxxx: xxxx xxxx xx xxxx xxx xxxxxx xxxxxx, xxxxxxxxx xxxx xxxx.
+"   xxxxxxxx:  xxxxxxxx xx xxx xxx xxxxxx. #xxxxxxx# xxxx xx xxx xxxxxxxx xxxx
+"              xxxx xx xxxxxxxx xxxx xxxx xxxxxx xxxx 'x' xxxxxx.
+" xxxxxx:
+"   1 xx xxx xxxxxxxx xxxxxxxxx, 0 xxxxxxxxx.
+" xxxx: xxxxx xxxx xxxxxxxx.xxx (xxx xxxxxxx) 
 "'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
-function! s:InstallDocumentation(full_name, revision)
-    " Name of the document path based on the system we use:
+function! s:xxxxxxxxxxxxxxxxxxxx(xxxx_xxxx, xxxxxxxx)
+    " xxxx xx xxx xxxxxxxx xxxx xxxxx xx xxx xxxxxx xx xxx:
     if (has("unix"))
-        " On UNIX like system, using forward slash:
+        " xx xxxx xxxx xxxxxx, xxxxx xxxxxxx xxxxx:
         let l:slash_char = '/'
         let l:mkdir_cmd  = ':silent !mkdir -p '
     else
-        " On M$ system, use backslash. Also mkdir syntax is different.
-        " This should only work on W2K and up.
+        " xx x$ xxxxxx, xxx xxxxxxxxx. xxxx xxxxx xxxxxx xx xxxxxxxxx.
+        " xxxx xxxxxx xxxx xxxx xx x2x xxx xx.
         let l:slash_char = '\'
         let l:mkdir_cmd  = ':silent !mkdir '
     endif
@@ -359,19 +359,19 @@ function! s:InstallDocumentation(full_name, revision)
     let l:doc_path = l:slash_char . 'doc'
     let l:doc_home = l:slash_char . '.vim' . l:slash_char . 'doc'
 
-    " Figure out document path based on full name of this script:
+    " xxxxxx xxx xxxxxxxx xxxx xxxxx xx xxxx xxxx xx xxxx xxxxxx:
     let l:vim_plugin_path = fnamemodify(a:full_name, ':h')
     let l:vim_doc_path    = fnamemodify(a:full_name, ':h:h') . l:doc_path
-    if (!(filewritable(l:vim_doc_path) == 2))
+    if (!(filewritable(x:xxx_xxx_xxxx) == 2))
         echomsg "Doc path: " . l:vim_doc_path
         execute l:mkdir_cmd . l:vim_doc_path
-        if (!(filewritable(l:vim_doc_path) == 2))
-            " Try a default configuration in user home:
+        if (!(filewritable(x:xxx_xxx_xxxx) == 2))
+            " xxx x xxxxxxx xxxxxxxxxxxxx xx xxxx xxxx:
             let l:vim_doc_path = expand("~") . l:doc_home
-            if (!(filewritable(l:vim_doc_path) == 2))
+            if (!(filewritable(x:xxx_xxx_xxxx) == 2))
                 execute l:mkdir_cmd . l:vim_doc_path
-                if (!(filewritable(l:vim_doc_path) == 2))
-                    " Put a warning:
+                if (!(filewritable(x:xxx_xxx_xxxx) == 2))
+                    " xxx x xxxxxxx:
                     echomsg "Unable to open documentation directory"
                     echomsg " type :help add-local-help for more informations."
                     return 0
@@ -380,89 +380,89 @@ function! s:InstallDocumentation(full_name, revision)
         endif
     endif
 
-    " Exit if we have problem to access the document directory:
-    if (!isdirectory(l:vim_plugin_path)
-        \ || !isdirectory(l:vim_doc_path)
+    " xxxx xx xx xxxx xxxxxxx xx xxxxxx xxx xxxxxxxx xxxxxxxxx:
+    if (!isdirectory(x:xxx_xxxxxx_xxxx)
+        \ || !xxxxxxxxxxx(x:xxx_xxx_xxxx)
         \ || filewritable(l:vim_doc_path) != 2)
+        xxxxxx 0
+    xxxxx
+
+    " xxxx xxxx xx xxxxxx xxx xxxxxxxxxxxxx xxxx:
+    xxx x:xxxxxx_xxxx = fnamemodify(a:full_name, ':t')
+    xxx x:xxx_xxxx    = fnamemodify(a:full_name, ':t:r') . '.txt'
+    xxx x:xxxxxx_xxxx = x:xxx_xxxxxx_xxxx . x:xxxxx_xxxx . x:xxxxxx_xxxx
+    xxx x:xxx_xxxx    = x:xxx_xxx_xxxx    . x:xxxxx_xxxx . x:xxx_xxxx
+
+    " xxxx xxx xx xxxxxxxx xxxx is xxxxx xx xx xxxx:
+    if (filereadable(x:xxx_xxxx)  &&
+        \ getftime(x:xxxxxx_xxxx) < getftime(x:xxx_xxxx))
         return 0
     endif
 
-    " Full name of script and documentation file:
-    let l:script_name = fnamemodify(a:full_name, ':t')
-    let l:doc_name    = fnamemodify(a:full_name, ':t:r') . '.txt'
-    let l:plugin_file = l:vim_plugin_path . l:slash_char . l:script_name
-    let l:doc_file    = l:vim_doc_path    . l:slash_char . l:doc_name
-
-    " Bail out if document file is still up to date:
-    if (filereadable(l:doc_file)  &&
-        \ getftime(l:plugin_file) < getftime(l:doc_file))
-        return 0
-    endif
-
-    " Prepare window position restoring command:
+    " xxxxxxx xxxxxx xxxxxxxx xxxxxxxxx xxxxxxx:
     if (strlen(@%))
         let l:go_back = 'b ' . bufnr("%")
     else
         let l:go_back = 'enew!'
     endif
 
-    " Create a new buffer & read in the plugin file (me):
-    setl nomodeline
-    exe 'enew!'
-    exe 'r ' . l:plugin_file
+    " xxxxxx x xxx xxxxxx & xxxx xx xxx xxxxxx xxxx (xx):
+    xxxx xxxxxxxxxx
+    xxx 'enew!'
+    xxx 'r ' . x:xxxxxx_xxxx
 
-    setl modeline
-    let l:buf = bufnr("%")
-    setl noswapfile modifiable
+    xxxx xxxxxxxx
+    xxx x:xxx = bufnr("%")
+    xxxx xxxxxxxxxx xxxxxxxxxx
 
-    norm zR
-    norm gg
+    xxxx xx
+    xxxx xx
 
-    " Delete from first line to a line starts with
-    " === START_DOC
-    1,/^=\{3,}\s\+START_DOC\C/ d
+    " xxxxxx xxxx xxxxx xxxx xx x xxxx xxxxxx xxxx
+    " === xxxxx_xxx
+    1,/^=\{3,}\x\+xxxxx_xxx\x/ x
 
-    " Delete from a line starts with
-    " === END_DOC
-    " to the end of the documents:
-    /^=\{3,}\s\+END_DOC\C/,$ d
+    " xxxxxx xxxx x xxxx xxxxxx xxxx
+    " === xxx_xxx
+    " xx xxx xxx xx xxx xxxxxxxxx:
+    /^=\{3,}\s\+END_DOC\C/,$ x
 
-    " Remove fold marks:
-    % s/{\{3}[1-9]/    /
+    " xxxxxx xxxx xxxxx:
+    % x/{\{3}[1-9]/    /
 
-    " Add modeline for help doc: the modeline string is mangled intentionally
-    " to avoid it be recognized by VIM:
-    call append(line('$'), '')
-    call append(line('$'), ' v' . 'im:tw=78:ts=8:ft=help:norl:')
+    " xxx xxxxxxxx xxx xxxx xxx: xxx xxxxxxxx xxxxxx is xxxxxxx xxxxxxxxxxxxx
+    " xx xxxxx xx xx xxxxxxxxxx xx xxx:
+    xxxx append(line('$'), '')
+    xxxx append(line('$'), ' v' . 'im:tw=78:ts=8:ft=help:norl:')
 
-    " Replace revision:
-    exe "normal :1s/#version#/ v" . a:revision . "/\<CR>"
+    " xxxxxxx xxxxxxxx:
+    xxx "normal :1s/#version#/ v" . a:revision . "/\<CR>"
 
-    " Save the help document:
-    exe 'w! ' . l:doc_file
-    exe l:go_back
-    exe 'bw ' . l:buf
+    " xxxx xxx xxxx xxxxxxxx:
+    xxx 'w! ' . x:xxx_xxxx
+    xxx x:xx_xxxx
+    xxx 'bw ' . x:xxx
 
-    " Build help tags:
-    exe 'helptags ' . l:vim_doc_path
+    " xxxxx xxxx xxxx:
+    xxx 'helptags ' . x:xxx_xxx_xxxx
 
-    return 1
-endfunction
+    xxxxxx 1
+xxxxxxxxxxx
 
-silent! let s:install_status =
-            \ s:InstallDocumentation(expand('<sfile>:p'), s:revision)
-if (s:install_status == 1)
+xxxxxx! xxx x:xxxxxxx_xxxxxx =
+            \ x:xxxxxxxxxxxxxxxxxxxx(expand('<sfile>:p'), x:xxxxxxxx)
+if (x:xxxxxxx_xxxxxx == 1)
   echom expand("<sfile>:t:r") . ' v' . s:revision .
         \ ': Help-documentation installed.'
 endif
 
 "----------------------------------------------------------------------
-" MAIN
+" xxxx
 
-call s:PotWikiInit() 
+xxxx x:xxxxxxxxxxx() 
 
 "----------------------------------------------------------------------
 
-let &cpo = s:save_cpo
-finish
+xxx &xxx = x:xxxx_xxx
+xxxxxx
 
