@@ -259,6 +259,25 @@ Flag whether the user chose to ignore the inconsistent results. This can be
 used by integrations (like IndentConsistencyCopAutoCmds) to cease scheduling
 of further cop runs in this buffer.
 
+
+				       *g:IndentConsistencyCop_MenuExtensions*
+The user queries can be extended with additional menu entries, defined in a
+Dictionary: >
+    let g:IndentConsistencyCop_MenuExtensions = {
+    \	'Dummy': {
+    \	    'priority': 100,
+    \	    'choice':   'Dumm&y',
+    \	    'Action':	function('DummyAction')
+    \	},
+    \	[...]
+    \}
+With the optional "choice" attribute, you can define an accelerator key via &;
+the rest of the text must be identical to the key!
+The optional "priority" attribute determines the order of the extension
+entries; they will always come after the plugin's core entries, though.
+The mandatory "Action" attribute is a Funcref to a function that is invoked
+without arguments if the menu entry is chosen.
+
 ==============================================================================
 LIMITATIONS				    *IndentConsistencyCop-limitations*
 
@@ -306,6 +325,9 @@ HISTORY						*IndentConsistencyCop-history*
 
 2.01	RELEASEME
 - Add b:indentconsistencycop_result.acknowledgedByUserSetting
+- ENH: Allow extension of the plugin's user queries with additional menu
+  entries. This is used by IndentConsistencyCopAutoCmds.vim to implement
+  blacklisting of certain files so that they are never checked again.
 
 2.00	23-Dec-2017
 - Minor: Replace explicit regexp engine workaround with ingo/compat/regexp.vim.
@@ -491,7 +513,7 @@ First published version.
 Started development.
 
 ==============================================================================
-Copyright: (C) 2006-2018 Ingo Karkat
+Copyright: (C) 2006-2019 Ingo Karkat
 The VIM LICENSE applies to this plugin; see |copyright|.
 
 Maintainer:	Ingo Karkat <ingo@karkat.de>

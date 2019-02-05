@@ -106,6 +106,28 @@ endfunction
 
 " }}}1
 
+"- Menu extensions -------------------------------------------------------{{{1
+function! s:SortByMenuExtensionPriority( k1, k2 )
+    return ingo#collections#PrioritySort(g:IndentConsistencyCop_MenuExtensions[a:k1], g:IndentConsistencyCop_MenuExtensions[a:k2])
+endfunction
+function! s:AppendMenuExtensionChoices( choices )
+    if ! empty(g:IndentConsistencyCop_MenuExtensions)
+	let l:menuItems = sort(keys(g:IndentConsistencyCop_MenuExtensions), 's:SortByMenuExtensionPriority')
+	call extend(a:choices, map(l:menuItems, 'get(g:IndentConsistencyCop_MenuExtensions[v:val], "choice", v:val)'))
+    endif
+    return a:choices
+endfunction
+function! s:HandleMenuExtensions( action )
+    if ! has_key(g:IndentConsistencyCop_MenuExtensions, a:action)
+	return 0
+    endif
+
+    let l:ActionFuncref = g:IndentConsistencyCop_MenuExtensions[a:action].Action
+    call call(l:ActionFuncref, [])
+    return 1
+endfunction
+" }}}1
+
 "- Processing of lines in buffer -----------------------------------------{{{1
 function! s:CountTabs( tabString ) " {{{2
     " A tab is a tab, and can thus be counted directly.
@@ -1312,8 +1334,10 @@ function! s:UnindentedBufferConsistencyCop( isEntireBuffer, isBufferSettingsChec
 	if ! empty( l:userMessage )
 	    let l:userMessage = 'This ' . s:GetScopeUserString(a:isEntireBuffer) . ' does not contain indented text. ' . l:userMessage
 	    let l:userMessage .= "\nHow do you want to deal with the inconsistency?"
-	    let l:action = ingo#query#ConfirmAsText(l:userMessage, ['&Ignore', '&Correct setting...'], 1, 'Question')
-	    if empty(l:action) || l:action ==? 'Ignore'
+	    let l:action = ingo#query#ConfirmAsText(l:userMessage, s:AppendMenuExtensionChoices(['&Ignore', '&Correct setting...']), 1, 'Question')
+	    if s:HandleMenuExtensions(l:action)
+		" Extension action.
+	    elseif empty(l:action) || l:action ==? 'Ignore'
 		call s:PrintBufferSettings( 'The buffer settings remain inconsistent: ' )
 	    elseif l:action =~? '^Correct'
 		let l:chosenIndentSetting = s:QueryIndentSetting(1)
@@ -1387,8 +1411,10 @@ function! s:IndentBufferConsistencyCop( startLnum, endLnum, consistentIndentSett
 	    if s:IsBufferSettingsConsistent()
 		call insert(l:bufferSettingsChoices, printf('Wrong, use &buffer settings (%s)', s:IndentSettingToUserString(s:GetIndentSettingForBufferSettings())), -1)
 	    endif
-	    let l:action = ingo#query#ConfirmAsText(l:userMessage, l:bufferSettingsChoices, (s:IsEnoughIndentForSolidAssessment() ? 2 : 0), 'Question')
-	    if empty(l:action) || l:action ==? 'Ignore'
+	    let l:action = ingo#query#ConfirmAsText(l:userMessage, s:AppendMenuExtensionChoices(l:bufferSettingsChoices), (s:IsEnoughIndentForSolidAssessment() ? 2 : 0), 'Question')
+	    if s:HandleMenuExtensions(l:action)
+		" Extension action.
+	    elseif empty(l:action) || l:action ==? 'Ignore'
 		call s:PrintBufferSettings( 'The buffer settings remain ' . (s:IsEnoughIndentForSolidAssessment() ? 'inconsistent' : 'at') . ': ' )
 	    elseif l:action ==? 'Change'
 		call s:MakeBufferSettingsConsistentWith( l:consistentIndentSetting )
@@ -1857,9 +1883,11 @@ function! s:IndentBufferInconsistencyCop( startLnum, endLnum, inconsistentIndent
     endif
 
     let l:bufferSettingsChoices = ['&Ignore' . (l:isBestGuessEqualToBufferIndent ? ', best guess equals buffer settings (' . l:bufferIndentSetting . ')' : ''), '&Just change buffer settings...', '&Highlight wrong indents...']
-    let l:action = ingo#query#ConfirmAsText(a:inconsistentIndentationMessage, l:bufferSettingsChoices, 1, 'Question')
+    let l:action = ingo#query#ConfirmAsText(a:inconsistentIndentationMessage, s:AppendMenuExtensionChoices(l:bufferSettingsChoices), 1, 'Question')
     let b:indentconsistencycop_result.isIgnore = (l:action =~# 'Ignore')
-    if empty(l:action) || l:action =~# '^Ignore'
+    if s:HandleMenuExtensions(l:action)
+	" Extension action.
+    elseif empty(l:action) || l:action =~# '^Ignore'
 	" User chose to ignore the inconsistencies.
 	call IndentConsistencyCop#ClearHighlighting()
 	call s:EchoUserMessage('Be careful when modifying the inconsistent indents! ')

@@ -5,7 +5,7 @@
 "   - IndentConsistencyCop.vim autoload script
 "   - IndentConsistencyCop/Filter.vim autoload script
 "
-" Copyright: (C) 2006-2017 by Ingo Karkat
+" Copyright: (C) 2006-2019 by Ingo Karkat
 "   The VIM LICENSE applies to this script; see ':help copyright'.
 "
 " Maintainer:	Ingo Karkat <ingo@karkat.de>
@@ -30,6 +30,10 @@ endif
 if ! exists('g:IndentConsistencyCop_line_filters')
     if v:version < 702 | runtime autoload/IndentConsistencyCop/Filter.vim | endif  " The Funcref doesn't trigger the autoload in older Vim versions.
     let g:IndentConsistencyCop_line_filters = [function('IndentConsistencyCop#Filter#BlockAlignment')]
+endif
+
+if ! exists('g:IndentConsistencyCop_MenuExtensions')
+    let g:IndentConsistencyCop_MenuExtensions = {}
 endif
 
 if g:indentconsistencycop_highlighting =~# 'm'

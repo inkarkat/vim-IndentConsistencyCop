@@ -1,4 +1,4 @@
-INDENT CONSISTENCY COP   
+INDENT CONSISTENCY COP
 ===============================================================================
 _by Ingo Karkat_
 
@@ -255,6 +255,25 @@ Flag whether the user chose to ignore the inconsistent results. This can be
 used by integrations (like IndentConsistencyCopAutoCmds) to cease scheduling
 of further cop runs in this buffer.
 
+The user queries can be extended with additional menu entries, defined in a
+Dictionary:
+
+    let g:IndentConsistencyCop_MenuExtensions = {
+    \   'Dummy': {
+    \       'priority': 100,
+    \       'choice':   'Dumm&y',
+    \       'Action':   function('DummyAction')
+    \   },
+    \   [...]
+    \}
+
+With the optional "choice" attribute, you can define an accelerator key via &;
+the rest of the text must be identical to the key!
+The optional "priority" attribute determines the order of the extension
+entries; they will always come after the plugin's core entries, though.
+The mandatory "Action" attribute is a Funcref to a function that is invoked
+without arguments if the menu entry is chosen.
+
 LIMITATIONS
 ------------------------------------------------------------------------------
 
@@ -298,6 +317,9 @@ HISTORY
 
 ##### 2.01    RELEASEME
 - Add b:indentconsistencycop\_result.acknowledgedByUserSetting
+- ENH: Allow extension of the plugin's user queries with additional menu
+  entries. This is used by IndentConsistencyCopAutoCmds.vim to implement
+  blacklisting of certain files so that they are never checked again.
 
 ##### 2.00    23-Dec-2017
 - Minor: Replace explicit regexp engine workaround with ingo/compat/regexp.vim.
@@ -340,12 +362,15 @@ HISTORY
   are wrong, and the assessment is solid. This is the most common (and
   sensible) choice. If there's not enough indent for that, don't default to
   anything.
-  __You need to update to ingo-library ([vimscript #4433](http://www.vim.org/scripts/script.php?script_id=4433)) version 1.024!__
+
+__You need to update to ingo-library ([vimscript #4433](http://www.vim.org/scripts/script.php?script_id=4433)) version 1.024!__
 
 ##### 1.45    12-Dec-2014
 - Minor: Highlight action checks are dependent on 'iskeyword' setting, and
   could cause script errors.
-- Add dependency to ingo-library ([vimscript #4433](http://www.vim.org/scripts/script.php?script_id=4433)). __You need to separately
+- Add dependency to ingo-library ([vimscript #4433](http://www.vim.org/scripts/script.php?script_id=4433)).
+
+__You need to separately
   install ingo-library ([vimscript #4433](http://www.vim.org/scripts/script.php?script_id=4433)) version 1.019 (or higher)!__
 
 ##### 1.44    11-Jan-2014
@@ -483,7 +508,7 @@ IndentBufferConsistencyCop.
 - Started development.
 
 ------------------------------------------------------------------------------
-Copyright: (C) 2006-2018 Ingo Karkat -
+Copyright: (C) 2006-2019 Ingo Karkat -
 The [VIM LICENSE](http://vimdoc.sourceforge.net/htmldoc/uganda.html#license) applies to this plugin.
 
 Maintainer:     Ingo Karkat <ingo@karkat.de>
