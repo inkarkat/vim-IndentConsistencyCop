@@ -1856,7 +1856,8 @@ function! s:IndentBufferInconsistencyCop( startLnum, endLnum, inconsistentIndent
 	let l:isBestGuessEqualToBufferIndent = (l:bestGuessIndentSetting ==# l:bufferIndentSetting)
     endif
 
-    let l:action = ingo#query#ConfirmAsText(a:inconsistentIndentationMessage, ['&Ignore' . (l:isBestGuessEqualToBufferIndent ? ', best guess equals buffer settings (' . l:bufferIndentSetting . ')' : ''), '&Just change buffer settings...', '&Highlight wrong indents...'], 1, 'Question')
+    let l:bufferSettingsChoices = ['&Ignore' . (l:isBestGuessEqualToBufferIndent ? ', best guess equals buffer settings (' . l:bufferIndentSetting . ')' : ''), '&Just change buffer settings...', '&Highlight wrong indents...']
+    let l:action = ingo#query#ConfirmAsText(a:inconsistentIndentationMessage, l:bufferSettingsChoices, 1, 'Question')
     let b:indentconsistencycop_result.isIgnore = (l:action =~# 'Ignore')
     if empty(l:action) || l:action =~# '^Ignore'
 	" User chose to ignore the inconsistencies.
