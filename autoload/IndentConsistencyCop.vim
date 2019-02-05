@@ -7,7 +7,7 @@
 "   - ingo/query.vim autoload script
 "   - ingo/range.vim autoload script
 "
-" Copyright: (C) 2006-2018 Ingo Karkat
+" Copyright: (C) 2006-2019 Ingo Karkat
 "   The VIM LICENSE applies to this script; see ':help copyright'.
 "
 " Maintainer:	Ingo Karkat <ingo@karkat.de>
@@ -1285,51 +1285,6 @@ endfunction
 " }}}1
 
 "- buffer consistency cops ------------------------------------------------{{{1
-function! s:Query( msg, choices, default ) "{{{2
-"*******************************************************************************
-"* PURPOSE:
-"   Ask the user for a choice. This is a wrapper around confirm() which allows
-"   to specify and return choices by name, not by index.
-"* ASSUMPTIONS / PRECONDITIONS:
-"   If g:indentconsistencycop_choices is a non-empty list, the first list
-"   item is popped off and returned instead of actually querying the user. This
-"   is used for testing purposes.
-"* EFFECTS / POSTCONDITIONS:
-"   None.
-"* INPUTS:
-"   a:msg	Dialog text.
-"   a:choices	List of choices. Set the shortcut key by prepending '&'.
-"   a:default	Default choice text. Either number (0 for no default, (index +
-"		1) for choice) or choice text; omit any shortcut key '&' there.
-"* RETURN VALUES:
-"   Choice text without the shortcut key '&'. Empty string if the dialog was
-"   aborted.
-"*******************************************************************************
-    let l:plainChoices = map(copy(a:choices), 'substitute(v:val, "&", "", "g")')
-    let l:defaultIndex = (type(a:default) == type(0) ? a:default : max([index(l:plainChoices, a:default) + 1, 0]))
-
-    if exists('g:indentconsistencycop_choices') && len(g:indentconsistencycop_choices) > 0
-	" Headless mode: Bypass actual confirm so that no user intervention is
-	" necesary.
-
-	" Emulate the console output of confirm(), so that it looks for a test
-	" driver as if it were real.
-	let l:defaultChoice = (l:defaultIndex > 0 ? get(a:choices, l:defaultIndex - 1) : '')
-	echo a:msg
-	echo join(map(copy(a:choices), 'substitute(v:val, "&\\(.\\)", (v:val ==# l:defaultChoice ? "[\\1]" : "(\\1)"), "g")'), ', ') . ': '
-
-	" Return predefined choice.
-	return remove(g:indentconsistencycop_choices, 0)
-    endif
-
-    let l:choice = ''
-    let l:index = confirm(a:msg, join(a:choices, "\n"), l:defaultIndex, 'Question')
-    if l:index > 0
-	let l:choice = get(l:plainChoices, l:index - 1, '')
-    endif
-
-    return l:choice
-endfunction
 function! s:IsEntireBuffer( startLnum, endLnum ) "{{{2
     return (a:startLnum == 1 && a:endLnum == line('$'))
 endfunction
