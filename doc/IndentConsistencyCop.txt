@@ -185,9 +185,9 @@ removes these additional whitespaces from the indent when evaluating lines. >
     let g:indentconsistencycop_non_indent_pattern = ' \*\%([*/ \t]\|$\)'
 (You can also override / set this for certain files with a buffer-local var.)
 
-			*g:IndentConsistencyCop_line_filters*
-Some com,ment styles use irregularly indented blocks, for example aligment to
-a start of a keyword or construct in the previous line, without regard to
+   *b:IndentConsistencyCop_line_filters* *g:IndentConsistencyCop_line_filters*
+Some comment styles use irregularly indented blocks, for example aligment to a
+start of a keyword or construct in the previous line, without regard to
 whether that aligns with the indent width. To avoid annoying false positives
 on those lines, you can implement custom function(s) that detect these, so
 that they will be excluded from the cop's checking. Define a List of Funcrefs: >

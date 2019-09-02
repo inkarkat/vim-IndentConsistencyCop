@@ -180,8 +180,8 @@ removes these additional whitespaces from the indent when evaluating lines.
 
 (You can also override / set this for certain files with a buffer-local var.)
 
-Some com,ment styles use irregularly indented blocks, for example aligment to
-a start of a keyword or construct in the previous line, without regard to
+Some comment styles use irregularly indented blocks, for example aligment to a
+start of a keyword or construct in the previous line, without regard to
 whether that aligns with the indent width. To avoid annoying false positives
 on those lines, you can implement custom function(s) that detect these, so
 that they will be excluded from the cop's checking. Define a List of Funcrefs:
@@ -267,7 +267,7 @@ Dictionary:
     \   [...]
     \}
 
-With the optional "choice" attribute, you can define an accelerator key via &;
+With the optional "choice" attribute, you can define an accelerator key via &amp;;
 the rest of the text must be identical to the key!
 The optional "priority" attribute determines the order of the extension
 entries; they will always come after the plugin's core entries, though.
@@ -375,7 +375,7 @@ __You need to separately
 
 ##### 1.44    11-Jan-2014
 - BUG: The version 1.43 workaround for the Vim 7.4 new regexp engine was
-  ineffective, because the \%#=1 atom needs to be prepended to the entire
+  ineffective, because the \\%#=1 atom needs to be prepended to the entire
   regular expression, but that's not possible with the configuration value
   alone. (Also, the workaround mistakenly specified auto-select (0) instead of
   old engine (1).) Move the workaround to s:GetBeginningWhitespace() instead.
@@ -498,7 +498,7 @@ IndentBufferConsistencyCop.
   inconsistent ('badset'), which threw an exception when selected.
 
 ##### 1.00    30-Oct-2006
-- Improved g:indentconsistencycop\_non\_indent\_pattern to also allow ' \*\t' and '
+- Improved g:indentconsistencycop\_non\_indent\_pattern to also allow ' \*\\t' and '
 !!!\*\*' comments.
 
 ##### 1.00    24-Oct-2006
@@ -511,4 +511,4 @@ IndentBufferConsistencyCop.
 Copyright: (C) 2006-2019 Ingo Karkat -
 The [VIM LICENSE](http://vimdoc.sourceforge.net/htmldoc/uganda.html#license) applies to this plugin.
 
-Maintainer:     Ingo Karkat <ingo@karkat.de>
+Maintainer:     Ingo Karkat &lt;ingo@karkat.de&gt;
