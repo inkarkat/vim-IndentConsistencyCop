@@ -610,6 +610,14 @@ endfunction
 " }}}2
 
 "- Rating generation -----------------------------------------------------{{{1
+function! s:IsBlacklistedIndentSetting( indentSetting ) abort "{{{2
+    let l:unacceptableIndentSettings = ingo#plugin#setting#GetBufferLocal('IndentConsistencyCop_UnacceptableIndentSettings')
+    if type(l:unacceptableIndentSettings) == type([])
+	return (index(l:unacceptableIndentSettings, a:indentSetting) != -1)
+    else
+	return (! empty(l:unacceptableIndentSettings) && a:indentSetting =~# l:unacceptableIndentSettings)
+    endif
+endfunction
 function! s:Rate( occurrences, incompatibleOccurrences) " {{{2
     if has('float')
 	return 1.0 * a:occurrences / a:incompatibleOccurrences
@@ -665,14 +673,16 @@ function! s:EvaluateOccurrenceAndIncompatibleIntoRating( incompatibles ) " {{{2
 	if empty( l:incompatibles )
 	    " This is a perfect indent setting.
 	    if empty( s:perfectIndentSetting )
-		let s:perfectIndentSetting = l:indentSetting
+		if ! s:IsBlacklistedIndentSetting(l:indentSetting)
+		    let s:perfectIndentSetting = l:indentSetting
+		endif
 	    else
 		" When we have only a few, widely indented lines, there may be
 		" more than one way to interpret them as a perfect; e.g.
 		" "            " = 2 * spc6 / 3 * spc4;
 		" <Tab><Tab><Tab><Tab><Tab> = 5 * tab / 8 * sts5
 		"
-		" I would probably best to drag along all perfect indent
+		" It would probably be best to drag along all perfect indent
 		" settings, to later reconcile them with the buffer settings, or
 		" ask the user. Since this should happen rarely, for the moment
 		" just apply some simple heuristics to chose one over the other.
@@ -696,7 +706,9 @@ function! s:EvaluateOccurrenceAndIncompatibleIntoRating( incompatibles ) " {{{2
 	    " This is an authoritative indent setting.
 	    if ! empty( s:authoritativeIndentSetting ) | throw 'ASSERT: There is only one authoritative indent setting. ' | endif
 	    if ! empty( s:perfectIndentSetting ) | throw 'ASSERT: There can only be either a perfect or an authoritative indent setting. ' | endif
-	    let s:authoritativeIndentSetting = l:indentSetting
+	    if ! s:IsBlacklistedIndentSetting(l:indentSetting)
+		let s:authoritativeIndentSetting = l:indentSetting
+	    endif
 	endif
     endfor
 endfunction

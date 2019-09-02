@@ -180,6 +180,19 @@ removes these additional whitespaces from the indent when evaluating lines.
 
 (You can also override / set this for certain files with a buffer-local var.)
 
+You may never want certain indent settings in your files. As an indent
+multiplier of 1 more often is the result of a mess of different indents than
+an explicit choice, the default forbids 'spc1' and 'sts1' from being accepted
+as consistent indentation:
+
+    let g:IndentConsistencyCop_UnacceptableIndentSettings = ['spc1', 'sts1']
+
+Assign an empty List or String to accept any indent setting. As an alternative
+to the List of unacceptable indent settings, this configuration can also take
+a regular expression pattern:
+
+    let g:IndentConsistencyCop_UnacceptableIndentSettings = '^sts'
+
 Some comment styles use irregularly indented blocks, for example aligment to a
 start of a keyword or construct in the previous line, without regard to
 whether that aligns with the indent width. To avoid annoying false positives
@@ -320,6 +333,9 @@ HISTORY
 - ENH: Allow extension of the plugin's user queries with additional menu
   entries. This is used by IndentConsistencyCopAutoCmds.vim to implement
   blacklisting of certain files so that they are never checked again.
+- Add g:IndentConsistencyCop\_UnacceptableIndentSettings and by default forbid
+  indents with multiplier 1 (i.e. 'spc1' and 'sts1') from being accepted as
+  consistent indentation.
 
 ##### 2.00    23-Dec-2017
 - Minor: Replace explicit regexp engine workaround with ingo/compat/regexp.vim.

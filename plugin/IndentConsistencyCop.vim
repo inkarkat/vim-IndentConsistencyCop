@@ -27,6 +27,9 @@ if ! exists('g:indentconsistencycop_non_indent_pattern')
     let g:indentconsistencycop_non_indent_pattern = ' \*\%([*/ \t]\|$\)'
 endif
 
+if ! exists('g:IndentConsistencyCop_UnacceptableIndentSettings')
+    let g:IndentConsistencyCop_UnacceptableIndentSettings = ['spc1', 'sts1']
+endif
 if ! exists('g:IndentConsistencyCop_line_filters')
     if v:version < 702 | runtime autoload/IndentConsistencyCop/Filter.vim | endif  " The Funcref doesn't trigger the autoload in older Vim versions.
     let g:IndentConsistencyCop_line_filters = [function('IndentConsistencyCop#Filter#BlockAlignment')]

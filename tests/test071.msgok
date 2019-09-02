@@ -1,6 +1,8 @@
-The buffer's indent settings are inconsistent with the used indent '1 spaces'; these settings must be changed: 
-- softtabstop from 2 to 1
-- shiftwidth from 2 to 1
-How do you want to deal with the inconsistency?
-(I)gnore, [C]hange, Wrong, use (b)uffer settings (2 spaces), (W)rong, choose correct setting...: 
-The buffer settings remain inconsistent: tabstop=8 softtabstop=2 shiftwidth=2 expandtab
+Found inconsistent indentation in this buffer; generated from these conflicting settings: 
+- 1 spaces (8 of 581 lines)
+Some minor / inconclusive potential settings have been omitted. 
+The buffer setting is 2 spaces. 
+[I]gnore, (J)ust change buffer settings..., (H)ighlight wrong indents...: 
+What kind of inconsistent indents do you want to highlight?
+Not [b]uffer settings (spc2), Not best (g)uess (spc1), Not (c)hosen setting...: 
+Marked 14 incorrect lines. 

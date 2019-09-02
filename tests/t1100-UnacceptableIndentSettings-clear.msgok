@@ -1,0 +1,6 @@
+The buffer's indent settings are inconsistent with the used indent '1 spaces'; these settings must be changed: 
+- softtabstop from 2 to 1
+- shiftwidth from 2 to 1
+How do you want to deal with the inconsistency?
+(I)gnore, [C]hange, Wrong, use (b)uffer settings (2 spaces), (W)rong, choose correct setting...: 
+The buffer settings remain inconsistent: tabstop=8 softtabstop=2 shiftwidth=2 expandtab
