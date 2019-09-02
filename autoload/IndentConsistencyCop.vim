@@ -158,12 +158,29 @@ function! s:CountBadMixOfSpacesAndTabs( string ) " {{{2
 endfunction
 
 
-function! s:GetBeginningWhitespacePattern( suffix ) abort
-    return ingo#compat#regexp#GetOldEnginePrefix() . '^\s\{-}\ze'
+function! s:GetBeginningWhitespacePattern( whitespaceSuffixPattern ) abort " {{{2
+    return ingo#compat#regexp#GetOldEnginePrefix() . '^\s\{-}\ze' . a:whitespaceSuffixPattern
+endfunction
+function! s:IsOnSyntax( lnum, col, syntaxItemArgs ) abort " {{{2
+    if ! exists('g:syntax_on') | return 1 | endif
+    return call('ingo#syntaxitem#IsOnSyntax', [[0, a:lnum, a:col, 0]] + a:syntaxItemArgs)
 endfunction
 function! IndentConsistencyCop#GetBeginningWhitespace( lnum, isApplyNonIndentPattern ) " {{{2
+    let l:line = getline(a:lnum)
     let l:nonIndentPattern = (a:isApplyNonIndentPattern ? ingo#plugin#setting#GetBufferLocal('indentconsistencycop_non_indent_pattern') : '')
-    return matchstr(getline(a:lnum), s:GetBeginningWhitespacePattern('\($\|\S' . (empty(l:nonIndentPattern) ? '' : '\|' . l:nonIndentPattern) . '\)'))
+
+    if empty(l:nonIndentPattern) || type(l:nonIndentPattern) != type([])
+	return matchstr(l:line, s:GetBeginningWhitespacePattern('\($\|\S' . (empty(l:nonIndentPattern) ? '' : '\|' . l:nonIndentPattern) . '\)'))
+    endif
+
+    if l:line !~# s:GetBeginningWhitespacePattern(l:nonIndentPattern[0])
+	return matchstr(l:line, s:GetBeginningWhitespacePattern('\($\|\S\)'))
+    endif
+
+    let l:beginningWhitespaceBeforeNonIndentPattern = matchstr(l:line, s:GetBeginningWhitespacePattern(l:nonIndentPattern[0]))
+    let l:isOnSyntax = s:IsOnSyntax(a:lnum, len(l:beginningWhitespaceBeforeNonIndentPattern) + 1, l:nonIndentPattern[1:])
+    let l:whitespaceSuffixPattern = (l:isOnSyntax ? '\($\|\S' . '\|' . l:nonIndentPattern[0] . '\)' : '\($\|\S\)')
+    return matchstr(l:line, s:GetBeginningWhitespacePattern(l:whitespaceSuffixPattern))
 endfunction
 
 function! s:UpdateIndentMinMax( beginningWhitespace ) " {{{2
