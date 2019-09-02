@@ -157,9 +157,13 @@ function! s:CountBadMixOfSpacesAndTabs( string ) " {{{2
     call s:IncreaseKeyed( s:occurrences, 'badmix')
 endfunction
 
+
+function! s:GetBeginningWhitespacePattern( suffix ) abort
+    return ingo#compat#regexp#GetOldEnginePrefix() . '^\s\{-}\ze'
+endfunction
 function! IndentConsistencyCop#GetBeginningWhitespace( lnum, isApplyNonIndentPattern ) " {{{2
     let l:nonIndentPattern = (a:isApplyNonIndentPattern ? ingo#plugin#setting#GetBufferLocal('indentconsistencycop_non_indent_pattern') : '')
-    return matchstr(getline(a:lnum), ingo#compat#regexp#GetOldEnginePrefix() . '^\s\{-}\ze\($\|\S' . (empty(l:nonIndentPattern) ? '' : '\|' . l:nonIndentPattern) . '\)')
+    return matchstr(getline(a:lnum), s:GetBeginningWhitespacePattern('\($\|\S' . (empty(l:nonIndentPattern) ? '' : '\|' . l:nonIndentPattern) . '\)'))
 endfunction
 
 function! s:UpdateIndentMinMax( beginningWhitespace ) " {{{2
