@@ -24,7 +24,7 @@ if ! exists('g:indentconsistencycop_highlighting')
 endif
 
 if ! exists('g:indentconsistencycop_non_indent_pattern')
-    let g:indentconsistencycop_non_indent_pattern = ' \*\%([*/ \t]\|$\)'
+    let g:indentconsistencycop_non_indent_pattern = [' \*\%([*/ \t]\|$\)', '^Comment$', 'FoldMarker$']
 endif
 
 if ! exists('g:IndentConsistencyCop_UnacceptableIndentSettings')

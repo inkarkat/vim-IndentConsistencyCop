@@ -179,6 +179,15 @@ removes these additional whitespaces from the indent when evaluating lines.
     let g:indentconsistencycop_non_indent_pattern = ' \*\%([*/ \t]\|$\)'
 
 (You can also override / set this for certain files with a buffer-local var.)
+The pattern could also match in non-comment lines; to avoid that, the cop can
+additionally check for a syntax match at the comment position, by supplying a
+regular expression for the syntax item name, and optionally another one for a
+syntax item name that stops looking further down the syntax stack:
+
+    let g:indentconsistencycop_non_indent_pattern = [' \*\%([*/ \t]\|$\)',
+    \ '^Comment$', 'FoldMarker$']
+
+These are only considered when :syntax on.
 
 You may never want certain indent settings in your files. As an indent
 multiplier of 1 more often is the result of a mess of different indents than
@@ -336,6 +345,10 @@ HISTORY
 - Add g:IndentConsistencyCop\_UnacceptableIndentSettings and by default forbid
   indents with multiplier 1 (i.e. 'spc1' and 'sts1') from being accepted as
   consistent indentation.
+- ENH: g:indentconsistencycop\_non\_indent\_pattern now also enforces a comment
+  syntax item (if :syntax on) for applying the special indent pattern, to
+  avoid false positives in non-comment lines that just look like they're
+  starting with a comment prefix.
 
 ##### 2.00    23-Dec-2017
 - Minor: Replace explicit regexp engine workaround with ingo/compat/regexp.vim.
