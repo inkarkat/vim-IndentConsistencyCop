@@ -1,0 +1,581 @@
+// vim: set ft=java ts=8 sts=2 sw=2 expandtab:
+// Consistent indentation 'spc1'.
+// Has inconsistent buffer settings (sts, sw should be 1, not 2).
+
+package xxx.xxxxxxx.xx.xxxxxxxx.xxxxxxxxxx.xxxxxx.xxxxxxxxxxx;
+
+import xxx.xx.xxx.xxxxxxxx.xxx.xxxxx.*;
+import xxx.xx.xxx.xxx.xx.xxx.xxxxxxxx.xxxxxx.xxxxxxxxxxxxxxxxxxxxx;
+import xxx.xx.xxx.xxxxxxxx.xxx.xxxxxxxxxxx.*;
+import xxx.xxxxxxx.xx.xxxxxxxx.xxxxxxxxxx.xxxxxx.xxxxxxxxx.*;
+import xxx.xxxxxxx.xx.xxxxxxxx.xxxxxxxxxx.xxxxxx.xxxx.xxxxxxxxxxxxxxxxxxxx;
+import xxx.xxxxxxx.xx.xxxxxxxx.xxxxxxxxxx.xxxxxx.xxxx.xxxxxxxxxxxxxxx;
+import xxx.xxxxxxx.xx.xxxxxxxx.xxxxxxxxxx.xxxxxx.xxxxxxxxx.xxxxxxxxxxxxxx;
+import xxx.xxxxxxx.xx.xxxxxxxx.xxxxxxxxxx.xxxxxx.xxxxxxxxx.xxxxxxxxx;
+import xxx.xxxxxxx.xx.xxxxxxxx.xxxxxxxxxx.xxxxxx.xxxxx.xxxxxxxxxxxx;
+import xxx.xxxxxxx.xx.xxxxxxxx.xxxxxxxxxx.xxxxxx.xxxxx.xxxxxxxxxxxxx;
+import xxx.xxxxxxx.xx.xxxxxxxx.xxxxxxxxxx.xxxxxx.xxxxx.xxxxxxxxxxxxx;
+import xxx.xxxxxxx.xx.xxxxxxxx.xxxxxxxxxx.xxxxxx.xxx.xxxx.xxxxxxxxxxxxxxxxxxxxxxx;
+import xxx.xxxxxxx.xx.xxxxxxxx.xxxxxxxxxx.xxxxxx.xxx.xxxx.xxxxxxxxxxxxxxxx;
+import xxx.xxxxxxx.xx.xxxxxxxx.xxxxxxx.xxxxxxxxxx.xxxxxxxxxxx;
+import xxx.xxxxxxx.xx.xxxxxxxx.xxx.xxxxxx.xxxxxxxxxxxx;
+import xxx.xxxxxxx.xxxxx.xxxxx.xxxxxx.xxx;
+import xxx.xxxxxxx.xxxxx.xxxxx.xxxxxx.xxxxxxxxxx;
+import xxx.xxxxxxx.xxx.xxxxxxx.xxxxxxxxxxxxxxxxx;
+import xxx.xx.xxx.xxxxxxxx.xxx.xxxxxxxxxxx;
+import xxx.xx.xxxxx.xxx.xxxxx.xxxxxxx;
+
+import xxxx.xxxx.*;
+
+/**
+ * xxxxx xxx xxxxx (xxxxxxx) xxxxxxx xxx xxxxx xxxxx xxxxx xxxx xx xx xxxxxxx xx xxxx. xx xxxxx
+ * xx xx xxxxxxxxx, xxx xxxxx xxxxx xx xxxx xxxxxxx xxxxx x xxxxxxxx xxxxx xxxxxx. xxx xxxxxxxx
+ * xxxxx xxxxxxx xxx xxxxxxx xx xxxxxxx xxxxx xxx xx xxxxxxxxxxxx.
+ * xxx xxxxx xxxx x xxxx xxxx xxxxxxxxx xx x xxxxxx xx xxxxxx xxxxxx. xx xx, xxxx xxx xxxxx
+ * xxxxxx xx xxxxxxxx xxx xxxxx xxxxxxxxx xxxx xxx xxx xxxxxxx xxxxx xxx xxxxxxx "xxxx" xxxxx
+ * xxxxxxx xxxx xxx xxxxx xxxxxxx xxxxx xxx xxxxxxx xxxx xxxx xxx xxxxx.
+ *
+ * @xxxxxx <x xxxx="xxxxxx:xxxxxxx@xxxxxxx.xxx">xxxx xxxxxx</x>
+ * @xxxxx xxx 6.0
+ */
+public class xxxxxxxxxxxxxxxxxxxxxxxx extends xxxxxxxxxxxxxxxxxxxxxxxxxxxx {
+    private static final xxxxxx xxxxx_xxxxxxx_xxxxxx_xxxxxxxx = "alert_trigger";
+    public static final xxxxxx xxxxxxx_xxxxxxxxxx_xxxxx_xxxx = "CIALERT_PERSISTENT_STATE";
+
+    private static final xxx xxx = xxxxxxxxxx.xxxxxxxxxx(xxxxxxxxxxxxxxxxxxxxxxxx.class);
+
+    private boolean xxxxxxxxxxxxxxxxx;
+    /**
+     * xxxxxxxxxxx
+     */
+    public xxxxxxxxxxxxxxxxxxxxxxxx() {
+        super();
+        xxxxxxxxxxxxxxxxx = false;
+    }
+
+    /**
+     * xxxxxx xx xxxxxxx xxxx xxx xxxxx xxxxxx xxxxxx. xxxxxxxxxxxxxxxxx xx x xxxx xxxx xxxxxxxxx
+     * xxxxxxx xx xxxxxx xx xxx xxxxx xxxxx xx xxxxxxx xx xxxxxx.
+     */
+    @Override
+    public void xxxxxxxxxxxxx(xxxxxxxxxxxxxxxxx xxxxx) {
+    }
+
+    /**
+     * xxxxxx xx xxxxxxx xxxx x xxxxxxx xxxx xx xxxxx. xxxx xxxxxxx xxxx xxxxx xx xx xxxxx,
+     * xx xxx xxxxx xxxxx xxxxxx xx xxxxxxx.
+     */
+    @Override
+    public void xxxxxxxxxxxxxxxx(xxxxxxxxxxxxxxxxx xxxxx, xxxxxxxxxxxxxxxx xxxxxxxxxxx) {
+        xxxxxxxxxxxxxxxxx = true;
+        
+        final int xxxx = xxxxxxxxxxxx(xxxxxxxxxxx);
+
+        if (xxxx == xxxxxxxxxxxx.xxxxxxxxx_xxxxxxx)
+        {
+          xxxxxx xxxxxxxx = (xxxxxx) xxxxxxxxxxx.xxxxxxxxxxx(xxxxxxxxxxx.xxxxxx_xxxxx.xxxx_xxxx);
+          
+          if ((xxxxxxxx != null) && !xxxxxxxx.xxxxxxx() && !xxxxxxxx.xxxxxx(xxxxxxxxxxxxxxxxxxxxx.xxxx_xxxx))
+          {
+            xxxxx.xxxxxxxxxxxxxxxxxxx(xxxxxxxx, xxxxxxxxxxx, xxxxxxxxxxx.xxxxx_xx.xxxxx_xxxx);
+          }
+        }
+    }
+
+    /**
+     * xxxxxx xx xxxxxxx xxxx x xxxxxxx xxxx xx xxxxxxx. xxxx xxxxxxx xxxx xxxxx xx xx xxxxx,
+     * xx xxx xxxxx xxxxx xxxxxx xx xxxxxxx.
+     */
+    @Override
+    public void xxxxxxxxxxxxxxxxxx(xxxxxxxxxxxxxxxxx xxxxx, xxxxxxxxxxxxxxxx xxxxxxxxxxx) {
+        xxxxxxxxxxxxxxxxx = true;
+        
+        final int xxxx = xxxxxxxxxxxx(xxxxxxxxxxx);
+
+        if (xxxx == xxxxxxxxxxxx.xxxxxxxxx_xxxxxxx)
+        {
+          xxxxxx xxxxxxxx = (xxxxxx) xxxxxxxxxxx.xxxxxxxxxxx(xxxxxxxxxxx.xxxxxx_xxxxx.xxxx_xxxx);
+          
+          if ((xxxxxxxx != null) && !xxxxxxxx.xxxxxxx() && !xxxxxxxx.xxxxxx(xxxxxxxxxxxxxxxxxxxxx.xxxx_xxxx))
+          {
+            xxxxx.xxxxxxxxxxxxxxxxxxxxx(xxxxxxxx, xxxxxxxxxxx, xxxxxxxxxxx.xxxxx_xx.xxxxx_xxxx);
+          }
+        }
+
+    }
+
+    /**
+     * xxxxxx xx xxxxxxx xxxx x xxxxxxx xxxx xx xxxxxxx. xxxx xxxxxxx xxxx xxxxx xx xx xxxxx,
+     * xx xxx xxxxx xxxxx xxxxxx xx xxxxxxx.
+     */
+    @Override
+    public void xxxxxxxxxxxxxxxxxx(xxxxxxxxxxxxxxxxx xxxxx, xxxxxxxxxxxxxxxx xxxxxxxxxxx,
+                                   xxx<xxxxxx,xxxxxx> xxxxxxxxxxxxxxxxx) {
+        xxxxxxxxxxxxxxxxx = true;
+        
+        final int xxxx = xxxxxxxxxxxx(xxxxxxxxxxx);
+
+        if ((xxxx == xxxxxxxxxxxx.xxxxxxxxx_xxxxxxx) && xxxxxxxxxxxxxxxxx.xxxxxxxxxxx(xxxxxxxxxxx.xxxxxx_xxxxx.xxxx_xxxx))
+        {
+          xxxxxx xxxxxxxxxxxx = (xxxxxx) xxxxxxxxxxxxxxxxx.xxx(xxxxxxxxxxx.xxxxxx_xxxxx.xxxx_xxxx);
+          xxxxxx xxxxxxxx = (xxxxxx) xxxxxxxxxxx.xxxxxxxxxxx(xxxxxxxxxxx.xxxxxx_xxxxx.xxxx_xxxx);
+          
+          if ((xxxxxxxxxxxx != null) && !xxxxxxxxxxxx.xxxxxxx() && !xxxxxxxxxxxx.xxxxxx(xxxxxxxxxxxxxxxxxxxxx.xxxx_xxxx))
+          {
+            xxxxx.xxxxxxxxxxxxxxxxxxxxx(xxxxxxxxxxxx, xxxxxxxxxxx, xxxxxxxxxxx.xxxxx_xx.xxxxx_xxxx);
+          }
+
+          if ((xxxxxxxx != null) && !xxxxxxxx.xxxxxxx() && !xxxxxxxx.xxxxxx(xxxxxxxxxxxxxxxxxxxxx.xxxx_xxxx))
+          {
+            xxxxx.xxxxxxxxxxxxxxxxxxx(xxxxxxxx, xxxxxxxxxxx, xxxxxxxxxxx.xxxxx_xx.xxxxx_xxxx);
+          }
+         }
+    }
+
+    /**
+     * xxxxxx xx xxxxxxx xxxx xx xxxxxxxxxxx xx xxxxx. xxxx xxxxxxxxxxx xxxxx xx xx xxxxxxxxxxx
+     * xxxxxxx xx xxxxx xxx xxx xxxxxxxxx, xx xxx xxxxx xxxxx xxxxxx xx xxxxxxx.
+     */
+    @Override
+    public void xxxxxxxxxxxxxxxx(xxxxxxxxxxxxxxxxx xxxxx, xxxxxxxxxxxxxxxx xxx) {
+        xxxxxxxxxxxxxxxxx = true;
+    }
+
+    static final xxxxxx xxxxxxxxx_xxxxxx = "__ACT_";
+    public static final xxxxxx xxxxxxxxx_xxxxx_xxxxx_xxxxx = xxxxxxxxx_xxxxxx + "alertState";
+
+    /**
+     * xxxxxx xx xxxxxxx xxxx xx xxxxxxxxxxx xx xxxxxxx. xxxx xxxxxxxxxxx xxxxx xx xx xxxxxxxxxxx
+     * xxxxxxx xx xxxxx xxx xxx xxxxxxxxx, xx xxx xxxxx xxxxx xxxxxx xx xxxxxxx.
+     */
+    @Override
+    public void xxxxxxxxxxxxxxxxxx(xxxxxxxxxxxxxxxxx xxxxx, xxxxxxxxxxxxxxxx xxx) {
+        xxxxxxxxxxxxxxxxx = true;
+    }
+
+    /**
+     * xxxxxx xx xxxxxxx xxxx xx xxxxxxxxxxx xx xxxxxxx. xxxx xxxxxxxxxxx xxxxx xx xx xxxxxxxxxxx
+     * xxxxxxx xx xxxxx xxx xxx xxxxxxxxx, xx xxx xxxxx xxxxx xxxxxx xx xxxxxxx.
+     */
+    @Override
+    public void xxxxxxxxxxxxxxxxxx(xxxxxxxxxxxxxxxxx xxxxx, xxxxxxxxxxxxxxxx xxx,
+                                   xxx<xxxxxx,xxxxxx> xxxxxxxxxxxxxxxxx) {
+        xxxxxxxxxxxxxxxxx = true;
+    }
+    
+    
+
+    @Override
+    public void xxxxxxxxxxxxxx(xxxxxxxxxxxxxxxxx xxxxx, xxxxxxxxxxxxxx xxxxxxxxx) {
+        xxxxxxxxxxxxxxxxx = true;
+    }
+
+    /**
+     * xxxxxx xx xxxxxxx xxxxx xxx xxxxx xxxxxx xx xxxxxxxx
+     *
+     * @xxxxx xxxxxxxxxxxxxxxxx - xxxxxx xx xxxxx
+     */
+    @Override
+    public void xxxxxxxxxxxxxxx(xxxxxxxxxxxxxxxxx xxxxxxxxxxxxxxxxx) {
+        if (xxxxxxxxxxxxxxxxx) {
+            int xxxxxxxxxx = 0;
+            for (xxxxxxxxxxxxxxxx xxxxxxxxxxx : xxxxxxxxxxxxxxxxx.xxxxxxxxxxxxxxxxxx())
+            {
+                final int xxxx = xxxxxxxxxxxx(xxxxxxxxxxx);
+                if (xxxx != -1) {
+                    xxxxxxxxxxx xxxxxxx = xxxxxxxxxxx.xxxxx();
+
+                    xxxxxxxxx xxxxxxxxx = null;
+                    for (xxxxxxxxxxxxxxx xxxxxxxxxxx : xxxxxxxxxxx.xxxxxxxxxxxxxxxxxxxxxxxxx())
+                    {
+                        if (xxxxxxxxxxx.xxxxxxx().xxxxxx(xxxxxxxxxxx.xxxxx_xxxxxxxxx_xx.xxxxx_xxxx)) {
+                            xxxxxxxxxxxxxxx xxxxxxxxxxxxx = xxxxxxxxxxx.xxxxxxxxxxxxxx();
+                            if (xxxxxxxxxxxxx.xxxxxxx().xxxxxx(xxxxxxxxxxx.xxxxxx_xxxxxx_xxxxx_xxxxxxxxx.xxxxx_xxxx)) {
+                                xxxxxxx xxxxxxxxxxxxxx = (xxxxxxx) xxxxxxxxxxxxx.xxxxxxxxxxx(xxxxxxxxxxx.xxxxxx_xxxxxx_xxxxx_xxxxxxxxx.xxxxxxxx_xxxxxx);
+                                xxxxxxx xxxxxxxxxx = (xxxxxxx) xxxxxxxxxxxxx.xxxxxxxxxxx(xxxxxxxxxxx.xxxxxx_xxxxxx_xxxxx_xxxxxxxxx.xxxx_xxxxxx);
+                                xxxxxxxxx = new xxxxxxxxxxxxxxxxxxxxx(xxxx, xxxxxxxxxxxxxx, xxxxxxxxxx);
+                            } else  if (xxxxxxxxxxxxx.xxxxxxx().xxxxxx(xxxxxxxxxxx.xxxx_xxx_xxxxxx_xxxxxx_xxxxx_xxxxxxxxx.xxxxx_xxxx)) {
+                                xxxxxxx xxxxxxxxxx = (xxxxxxx) xxxxxxxxxxxxx.xxxxxxxxxxx(xxxxxxxxxxx.xxxx_xxx_xxxxxx_xxxxxx_xxxxx_xxxxxxxxx.xxxx_xxxxxx);
+                                xxxxxxxxx = new xxxxxxxxxxxxxxxxxxxxxxxxxxxx(xxxx, xxxxxxxxxx);
+                            } else if (xxxxxxxxxxxxx.xxxxxxx().xxxxxx(xxxxxxxxxxx.xxxxxx_xxx_xxxx_xxxxx_xxxxxxxxx.xxxxx_xxxx)) {
+                                xxxxxxx xxxxxxxxxxxxxxxx = (xxxxxxx) xxxxxxxxxxxxx.xxxxxxxxxxx(xxxxxxxxxxx.xxxxxx_xxx_xxxx_xxxxx_xxxxxxxxx.xxxxxxxxxx_xxxxxx);
+                                xxxxxxx xxxxxxxxxxxxx = (xxxxxxx) xxxxxxxxxxxxx.xxxxxxxxxxx(xxxxxxxxxxx.xxxxxx_xxx_xxxx_xxxxx_xxxxxxxxx.xxxxxx_xx_xxxxx);
+                                xxxx xxxxxxxxxxxx = (xxxx) xxxxxxxxxxxxx.xxxxxxxxxxx(xxxxxxxxxxx.xxxxxx_xxx_xxxx_xxxxx_xxxxxxxxx.xxxx_xxxxxxxx);
+                                xxxxxxxxx = new xxxxxxxxxxxxxxxxxxxxxx(xxxx, xxxxxxxxxxxxxxxx, xxxxxxxxxxxxx, xxxxxxxxxxxx);
+                                /* xx xxxx xxx xxxxxxxxxxxxxxx xxxxxx xx xxxxxx xxxxx xxxxxxx xx xxxxx
+                                * xx xxxx xx xxx xxx xxxxx xxxxxx xx xxx xxx xx xxx xxxx xxxxxx
+                                * (xxx xxxxxxxxx xxxxxx xxx xxxx xx xxx xxxxxxxxxxxxxxxxxxx xxxxxx)
+                                * xx xxxx xxxx xxx xxx xxxxx xxxx xxxxx xx xxxxxx xx xxx xxx xxx xxx'x
+                                * xxxx xxxx xxx.
+                                */
+                                xxxx<xxxxxx> xxxx = (xxxxxxxxx<xxxxxx>) xxxxxxxxxxx.xxxxxxxxxxx(xxxxxxxxxxx.xxxxxx_xxxxx.xxx_xxxx);
+                                
+                                for (xxxxxxxxxxxxxxx xxx : xxxxxxxxxxx.xxxxxxxxxxxxxxxxxxxxxxxx()) {
+                                    xxxxxxxxx xxxx = (xxxxxxxxx) xxx.xxxxxxxxx();
+                                    xxxxxxxxxxxxxx(xxxx, xxxx);
+                                }
+                                
+                                xxxxxx xxxxxxxx = (xxxxxx) xxxxxxxxxxx.xxxxxxxxxxx(xxxxxxxxxxx.xxxxxx_xxxxx.xxxx_xxxx);
+                                
+                                if ((xxxxxxxx != null) && !xxxxxxxx.xxxxxxx() && !xxxxxxxx.xxxxxx(xxxxxxxxxxxxxxxxxxxxx.xxxx_xxxx)) {
+                                  xxxxxxxxx xxxx = xxxxxxxxxxxxxxxxx.xxxxxxx(xxxxxxxx);
+                                  
+                                  if (xxxx != null) {
+                                    for (xxxxxxxxx xxxx : xxxx.xxxxxxxx())
+                                      xxxxxxxxxxxxxx(xxxx, xxxx);
+                                  }
+                                }
+                                
+                            } else if (xxxxxxxxxxxxx.xxxxxxx().xxxxxx(xxxxxxxxxxx.xxxxxx_xxxxxx_xxxxx_xxxxxxxxx.xxxxx_xxxx)) {
+                                xxxxxxxxx = new xxxxxxxxxxxxxxxxxxxxx();
+                            } else {
+                                xxxxxxxxx = new xxxxxxxxxxxxxxxxxxxx();
+                            }
+                            break;
+                        }
+                    }
+                    if (xxxxxxxxx == null) {
+                        xxx.xxxxx(xxxxxxxxxxxxxxxxx.xxxxxxxxxx(
+                                "120654"/* xxxxxx xx xxxxxxxxxxx xxxxxxxxx. xxx xxxxx xxxx xx xxxxxxx */,
+                                new xxxxxx[]{"Id", xxxxxxx.xxxxxxxx()}));
+                    } else {
+
+                        xxxx xxxxxxxxxxxxxxxxxxx = (xxxx) xxxxxxxxxxx.xxxxxxxxxxx(xxxxxxxxxxx.xxxxx.xxxxxxxxx);
+                        long xxxxxxxxxxx = (xxxxxxxxxxxxxxxxxxx == null ? -1 : xxxxxxxxxxxxxxxxxxx);
+                        xxxxxxxxxxxxxxxx xxxxxxxxxxxxxxx = (xxxxxxxxxxxxxxxx) xxxxxxxxxxx.xxxxxxxxxxx(xxxxx_xxxxxxx_xxxxxx_xxxxxxxx);
+                        xxxxxxxxxxxxxxxx xxxxxxxxxxxx = new xxxxxxxxxxxxxxxx(xxxxxxx, xxxxxxxxx, xxxxxxxxxxx,
+                                (xxxxxxxxxxxxxxx == null ? new xxxxxxx() : xxxxxxxxxxxxxxx.xxxxxxxxxxxxxxxxxx()));
+                        xxxxxxxxxxx.xxxxxxxxxxx(xxxxx_xxxxxxx_xxxxxx_xxxxxxxx, xxxxxxxxxxxx);
+                        xxxxxxxxxx++;
+                        if (xxx.xxxxxxxxxxxxx()) {
+                            xxxxxx xxxxx = (xxxxxx)xxxxxxxxxxx.xxxxxxxxxxx("display_label");
+                            xxxxxxxxxxxx xxxxxxx = new xxxxxxxxxxxx("Active alert id ");
+                            xxxxxxx.xxxxxx(xxxxxxx);
+                            xxxxxxx.xxxxxx(",label: ");
+                            xxxxxxx.xxxxxx(xxxxx != null ? xxxxx : "");
+                            xxxxxxx.xxxxxx(",condition type: ");
+                            xxxxxxx.xxxxxx(xxxxxxxxx.xxxxxxx());
+                            xxxxxxx.xxxxxx((xxxxxxxxxxxxxxx == null) ? " new alert" : " existing alert");
+                            xxx.xxxx(xxxxxxx);
+                        }
+                    }
+                }
+            }
+            xxxxxxxxxxxxxxxxx = false;
+            if (xxx.xxxxxxxxxxxxx()) {
+                xxx.xxxx(xxxxxxxxxx + " active alerts were read successfully");
+            }
+        } else {
+            if (xxx.xxxxxxxxxxxxxx()) {
+                xxx.xxxxx("Trinity cache was updated but there was no need to update the alert cache");
+            }
+        }
+    }
+
+    private void xxxxxxxxxxxxxx(xxxx<xxxxxx> xxxx, xxxxxxxxx xxxx)
+    {
+      xxxxxxxxxxxx<xxxxxxxxxxxxx> xxxxxxxx = xxxx.xxxxxxxxxxxxx().xxxxxxxxxxxx();
+      while (xxxxxxxx.xxxxxxx()) {
+          xxxxxxxxxxxxxx xxx = (xxxxxxxxxxxxxx) xxxxxxxx.xxxx();
+          xxxxxxx xxxxxxxxxxxxx = xxx.xxxxxxxxxxxxxxxx();
+          boolean xxxxx = false;
+          if ((xxxx == null) || (xxxx.xxxx() == 0)) {
+              xxxxx = true;
+          } else {
+              for (xxxxxx xxx_xxxx : xxxx) {
+                  if (xxxxxxx.xxxxxxx(xxx_xxxx).xxxxxx(xxxxxxxxxxxxx)) {
+                      xxxxx = true;
+                      break;
+                  }
+              }
+          }
+          if (xxxxx) {
+              /* xxxx xxx xxx xxx xxxxx xxxxx xx xxxxx xx xx xxxxx xxxxxx
+              * xxxxxxx xxxx xxxxxx xxxx xxxx xxxx xx xxxxx xx xxxxx, xxxxxxx xx xxxxxx
+              * xxx xx xx xxx xxxx xx xxxxxxx xx xxxxxxxx xxxxx xxxx xx xxxxx xxx.
+              */
+              if (xxx.xxxxxxxxxxxxx(xxxxxxx_xxxxxxxxxx_xxxxx_xxxx) == null) {
+                    xxxxxxxxxxxxxxxxxxxxxxxxxx xxxxxxxxxx = new xxxxxxxxxxxxxxxxxxxxxxxxxx(xxx.xxxxx().xxxxxxxx());
+                  xxx.xxxxxxxxxxxxx(xxxxxxx_xxxxxxxxxx_xxxxx_xxxx, xxxxxxxxxx);
+              }
+          }
+      }
+    }
+
+    private static int xxxxxxxxxxxx
+            (xxxxxxxxxxxxxxxx
+                    xxxx) {
+        if (xxxx != null) {
+            if (xxxx.xxxxxxx().xxxxxx(xxxxxxxxxxx.xxxxxxxxx_xxxxx.xxxxx_xxxx)) {
+                return xxxxxxxxxxxx.xxxxxxxxx_xxxxxxx;
+            } else if (xxxx.xxxxxxx().xxxxxx(xxxxxxxxxxx.xxx_xxxxx.xxxxx_xxxx) ||
+                    (xxxx.xxxxxxx().xxxxxx(xxxxxxxxxxx.xxxxxxxx_xxxxx.xxxxx_xxxx))) {
+                return xxxxxxxxxxxx.xxx_xxxxxxx;
+            }
+        }
+        return -1;
+    }
+
+    private static class xxxxxxxxxxxxxxxx implements xxxxxxxxxxxx {
+
+        private static final xxx xxx = xxxxxxxxxx.xxxxxxxxxx(xxxxxxxxxxxxxxxx.class);
+
+        private xxxxxxxxxxx xx;
+        private xxxxxxxxx xxxxxxxxx;
+        private long xxxxxxxxxxx;
+        private xxx xxxxxxxxxxxxxxx;
+
+        /**
+         * xxxxxx xx xxxxx xxxxxxx xxxxxx xxxx xxxxx xxxxxxx xxxxxxx
+         *
+         * @xxxxx xx              - xxxxx xx
+         * @xxxxx xxxxxxxxx       - xxxxx xxxxxxxxx
+         * @xxxxx xxxxxxxxxxx     - xxxxxxx xxxxxxxx xxxxxxx xxxxxx (xx xxxxxxxxxxxx, -1 - xx xxxxxxxx).
+         *                        xxx xxxxxxx, xx xxx xx 30 xxxxxxx, xxx xxxxxx xxxx xxx xxxx xxxx
+         *                        xxxxx xx xxx xxxx xxxxxx (xx) xxxx xxxx xxxx xx 30 xxxxxxx
+         * @xxxxx xxxxxxxxxxxxxxx - xxxx xxxx xxxx xx xxx xxxxx xx xxxxxx xx
+         */
+        private xxxxxxxxxxxxxxxx(xxxxxxxxxxx xx, xxxxxxxxx xxxxxxxxx, long xxxxxxxxxxx, xxx xxxxxxxxxxxxxxx) {
+            xxxxx(xx);
+            xxxxxxxxxxxx(xxxxxxxxx);
+            xxxxxxxxxxxxxx(xxxxxxxxxxx);
+            xxxxxxxxxxxxxxxxxx(xxxxxxxxxxxxxxx);
+        }
+
+        @Override
+        public xxxxxxxxxxx xxxxx() {
+            return xx;
+        }
+
+        protected void xxxxx(xxxxxxxxxxx xx) {
+            this.xx = xx;
+        }
+
+        @Override
+        public xxxxxxxxx xxxxxxxxxxxx() {
+            return xxxxxxxxx;
+        }
+
+        protected void xxxxxxxxxxxx(xxxxxxxxx xxxxxxxxx) {
+            this.xxxxxxxxx = xxxxxxxxx;
+        }
+
+        @Override
+        public long xxxxxxxxxxxxxx() {
+            return xxxxxxxxxxx;
+        }
+
+        protected void xxxxxxxxxxxxxx(long xxxxxxxxxxx) {
+            this.xxxxxxxxxxx = xxxxxxxxxxx;
+        }
+
+        @Override
+        public synchronized xxx xxxxxxxxxxxxxxxxxx() {
+            return xxxxxxxxxxxxxxx;
+        }
+
+        protected synchronized void xxxxxxxxxxxxxxxxxx(xxx xxxxxxxxxxxxxxx) {
+            this.xxxxxxxxxxxxxxx = xxxxxxxxxxxxxxx;
+        }
+
+        /**
+         * xxxx xxx xxxxxxxxxxxxxx xxxxxxxx
+         */
+        protected xxxxxxxxx xxxxxxxxxxxxxxxxxxxxxxxxx() {
+            return xxxxxxxxxxxxxx.xxxxxxxxxxx();
+        }
+        /**
+         * xxxxxx xx xxx xxxxx xx xxxxxxxxx xx xxx xxxxxx xxxx xxxxxxxxxxxxxx xx xxxxxxxxxx
+         *
+         * @xxxxx xxxxxxxxxxxxxxxxxxxx - xxxxxx xx xxx xxxx xxxxxx xxx xxxxxx
+         * @xxxxx xxxxxxxxxxxxxxxx     - xxxxxx xx xxx xxxx xxxxx xxx xxxxxx
+         * @xxxxx xxxxxxxxxx
+         * @xxxxxx xx xxxxxxxxx
+         */
+        @Override
+        public boolean xxxxxxxxx(xxxxxxxxxxxx xxxxxxxxxxxxxxxxxxxx, xxxxxxxxxxxx xxxxxxxxxxxxxxxx, xxxxxxxxxxxxxxxxxxxxxxxxxx xxxxxxxxxx,
+                                 xxxxxxx xxxxxxxxxxx, long xxxxxxxxxxx, boolean xxxxxxxxxx) {
+            return xxxxxxxxx.xxx(xxxxxxxxxxxxxxxxxxxx, xxxxxxxxxxxxxxxx, xxxxxxxxxx, xxxxxxxxxxx, xxxxxxxxxxx, xxxxxxxxxx);
+        }
+
+        /*
+        * xxx xxxxxxxxx xxxxxxx xx xxxxxxxxxxxx
+        */
+        @Override
+        public xxxxxx xxxxxxxxxxxxxxxxxxxxxx(xxxxxxxxxxxxx.xxxx xxxxxxxxxxxxx) {
+            xxxxxxxxxxxx xxxxxxxxxxxxxx = new xxxxxxxxxxxx("");
+            if (xxxxxxxxxxxxx.xxxxxx(xxxxxxxxxxxxx.xxxx.xxxx_xxx_xxxxxx_xxxxxx)) {
+                xxxxxxxxxxxxxxxxxxxxxxxxxxxx xxxxxxxxx = (xxxxxxxxxxxxxxxxxxxxxxxxxxxx) this.xxxxxxxxx;
+                xxxxxxxxxxxxxx.xxxxxx(xxxxxxxxx.xxxxxxxxxxxxx().xxxxxxxx());
+            } else if (xxxxxxxxxxxxx.xxxxxx(xxxxxxxxxxxxx.xxxx.xxxxxx_xxxxxx)) {
+                xxxxxxxxxxxxxxxxxxxxx xxxxxxxxx = (xxxxxxxxxxxxxxxxxxxxx) this.xxxxxxxxx;
+                xxxxxxxxxxxxxx.xxxxxx(xxxxxxxxx.xxxxxxxxxxxxxxxxx().xxxxxxxx());
+                xxxxxxxxxxxxxx.xxxxxx(",");
+                xxxxxxxxxxxxxx.xxxxxx(xxxxxxxxx.xxxxxxxxxxxxx().xxxxxxxx());
+            } else if (xxxxxxxxxxxxx.xxxxxx(xxxxxxxxxxxxx.xxxx.xxxxxx_xxx_xxxx)) {
+                xxxxxxxxxxxxxxxxxxxxxx xxxxxxxxx = (xxxxxxxxxxxxxxxxxxxxxx) this.xxxxxxxxx;
+                xxxxxxxxxxxxxx.xxxxxx(xxxxxxxxx.xxxxxxxxxxxxxxxxxxx().xxxxxxxx());
+                xxxxxxxxxxxxxx.xxxxxx(",");
+                xxxxxxxxxxxxxx.xxxxxx(xxxxxxxxx.xxxxxxxxxxxxxxxx());
+                xxxxxxxxxxxxxx.xxxxxx(",");
+                xxxxxxxxxxxxxx.xxxxxx(xxxxxxxxx.xxxxxxxxxxxxxxx());
+            }
+
+            return xxxxxxxxxxxxxx.xxxxxxxx();
+        }
+
+        /**
+         * xxxxxx xx xxx xxxxx xxxxxx xxx xx xxxx xxxx xxxx xxxx xx x xxxx xxxxxx xxx xx xx, xx xx
+         * xxx xxxxxxx xxxx xxx xxx xxxxx xxxxxx xx xxxx xxxx xxxxxx
+         *
+         * @xxxxx xxxxxxxx - xx xx xxx xxxxxx
+         * @xxxxxx xx xxx xxxxx
+         */
+        @Override
+        public boolean xxxxxxxx(xxxxxxx xxxxxxxx, long xxxxxxxxxxx) {
+            if (xxxxxxxxxxxxxx() == -1) {
+                return false;
+            }
+            xxxx xxxxxxxxxxxx = null;
+            synchronized (this) {
+                xxxxxxxxxxxx = (xxxx) xxxxxxxxxxxxxxxxxx().xxx(xxxxxxxx.xxxxxxxx());
+            }
+            if (xxxxxxxxxxxx == null) {
+                return false;
+            }
+            long xxxxxxxx = xxxxxxxxxxxx;
+            if (xxxxxxxx + xxxxxxxxxxxxxx() <= xxxxxxxxxxx) {
+                return false;
+            }
+            if (xxx.xxxxxxxxxxxxxx()) {
+                int xxxxxxxxxxxxx = (int) ((xxxxxxxxxxx - xxxxxxxx) / 1000);
+                int xxxxxxxxx = (int) (xxxxxxxxxxxxxx() / 1000);
+                xxxxxxxxxxxx xxxxxxx = new xxxxxxxxxxxx("Alert (").xxxxxx(xxxxxxxxxx()).xxxxxx(") was sent");
+                xxxxxxx.xxxxxx(" for CI (id: ").xxxxxx(xxxxxxxx.xxxxxxxx()).xxxxxx(") ").xxxxxx(xxxxxxxxxxxxx);
+                xxxxxxx.xxxxxx(" seconds ago. The frequency of the alert is ").xxxxxx(xxxxxxxxx);
+                xxxxxxx.xxxxxx(" seconds. It will not be sent for at least another ");
+                xxxxxxx.xxxxxx(xxxxxxxxx - xxxxxxxxxxxxx).xxxxxx(" seconds.");
+                xxx.xxxxx(xxxxxxx);
+            }
+            return true;
+        }
+        @Override
+        public boolean xxxxxxxxxxxx(xxxxxxxxxxxx xxxxxxxxxxxxxxxxxxxx, xxxxxxxxxxxx xxxxxxxxxxxxxxxx, xxxxxxxxxxx xxxxxxxxxxxxxxx,
+                                            xxxxxxxxxxx xxxxxxxxxxx, xxxxxxxxxxxxxxxxxxxxxxxxxx xxxxxxxxxx, long xxxxxxxxxxx,
+                                            int xxxxxxxxxx) {return false;}
+        /**
+         * xxxxxx xx xxx xxxxx xxxxxx xx xxxx. xx xxxxx xxxxxx xx xxxx xx xx xx xxxxxxxxx xx xxx
+         * xxxxxx xxxxxx xxx xx xxx xxx xxxxxxx xxxx xxx xxx xxxxx xxxxxx
+         *
+         * @xxxxx xxxxxxxxxxxxxxx - xx xx xxx xxx/xxxx
+         * @xxxxxx xxxxxxx xxxx
+         * @xxxxxxxxxx xxxx xxxxxxxxxx
+         */
+        @Override
+        public boolean xxxxxxxxxxxx(xxxxxxxxxxxx xxxxxxxxxxxxxxxxxxxx, xxxxxxxxxxxx xxxxxxxxxxxxxxxx, xxxxxxxxxxx xxxxxxxxxxxxxxx,
+                                            xxxxxxxxxxx xxxxxxxxxxx, xxxxxxxxxxxxxxxxxxxxxxxxxx xxxxxxxxxx, long xxxxxxxxxxx,
+                                            int xxxxxxxxxx, boolean xxxxxxxxxxxx) {
+            xxxxxxx xxxxxxxxxxxxxxxxxxx = xxxxxxxxxxxxxxxxxxxxxxx.xxxxxxxxxxx(xxxxxxxxxx, xxxxxxxxxxxxxxx, xxxxxxxxxxxxxxxx.xxxxxxx);
+            xxxxxxx xxxxxxxxxxxxxxx = xxxxxxxxxxxxxxxxxxxxxxx.xxxxxxxxxxx(xxxxxxxxxx, xxxxxxxxxxx, xxxxxxxxxxxxxxxx.xxxxxxx);
+            boolean xxxxxx;
+            if (xxx.xxxxxxxxxxxxxx()) {
+                xxxxxxxxxxxx xxxxxxx = new xxxxxxxxxxxx("----- CI/SLA Status Alert condition check start for alert id: ");
+                xxxxxxx.xxxxxx(xx);
+                xxxxxxx.xxxxxx(" -----");
+                xxx.xxxxx(xxxxxxx);
+            }
+            xxxxxx = xxxxxxxxx(xxxxxxxxxxxxxxxxxxxx, xxxxxxxxxxxxxxxx, xxxxxxxxxx, xxxxxxxxxxxxxxx, xxxxxxxxxxx, xxxxxxxxxxxx) && !xxxxxxxx(xxxxxxxxxxxxxxxxxxx, xxxxxxxxxxx);
+            if (xxx.xxxxxxxxxxxxxx()) {
+                xxxxxxxxxxxx xxxxxxx = new xxxxxxxxxxxx("Alert is ");
+                xxxxxxx.xxxxxx(xxxxxx ? "sent " : "not sent");
+                xxx.xxxxx(xxxxxxx);
+                xxxxxxxxxxxx xxxxxxx1 = new xxxxxxxxxxxx("----- CI/SLA Status Alert condition check end for alert id: ");
+                xxxxxxx1.xxxxxx(xx);
+                xxxxxxx1.xxxxxx(" -----");
+                xxx.xxxxx(xxxxxxx1);
+
+            }
+            return xxxxxx;
+        }
+        /**
+         * xxxxx xx xxxxx
+         *
+         * @xxxxx xxxxxxxxxxxx - x xxxxxxxxxx xx xxxxxxx xx xxx xxxxx xxxx xxxxxxxx xxx xxxxx (xxxx xxx
+         *                     xxx xxxxx xxx xxxxxxx)
+         * @xxxxxx xxxxxxx/xxxxxxx
+         */
+        @Override
+        public boolean xxxx(int xxxxxxxxxx, xxxx xxxxxxxxx, xxxxxxx xxxxxxxxxxxx) {
+            boolean xxxxxxx = true;
+
+            //xxxx: xxxxxx xxxxxx xxxxxxx xxxxx xxxxx xxxxxx xxxxxxx
+            for (xxxxxx xxxxxx : xxxxxxxxxxxx.xxxxxxxx()) {
+                xxx.xxxxx<xxxxxx, xxxxxx> xxxxx = (xxx.xxxxx<xxxxxx, xxxxxx>) xxxxxx;
+                xxxxxx xxx = xxxxx.xxxxxx();
+                xxxxxx xxxxx = xxxxx.xxxxxxxx();
+                xxxxxxxxxxxx.xxx(xxx, xxxxx.xxxxxxxx());
+            }
+
+            xxxxxxxxxxxx.xxx(xxxxxxxxxxxxxxx.xxxxx_xx_xxxxxxxx, xxxxxx.xxxxxxx(xxxxx()));
+            xxxxxxxxxxxx.xxx(xxxxxxxxxxxxxxx.xxxxx_xxxxxxxxx_xxxxxxxx, xxxxxx.xxxxxxx(xxxxxxxxx.xxxxxxx()));
+            xxxxxxxxxxxx.xxx(xxxxxxxxxxxxxxx.xxxxx_xxxxxxxx_xx_xxxxxxxx, xxxxxx.xxxxxxx(xxxxxxxxxx));
+            int xxxx;
+            if (xxxxxxxxx.xxxxxxx().xxxxxx(xxxxxxxxxxxxx.xxxx.xxxxxx_xxx_xxxx)) {
+                xxxxxxxxxxxxxxxxxxxxxx xxxx = (xxxxxxxxxxxxxxxxxxxxxx) xxxxxxxxx;
+                xxxx = xxxx.xxxxxxxxxxxxxxxxxxxxx();
+                xxxxxxxxxxxx.xxx(xxxxxxxxxxxxxxx.xxxxx_xxxx_xxxxxxxxxxx_xxxxxxxx, xxxxxxxxxxxxxxx.xxxxx_xxxxxxx_xxxx_xxxxxxxxxxx);
+                xxxxxxxxxxxx.xxx(xxxxxxxxxxxxxxx.xxxxx_xxxxxx_xxxx_xxxxxxxxxxx_xxxxxxxx, xxxxxxxxxxxxx.xxxxxxxxxxxxxxxxxxxxx(xxxx));
+            } else {
+                xxxx = 0;
+                xxxxxxxxxxxx.xxx(xxxxxxxxxxxxxxx.xxxxx_xxxx_xxxxxxxxxxx_xxxxxxxx, xxxxxxxxxxxxxxx.xxxxx_xxxxxx_xxxxxx_xxxx_xxxxxxxxxxx);
+                xxxxxxxxxxxx.xxx(xxxxxxxxxxxxxxx.xxxxx_xxxxxx_xxxx_xxxxxxxxxxx_xxxxxxxx, "N/A");
+            }
+            xxxxxxxxxxxx.xxx(xxxxxxxxxxxxxxx.xxxxx_xxxxxx_xxxx_xxxxxxxx_xxxxxxxx, new xxxxxxx(xxxx).xxxxxxxx());
+
+
+            try {
+                xxxxxxxxx xxxxxxxxx = xxxxxxxxxxxxxxxxxxxxxxxxx();
+                if (xxxxxxxxx == null) {
+                    throw new xxxxxxxxxxxxxxxxxxxx("The AlertPublisher is null. The alert will not be sent");
+                }
+                xxxxxxxxx.xxxxxxx(xxxxxxxxxxxx);
+                // xxx xxx xxxx xxxx xxxx xxx xxx xxxxxx xx xxxxxxxx
+                if (xxxxxxxxxxxxxx() != -1) {
+                    synchronized (this) {
+                        xxxxxxxxxxxxxxxxxx().xxx(xxxxxxxxxxxx.xxx(xxxxxxxxxxxxxxx.xxxxx_xxx_xxxxxxxx),
+                                xxxxxx.xxxxxxxxxxxxxxxxx());
+                    }
+                }
+                if (xxx.xxxxxxxxxxxxx()) {
+                    xxxxxxxxxxxx xxxxxxx = new xxxxxxxxxxxx("Alert (").xxxxxx(xxxxxxxxxx()).xxxxxx(") was sent successfully");
+                    xxx.xxxx(xxxxxxx);
+                }
+            } catch (xxxxxxxxxxxxxxxxxxxx x) {
+                xxx.xxxxx(xxxxxxxxxxxxxxxxx.xxxxxxxxxx("120622"/* xxxxxx xx xxxx xxxxx */, xxxxxxxxxxxxxxxx()), x);
+                xxxxxxx = false;
+            }
+            return xxxxxxx;
+        }
+
+        /**
+         * xxxxxxx x xxxxxx xxxxx xxxxxxxxx xxx xxxxxx. xxx xxxxxxx xxxxxxxx
+         */
+        @Override
+        public xxxxxx xxxxxxxxxx() {
+            return "id: " + xxxxx();
+        }
+
+        /**
+         * xxxxxxx xx xxxxx xx xxxxxxxxxx xxxxx xxxxxxxxx xxx xxxxxx. xxx xxxxxxx xxxxxxxx
+         */
+        @Override
+        public xxxxxx[] xxxxxxxxxxxxxxxx() {
+            return new xxxxxx[]{"Alert id", xxxxx()};
+        }
+
+        @Override
+        public boolean xxxxxxxxxxxxxxxxxxxxxxxx() {
+            return xxxxxxxxxxxx() instanceof xxxxxxxxxxxxxxxxxxxxxx;
+        }
+    }
+}
