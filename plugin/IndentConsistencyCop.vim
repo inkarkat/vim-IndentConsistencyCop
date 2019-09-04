@@ -26,13 +26,17 @@ endif
 if ! exists('g:indentconsistencycop_non_indent_pattern')
     let g:indentconsistencycop_non_indent_pattern = [' \*\%([*/ \t]\|$\)', '^Comment$', 'FoldMarker$']
 endif
+if ! exists('g:IndentConsistencyCop_IgnorePatterns')
+    let g:IndentConsistencyCop_IgnorePatterns = [['^\s\+', 'podVerbatimLine']]
+endif
 
 if ! exists('g:IndentConsistencyCop_UnacceptableIndentSettings')
     let g:IndentConsistencyCop_UnacceptableIndentSettings = ['spc1', 'sts1']
 endif
 if ! exists('g:IndentConsistencyCop_line_filters')
+    if v:version < 702 | runtime autoload/IndentConsistencyCop/Pattern.vim | endif  " The Funcref doesn't trigger the autoload in older Vim versions.
     if v:version < 702 | runtime autoload/IndentConsistencyCop/Filter.vim | endif  " The Funcref doesn't trigger the autoload in older Vim versions.
-    let g:IndentConsistencyCop_line_filters = [function('IndentConsistencyCop#Filter#BlockAlignment')]
+    let g:IndentConsistencyCop_line_filters = [function('IndentConsistencyCop#Pattern#Filter'), function('IndentConsistencyCop#Filter#BlockAlignment')]
 endif
 
 if ! exists('g:IndentConsistencyCop_MenuExtensions')

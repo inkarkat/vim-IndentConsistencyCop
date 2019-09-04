@@ -215,7 +215,19 @@ that they will be excluded from the cop's checking. Define a List of Funcrefs: >
 The function must take two startLnum, endLnum arguments and return a
 Dictionary whose keys represent the filtered out line numbers. The cop ignores
 the union of all returned Sets.
-
+				       *b:IndentConsistencyCop_IgnorePatterns*
+				       *g:IndentConsistencyCop_IgnorePatterns*
+In case of really irregular lines where the removal of some whitespace per
+|g:indentconsistencycop_non_indent_pattern| isn't possible, the lines can be
+ignored altogether. Lines can be selected by a List of patterns, optionally
+limited to certain syntax item names (tested after the matched text),
+optionally with another one for a syntax item name that stops looking further
+down the syntax stack: >
+    let g:IndentConsistencyCop_IgnorePatterns = [
+    \	'^\s\+####D',
+    \	['^\s\+', 'podVerbatimLine']
+    \]
+<
 ==============================================================================
 INTEGRATION				    *IndentConsistencyCop-integration*
 					       *b:indentconsistencycop_result*
