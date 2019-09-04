@@ -1,11 +1,7 @@
 " IndentConsistencyCop.vim: Is the buffer's indentation consistent and does it conform to tab settings?
 "
 " DEPENDENCIES:
-"   - ingo/compat.vim autoload script
-"   - ingo/compat/regexp.vim autoload script
-"   - ingo/plugin/setting.vim autoload script
-"   - ingo/query.vim autoload script
-"   - ingo/range.vim autoload script
+"   - ingo-library.vim plugin
 "
 " Copyright: (C) 2006-2019 Ingo Karkat
 "   The VIM LICENSE applies to this script; see ':help copyright'.

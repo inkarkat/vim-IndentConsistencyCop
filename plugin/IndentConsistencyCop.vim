@@ -2,8 +2,6 @@
 "
 " DEPENDENCIES:
 "   - Requires Vim 7.0 or higher.
-"   - IndentConsistencyCop.vim autoload script
-"   - IndentConsistencyCop/Filter.vim autoload script
 "
 " Copyright: (C) 2006-2019 by Ingo Karkat
 "   The VIM LICENSE applies to this script; see ':help copyright'.
