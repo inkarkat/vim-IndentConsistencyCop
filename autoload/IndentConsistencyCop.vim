@@ -161,8 +161,7 @@ endfunction
 function! s:GetBeginningWhitespacePattern( whitespaceSuffixPattern ) abort " {{{2
     return ingo#compat#regexp#GetOldEnginePrefix() . '^\s\{-}\ze' . a:whitespaceSuffixPattern
 endfunction
-function! s:IsOnSyntax( lnum, col, syntaxItemArgs ) abort " {{{2
-    if ! exists('g:syntax_on') | return 1 | endif
+function! IndentConsistencyCop#IsOnSyntax( lnum, col, syntaxItemArgs ) abort " {{{2
     return call('ingo#syntaxitem#IsOnSyntax', [[0, a:lnum, a:col, 0]] + a:syntaxItemArgs)
 endfunction
 function! IndentConsistencyCop#GetBeginningWhitespace( lnum, isApplyNonIndentPattern ) " {{{2
@@ -177,8 +176,12 @@ function! IndentConsistencyCop#GetBeginningWhitespace( lnum, isApplyNonIndentPat
 	return matchstr(l:line, s:GetBeginningWhitespacePattern('\($\|\S\)'))
     endif
 
-    let l:beginningWhitespaceBeforeNonIndentPattern = matchstr(l:line, s:GetBeginningWhitespacePattern(l:nonIndentPattern[0]))
-    let l:isOnSyntax = s:IsOnSyntax(a:lnum, len(l:beginningWhitespaceBeforeNonIndentPattern) + 1, l:nonIndentPattern[1:])
+    if exists('g:syntax_on')
+	let l:beginningWhitespaceBeforeNonIndentPattern = matchstr(l:line, s:GetBeginningWhitespacePattern(l:nonIndentPattern[0]))
+	let l:isOnSyntax = IndentConsistencyCop#IsOnSyntax(a:lnum, len(l:beginningWhitespaceBeforeNonIndentPattern) + 1, l:nonIndentPattern[1:])
+    else
+	let l:isOnSyntax = 1
+    endif
     let l:whitespaceSuffixPattern = (l:isOnSyntax ? '\($\|\S' . '\|' . l:nonIndentPattern[0] . '\)' : '\($\|\S\)')
     return matchstr(l:line, s:GetBeginningWhitespacePattern(l:whitespaceSuffixPattern))
 endfunction
