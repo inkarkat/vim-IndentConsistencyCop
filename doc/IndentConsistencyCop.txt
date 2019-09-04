@@ -227,7 +227,8 @@ down the syntax stack: >
     \	'^\s\+####D',
     \	['^\s\+', 'podVerbatimLine']
     \]
-<
+(This is implemented as a default |g:IndentConsistencyCop_line_filters|.)
+
 ==============================================================================
 INTEGRATION				    *IndentConsistencyCop-integration*
 					       *b:indentconsistencycop_result*
@@ -354,7 +355,7 @@ below).
 ==============================================================================
 HISTORY						*IndentConsistencyCop-history*
 
-2.01	RELEASEME
+2.10	RELEASEME
 - Add b:indentconsistencycop_result.acknowledgedByUserSetting
 - ENH: Allow extension of the plugin's user queries with additional menu
   entries. This is used by IndentConsistencyCopAutoCmds.vim to implement
@@ -366,6 +367,9 @@ HISTORY						*IndentConsistencyCop-history*
   syntax item (if :syntax on) for applying the special indent pattern, to
   avoid false positives in non-comment lines that just look like they're
   starting with a comment prefix.
+- Add g:IndentConsistencyCop_IgnorePatterns to completely ignore certain lines
+  that match a pattern (and optionally have a certain syntax item name),
+  implemented as a default g:IndentConsistencyCop_line_filters.
 
 2.00	23-Dec-2017
 - Minor: Replace explicit regexp engine workaround with ingo/compat/regexp.vim.
