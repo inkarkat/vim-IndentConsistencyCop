@@ -1,14 +1,13 @@
-" IndentConsistencyCop/Filter.vim: Filters to deal with non-regular indentation styles.
+" IndentConsistencyCop/BlockAlignment.vim: Exclude lines that are aligned as a block.
 "
 " DEPENDENCIES:
-"   - IndentConsistencyCop.vim autoload script
 "
-" Copyright: (C) 2015-2017 Ingo Karkat
+" Copyright: (C) 2015-2019 Ingo Karkat
 "   The VIM LICENSE applies to this script; see ':help copyright'.
 "
 " Maintainer:	Ingo Karkat <ingo@karkat.de>
 
-function! IndentConsistencyCop#Filter#BlockAlignment( startLnum, endLnum )
+function! IndentConsistencyCop#BlockAlignment#Filter( startLnum, endLnum )
 "******************************************************************************
 "* PURPOSE:
 "   Handle alignment to previous keywords, e.g.

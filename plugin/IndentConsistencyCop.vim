@@ -35,8 +35,8 @@ if ! exists('g:IndentConsistencyCop_UnacceptableIndentSettings')
 endif
 if ! exists('g:IndentConsistencyCop_line_filters')
     if v:version < 702 | runtime autoload/IndentConsistencyCop/Pattern.vim | endif  " The Funcref doesn't trigger the autoload in older Vim versions.
-    if v:version < 702 | runtime autoload/IndentConsistencyCop/Filter.vim | endif  " The Funcref doesn't trigger the autoload in older Vim versions.
-    let g:IndentConsistencyCop_line_filters = [function('IndentConsistencyCop#Pattern#Filter'), function('IndentConsistencyCop#Filter#BlockAlignment')]
+    if v:version < 702 | runtime autoload/IndentConsistencyCop/BlockAlignment.vim | endif  " The Funcref doesn't trigger the autoload in older Vim versions.
+    let g:IndentConsistencyCop_line_filters = [function('IndentConsistencyCop#Pattern#Filter'), function('IndentConsistencyCop#BlockAlignment#Filter')]
 endif
 
 if ! exists('g:IndentConsistencyCop_MenuExtensions')
