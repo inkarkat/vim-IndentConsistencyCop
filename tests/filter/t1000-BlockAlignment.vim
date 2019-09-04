@@ -1,6 +1,6 @@
 " Test filtering of block alignment.
 
-let g:IndentConsistencyCop_line_filters = [function('IndentConsistencyCop#Filter#BlockAlignment')]
+let g:IndentConsistencyCop_line_filters = [function('IndentConsistencyCop#BlockAlignment#Filter')]
 
 edit BlockAlignment.txt
 

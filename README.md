@@ -215,6 +215,20 @@ The function must take two startLnum, endLnum arguments and return a
 Dictionary whose keys represent the filtered out line numbers. The cop ignores
 the union of all returned Sets.
 
+In case of really irregular lines where the removal of some whitespace per
+g:indentconsistencycop\_non\_indent\_pattern isn't possible, the lines can be
+ignored altogether. Lines can be selected by a List of patterns, optionally
+limited to certain syntax item names (tested after the matched text),
+optionally with another one for a syntax item name that stops looking further
+down the syntax stack:
+
+    let g:IndentConsistencyCop_IgnorePatterns = [
+    \   '^\s\+####D',
+    \   ['^\s\+', 'podVerbatimLine']
+    \]
+
+(This is implemented as a default g:IndentConsistencyCop\_line\_filters.)
+
 INTEGRATION
 ------------------------------------------------------------------------------
 
@@ -337,7 +351,7 @@ below).
 HISTORY
 ------------------------------------------------------------------------------
 
-##### 2.01    RELEASEME
+##### 2.10    RELEASEME
 - Add b:indentconsistencycop\_result.acknowledgedByUserSetting
 - ENH: Allow extension of the plugin's user queries with additional menu
   entries. This is used by IndentConsistencyCopAutoCmds.vim to implement
@@ -349,6 +363,9 @@ HISTORY
   syntax item (if :syntax on) for applying the special indent pattern, to
   avoid false positives in non-comment lines that just look like they're
   starting with a comment prefix.
+- Add g:IndentConsistencyCop\_IgnorePatterns to completely ignore certain lines
+  that match a pattern (and optionally have a certain syntax item name),
+  implemented as a default g:IndentConsistencyCop\_line\_filters.
 
 ##### 2.00    23-Dec-2017
 - Minor: Replace explicit regexp engine workaround with ingo/compat/regexp.vim.

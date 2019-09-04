@@ -2,8 +2,6 @@
 "
 " DEPENDENCIES:
 "   - Requires Vim 7.0 or higher.
-"   - IndentConsistencyCop.vim autoload script
-"   - IndentConsistencyCop/Filter.vim autoload script
 "
 " Copyright: (C) 2006-2019 by Ingo Karkat
 "   The VIM LICENSE applies to this script; see ':help copyright'.
@@ -26,13 +24,17 @@ endif
 if ! exists('g:indentconsistencycop_non_indent_pattern')
     let g:indentconsistencycop_non_indent_pattern = [' \*\%([*/ \t]\|$\)', '^Comment$', 'FoldMarker$']
 endif
+if ! exists('g:IndentConsistencyCop_IgnorePatterns')
+    let g:IndentConsistencyCop_IgnorePatterns = [['^\s\+', 'podVerbatimLine']]
+endif
 
 if ! exists('g:IndentConsistencyCop_UnacceptableIndentSettings')
     let g:IndentConsistencyCop_UnacceptableIndentSettings = ['spc1', 'sts1']
 endif
 if ! exists('g:IndentConsistencyCop_line_filters')
-    if v:version < 702 | runtime autoload/IndentConsistencyCop/Filter.vim | endif  " The Funcref doesn't trigger the autoload in older Vim versions.
-    let g:IndentConsistencyCop_line_filters = [function('IndentConsistencyCop#Filter#BlockAlignment')]
+    if v:version < 702 | runtime autoload/IndentConsistencyCop/Pattern.vim | endif  " The Funcref doesn't trigger the autoload in older Vim versions.
+    if v:version < 702 | runtime autoload/IndentConsistencyCop/BlockAlignment.vim | endif  " The Funcref doesn't trigger the autoload in older Vim versions.
+    let g:IndentConsistencyCop_line_filters = [function('IndentConsistencyCop#Pattern#Filter'), function('IndentConsistencyCop#BlockAlignment#Filter')]
 endif
 
 if ! exists('g:IndentConsistencyCop_MenuExtensions')
