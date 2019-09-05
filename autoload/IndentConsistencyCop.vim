@@ -2134,7 +2134,11 @@ function! IndentConsistencyCop#IndentConsistencyCop( startLnum, endLnum, isBuffe
     let s:occurrences = {}
     let s:ratings = {}
 endfunction
+" }}}1
 
+function! IndentConsistencyCop#TurnOff() abort " {{{1
+    call IndentConsistencyCop#ClearHighlighting()
+endfunction
 " }}}1
 
 " vim: set ts=8 sts=4 sw=4 noexpandtab ff=unix fdm=marker :

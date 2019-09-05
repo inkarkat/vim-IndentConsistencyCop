@@ -54,7 +54,7 @@ command! -bar -range=% IndentConsistencyCop call IndentConsistencyCop#IndentCons
 
 " Remove the highlighting of inconsistent lines and restore the normal view for
 " this buffer.
-command! -bar IndentConsistencyCopOff call IndentConsistencyCop#ClearHighlighting()
+command! -bar IndentConsistencyCopOff call IndentConsistencyCop#TurnOff()
 
 " Only check indent consistency within range / buffer. Don't check the
 " consistency with buffer indent settings. Prefer this command to
