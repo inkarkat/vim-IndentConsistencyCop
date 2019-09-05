@@ -155,9 +155,10 @@ removed via :IndentConsistencyCopOff.
         to locate the incorrect lines.
         You can customize this by defining / linking the
         'IndentConsistencyCop' highlight group before this script is
-        sourced:
-        highlight link IndentConsistencyCop Error
-    f:{n} (n = 0..9) - Fold correct lines with a context of {n} lines (like
+        sourced: >
+            highlight link IndentConsistencyCop Error
+    f:{n} (n = 0..9)
+      - Fold correct lines with a context of {n} lines (like
         in Vim diff mode).
     TODO:
     q - Populate quickfix list with all incorrect lines. Idea: Use :cgetexpr.
