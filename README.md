@@ -324,6 +324,12 @@ differently to various conditions. For example:
         \   b:indentconsistencycop_result.isOff ? 'off' : 'on'
     augroup END
 
+The following turns the buffer read-only if it is inconsistent:
+
+        autocmd User IndentConsistencyCop let &l:readonly =
+        \   ! b:indentconsistencycop_result.isConsistent &&
+        \   ! b:indentconsistencycop_result.isOff
+
 LIMITATIONS
 ------------------------------------------------------------------------------
 
