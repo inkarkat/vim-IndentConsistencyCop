@@ -1788,6 +1788,9 @@ function! s:InitResults() "{{{2
 	let b:indentconsistencycop_result = {}
     endif
 endfunction
+function! s:TriggerEvent() abort " {{{2
+    call ingo#event#TriggerCustom('IndentConsistencyCop')
+endfunction
 
 function! s:ReportIndentSetting( indentSetting ) "{{{2
     if a:indentSetting ==# 'tab'
@@ -1847,6 +1850,7 @@ endfunction
 
 function! s:ReportConsistencyResult( isEntireBuffer, isConsistent, consistentIndentSetting, isAcknowledgedByUser ) "{{{2
     call s:InitResults()
+    let b:indentconsistencycop_result.isOff = 0
 
     " Only update the buffer result if the entire buffer was checked or if the
     " check of a range yielded a definitive inconsistency.
@@ -2133,8 +2137,17 @@ function! IndentConsistencyCop#IndentConsistencyCop( startLnum, endLnum, isBuffe
     let s:filteredLnums = {}
     let s:occurrences = {}
     let s:ratings = {}
-endfunction
 
+    call s:TriggerEvent()
+endfunction
+" }}}1
+
+function! IndentConsistencyCop#TurnOff() abort " {{{1
+    call s:InitResults()
+    call IndentConsistencyCop#ClearHighlighting()
+    let b:indentconsistencycop_result.isOff = 1
+    call s:TriggerEvent()
+endfunction
 " }}}1
 
 " vim: set ts=8 sts=4 sw=4 noexpandtab ff=unix fdm=marker :
