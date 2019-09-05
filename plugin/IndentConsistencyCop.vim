@@ -20,6 +20,9 @@ let g:loaded_indentconsistencycop = 1
 if ! exists('g:indentconsistencycop_highlighting')
     let g:indentconsistencycop_highlighting = 'sglmf:3'
 endif
+if g:indentconsistencycop_highlighting =~# 'm'
+    highlight def link IndentConsistencyCop Error
+endif
 
 if ! exists('g:indentconsistencycop_non_indent_pattern')
     let g:indentconsistencycop_non_indent_pattern = [' \*\%([*/ \t]\|$\)', '^Comment$', 'FoldMarker$']
@@ -41,9 +44,15 @@ if ! exists('g:IndentConsistencyCop_MenuExtensions')
     let g:IndentConsistencyCop_MenuExtensions = {}
 endif
 
-if g:indentconsistencycop_highlighting =~# 'm'
-    highlight def link IndentConsistencyCop Error
+if ! exists('g:IndentConsistencyCop_IsCopyAndPreserveIndent')
+    let g:IndentConsistencyCop_IsCopyAndPreserveIndent = 1
 endif
+if g:IndentConsistencyCop_IsCopyAndPreserveIndent
+    augroup IndentConsistencyCop
+	autocmd! User IndentConsistencyCop call IndentConsistencyCop#CopyAndPreserveIndent#Adapt()
+    augroup END
+endif
+
 
 
 "- commands ------------------------------------------------------------------

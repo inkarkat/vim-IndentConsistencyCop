@@ -230,6 +230,16 @@ down the syntax stack:
 
 (This is implemented as a default g:IndentConsistencyCop\_line\_filters.)
 
+By default, the cop sets 'copyindent' and 'preserveindent' if the buffer's
+indent is inconsistent and this is ignored by the user, as these options
+typically make Vim respect the original indent. This is undone automatically
+if the buffer becomes consistent or the cop is turned off via
+:IndentConsistencyCopOff. To disable this feature, set
+
+    let g:IndentConsistencyCop_IsCopyAndPreserveIndent = 0
+
+(This is implemented as a default IndentConsistencyCop-event.)
+
 INTEGRATION
 ------------------------------------------------------------------------------
 
@@ -389,6 +399,9 @@ HISTORY
   implemented as a default g:IndentConsistencyCop\_line\_filters.
 - Emit "IndentConsistencyCop" User event after each cop command, so that
   customizations can react to the results.
+- Set 'copyindent' and 'preserveindent' when the buffer is inconsistent and
+  this is ignored (configurable via
+  g:IndentConsistencyCop\_IsCopyAndPreserveIndent).
 
 ##### 2.00    23-Dec-2017
 - Minor: Replace explicit regexp engine workaround with ingo/compat/regexp.vim.
