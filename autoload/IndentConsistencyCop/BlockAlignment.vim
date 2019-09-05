@@ -25,7 +25,7 @@ function! IndentConsistencyCop#BlockAlignment#Filter( startLnum, endLnum )
 "******************************************************************************
     let l:filteredLnums = {}
     let l:lnum = a:startLnum
-    while l:lnum < a:endLnum
+    while l:lnum < a:endLnum    " Can ignore last line because there are no subsequent lines then.
 	let l:whitespace = IndentConsistencyCop#GetBeginningWhitespace(l:lnum + 1, 0)
 
 	if l:whitespace =~# '^\t\+ \{0,7}$'

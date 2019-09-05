@@ -11,7 +11,7 @@
 function! IndentConsistencyCop#Pattern#Filter( startLnum, endLnum ) abort
     let l:filteredLnums = {}
     let l:lnum = a:startLnum
-    while l:lnum < a:endLnum
+    while l:lnum <= a:endLnum
 	let l:line = getline(l:lnum)
 	for l:pattern in ingo#plugin#setting#GetBufferLocal('IndentConsistencyCop_IgnorePatterns')
 	    let l:isSimplePattern = (type(l:pattern) != type([]))
