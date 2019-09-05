@@ -291,6 +291,10 @@ Flag whether the user chose to ignore the inconsistent results. This can be
 used by integrations (like IndentConsistencyCopAutoCmds) to cease scheduling
 of further cop runs in this buffer.
 
+    b:indentconsistencycop_result.isOff
+Flag whether the cop has been (at least temporarily) disabled via
+:IndentConsistencyCopOff.
+
 The user queries can be extended with additional menu entries, defined in a
 Dictionary:
 
@@ -309,6 +313,16 @@ The optional "priority" attribute determines the order of the extension
 entries; they will always come after the plugin's core entries, though.
 The mandatory "Action" attribute is a Funcref to a function that is invoked
 without arguments if the menu entry is chosen.
+
+The plugin emits a User event "IndentConsistencyCop" after each run.
+Integrations can check the b:indentconsistencycop\_result dictionary to react
+differently to various conditions. For example:
+
+    augroup IndentConsistencyCopCustomization
+        autocmd!
+        autocmd User IndentConsistencyCop unsilent echomsg 'The cop is'
+        \   b:indentconsistencycop_result.isOff ? 'off' : 'on'
+    augroup END
 
 LIMITATIONS
 ------------------------------------------------------------------------------
@@ -366,6 +380,8 @@ HISTORY
 - Add g:IndentConsistencyCop\_IgnorePatterns to completely ignore certain lines
   that match a pattern (and optionally have a certain syntax item name),
   implemented as a default g:IndentConsistencyCop\_line\_filters.
+- Emit "IndentConsistencyCop" User event after each cop command, so that
+  customizations can react to the results.
 
 ##### 2.00    23-Dec-2017
 - Minor: Replace explicit regexp engine workaround with ingo/compat/regexp.vim.
