@@ -1788,6 +1788,9 @@ function! s:InitResults() "{{{2
 	let b:indentconsistencycop_result = {}
     endif
 endfunction
+function! s:TriggerEvent() abort " {{{2
+    call ingo#event#TriggerCustom('IndentConsistencyCop')
+endfunction
 
 function! s:ReportIndentSetting( indentSetting ) "{{{2
     if a:indentSetting ==# 'tab'
@@ -2134,6 +2137,8 @@ function! IndentConsistencyCop#IndentConsistencyCop( startLnum, endLnum, isBuffe
     let s:filteredLnums = {}
     let s:occurrences = {}
     let s:ratings = {}
+
+    call s:TriggerEvent()
 endfunction
 " }}}1
 
@@ -2141,6 +2146,7 @@ function! IndentConsistencyCop#TurnOff() abort " {{{1
     call s:InitResults()
     call IndentConsistencyCop#ClearHighlighting()
     let b:indentconsistencycop_result.isOff = 1
+    call s:TriggerEvent()
 endfunction
 " }}}1
 

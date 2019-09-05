@@ -313,6 +313,16 @@ entries; they will always come after the plugin's core entries, though.
 The mandatory "Action" attribute is a Funcref to a function that is invoked
 without arguments if the menu entry is chosen.
 
+						 *IndentConsistencyCop-events*
+The plugin emits a |User| event "IndentConsistencyCop" after each run.
+Integrations can check the |b:indentconsistencycop_result| dictionary to react
+differently to various conditions. For example: >
+    augroup IndentConsistencyCopCustomization
+	autocmd!
+	autocmd User IndentConsistencyCop unsilent echomsg 'The cop is'
+	\   b:indentconsistencycop_result.isOff ? 'off' : 'on'
+    augroup END
+<
 ==============================================================================
 LIMITATIONS				    *IndentConsistencyCop-limitations*
 
