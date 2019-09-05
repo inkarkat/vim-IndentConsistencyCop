@@ -1847,6 +1847,7 @@ endfunction
 
 function! s:ReportConsistencyResult( isEntireBuffer, isConsistent, consistentIndentSetting, isAcknowledgedByUser ) "{{{2
     call s:InitResults()
+    let b:indentconsistencycop_result.isOff = 0
 
     " Only update the buffer result if the entire buffer was checked or if the
     " check of a range yielded a definitive inconsistency.
@@ -2137,7 +2138,9 @@ endfunction
 " }}}1
 
 function! IndentConsistencyCop#TurnOff() abort " {{{1
+    call s:InitResults()
     call IndentConsistencyCop#ClearHighlighting()
+    let b:indentconsistencycop_result.isOff = 1
 endfunction
 " }}}1
 

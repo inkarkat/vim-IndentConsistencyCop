@@ -290,7 +290,10 @@ this flag unchanged.)
 Flag whether the user chose to ignore the inconsistent results. This can be
 used by integrations (like IndentConsistencyCopAutoCmds) to cease scheduling
 of further cop runs in this buffer.
-
+>
+    b:indentconsistencycop_result.isOff
+Flag whether the cop has been (at least temporarily) disabled via
+|:IndentConsistencyCopOff|.
 
 				       *g:IndentConsistencyCop_MenuExtensions*
 The user queries can be extended with additional menu entries, defined in a
