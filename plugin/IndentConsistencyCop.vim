@@ -59,7 +59,7 @@ endif
 
 " Ensure indent consistency within the range / buffer, and - if achieved -, also
 " check consistency with buffer indent settings.
-command! -bar -range=% IndentConsistencyCop call IndentConsistencyCop#IndentConsistencyCop(<line1>, <line2>, 1)
+command! -bar -range=% -nargs=? -complete=customlist,IndentConsistencyCop#IndentSettingComplete IndentConsistencyCop if ! IndentConsistencyCop#IndentConsistencyCop(<line1>, <line2>, 1, <q-args>) | echoerr ingo#err#Get() | endif
 
 " Remove the highlighting of inconsistent lines and restore the normal view for
 " this buffer.
@@ -70,6 +70,6 @@ command! -bar IndentConsistencyCopOff call IndentConsistencyCop#TurnOff()
 " IndentConsistencyCop if you don't want your buffer indent settings
 " changed, or if you only want to check a limited range of the buffer that you
 " know does not conform to the buffer indent settings.
-command! -bar -range=% IndentRangeConsistencyCop call IndentConsistencyCop#IndentConsistencyCop(<line1>, <line2>, 0)
+command! -bar -range=% -nargs=? -complete=customlist,IndentConsistencyCop#IndentSettingComplete IndentRangeConsistencyCop if ! IndentConsistencyCop#IndentConsistencyCop(<line1>, <line2>, 0, <q-args>) | echoerr ingo#err#Get() | endif
 
 " vim: set ts=8 sts=4 sw=4 noexpandtab ff=unix fdm=syntax :
