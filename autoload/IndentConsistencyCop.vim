@@ -81,7 +81,7 @@ function! s:IsDivisorOf( newNumber, numbers ) " {{{2
     return 0
 endfunction
 
-function! s:GetMultiplierFromIndentSetting( indentSetting ) " {{{2
+function! IndentConsistencyCop#GetMultiplierFromIndentSetting( indentSetting ) " {{{2
     if a:indentSetting ==# 'tab'
 	return 8
     else
@@ -89,15 +89,15 @@ function! s:GetMultiplierFromIndentSetting( indentSetting ) " {{{2
     endif
 endfunction
 
-function! s:GetSettingFromIndentSetting( indentSetting ) " {{{2
+function! IndentConsistencyCop#GetSettingFromIndentSetting( indentSetting ) " {{{2
     return strpart( a:indentSetting, 0, 3 )
 endfunction
 function! s:StripTabstopValueFromIndentSetting( indentSetting ) " {{{2
-    return (s:GetSettingFromIndentSetting( a:indentSetting ) ==# 'tab' ? 'tab' : a:indentSetting)
+    return (IndentConsistencyCop#GetSettingFromIndentSetting( a:indentSetting ) ==# 'tab' ? 'tab' : a:indentSetting)
 endfunction
 
 function! s:IsBadIndentSetting( indentSetting ) " {{{2
-    return s:GetSettingFromIndentSetting( a:indentSetting ) ==# 'bad'
+    return IndentConsistencyCop#GetSettingFromIndentSetting( a:indentSetting ) ==# 'bad'
 endfunction
 
 " }}}1
@@ -347,10 +347,10 @@ function! s:GetPrecedence( indentSetting ) " {{{1
 "   For doubtful indent settings, a list of indent settings; only 'spc' and
 "   'sts' are contained, no 'dbt' is returned.
 "*******************************************************************************
-    if s:GetSettingFromIndentSetting( a:indentSetting ) !=# 'dbt'
+    if IndentConsistencyCop#GetSettingFromIndentSetting( a:indentSetting ) !=# 'dbt'
 	return [a:indentSetting]    " Pass-through.
     endif
-    let l:multiplier = s:GetMultiplierFromIndentSetting( a:indentSetting )
+    let l:multiplier = IndentConsistencyCop#GetMultiplierFromIndentSetting( a:indentSetting )
 
     if s:GetKeyedValue( s:occurrences, a:indentSetting ) <= 0
 	return []   " Bad query.
@@ -459,7 +459,7 @@ endfunction
 
 "- Check for compatible indent settings ----------------------------------{{{1
 function! s:IsIndentProduceableWithIndentSetting( indent, indentSetting ) " {{{2
-    let l:indentMultiplier = s:GetMultiplierFromIndentSetting( a:indentSetting )
+    let l:indentMultiplier = IndentConsistencyCop#GetMultiplierFromIndentSetting( a:indentSetting )
     if l:indentMultiplier == 0
 	return 0 " This is for the 'badsts' and 'badmix' indent settings.
     else
@@ -501,7 +501,7 @@ function! s:InspectForCompatibles( incompatibles, indents, baseIndentSetting, te
     " Seed possible incompatibles with passed set; filter is testSetting.
     let l:isIncompatibles = {}	" Key: indentSetting; value: boolean (0/1).
     for l:incompatible in a:incompatibles
-	if s:GetSettingFromIndentSetting( l:incompatible ) ==# a:testSetting
+	if IndentConsistencyCop#GetSettingFromIndentSetting( l:incompatible ) ==# a:testSetting
 	    let l:isIncompatibles[ l:incompatible ] = 0
 	endif
     endfor
@@ -554,7 +554,7 @@ function! s:GetIncompatiblesForIndentSetting( indentSetting ) " {{{2
     " The indent setting is compatible with itself.
     call s:RemoveFromList( l:incompatibles, a:indentSetting )
 
-    let l:setting = s:GetSettingFromIndentSetting( a:indentSetting )
+    let l:setting = IndentConsistencyCop#GetSettingFromIndentSetting( a:indentSetting )
     if l:setting ==# 'tab'
 	" 'sts' could be compatible with 'tab'.
 	" softtabstops must be inspected; doubtful contains indents that are too small (<8) for 'tab'.
@@ -713,7 +713,7 @@ function! s:EvaluateOccurrenceAndIncompatibleIntoRating( incompatibles ) " {{{2
 		    " Prefer the new Tab.
 		    unlet s:ratings[s:perfectIndentSetting]
 		    let s:perfectIndentSetting = l:indentSetting
-		elseif s:GetMultiplierFromIndentSetting(l:indentSetting) < s:GetMultiplierFromIndentSetting(s:perfectIndentSetting)
+		elseif IndentConsistencyCop#GetMultiplierFromIndentSetting(l:indentSetting) < IndentConsistencyCop#GetMultiplierFromIndentSetting(s:perfectIndentSetting)
 		    " Prefer the new, smaller multiplier.
 		    unlet s:ratings[s:perfectIndentSetting]
 		    let s:perfectIndentSetting = l:indentSetting
@@ -1060,17 +1060,17 @@ function! s:GetCorrectTabstopSetting( indentSetting ) " {{{2
 	" 'shiftwidth'; 'tabstop' and 'softtabstop' are only used in other
 	" places.
 	return &l:tabstop
-    elseif s:GetSettingFromIndentSetting( a:indentSetting ) ==# 'tab'
-	return (a:indentSetting ==# 'tab' ? &l:tabstop : s:GetMultiplierFromIndentSetting( a:indentSetting ))
-    elseif s:GetSettingFromIndentSetting( a:indentSetting ) ==# 'sts'
+    elseif IndentConsistencyCop#GetSettingFromIndentSetting( a:indentSetting ) ==# 'tab'
+	return (a:indentSetting ==# 'tab' ? &l:tabstop : IndentConsistencyCop#GetMultiplierFromIndentSetting( a:indentSetting ))
+    elseif IndentConsistencyCop#GetSettingFromIndentSetting( a:indentSetting ) ==# 'sts'
 	return 8
-    elseif s:GetSettingFromIndentSetting( a:indentSetting ) ==# 'spc'
+    elseif IndentConsistencyCop#GetSettingFromIndentSetting( a:indentSetting ) ==# 'spc'
 	" If tabstop=8, we prefer changing the indent via softtabstop.
 	" If tabstop!=8, we rather modify tabstop than turning on softtabstop.
 	if &l:tabstop == 8
 	    return 8
 	else
-	    return s:GetMultiplierFromIndentSetting( a:indentSetting )
+	    return IndentConsistencyCop#GetMultiplierFromIndentSetting( a:indentSetting )
 	endif
     else
 	throw 'ASSERT: Unknown setting. '
@@ -1083,13 +1083,13 @@ function! s:GetCorrectSofttabstopSetting( indentSetting ) " {{{2
 	" 'shiftwidth'; 'tabstop' and 'softtabstop' are only used in other
 	" places.
 	return &l:softtabstop
-    elseif s:GetSettingFromIndentSetting( a:indentSetting ) ==# 'sts'
-	return s:GetMultiplierFromIndentSetting( a:indentSetting )
-    elseif s:GetSettingFromIndentSetting( a:indentSetting ) ==# 'spc'
+    elseif IndentConsistencyCop#GetSettingFromIndentSetting( a:indentSetting ) ==# 'sts'
+	return IndentConsistencyCop#GetMultiplierFromIndentSetting( a:indentSetting )
+    elseif IndentConsistencyCop#GetSettingFromIndentSetting( a:indentSetting ) ==# 'spc'
 	" If tabstop=8, we prefer changing the indent via softtabstop.
 	" If tabstop!=8, we rather modify tabstop than turning on softtabstop.
-	if &l:tabstop == 8 && s:GetMultiplierFromIndentSetting( a:indentSetting ) != 8
-	    return s:GetMultiplierFromIndentSetting( a:indentSetting )
+	if &l:tabstop == 8 && IndentConsistencyCop#GetMultiplierFromIndentSetting( a:indentSetting ) != 8
+	    return IndentConsistencyCop#GetMultiplierFromIndentSetting( a:indentSetting )
 	else
 	    return 0
 	endif
@@ -1100,15 +1100,15 @@ function! s:GetCorrectSofttabstopSetting( indentSetting ) " {{{2
 endfunction
 
 function! s:GetCorrectShiftwidthSetting( indentSetting ) " {{{2
-    if s:GetSettingFromIndentSetting( a:indentSetting ) ==# 'tab'
-	return (a:indentSetting ==# 'tab' ? &l:tabstop : s:GetMultiplierFromIndentSetting( a:indentSetting ))
+    if IndentConsistencyCop#GetSettingFromIndentSetting( a:indentSetting ) ==# 'tab'
+	return (a:indentSetting ==# 'tab' ? &l:tabstop : IndentConsistencyCop#GetMultiplierFromIndentSetting( a:indentSetting ))
     else
-	return s:GetMultiplierFromIndentSetting( a:indentSetting )
+	return IndentConsistencyCop#GetMultiplierFromIndentSetting( a:indentSetting )
     endif
 endfunction
 
 function! s:GetCorrectExpandtabSetting( indentSetting ) " {{{2
-    return (s:GetSettingFromIndentSetting( a:indentSetting ) ==# 'spc')
+    return (IndentConsistencyCop#GetSettingFromIndentSetting( a:indentSetting ) ==# 'spc')
 endfunction
 
 function! s:CheckConsistencyWithBufferSettings( indentSetting ) " {{{2
@@ -1217,8 +1217,8 @@ function! s:IndentSettingToUserString( indentSetting ) " {{{2
     elseif a:indentSetting ==# 'notbad'
 	let l:userString = 'no bad mixes or soft tabstops with too many spaces'
     else
-	let l:setting = s:GetSettingFromIndentSetting( a:indentSetting )
-	let l:multiplier = s:GetMultiplierFromIndentSetting( a:indentSetting )
+	let l:setting = IndentConsistencyCop#GetSettingFromIndentSetting( a:indentSetting )
+	let l:multiplier = IndentConsistencyCop#GetMultiplierFromIndentSetting( a:indentSetting )
 	if l:setting ==# 'tab'
 	    let l:userString = 'tabstop, ' . l:multiplier . ' wide'
 	elseif l:setting ==# 'sts'
@@ -1415,7 +1415,7 @@ function! s:IndentBufferConsistencyCop( startLnum, endLnum, consistentIndentSett
     let l:isEntireBuffer = s:IsEntireBuffer(a:startLnum, a:endLnum)
     if a:isBufferSettingsCheck
 	let l:userMessage = s:CheckConsistencyWithBufferSettings( l:consistentIndentSetting )
-	if ! empty( l:userMessage ) && ! s:IsEnoughIndentForSolidAssessment() && s:GetSettingFromIndentSetting(l:consistentIndentSetting) ==# 'spc'
+	if ! empty( l:userMessage ) && ! s:IsEnoughIndentForSolidAssessment() && IndentConsistencyCop#GetSettingFromIndentSetting(l:consistentIndentSetting) ==# 'spc'
 	    " Space indents of up to 7 spaces can be either softtabstop or
 	    " space-indent, lacking larger indents or other hints they cannot be
 	    " told apart, so s:GetPrecedence() defaults to 'spc'. To avoid
@@ -1428,7 +1428,7 @@ function! s:IndentBufferConsistencyCop( startLnum, endLnum, consistentIndentSett
 	    " logic free of dependencies to the buffer settings. (The functional
 	    " block of s:GetPrecedence() has no knowledge of
 	    " a:isBufferSettingsCheck, and should have none of it.)
-	    let l:equivalentConsistentIndentSetting = 'sts' . s:GetMultiplierFromIndentSetting(l:consistentIndentSetting)
+	    let l:equivalentConsistentIndentSetting = 'sts' . IndentConsistencyCop#GetMultiplierFromIndentSetting(l:consistentIndentSetting)
 	    if s:IsConsistentWithBufferSettings( l:equivalentConsistentIndentSetting )
 		let l:userMessage = ''
 		let l:consistentIndentSetting = l:equivalentConsistentIndentSetting
@@ -1499,9 +1499,9 @@ function! s:IsLineCorrect( lnum, correctIndentSetting ) " {{{2
 
     if a:correctIndentSetting ==# 'tab'
 	return l:beginningWhitespace =~# '^\t\+$'
-    elseif s:GetSettingFromIndentSetting( a:correctIndentSetting ) ==# 'spc'
+    elseif IndentConsistencyCop#GetSettingFromIndentSetting( a:correctIndentSetting ) ==# 'spc'
 	return l:beginningWhitespace =~# '^ \+$' && s:IsIndentProduceableWithIndentSetting( len( l:beginningWhitespace ), a:correctIndentSetting )
-    elseif s:GetSettingFromIndentSetting( a:correctIndentSetting ) ==# 'sts'
+    elseif IndentConsistencyCop#GetSettingFromIndentSetting( a:correctIndentSetting ) ==# 'sts'
 	let l:beginningSpaces = substitute( l:beginningWhitespace, '\t', '        ', 'g' )
 	return l:beginningWhitespace =~# '^\t* \{0,7}$' && s:IsIndentProduceableWithIndentSetting( len( l:beginningSpaces ), a:correctIndentSetting )
     elseif a:correctIndentSetting ==# 'notbad'
@@ -1823,7 +1823,7 @@ function! s:ReportBufferSettingsConsistency( indentSetting ) "{{{2
 "   none
 "*******************************************************************************
     let l:indentSetting = s:GetIndentSettingForBufferSettings()
-    if ! empty(a:indentSetting) && a:indentSetting !=# l:indentSetting && (l:indentSetting !=# 'tab' || s:GetSettingFromIndentSetting(a:indentSetting) !=# 'tab')
+    if ! empty(a:indentSetting) && a:indentSetting !=# l:indentSetting && (l:indentSetting !=# 'tab' || IndentConsistencyCop#GetSettingFromIndentSetting(a:indentSetting) !=# 'tab')
 	throw 'ASSERT: Passed buffer settings are equal to actual indent settings. '
     endif
     let b:indentconsistencycop_result.bufferSettings = s:ReportIndentSetting(l:indentSetting)
