@@ -72,7 +72,7 @@ endfunction
 " }}}2
 
 "- utility functions -----------------------------------------------------{{{1
-function! s:IsDivsorOf( newNumber, numbers ) " {{{2
+function! s:IsDivisorOf( newNumber, numbers ) " {{{2
     for l:number in a:numbers
 	if l:number % a:newNumber == 0
 	    return 1
@@ -286,7 +286,7 @@ function! s:EvaluateIndentsIntoOccurrences( dict, type ) " {{{1
 	let l:indentCnt = 8
 	while l:indentCnt > 0
 	    if l:indent % l:indentCnt == 0
-		if ! s:IsDivsorOf( l:indentCnt, l:divisors )
+		if ! s:IsDivisorOf( l:indentCnt, l:divisors )
 		    "****D echo "**** " . l:indent . " adding " . l:indentCnt
 		    call s:IncreaseKeyedBy( s:occurrences, a:type . l:indentCnt, a:dict[ l:indent ] )
 		"****D else
