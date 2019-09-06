@@ -14,7 +14,7 @@ function! IndentConsistencyCop#CopyAndPreserveIndent#Adapt() abort
 	endif
 
 	setlocal copyindent
-	if get(b:indentconsistencycop_result, 'bufferSettings', '') !~# '^sts'
+	if IndentConsistencyCop#GetSettingFromIndentSetting(get(b:indentconsistencycop_result, 'bufferSettings', '')) !=# 'sts'
 	    " Because of the tab-space combination, 'preserveindent' doesn't
 	    " make sense with softtabstop.
 	    setlocal preserveindent
