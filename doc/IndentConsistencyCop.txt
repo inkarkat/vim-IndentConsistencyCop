@@ -99,7 +99,11 @@ RELATED WORKS								     *
 USAGE						  *IndentConsistencyCop-usage*
 						       *:IndentConsistencyCop*
 Start the examination of the current buffer or range via: >
-    :[range]IndentConsistencyCop
+    :[range]IndentConsistencyCop [{setting}]
+The optional {setting} specifies the assumed correct indent setting for the
+buffer / range (if omitted the cop can later be told), as combination of
+either tab, spc, or sts with a number between 1-8, e.g. "sts4" for a
+4-character soft tabstop indent.
 The triggering can be done automatically for configurable filetypes with the
 autocmds defined in IndentConsistencyCopAutoCmds.vim (vimscript #1691).
 						    *:IndentConsistencyCopOff*
@@ -111,7 +115,7 @@ to remove the highlightings.
 If you just want to check a read-only file, or do not intend to modify the
 file, you don't care if Vim's buffer settings are compatible with the used
 indent. In this case, you can use >
-    :[range]IndentRangeConsistencyCop
+    :[range]IndentRangeConsistencyCop [{setting}]
 instead of :IndentConsistencyCop.
 
 ==============================================================================
@@ -402,6 +406,9 @@ HISTORY						*IndentConsistencyCop-history*
 - Set 'copyindent' and 'preserveindent' when the buffer is inconsistent and
   this is ignored (configurable via
   |g:IndentConsistencyCop_IsCopyAndPreserveIndent|).
+- ENH: Allow passing correct indent setting as an :Indent[Range]ConsistencyCop
+  argument. (Overriding of a wrongly found indent setting is already offered
+  in the cop's dialog.)
 
 2.00	23-Dec-2017
 - Minor: Replace explicit regexp engine workaround with ingo/compat/regexp.vim.

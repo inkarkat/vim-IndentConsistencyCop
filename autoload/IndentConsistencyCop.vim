@@ -100,6 +100,9 @@ function! s:IsBadIndentSetting( indentSetting ) " {{{2
     return IndentConsistencyCop#GetSettingFromIndentSetting( a:indentSetting ) ==# 'bad'
 endfunction
 let s:validSettings = ['tab', 'sts', 'spc']
+function! s:IsValidIndentSetting( indentSetting ) " {{{2
+    return a:indentSetting =~? '^\%(' . join(map(copy(s:validSettings), 'v:val . "[1-8]"'), '\|') . '\)$'
+endfunction
 function! IndentConsistencyCop#IndentSettingComplete( ArgLead, CmdLine, CursorPos ) abort
     if index(s:validSettings, a:ArgLead) != -1
 	return map(range(1, 8), 'a:ArgLead . v:val')
@@ -1399,7 +1402,7 @@ function! s:UnindentedBufferConsistencyCop( isEntireBuffer, isBufferSettingsChec
     endif
 endfunction
 " }}}2
-function! s:IndentBufferConsistencyCop( startLnum, endLnum, consistentIndentSetting, isBufferSettingsCheck ) " {{{2
+function! s:IndentBufferConsistencyCop( startLnum, endLnum, consistentIndentSetting, correctIndentSetting, isBufferSettingsCheck ) " {{{2
 "*******************************************************************************
 "* PURPOSE:
 "   Reports buffer consistency and (if desired) triggers the consistency check
@@ -1413,6 +1416,8 @@ function! s:IndentBufferConsistencyCop( startLnum, endLnum, consistentIndentSett
 "			    checked.
 "   a:consistentIndentSetting:  determined consistent indent setting of the
 "				buffer
+"   a:correctIndentSetting      correct indent setting optionally passed by the
+"				user (or empty String)
 "   a:isBufferSettingsCheck:    flag whether consistency with the buffer
 "				settings should also be checked.
 "* RETURN VALUES:
@@ -1447,7 +1452,7 @@ function! s:IndentBufferConsistencyCop( startLnum, endLnum, consistentIndentSett
 	    let l:userMessage .= "\nHow do you want to deal with the "
 	    let l:userMessage .= (s:IsEnoughIndentForSolidAssessment() ? '' : 'potential ')
 	    let l:userMessage .= 'inconsistency?'
-	    let l:bufferSettingsChoices = ['&Ignore', '&Change', '&Wrong, choose correct setting...']
+	    let l:bufferSettingsChoices = ['&Ignore', '&Change', (empty(a:correctIndentSetting) ? '&Wrong, choose correct setting...' : '&Wrong, use correct ' . a:correctIndentSetting)]
 	    if s:IsBufferSettingsConsistent()
 		call insert(l:bufferSettingsChoices, printf('Wrong, use &buffer settings (%s)', s:IndentSettingToUserString(s:GetIndentSettingForBufferSettings())), -1)
 	    endif
@@ -1467,6 +1472,8 @@ function! s:IndentBufferConsistencyCop( startLnum, endLnum, consistentIndentSett
 	    elseif l:action =~? '^Wrong'
 		if l:action =~? '^Wrong, choose correct setting'
 		    let l:chosenIndentSetting = s:QueryIndentSetting(1)
+		elseif l:action =~? '^Wrong, use correct'
+		    let l:chosenIndentSetting = a:correctIndentSetting
 		elseif l:action =~? '^Wrong, use buffer settings'
 		    let l:chosenIndentSetting = s:GetIndentSettingForBufferSettings()
 		else
@@ -2073,7 +2080,7 @@ function! s:IsBufferConsistentWith( indentSetting, startLnum, endLnum ) " {{{1
     return 0
 endfunction
 
-function! IndentConsistencyCop#IndentConsistencyCop( startLnum, endLnum, isBufferSettingsCheck ) " {{{1
+function! IndentConsistencyCop#IndentConsistencyCop( startLnum, endLnum, isBufferSettingsCheck, arguments ) " {{{1
 "*******************************************************************************
 "* PURPOSE:
 "   Triggers the indent consistency check and presents the results to the user.
@@ -2086,11 +2093,16 @@ function! IndentConsistencyCop#IndentConsistencyCop( startLnum, endLnum, isBuffe
 "			    checked.
 "   a:isBufferSettingsCheck:    flag whether consistency with the buffer
 "				settings should also be checked.
+"   a:arguments Optional correct indent setting for the buffer / range.
 "* RETURN VALUES:
 "   none
 "*******************************************************************************
     let [l:startLnum, l:endLnum] = [ingo#range#NetStart(a:startLnum), ingo#range#NetEnd(a:endLnum)]
     let l:isEntireBuffer = s:IsEntireBuffer(l:startLnum, l:endLnum)
+    if ! empty(a:arguments) && ! s:IsValidIndentSetting(a:arguments)
+	call ingo#err#Set('Invalid indent setting: ' . a:arguments)
+	return 0
+    endif
 
     let s:filteredLnums = {}
     for l:Filter in ingo#plugin#setting#GetBufferLocal('IndentConsistencyCop_line_filters', [])
@@ -2121,7 +2133,7 @@ function! IndentConsistencyCop#IndentConsistencyCop( startLnum, endLnum, isBuffe
 
 	    let l:consistentIndentSetting = s:GetIndentSettingForBufferSettings()
 	    call s:ReportConsistencyResult( l:isEntireBuffer, l:isConsistent, l:consistentIndentSetting, 0 )	" Update report, now that the verdict has been turned around and we have the consistent indent setting.
-	    call s:IndentBufferConsistencyCop( l:startLnum, l:endLnum, l:consistentIndentSetting, 0 ) " Pass isBufferSettingsCheck = 0 here (though a:isBufferSettingsCheck == 1) because we've already ensured that the buffer is consistent with the buffer settings, and just want the function to print the user message.
+	    call s:IndentBufferConsistencyCop( l:startLnum, l:endLnum, l:consistentIndentSetting, a:arguments, 0 ) " Pass isBufferSettingsCheck = 0 here (though a:isBufferSettingsCheck == 1) because we've already ensured that the buffer is consistent with the buffer settings, and just want the function to print the user message.
 	else
 	    let l:inconsistentIndentationMessage = 'Found ' . ( s:IsEnoughIndentForSolidAssessment() ? '' : 'potentially ')
 	    let l:inconsistentIndentationMessage .= 'inconsistent indentation in this ' . s:GetScopeUserString(l:isEntireBuffer) . '; generated from these conflicting settings: '
@@ -2133,7 +2145,7 @@ function! IndentConsistencyCop#IndentConsistencyCop( startLnum, endLnum, isBuffe
 	call IndentConsistencyCop#ClearHighlighting()
 
 	call s:ReportConsistencyResult( l:isEntireBuffer, l:isConsistent, s:perfectIndentSetting, 0 )	" Update report, now that we have the consistent (perfect) indent setting.
-	call s:IndentBufferConsistencyCop( l:startLnum, l:endLnum, s:perfectIndentSetting, a:isBufferSettingsCheck )
+	call s:IndentBufferConsistencyCop( l:startLnum, l:endLnum, s:perfectIndentSetting, a:arguments, a:isBufferSettingsCheck )
     else
 	throw 'ASSERT: Unhandled l:isConsistent: ' . l:isConsistent
     endif
@@ -2147,6 +2159,7 @@ function! IndentConsistencyCop#IndentConsistencyCop( startLnum, endLnum, isBuffe
     let s:ratings = {}
 
     call s:TriggerEvent()
+    return 1
 endfunction
 " }}}1
 
