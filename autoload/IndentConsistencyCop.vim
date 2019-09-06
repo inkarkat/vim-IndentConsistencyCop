@@ -99,6 +99,14 @@ endfunction
 function! s:IsBadIndentSetting( indentSetting ) " {{{2
     return IndentConsistencyCop#GetSettingFromIndentSetting( a:indentSetting ) ==# 'bad'
 endfunction
+let s:validSettings = ['tab', 'sts', 'spc']
+function! IndentConsistencyCop#IndentSettingComplete( ArgLead, CmdLine, CursorPos ) abort
+    if index(s:validSettings, a:ArgLead) != -1
+	return map(range(1, 8), 'a:ArgLead . v:val')
+    else
+	return filter(copy(s:validSettings), 'v:val =~# "\\V\\^" . escape(a:ArgLead, "\\")')
+    endif
+endfunction
 
 " }}}1
 
