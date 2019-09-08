@@ -211,7 +211,7 @@ function! s:IsEnoughIndentForSolidAssessment() " {{{2
     return (s:indentMin == s:indentMax ? (s:indentMax > 8) : (s:indentMax >= 8))
 endfunction
 
-function! s:InspectLine( lnum ) " {{{2
+function! s:InspectLine( lnum, isFindBadMixEverywhere ) " {{{2
 "*******************************************************************************
 "* PURPOSE:
 "   Count the whitespace at the beginning of the passed line (until the first
@@ -227,18 +227,21 @@ function! s:InspectLine( lnum ) " {{{2
 "      compatibilities with other indent settings.
 "
 "* ASSUMPTIONS / PRECONDITIONS:
-"	? List of any external variable, control, or other element whose state affects this procedure.
+"   None.
 "* EFFECTS / POSTCONDITIONS:
 "   updates s:occurrences, s:tabstops, s:spaces, s:softtabstops, s:doubtful
 "   updates s:indentMin, s:indentMax
 "* INPUTS:
-"   lnum: number of line in the current buffer
+"   a:lnum                      line number in the current buffer
+"   a:isFindBadMixEverywhere    Flag whether badmix should also be detected in
+"                               whitespace after the indent
 "* RETURN VALUES:
-"   none
+"   None.
 "*******************************************************************************
 "****D echo getline(a:lnum)
+    let l:hasBadMix = (a:isFindBadMixEverywhere ? (getline(a:lnum) =~# ' \t') : 0)
     let l:beginningWhitespace = IndentConsistencyCop#GetBeginningWhitespace(a:lnum, 1)
-    if empty(l:beginningWhitespace)
+    if empty(l:beginningWhitespace) && ! l:hasBadMix
 	return
     elseif l:beginningWhitespace =~# '^\t\+$'
 	call s:CountTabs( l:beginningWhitespace )
@@ -260,10 +263,17 @@ function! s:InspectLine( lnum ) " {{{2
 	call s:CountBadSofttabstop( l:beginningWhitespace )
     else
 	call s:CountBadMixOfSpacesAndTabs( l:beginningWhitespace )
+	let l:hasBadMix = 0
 
 	" Because of the bad combination of spaces followed by tabstop, we must
 	" render the actual tabstop width to arrive at the correct indent width.
 	let l:beginningWhitespace = repeat(' ', ingo#compat#strdisplaywidth(l:beginningWhitespace))
+    endif
+
+    if l:hasBadMix
+	" If we're here, the bad mix is after the indent. To be included in the
+	" cop's warning, record this in addition to the indent (if any).
+	call s:CountBadMixOfSpacesAndTabs( l:beginningWhitespace )
     endif
 
     call s:UpdateIndentMinMax( l:beginningWhitespace )
@@ -899,10 +909,11 @@ function! s:CheckBufferConsistency( startLnum, endLnum ) " {{{1
     let s:softtabstops = {} " key: number of indent softtabstops (converted to spaces); value: number of lines that have the number of spaces.
     let s:doubtful = {}	    " key: number of indent spaces (<8) which may be either spaces or softtabstops; value: number of lines that have the number of spaces.
 
+    let l:isFindBadMixEverywhere = ingo#plugin#setting#GetBufferLocal('IndentConsistencyCop_IsFindBadMixEverywhere')
     let l:lnum = a:startLnum
     while l:lnum <= a:endLnum
 	if ! has_key(s:filteredLnums, l:lnum)
-	    call s:InspectLine(l:lnum)
+	    call s:InspectLine(l:lnum, l:isFindBadMixEverywhere)
 	endif
 
 	let l:lnum += 1
@@ -1506,7 +1517,11 @@ endfunction
 " }}}1
 
 "- highlight functions-----------------------------------------------------{{{1
-function! s:IsLineCorrect( lnum, correctIndentSetting ) " {{{2
+function! s:IsLineCorrect( lnum, correctIndentSetting, isFindBadMixEverywhere ) " {{{2
+    if a:isFindBadMixEverywhere && (getline(a:lnum) =~# ' \t')
+	return 0
+    endif
+
     let l:beginningWhitespace = IndentConsistencyCop#GetBeginningWhitespace(a:lnum, 1)
     if empty( l:beginningWhitespace )
 	return 1
@@ -1598,7 +1613,8 @@ function! s:SetHighlighting( lineNumbers ) " {{{2
 	for l:lnum in a:lineNumbers
 	    let l:linePattern .= '\|\%' . l:lnum . 'l'
 	endfor
-	let l:linePattern = '\(' . strpart( l:linePattern, 2) . '\)\&^\s\+'
+	let l:isFindBadMixEverywhere = ingo#plugin#setting#GetBufferLocal('IndentConsistencyCop_IsFindBadMixEverywhere')
+	let l:linePattern = '\(' . strpart( l:linePattern, 2) . '\)\&^\s\+' . (l:isFindBadMixEverywhere ? '\|\s* \t\s*' : '')
 
 	if g:indentconsistencycop_highlighting =~# 's'
 	    let @/ = l:linePattern
@@ -1704,9 +1720,10 @@ endfunction
 function! s:GetInconsistentIndents( startLnum, endLnum, correctIndentSetting ) " {{{2
     let l:lineNumbers = []
 
+    let l:isFindBadMixEverywhere = ingo#plugin#setting#GetBufferLocal('IndentConsistencyCop_IsFindBadMixEverywhere')
     let l:lnum = a:startLnum
     while l:lnum <= a:endLnum
-	if ! has_key(s:filteredLnums, l:lnum) && ! s:IsLineCorrect( l:lnum, a:correctIndentSetting )
+	if ! has_key(s:filteredLnums, l:lnum) && ! s:IsLineCorrect( l:lnum, a:correctIndentSetting, l:isFindBadMixEverywhere )
 	    call add(l:lineNumbers, l:lnum)
 	endif
 	let l:lnum += 1
