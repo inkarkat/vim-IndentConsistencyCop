@@ -102,7 +102,8 @@ USAGE
     If you chose to highlight incorrect indents, either re-execute the
     IndentConsistencyCop to update the highlighting, or execute
         :IndentConsistencyCopOff
-    to remove the highlightings.
+    to remove the highlightings. Entries in the quickfix and location lists will
+    be kept.
 
     If you just want to check a read-only file, or do not intend to modify the
     file, you don't care if Vim's buffer settings are compatible with the used
@@ -164,8 +165,10 @@ removed via :IndentConsistencyCopOff.
     f:{n} (n = 0..9)
       - Fold correct lines with a context of {n} lines (like
         in Vim diff mode).
-    TODO:
-    q - Populate quickfix list with all incorrect lines. Idea: Use :cgetexpr.
+    q - Populate quickfix list with all incorrect lines. With uppercase Q
+        appends to an existing list.
+    w - Populate location list with all incorrect lines. With uppercase W
+        appends to an existing list.
 
     let g:indentconsistencycop_highlighting = 'sglmf:3'
 
@@ -419,6 +422,8 @@ HISTORY
 - Alert to bad "tab after space" whitespace combinations everywhere, not just
   in indent. Can be configured (turned off) via
   g:IndentConsistencyCop\_IsFindBadMixEverywhere.
+- ENH: Allow population of quickfix / location list via
+  g:indentconsistencycop\_highlighting values q/Q/w/W.
 
 ##### 2.00    23-Dec-2017
 - Minor: Replace explicit regexp engine workaround with ingo/compat/regexp.vim.

@@ -7,6 +7,8 @@
 "   The VIM LICENSE applies to this script; see ':help copyright'.
 "
 " Maintainer:	Ingo Karkat <ingo@karkat.de>
+let s:save_cpo = &cpo
+set cpo&vim
 
 "- list and dictionary utility functions ---------------------------------{{{1
 function! s:IncreaseKeyedBy( dict, key, num ) " {{{2
@@ -279,7 +281,9 @@ function! s:InspectLine( lnum, isFindBadMixEverywhere ) " {{{2
 
     call s:UpdateIndentMinMax( l:beginningWhitespace )
 endfunction
-let s:badIndentPattern = '\t \{8,}\| \t'
+let s:badSofttabstopPattern = '\t \{8,}'
+let s:badMixPattern = ' \t'
+let s:badIndentPattern = '\%(' . s:badSofttabstopPattern . '\|' . s:badMixPattern . '\)'
 function! IndentConsistencyCop#IsBadIndent( text )
     return a:text =~# s:badIndentPattern
 endfunction
@@ -1543,7 +1547,7 @@ function! s:IsLineCorrect( lnum, correctIndentSetting, isFindBadMixEverywhere ) 
     elseif a:correctIndentSetting ==# 'badsts'
 	return l:beginningWhitespace =~# '^\t* \{8,}$'
     elseif a:correctIndentSetting ==# 'badmix'
-	return l:beginningWhitespace =~# ' \t'
+	return l:beginningWhitespace =~# s:badMixPattern
     elseif a:correctIndentSetting ==# 'badset'
 	throw 'Cannot evaluate lines with badset'
     else
@@ -1618,7 +1622,7 @@ function! s:SetHighlighting( lineNumbers ) " {{{2
 	    let l:linePattern .= '\|\%' . l:lnum . 'l'
 	endfor
 	let l:isFindBadMixEverywhere = ingo#plugin#setting#GetBufferLocal('IndentConsistencyCop_IsFindBadMixEverywhere')
-	let l:linePattern = '\(' . strpart( l:linePattern, 2) . '\)\&^\s\+' . (l:isFindBadMixEverywhere ? '\|\s*\%(' . s:badIndentPattern . '\)\s*' : '')
+	let l:linePattern = '\(' . strpart( l:linePattern, 2) . '\)\&^\s\+' . (l:isFindBadMixEverywhere ? '\|\s*' . s:badIndentPattern . '\s*' : '')
 
 	if g:indentconsistencycop_highlighting =~# 's'
 	    let @/ = l:linePattern
@@ -1682,6 +1686,43 @@ function! s:SetHighlighting( lineNumbers ) " {{{2
 	    setlocal foldenable
 	endif
     endif
+
+    if g:indentconsistencycop_highlighting =~# '[qQwW]'
+	let [l:QfFunction, l:QfArgs, l:eventSubjectPrefix] = (g:indentconsistencycop_highlighting =~? 'W' ?
+	\   [function('setloclist'), [0], 'l'] :
+	\   [function('setqflist'), [], '']
+	\)
+	let l:eventSubject = l:eventSubjectPrefix . 'IndentConsistencyCop'
+	let l:bufNr = bufnr('')
+	let l:isFindBadMixEverywhere = ingo#plugin#setting#GetBufferLocal('IndentConsistencyCop_IsFindBadMixEverywhere')
+	silent call ingo#event#Trigger('QuickFixCmdPre ' . l:eventSubject) | " Allow hooking into the quickfix update.
+	    call call(l:QfFunction, l:QfArgs + [
+	    \   map(
+	    \       copy(a:lineNumbers),
+	    \       "s:QfEntry(l:bufNr, v:val, l:isFindBadMixEverywhere)"
+	    \   ),
+	    \   (g:indentconsistencycop_highlighting =~# '[QW]' ? 'a' : ' ')
+	    \])
+	silent call ingo#event#Trigger('QuickFixCmdPost ' . l:eventSubject) | " Allow hooking into the quickfix update.
+    endif
+endfunction
+function! s:QfEntry( bufNr, lnum, isFindBadMixEverywhere ) abort
+    let l:col = 1
+    let l:text = 'Indent conflicts with ' . b:indentconsistencycop_result.bufferSettings
+
+    if a:isFindBadMixEverywhere
+	let l:line = getline(a:lnum)
+	let l:textBeforeBadMix = matchstr(l:line, '^.*\S\s*\ze' . s:badIndentPattern)
+	if ! empty(l:textBeforeBadMix)
+	    let l:col = 1 + len(l:textBeforeBadMix)
+	    let l:text = (l:line =~# '\S\s*' . s:badMixPattern ?
+	    \   'Bad mix of space and tab' :
+	    \   'Bad softtabstop'
+	    \)
+	endif
+    endif
+
+    return {'bufnr': a:bufNr, 'lnum': v:val, 'col': l:col, 'text': l:text}
 endfunction
 
 function! IndentConsistencyCop#ClearHighlighting() " {{{2
@@ -2192,4 +2233,6 @@ function! IndentConsistencyCop#TurnOff() abort " {{{1
 endfunction
 " }}}1
 
+let &cpo = s:save_cpo
+unlet s:save_cpo
 " vim: set ts=8 sts=4 sw=4 noexpandtab ff=unix fdm=marker :
