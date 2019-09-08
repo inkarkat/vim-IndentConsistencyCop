@@ -53,6 +53,10 @@ if g:IndentConsistencyCop_IsCopyAndPreserveIndent
     augroup END
 endif
 
+if ! exists('g:IndentConsistencyCop_IsFindBadMixEverywhere')
+    let g:IndentConsistencyCop_IsFindBadMixEverywhere = 1
+endif
+
 
 
 "- commands ------------------------------------------------------------------

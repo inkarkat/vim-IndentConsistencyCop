@@ -244,6 +244,13 @@ if the buffer becomes consistent or the cop is turned off via
 
 (This is implemented as a default IndentConsistencyCop-event.)
 
+By default, the cop also checks for bad whitespace combinations (i.e. space
+character(s) followed by one or more tabs) everywhere inside the buffer, not
+just in indent. To turn this off and just alert to these bad mixes when they
+occur at the beginning of the line:
+
+    let g:IndentConsistencyCop_IsFindBadMixEverywhere = 0
+
 INTEGRATION
 ------------------------------------------------------------------------------
 
@@ -409,6 +416,9 @@ HISTORY
 - ENH: Allow passing correct indent setting as an :Indent[Range]ConsistencyCop
   argument. (Overriding of a wrongly found indent setting is already offered
   in the cop's dialog.)
+- Alert to bad "tab after space" whitespace combinations everywhere, not just
+  in indent. Can be configured (turned off) via
+  g:IndentConsistencyCop\_IsFindBadMixEverywhere.
 
 ##### 2.00    23-Dec-2017
 - Minor: Replace explicit regexp engine workaround with ingo/compat/regexp.vim.
