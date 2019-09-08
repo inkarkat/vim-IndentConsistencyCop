@@ -171,8 +171,10 @@ removed via :IndentConsistencyCopOff.
 <   f:{n} (n = 0..9)
       - Fold correct lines with a context of {n} lines (like
         in Vim diff mode).
-    TODO:
-    q - Populate quickfix list with all incorrect lines. Idea: Use :cgetexpr.
+    q - Populate quickfix list with all incorrect lines. With uppercase Q
+        appends to an existing list.
+    l - Populate location list with all incorrect lines. With uppercase L
+        appends to an existing list.
 >
     let g:indentconsistencycop_highlighting = 'sglmf:3'
 <
@@ -420,6 +422,8 @@ HISTORY						*IndentConsistencyCop-history*
 - Alert to bad "tab after space" whitespace combinations everywhere, not just
   in indent. Can be configured (turned off) via
   g:IndentConsistencyCop_IsFindBadMixEverywhere.
+- ENH: Allow population of quickfix / location list via
+  g:indentconsistencycop_highlighting values q/Q/l/L.
 
 2.00	23-Dec-2017
 - Minor: Replace explicit regexp engine workaround with ingo/compat/regexp.vim.
