@@ -279,7 +279,7 @@ function! s:InspectLine( lnum, isFindBadMixEverywhere ) " {{{2
     call s:UpdateIndentMinMax( l:beginningWhitespace )
 endfunction
 function! IndentConsistencyCop#IsBadIndent( beginningWhitespace )
-    return a:beginningWhitespace =~# '\t \{8,}\|\t '
+    return a:beginningWhitespace =~# '\t \{8,}\| \t'
 endfunction
 " }}}2
 
