@@ -502,16 +502,17 @@ function! s:InspectForCompatibles( incompatibles, indents, baseIndentSetting, te
 "* EFFECTS / POSTCONDITIONS:
 "   Modifies the passed a:incompatibles.
 "* INPUTS:
-"   a:incompatibles: reference to the pre-initialized list of (possibly)
-"	incompatibles. Will contain only *real* incompatibles after the function
-"	run.
-"   a:indents:	list of actual indents that have occurred in the buffer.
-"	The list should exclude indents that are not caused by
-"	a:baseIndentSetting, so that no false positives are found.
-"   a:baseIndentSetting: indent setting (e.g. 'sts6') on which the search for
-"	compatibles is based on
-"   a:testSetting: setting (e.g. 'sts') which filters the indent settings to be
-"	searched for compatibles.
+"   a:incompatibles     reference to the pre-initialized list of (possibly)
+"                       incompatibles. Will contain only *real* incompatibles
+"                       after the function run.
+"   a:indents           list of actual indents that have occurred in the buffer.
+"                       The list should exclude indents that are not caused by
+"                       a:baseIndentSetting, so that no false positives are
+"                       found.
+"   a:baseIndentSetting indent setting (e.g. 'sts6') on which the search for
+"                       compatibles is based on
+"   a:testSetting       setting (e.g. 'sts') which filters the indent settings
+"                       to be searched for compatibles.
 "* RETURN VALUES:
 "   none
 "* EXAMPLES:
@@ -694,7 +695,7 @@ function! s:EvaluateOccurrenceAndIncompatibleIntoRating( incompatibles ) " {{{2
 "   same time.
 "   There is either one perfect rating, or one authoritative rating, or neither.
 "* INPUTS:
-"   a:incompatibles: dictionary of incompatibles
+"   a:incompatibles dictionary of incompatibles
 "* RETURN VALUES:
 "   none
 "*******************************************************************************
@@ -1144,7 +1145,7 @@ function! s:CheckConsistencyWithBufferSettings( indentSetting ) " {{{2
 "* EFFECTS / POSTCONDITIONS:
 "	? List of the procedure's effect on each external variable, control, or other element.
 "* INPUTS:
-"   a:indentSettings: prescribed indent setting for the buffer
+"   a:indentSettings    prescribed indent setting for the buffer
 "* RETURN VALUES:
 "   empty string: indent setting is consistent with buffer indent settings, else
 "   user string describing the necessary changes to adapt the buffer indent
@@ -1222,7 +1223,7 @@ function! s:IndentSettingToUserString( indentSetting ) " {{{2
 "* EFFECTS / POSTCONDITIONS:
 "	? List of the procedure's effect on each external variable, control, or other element.
 "* INPUTS:
-"   a:indentSetting: indent setting
+"   a:indentSetting indent setting
 "* RETURN VALUES:
 "   string describing the indent setting
 "*******************************************************************************
@@ -1299,7 +1300,7 @@ function! s:RatingsToUserString( lineCnt ) " {{{2
 "* EFFECTS / POSTCONDITIONS:
 "	? List of the procedure's effect on each external variable, control, or other element.
 "* INPUTS:
-"   a:lineCnt:	Number of lines in the range / buffer that have been inspected.
+"   a:lineCnt   Number of lines in the range / buffer that have been inspected.
 "* RETURN VALUES:
 "   user string describing the ratings information
 "*******************************************************************************
@@ -1376,9 +1377,10 @@ function! s:UnindentedBufferConsistencyCop( isEntireBuffer, isBufferSettingsChec
 "* EFFECTS / POSTCONDITIONS:
 "	? List of the procedure's effect on each external variable, control, or other element.
 "* INPUTS:
-"   a:isEntireBuffer:	flag whether complete buffer or limited range is checked
-"   a:isBufferSettingsCheck: flag whether consistency with the buffer
-"	settings should also be checked.
+"   a:isEntireBuffer        flag whether complete buffer or limited range is
+"                           checked
+"   a:isBufferSettingsCheck flag whether consistency with the buffer settings
+"                           should also be checked.
 "* RETURN VALUES:
 "   none
 "*******************************************************************************
@@ -1423,13 +1425,13 @@ function! s:IndentBufferConsistencyCop( startLnum, endLnum, consistentIndentSett
 "* EFFECTS / POSTCONDITIONS:
 "	? List of the procedure's effect on each external variable, control, or other element.
 "* INPUTS:
-"   a:startLnum, a:endLnum: range in the current buffer that was to be
+"   a:startLnum, a:endLnum  range in the current buffer that was to be
 "			    checked.
-"   a:consistentIndentSetting:  determined consistent indent setting of the
+"   a:consistentIndentSetting   determined consistent indent setting of the
 "				buffer
 "   a:correctIndentSetting      correct indent setting optionally passed by the
 "				user (or empty String)
-"   a:isBufferSettingsCheck:    flag whether consistency with the buffer
+"   a:isBufferSettingsCheck     flag whether consistency with the buffer
 "				settings should also be checked.
 "* RETURN VALUES:
 "   none
@@ -1931,9 +1933,9 @@ function! s:IndentBufferInconsistencyCop( startLnum, endLnum, inconsistentIndent
 "* EFFECTS / POSTCONDITIONS:
 "	? List of the procedure's effect on each external variable, control, or other element.
 "* INPUTS:
-"   a:startLnum, a:endLnum: range in the current buffer that is to be
+"   a:startLnum, a:endLnum  range in the current buffer that is to be
 "			    checked.
-"   a:inconsistentIndentationMessage:   user message about the inconsistent
+"   a:inconsistentIndentationMessage    user message about the inconsistent
 "					indentation and possible conflicting
 "					indent settings
 "* RETURN VALUES:
@@ -2075,7 +2077,7 @@ function! s:IsBufferConsistentWith( indentSetting, startLnum, endLnum ) " {{{1
 "   None.
 "* INPUTS:
 "   a:indentSetting	Indent setting to evaluate against.
-"   a:startLnum, a:endLnum: range in the current buffer that is to be
+"   a:startLnum, a:endLnum  range in the current buffer that is to be
 "			    checked.
 "* RETURN VALUES:
 "   1 if the uncertainty of small maximum indents has been resolved to
@@ -2106,11 +2108,11 @@ function! IndentConsistencyCop#IndentConsistencyCop( startLnum, endLnum, isBuffe
 "* EFFECTS / POSTCONDITIONS:
 "	? List of the procedure's effect on each external variable, control, or other element.
 "* INPUTS:
-"   a:startLnum, a:endLnum: range in the current buffer that is to be
+"   a:startLnum, a:endLnum  range in the current buffer that is to be
 "			    checked.
-"   a:isBufferSettingsCheck:    flag whether consistency with the buffer
-"				settings should also be checked.
-"   a:arguments Optional correct indent setting for the buffer / range.
+"   a:isBufferSettingsCheck flag whether consistency with the buffer settings
+"                           should also be checked.
+"   a:arguments             Optional correct indent setting for the buffer / range.
 "* RETURN VALUES:
 "   none
 "*******************************************************************************
