@@ -1,6 +1,6 @@
 " Test appending to location list.
 
-let g:indentconsistencycop_highlighting = 'L'
+let g:indentconsistencycop_highlighting = 'W'
 let g:IngoLibrary_ConfirmChoices = ['highlight wrong indents', 'illegal indents only', 'highlight wrong indents', 'not buffer settings']
 
 edit IsFindBadMixEverywhere.txt

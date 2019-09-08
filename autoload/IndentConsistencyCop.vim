@@ -1687,8 +1687,8 @@ function! s:SetHighlighting( lineNumbers ) " {{{2
 	endif
     endif
 
-    if g:indentconsistencycop_highlighting =~# '[qQlL]'
-	let [l:QfFunction, l:QfArgs, l:eventSubjectPrefix] = (g:indentconsistencycop_highlighting =~? 'l' ?
+    if g:indentconsistencycop_highlighting =~# '[qQwW]'
+	let [l:QfFunction, l:QfArgs, l:eventSubjectPrefix] = (g:indentconsistencycop_highlighting =~? 'W' ?
 	\   [function('setloclist'), [0], 'l'] :
 	\   [function('setqflist'), [], '']
 	\)
@@ -1701,7 +1701,7 @@ function! s:SetHighlighting( lineNumbers ) " {{{2
 	    \       copy(a:lineNumbers),
 	    \       "s:QfEntry(l:bufNr, v:val, l:isFindBadMixEverywhere)"
 	    \   ),
-	    \   (g:indentconsistencycop_highlighting =~# '[QL]' ? 'a' : ' ')
+	    \   (g:indentconsistencycop_highlighting =~# '[QW]' ? 'a' : ' ')
 	    \])
 	silent call ingo#event#Trigger('QuickFixCmdPost ' . l:eventSubject) | " Allow hooking into the quickfix update.
     endif

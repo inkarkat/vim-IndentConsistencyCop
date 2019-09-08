@@ -167,7 +167,7 @@ removed via :IndentConsistencyCopOff.
         in Vim diff mode).
     q - Populate quickfix list with all incorrect lines. With uppercase Q
         appends to an existing list.
-    l - Populate location list with all incorrect lines. With uppercase L
+    w - Populate location list with all incorrect lines. With uppercase W
         appends to an existing list.
 
     let g:indentconsistencycop_highlighting = 'sglmf:3'
@@ -423,7 +423,7 @@ HISTORY
   in indent. Can be configured (turned off) via
   g:IndentConsistencyCop\_IsFindBadMixEverywhere.
 - ENH: Allow population of quickfix / location list via
-  g:indentconsistencycop\_highlighting values q/Q/l/L.
+  g:indentconsistencycop\_highlighting values q/Q/w/W.
 
 ##### 2.00    23-Dec-2017
 - Minor: Replace explicit regexp engine workaround with ingo/compat/regexp.vim.
