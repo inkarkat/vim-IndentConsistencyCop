@@ -52,7 +52,7 @@ function! s:UniqueReplaceElementWithListContents( list, searchElement, substitut
 "   none
 "* INPUTS:
 "   a:list		source list
-"   a:searchElement 	element of a:list to be replaced
+"   a:searchElement	element of a:list to be replaced
 "   a:substitutionList	list of elements that replace a:searchElement
 "* RETURN VALUES:
 "   Modifies a:list in-place, and also returns a:list.
