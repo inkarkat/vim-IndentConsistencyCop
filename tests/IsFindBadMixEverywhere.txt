@@ -6,7 +6,7 @@ foo
     boo	  	there
 quux
     quuux
-	q   		!
+	q	        !
 	q		.
     q
 q

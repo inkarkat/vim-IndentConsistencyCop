@@ -239,7 +239,7 @@ function! s:InspectLine( lnum, isFindBadMixEverywhere ) " {{{2
 "   None.
 "*******************************************************************************
 "****D echo getline(a:lnum)
-    let l:hasBadMix = (a:isFindBadMixEverywhere ? (getline(a:lnum) =~# ' \t') : 0)
+    let l:hasBadMix = (a:isFindBadMixEverywhere ? IndentConsistencyCop#IsBadIndent(getline(a:lnum)) : 0)
     let l:beginningWhitespace = IndentConsistencyCop#GetBeginningWhitespace(a:lnum, 1)
     if empty(l:beginningWhitespace) && ! l:hasBadMix
 	return
@@ -261,6 +261,7 @@ function! s:InspectLine( lnum, isFindBadMixEverywhere ) " {{{2
 	call s:CountSofttabstops( l:beginningWhitespace )
     elseif l:beginningWhitespace =~# '^\t\+ \{8,}$'
 	call s:CountBadSofttabstop( l:beginningWhitespace )
+	let l:hasBadMix = 0
     else
 	call s:CountBadMixOfSpacesAndTabs( l:beginningWhitespace )
 	let l:hasBadMix = 0
@@ -278,8 +279,9 @@ function! s:InspectLine( lnum, isFindBadMixEverywhere ) " {{{2
 
     call s:UpdateIndentMinMax( l:beginningWhitespace )
 endfunction
-function! IndentConsistencyCop#IsBadIndent( beginningWhitespace )
-    return a:beginningWhitespace =~# '\t \{8,}\| \t'
+let s:badIndentPattern = '\t \{8,}\| \t'
+function! IndentConsistencyCop#IsBadIndent( text )
+    return a:text =~# s:badIndentPattern
 endfunction
 " }}}2
 
@@ -1520,7 +1522,7 @@ endfunction
 
 "- highlight functions-----------------------------------------------------{{{1
 function! s:IsLineCorrect( lnum, correctIndentSetting, isFindBadMixEverywhere ) " {{{2
-    if a:isFindBadMixEverywhere && (getline(a:lnum) =~# ' \t')
+    if a:isFindBadMixEverywhere && IndentConsistencyCop#IsBadIndent(getline(a:lnum))
 	return 0
     endif
 
@@ -1616,7 +1618,7 @@ function! s:SetHighlighting( lineNumbers ) " {{{2
 	    let l:linePattern .= '\|\%' . l:lnum . 'l'
 	endfor
 	let l:isFindBadMixEverywhere = ingo#plugin#setting#GetBufferLocal('IndentConsistencyCop_IsFindBadMixEverywhere')
-	let l:linePattern = '\(' . strpart( l:linePattern, 2) . '\)\&^\s\+' . (l:isFindBadMixEverywhere ? '\|\s* \t\s*' : '')
+	let l:linePattern = '\(' . strpart( l:linePattern, 2) . '\)\&^\s\+' . (l:isFindBadMixEverywhere ? '\|\s*\%(' . s:badIndentPattern . '\)\s*' : '')
 
 	if g:indentconsistencycop_highlighting =~# 's'
 	    let @/ = l:linePattern
