@@ -102,7 +102,8 @@ USAGE
     If you chose to highlight incorrect indents, either re-execute the
     IndentConsistencyCop to update the highlighting, or execute
         :IndentConsistencyCopOff
-    to remove the highlightings.
+    to remove the highlightings. Entries in the quickfix and location lists will
+    be kept.
 
     If you just want to check a read-only file, or do not intend to modify the
     file, you don't care if Vim's buffer settings are compatible with the used
