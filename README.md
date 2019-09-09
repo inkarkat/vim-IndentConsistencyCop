@@ -133,7 +133,7 @@ To uninstall, use the :RmVimball command.
 ### DEPENDENCIES
 
 - Requires Vim 7.0 or higher.
-- Requires the ingo-library.vim plugin ([vimscript #4433](http://www.vim.org/scripts/script.php?script_id=4433)), version 1.019 or
+- Requires the ingo-library.vim plugin ([vimscript #4433](http://www.vim.org/scripts/script.php?script_id=4433)), version 1.039 or
   higher.
 
 CONFIGURATION
@@ -396,7 +396,7 @@ below).
 HISTORY
 ------------------------------------------------------------------------------
 
-##### 2.10    RELEASEME
+##### 3.00    RELEASEME
 - Add b:indentconsistencycop\_result.acknowledgedByUserSetting
 - ENH: Allow extension of the plugin's user queries with additional menu
   entries. This is used by IndentConsistencyCopAutoCmds.vim to implement
@@ -424,6 +424,8 @@ HISTORY
   g:IndentConsistencyCop\_IsFindBadMixEverywhere.
 - ENH: Allow population of quickfix / location list via
   g:indentconsistencycop\_highlighting values q/Q/w/W.
+
+__You need to update to ingo-library ([vimscript #4433](http://www.vim.org/scripts/script.php?script_id=4433)) version 1.039!__
 
 ##### 2.00    23-Dec-2017
 - Minor: Replace explicit regexp engine workaround with ingo/compat/regexp.vim.

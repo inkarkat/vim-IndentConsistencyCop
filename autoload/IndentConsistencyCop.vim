@@ -1707,22 +1707,31 @@ function! s:SetHighlighting( lineNumbers ) " {{{2
     endif
 endfunction
 function! s:QfEntry( bufNr, lnum, isFindBadMixEverywhere ) abort
+    let l:line = getline(a:lnum)
     let l:col = 1
-    let l:text = 'Indent conflicts with ' . b:indentconsistencycop_result.bufferSettings
+    let l:message = printf('Indent conflicts with %s: ', b:indentconsistencycop_result.bufferSettings)
+    let l:excerpt = matchstr(l:line, '^\s\+\S*')
+    let l:isExceptFromEnd = (l:line !~# '^\s\+\S\+\s')
 
     if a:isFindBadMixEverywhere
-	let l:line = getline(a:lnum)
-	let l:textBeforeBadMix = matchstr(l:line, '^.*\S\s*\ze' . s:badIndentPattern)
+	let l:textBeforeBadMix = matchstr(l:line, '^.\{-}\S\s*\ze' . s:badIndentPattern)
 	if ! empty(l:textBeforeBadMix)
 	    let l:col = 1 + len(l:textBeforeBadMix)
-	    let l:text = (l:line =~# '\S\s*' . s:badMixPattern ?
+	    let l:message = (l:line =~# '\S\s*' . s:badMixPattern ?
 	    \   'Bad mix of space and tab' :
 	    \   'Bad softtabstop'
-	    \)
+	    \) . ': '
+	    let l:excerpt = matchstr(l:line, '\S\+\s*' . s:badIndentPattern . '\s*\S*')
+	    let l:isExceptFromEnd = (l:line !~# '\S\+\s*' . s:badIndentPattern . '\s*\S\+\s')
 	endif
     endif
 
-    return {'bufnr': a:bufNr, 'lnum': v:val, 'col': l:col, 'text': l:text}
+    return {
+    \   'bufnr': a:bufNr,
+    \   'lnum': v:val,
+    \   'col': l:col,
+    \   'text': l:message . ingo#option#listchars#Render(l:excerpt, l:isExceptFromEnd, {'fallback': {'tab': '^I', 'space': '.'}})
+    \}
 endfunction
 
 function! IndentConsistencyCop#ClearHighlighting() " {{{2
