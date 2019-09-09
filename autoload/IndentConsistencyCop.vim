@@ -95,7 +95,10 @@ function! IndentConsistencyCop#GetSettingFromIndentSetting( indentSetting ) " {{
     return strpart( a:indentSetting, 0, 3 )
 endfunction
 function! s:StripTabstopValueFromIndentSetting( indentSetting ) " {{{2
-    return (IndentConsistencyCop#GetSettingFromIndentSetting( a:indentSetting ) ==# 'tab' ? 'tab' : a:indentSetting)
+    return (IndentConsistencyCop#GetSettingFromIndentSetting(a:indentSetting) ==# 'tab' ?
+    \   'tab' :
+    \   a:indentSetting
+    \)
 endfunction
 
 function! s:IsBadIndentSetting( indentSetting ) " {{{2
@@ -117,7 +120,10 @@ endfunction
 
 "- Menu extensions -------------------------------------------------------{{{1
 function! s:SortByMenuExtensionPriority( k1, k2 )
-    return ingo#collections#PrioritySort(g:IndentConsistencyCop_MenuExtensions[a:k1], g:IndentConsistencyCop_MenuExtensions[a:k2])
+    return ingo#collections#PrioritySort(
+    \   g:IndentConsistencyCop_MenuExtensions[a:k1],
+    \   g:IndentConsistencyCop_MenuExtensions[a:k2]
+    \)
 endfunction
 function! s:AppendMenuExtensionChoices( choices )
     if ! empty(g:IndentConsistencyCop_MenuExtensions)
@@ -142,28 +148,28 @@ function! s:CountTabs( tabString ) " {{{2
     " A tab is a tab, and can thus be counted directly.
     " However, the number of tabs, or the equivalent indent, must be captured to
     " be able to resolve possible compatibilities with softtabstops.
-    call s:IncreaseKeyed( s:occurrences, 'tab' )
-    call s:IncreaseKeyed( s:tabstops, len( substitute( a:tabString, '\t', '        ', 'g' ) ) )
+    call s:IncreaseKeyed(s:occurrences, 'tab')
+    call s:IncreaseKeyed(s:tabstops, len(substitute(a:tabString, '\t', '        ', 'g')))
 endfunction
 
 function! s:CountDoubtful( spaceString ) " {{{2
-    call s:IncreaseKeyed( s:doubtful, len( a:spaceString ) )
+    call s:IncreaseKeyed(s:doubtful, len(a:spaceString))
 endfunction
 
 function! s:CountSpaces( spaceString ) " {{{2
-    call s:IncreaseKeyed( s:spaces, len( a:spaceString ) )
+    call s:IncreaseKeyed(s:spaces, len(a:spaceString))
 endfunction
 
 function! s:CountSofttabstops( stsString ) " {{{2
-    call s:IncreaseKeyed( s:softtabstops, len( substitute( a:stsString, '\t', '        ', 'g' ) ) )
+    call s:IncreaseKeyed(s:softtabstops, len(substitute(a:stsString, '\t', '        ', 'g')))
 endfunction
 
 function! s:CountBadSofttabstop( string ) " {{{2
-    call s:IncreaseKeyed( s:occurrences, 'badsts')
+    call s:IncreaseKeyed(s:occurrences, 'badsts')
 endfunction
 
 function! s:CountBadMixOfSpacesAndTabs( string ) " {{{2
-    call s:IncreaseKeyed( s:occurrences, 'badmix')
+    call s:IncreaseKeyed(s:occurrences, 'badmix')
 endfunction
 
 
@@ -175,10 +181,16 @@ function! IndentConsistencyCop#IsOnSyntax( lnum, col, syntaxItemArgs ) abort " {
 endfunction
 function! IndentConsistencyCop#GetBeginningWhitespace( lnum, isApplyNonIndentPattern ) " {{{2
     let l:line = getline(a:lnum)
-    let l:nonIndentPattern = (a:isApplyNonIndentPattern ? ingo#plugin#setting#GetBufferLocal('indentconsistencycop_non_indent_pattern') : '')
+    let l:nonIndentPattern = (a:isApplyNonIndentPattern ?
+    \   ingo#plugin#setting#GetBufferLocal('indentconsistencycop_non_indent_pattern') :
+    \   ''
+    \)
 
     if empty(l:nonIndentPattern) || type(l:nonIndentPattern) != type([])
-	return matchstr(l:line, s:GetBeginningWhitespacePattern('\($\|\S' . (empty(l:nonIndentPattern) ? '' : '\|' . l:nonIndentPattern) . '\)'))
+	return matchstr(
+	\   l:line,
+	\   s:GetBeginningWhitespacePattern('\($\|\S' . (empty(l:nonIndentPattern) ? '' : '\|' . l:nonIndentPattern) . '\)')
+	\)
     endif
 
     if l:line !~# s:GetBeginningWhitespacePattern(l:nonIndentPattern[0])
@@ -196,7 +208,7 @@ function! IndentConsistencyCop#GetBeginningWhitespace( lnum, isApplyNonIndentPat
 endfunction
 
 function! s:UpdateIndentMinMax( beginningWhitespace ) " {{{2
-    let l:currentIndent = len( substitute( a:beginningWhitespace, '\t', '        ', 'g' ) )
+    let l:currentIndent = len(substitute(a:beginningWhitespace, '\t', '        ', 'g'))
     if l:currentIndent > s:indentMax
 	let s:indentMax = l:currentIndent
     elseif l:currentIndent > 0 && l:currentIndent < s:indentMin
@@ -299,9 +311,9 @@ function! s:EvaluateIndentsIntoOccurrences( dict, type ) " {{{1
 "	 indent of 21 -> shiftwidths of 7,3 (1 skipped)
 "	 indent of 17 -> shiftwidth of 1
 "* ASSUMPTIONS / PRECONDITIONS:
-"	? List of any external variable, control, or other element whose state affects this procedure.
+"   None.
 "* EFFECTS / POSTCONDITIONS:
-"	? List of the procedure's effect on each external variable, control, or other element.
+"   None.
 "* INPUTS:
 "   dict: the dictionary of actual indents for a particular type
 "   type: either 'spc' or 'sts'
@@ -314,10 +326,10 @@ function! s:EvaluateIndentsIntoOccurrences( dict, type ) " {{{1
 	while l:indentCnt > 0
 	    if l:indent % l:indentCnt == 0
 		if ! s:IsDivisorOf( l:indentCnt, l:divisors )
-		    "****D echo "**** " . l:indent . " adding " . l:indentCnt
+"****D echo "**** " . l:indent . " adding " . l:indentCnt
 		    call s:IncreaseKeyedBy( s:occurrences, a:type . l:indentCnt, a:dict[ l:indent ] )
-		"****D else
-		    "****D echo "**** " . l:indent . " discarding " . l:indentCnt . " because already done " . string(l:divisors)
+"****D else
+"****D echo "**** " . l:indent . " discarding " . l:indentCnt . " because already done " . string(l:divisors)
 		endif
 		let l:divisors += [ l:indentCnt ]
 	    endif
@@ -340,7 +352,7 @@ function! s:RemoveSts8() " {{{1
 "* RETURN VALUES:
 "   none
 "*******************************************************************************
-    if s:GetKeyedValue( s:occurrences, 'sts8' ) !=# s:GetKeyedValue( s:occurrences, 'tab' )
+    if s:GetKeyedValue(s:occurrences, 'sts8') !=# s:GetKeyedValue(s:occurrences, 'tab')
 	throw 'ASSERT: sts8 == tab'
     endif
     call s:RemoveKey( s:occurrences, 'sts8' )
@@ -377,7 +389,7 @@ function! s:GetPrecedence( indentSetting ) " {{{1
     if IndentConsistencyCop#GetSettingFromIndentSetting( a:indentSetting ) !=# 'dbt'
 	return [a:indentSetting]    " Pass-through.
     endif
-    let l:multiplier = IndentConsistencyCop#GetMultiplierFromIndentSetting( a:indentSetting )
+    let l:multiplier = IndentConsistencyCop#GetMultiplierFromIndentSetting(a:indentSetting)
 
     if s:GetKeyedValue( s:occurrences, a:indentSetting ) <= 0
 	return []   " Bad query.
@@ -570,7 +582,7 @@ function! s:GetIncompatiblesForIndentSetting( indentSetting ) " {{{2
 "   s:occurrences dictionary; key: indent setting; value: number of
 "	lines that have that indent setting
 "* EFFECTS / POSTCONDITIONS:
-"	? List of the procedure's effect on each external variable, control, or other element.
+"   None.
 "* INPUTS:
 "   a:indentSetting (preferred) indent setting for which the incompatible
 "	settings are calculated.
@@ -1051,9 +1063,9 @@ function! s:GetIndentSettingForBufferSettings() " {{{2
 "   Translates the buffer indent settings (tabstop, softtabstop, shiftwidth,
 "   expandtab) into an indent setting (e.g. 'sts4').
 "* ASSUMPTIONS / PRECONDITIONS:
-"	? List of any external variable, control, or other element whose state affects this procedure.
+"   None.
 "* EFFECTS / POSTCONDITIONS:
-"	? List of the procedure's effect on each external variable, control, or other element.
+"   None.
 "* INPUTS:
 "   none
 "* RETURN VALUES:
@@ -1147,9 +1159,9 @@ function! s:CheckConsistencyWithBufferSettings( indentSetting ) " {{{2
 "   of the current buffer, i.e. the 'tabstop', 'softtabstop', 'shiftwidth' and
 "   'expandtab' settings.
 "* ASSUMPTIONS / PRECONDITIONS:
-"	? List of any external variable, control, or other element whose state affects this procedure.
+"   None.
 "* EFFECTS / POSTCONDITIONS:
-"	? List of the procedure's effect on each external variable, control, or other element.
+"   None.
 "* INPUTS:
 "   a:indentSettings    prescribed indent setting for the buffer
 "* RETURN VALUES:
@@ -1165,19 +1177,26 @@ function! s:CheckConsistencyWithBufferSettings( indentSetting ) " {{{2
     if l:isTabstopCorrect && l:isSofttabstopCorrect && l:isShiftwidthCorrect && l:isExpandtabCorrect
 	return ''
     else
-	let l:userString = "The buffer's indent settings are " . ( s:IsEnoughIndentForSolidAssessment() ? '' : 'potentially ')
-	let l:userString .= "inconsistent with the used indent '" . s:IndentSettingToUserString( a:indentSetting ) . "'; these settings must be changed: "
+	let l:userString = "The buffer's indent settings are " .
+	\   ( s:IsEnoughIndentForSolidAssessment() ? '' : 'potentially ')
+	let l:userString .= "inconsistent with the used indent '" .
+	\   s:IndentSettingToUserString( a:indentSetting ) .
+	\   "'; these settings must be changed: "
 	if ! l:isTabstopCorrect
-	    let l:userString .= "\n- tabstop from " . &l:tabstop . ' to ' . s:GetCorrectTabstopSetting( a:indentSetting )
+	    let l:userString .= "\n- tabstop from " . &l:tabstop .
+	    \   ' to ' . s:GetCorrectTabstopSetting( a:indentSetting )
 	endif
 	if ! l:isSofttabstopCorrect
-	    let l:userString .= "\n- softtabstop from " . &l:softtabstop . ' to ' . s:GetCorrectSofttabstopSetting( a:indentSetting )
+	    let l:userString .= "\n- softtabstop from " . &l:softtabstop .
+	    \   ' to ' . s:GetCorrectSofttabstopSetting( a:indentSetting )
 	endif
 	if ! l:isShiftwidthCorrect
-	    let l:userString .= "\n- shiftwidth from " . &l:shiftwidth . ' to ' . s:GetCorrectShiftwidthSetting( a:indentSetting )
+	    let l:userString .= "\n- shiftwidth from " . &l:shiftwidth .
+	    \   ' to ' . s:GetCorrectShiftwidthSetting( a:indentSetting )
 	endif
 	if ! l:isExpandtabCorrect
-	    let l:userString .= "\n- " . ingo#plugin#setting#BooleanToStringValue('expandtab') . ' to ' . ingo#plugin#setting#BooleanToStringValue('expandtab', s:GetCorrectExpandtabSetting(a:indentSetting))
+	    let l:userString .= "\n- " . ingo#plugin#setting#BooleanToStringValue('expandtab') .
+	    \   ' to ' . ingo#plugin#setting#BooleanToStringValue('expandtab', s:GetCorrectExpandtabSetting(a:indentSetting))
 	endif
 
 	let l:userString .= s:GetInsufficientIndentUserMessage()
@@ -1225,9 +1244,9 @@ function! s:IndentSettingToUserString( indentSetting ) " {{{2
 "   Converts the internally used 'xxxn' indent setting into a
 "   user-understandable string.
 "* ASSUMPTIONS / PRECONDITIONS:
-"	? List of any external variable, control, or other element whose state affects this procedure.
+"   None.
 "* EFFECTS / POSTCONDITIONS:
-"	? List of the procedure's effect on each external variable, control, or other element.
+"   None.
 "* INPUTS:
 "   a:indentSetting indent setting
 "* RETURN VALUES:
@@ -1304,7 +1323,7 @@ function! s:RatingsToUserString( lineCnt ) " {{{2
 "   s:ratings dictionary; key: indent setting; value: percentage
 "	rating (100: checked range is consistent; < 100: inconsistent.
 "* EFFECTS / POSTCONDITIONS:
-"	? List of the procedure's effect on each external variable, control, or other element.
+"   None.
 "* INPUTS:
 "   a:lineCnt   Number of lines in the range / buffer that have been inspected.
 "* RETURN VALUES:
@@ -1317,7 +1336,8 @@ function! s:RatingsToUserString( lineCnt ) " {{{2
     let l:ratingSum = 0
     for l:ratingList in s:GetSortedRatingList()
 	let l:indentSetting = l:ratingList[0]
-	let l:userString .= "\n- " . s:IndentSettingToUserString( l:indentSetting ) . ' (' . s:occurrences[ l:indentSetting ] . ' of ' . a:lineCnt . ' lines)'
+	let l:userString .= "\n- " . s:IndentSettingToUserString( l:indentSetting ) .
+	\   ' (' . s:occurrences[ l:indentSetting ] . ' of ' . a:lineCnt . ' lines)'
 	"**** let l:rating = l:ratingList[1] = s:ratings[ l:indentSetting ]
 	if l:indentSetting ==# l:bufferIndentSetting
 	    let l:userString .= ' <- buffer setting'
@@ -1379,9 +1399,9 @@ function! s:UnindentedBufferConsistencyCop( isEntireBuffer, isBufferSettingsChec
 "   triggers the consistency check with the buffer indent settings, thereby
 "   interacting with the user.
 "* ASSUMPTIONS / PRECONDITIONS:
-"	? List of any external variable, control, or other element whose state affects this procedure.
+"   None.
 "* EFFECTS / POSTCONDITIONS:
-"	? List of the procedure's effect on each external variable, control, or other element.
+"   None.
 "* INPUTS:
 "   a:isEntireBuffer        flag whether complete buffer or limited range is
 "                           checked
@@ -1396,7 +1416,11 @@ function! s:UnindentedBufferConsistencyCop( isEntireBuffer, isBufferSettingsChec
 	if ! empty( l:userMessage )
 	    let l:userMessage = 'This ' . s:GetScopeUserString(a:isEntireBuffer) . ' does not contain indented text. ' . l:userMessage
 	    let l:userMessage .= "\nHow do you want to deal with the inconsistency?"
-	    let l:action = ingo#query#ConfirmAsText(l:userMessage, s:AppendMenuExtensionChoices(['&Ignore', '&Correct setting...']), 1, 'Question')
+	    let l:action = ingo#query#ConfirmAsText(l:userMessage,
+	    \   s:AppendMenuExtensionChoices(['&Ignore', '&Correct setting...']),
+	    \   1,
+	    \   'Question'
+	    \)
 	    if s:HandleMenuExtensions(l:action)
 		" Extension action.
 	    elseif empty(l:action) || l:action ==? 'Ignore'
@@ -1427,9 +1451,9 @@ function! s:IndentBufferConsistencyCop( startLnum, endLnum, consistentIndentSett
 "   Reports buffer consistency and (if desired) triggers the consistency check
 "   with the buffer indent settings, thereby interacting with the user.
 "* ASSUMPTIONS / PRECONDITIONS:
-"	? List of any external variable, control, or other element whose state affects this procedure.
+"   None.
 "* EFFECTS / POSTCONDITIONS:
-"	? List of the procedure's effect on each external variable, control, or other element.
+"   None.
 "* INPUTS:
 "   a:startLnum, a:endLnum  range in the current buffer that was to be
 "			    checked.
@@ -1447,7 +1471,8 @@ function! s:IndentBufferConsistencyCop( startLnum, endLnum, consistentIndentSett
     let l:isEntireBuffer = s:IsEntireBuffer(a:startLnum, a:endLnum)
     if a:isBufferSettingsCheck
 	let l:userMessage = s:CheckConsistencyWithBufferSettings( l:consistentIndentSetting )
-	if ! empty( l:userMessage ) && ! s:IsEnoughIndentForSolidAssessment() && IndentConsistencyCop#GetSettingFromIndentSetting(l:consistentIndentSetting) ==# 'spc'
+	if ! empty( l:userMessage ) && ! s:IsEnoughIndentForSolidAssessment() &&
+	\   IndentConsistencyCop#GetSettingFromIndentSetting(l:consistentIndentSetting) ==# 'spc'
 	    " Space indents of up to 7 spaces can be either softtabstop or
 	    " space-indent, lacking larger indents or other hints they cannot be
 	    " told apart, so s:GetPrecedence() defaults to 'spc'. To avoid
@@ -1471,7 +1496,11 @@ function! s:IndentBufferConsistencyCop( startLnum, endLnum, consistentIndentSett
 	    let l:userMessage .= "\nHow do you want to deal with the "
 	    let l:userMessage .= (s:IsEnoughIndentForSolidAssessment() ? '' : 'potential ')
 	    let l:userMessage .= 'inconsistency?'
-	    let l:bufferSettingsChoices = ['&Ignore', '&Change', (empty(a:correctIndentSetting) ? '&Wrong, choose correct setting...' : '&Wrong, use correct ' . a:correctIndentSetting)]
+	    let l:bufferSettingsChoices = [
+	    \   '&Ignore',
+	    \   '&Change',
+	    \   (empty(a:correctIndentSetting) ? '&Wrong, choose correct setting...' : '&Wrong, use correct ' . a:correctIndentSetting)
+	    \]
 	    if s:IsBufferSettingsConsistent()
 		call insert(l:bufferSettingsChoices, printf('Wrong, use &buffer settings (%s)', s:IndentSettingToUserString(s:GetIndentSettingForBufferSettings())), -1)
 	    endif
@@ -1587,7 +1616,7 @@ function! s:SetHighlighting( lineNumbers ) " {{{2
 "   Highlights the incorrect lines; saves the original values if modifications
 "   to buffer settings are done.
 "* ASSUMPTIONS / PRECONDITIONS:
-"	? List of any external variable, control, or other element whose state affects this procedure.
+"   None.
 "* EFFECTS / POSTCONDITIONS:
 "   Sets b:indentconsistencycop_did_highlighting = 1.
 "   Saves buffer settings in buffer-local variables if they don't already exist.
@@ -1622,7 +1651,8 @@ function! s:SetHighlighting( lineNumbers ) " {{{2
 	    let l:linePattern .= '\|\%' . l:lnum . 'l'
 	endfor
 	let l:isFindBadMixEverywhere = ingo#plugin#setting#GetBufferLocal('IndentConsistencyCop_IsFindBadMixEverywhere')
-	let l:linePattern = '\(' . strpart( l:linePattern, 2) . '\)\&^\s\+' . (l:isFindBadMixEverywhere ? '\|\s*' . s:badIndentPattern . '\s*' : '')
+	let l:linePattern = '\(' . strpart( l:linePattern, 2) . '\)\&^\s\+' .
+	\   (l:isFindBadMixEverywhere ? '\|\s*' . s:badIndentPattern . '\s*' : '')
 
 	if g:indentconsistencycop_highlighting =~# 's'
 	    let @/ = l:linePattern
@@ -1845,7 +1875,12 @@ function! s:QueryIndentSetting( isQueryTabstopValue ) " {{{2
     if empty(l:setting)
 	return ''
     elseif a:isQueryTabstopValue || l:setting !=? 'tabstop'
-	let l:indentValue = ingo#query#ConfirmAsText(printf('Choose %s value:', l:setting ==? 'tabstop' ? 'tabstop' : 'indent'), ['&1', '&2', '&3', '&4', '&5', '&6', '&7', '&8'], (l:setting ==? 'tabstop' ? &l:tabstop : 0), 'Question')
+	let l:indentValue = ingo#query#ConfirmAsText(
+	\   printf('Choose %s value:', l:setting ==? 'tabstop' ? 'tabstop' : 'indent'),
+	\   ['&1', '&2', '&3', '&4', '&5', '&6', '&7', '&8'],
+	\   (l:setting ==? 'tabstop' ? &l:tabstop : 0),
+	\   'Question'
+	\)
 	if empty(l:indentValue)
 	    return ''
 	endif
@@ -1898,9 +1933,9 @@ function! s:ReportBufferSettingsConsistency( indentSetting ) "{{{2
 "* PURPOSE:
 "	? What the procedure does (not how).
 "* ASSUMPTIONS / PRECONDITIONS:
-"	? List of any external variable, control, or other element whose state affects this procedure.
+"   None.
 "* EFFECTS / POSTCONDITIONS:
-"	? List of the procedure's effect on each external variable, control, or other element.
+"   None.
 "* INPUTS:
 "   a:indentSetting (optional) indent setting that has been set in the buffer.
 "		    If set, it'll be validated against the actual buffer
@@ -1909,7 +1944,8 @@ function! s:ReportBufferSettingsConsistency( indentSetting ) "{{{2
 "   none
 "*******************************************************************************
     let l:indentSetting = s:GetIndentSettingForBufferSettings()
-    if ! empty(a:indentSetting) && a:indentSetting !=# l:indentSetting && (l:indentSetting !=# 'tab' || IndentConsistencyCop#GetSettingFromIndentSetting(a:indentSetting) !=# 'tab')
+    if ! empty(a:indentSetting) && a:indentSetting !=# l:indentSetting &&
+    \   (l:indentSetting !=# 'tab' || IndentConsistencyCop#GetSettingFromIndentSetting(a:indentSetting) !=# 'tab')
 	throw 'ASSERT: Passed buffer settings are equal to actual indent settings. '
     endif
     let b:indentconsistencycop_result.bufferSettings = s:ReportIndentSetting(l:indentSetting)
@@ -1983,7 +2019,7 @@ function! s:IndentBufferInconsistencyCop( startLnum, endLnum, inconsistentIndent
 "   s:ratings dictionary; key: indent setting; value: percentage
 "	rating (100: checked range is consistent; < 100: inconsistent.
 "* EFFECTS / POSTCONDITIONS:
-"	? List of the procedure's effect on each external variable, control, or other element.
+"   None.
 "* INPUTS:
 "   a:startLnum, a:endLnum  range in the current buffer that is to be
 "			    checked.
@@ -2004,7 +2040,11 @@ function! s:IndentBufferInconsistencyCop( startLnum, endLnum, inconsistentIndent
 	let l:isBestGuessEqualToBufferIndent = (l:bestGuessIndentSetting ==# l:bufferIndentSetting)
     endif
 
-    let l:bufferSettingsChoices = ['&Ignore' . (l:isBestGuessEqualToBufferIndent ? ', best guess equals buffer settings (' . l:bufferIndentSetting . ')' : ''), '&Just change buffer settings...', '&Highlight wrong indents...']
+    let l:bufferSettingsChoices = [
+    \   '&Ignore' . (l:isBestGuessEqualToBufferIndent ? ', best guess equals buffer settings (' . l:bufferIndentSetting . ')' : ''),
+    \   '&Just change buffer settings...',
+    \   '&Highlight wrong indents...'
+    \]
     let l:action = ingo#query#ConfirmAsText(a:inconsistentIndentationMessage, s:AppendMenuExtensionChoices(l:bufferSettingsChoices), 1, 'Question')
     let b:indentconsistencycop_result.isIgnore = (l:action =~# 'Ignore')
     if s:HandleMenuExtensions(l:action)
@@ -2022,7 +2062,10 @@ function! s:IndentBufferInconsistencyCop( startLnum, endLnum, inconsistentIndent
 	elseif ! l:isBestGuessEqualToBufferIndent && l:isBadBufferIndent
 	    let l:highlightChoices = ['Not best &guess (' . l:bestGuessIndentSetting . ')']
 	else
-	    let l:highlightChoices = ['Not &buffer settings (' . l:bufferIndentSetting . ')', 'Not best &guess (' . l:bestGuessIndentSetting . ')']
+	    let l:highlightChoices = [
+	    \   'Not &buffer settings (' . l:bufferIndentSetting . ')',
+	    \   'Not best &guess (' . l:bestGuessIndentSetting . ')'
+	    \]
 	endif
 	call add(l:highlightChoices, 'Not &chosen setting...')
 	if s:GetKeyedValue( s:occurrences, 'badmix' ) + s:GetKeyedValue( s:occurrences, 'badsts' ) > 0
@@ -2156,9 +2199,9 @@ function! IndentConsistencyCop#IndentConsistencyCop( startLnum, endLnum, isBuffe
 "* PURPOSE:
 "   Triggers the indent consistency check and presents the results to the user.
 "* ASSUMPTIONS / PRECONDITIONS:
-"	? List of any external variable, control, or other element whose state affects this procedure.
+"   None.
 "* EFFECTS / POSTCONDITIONS:
-"	? List of the procedure's effect on each external variable, control, or other element.
+"   None.
 "* INPUTS:
 "   a:startLnum, a:endLnum  range in the current buffer that is to be
 "			    checked.
