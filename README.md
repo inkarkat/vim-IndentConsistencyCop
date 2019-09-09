@@ -378,15 +378,6 @@ LIMITATIONS
   If tabstop is non-standard, anyway, we rather modify tabstop than turning on
   softtabstop.
 
-### TODO
-
-- Define autocmds to remove the highlighting if it isn't in scope any more
-  (e.g. remove search pattern when buffer is changed, remove error
-  highlighting and folding if another file is loaded into the buffer via :e).
-- Allow user to override wrongly found consistent setting (e.g. 'sts1' instead
-  of 'tab'), by specifying the correct setting in the :IndentConsistencyCop
-  call. (Overriding is already offered in the cop's dialog.)
-
 ### CONTRIBUTING
 
 Report any bugs, send patches, or suggest features via the issue tracker at
