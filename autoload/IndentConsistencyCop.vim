@@ -2044,19 +2044,21 @@ function! s:IndentBufferInconsistencyCop( startLnum, endLnum, inconsistentIndent
 
     let l:bufferSettingsChoices = [
     \   '&Ignore' . (l:isBestGuessEqualToBufferIndent ? ', best guess equals buffer settings (' . l:bufferIndentSetting . ')' : ''),
-    \   '&Just change buffer settings...',
-    \   '&Highlight wrong indents...'
-    \]
+    \   '&Just change buffer settings...'
+    \] +
+    \   (empty(g:indentconsistencycop_highlighting) ? [] : ['&Highlight wrong indents...']) +
+    \   (empty(g:IndentConsistencyCop_AltHighlighting) ? [] : [g:IndentConsistencyCop_AltHighlighting.menu])
     let l:action = ingo#query#ConfirmAsText(a:inconsistentIndentationMessage, s:AppendMenuExtensionChoices(l:bufferSettingsChoices), 1, 'Question')
-    let l:highlightingConfig = g:indentconsistencycop_highlighting
     let b:indentconsistencycop_result.isIgnore = (l:action =~# 'Ignore')
+    let l:isAltHighlightingAction = (l:action =~? ingo#query#StripAccellerator(get(g:IndentConsistencyCop_AltHighlighting, 'menu', 'InvalidMenuEntry')))
     if s:HandleMenuExtensions(l:action)
 	" Extension action.
     elseif empty(l:action) || l:action =~# '^Ignore'
 	" User chose to ignore the inconsistencies.
 	call IndentConsistencyCop#ClearHighlighting()
 	call s:EchoUserMessage('Be careful when modifying the inconsistent indents! ')
-    elseif l:action =~? '^Highlight'
+    elseif l:action =~? '^Highlight' || l:isAltHighlightingAction
+	let l:highlightingConfig = (l:isAltHighlightingAction ? g:IndentConsistencyCop_AltHighlighting.methods : g:indentconsistencycop_highlighting)
 	let l:highlightMessage = 'What kind of inconsistent indents do you want to highlight?'
 	if l:isBestGuessEqualToBufferIndent && l:isBadBufferIndent
 	    let l:highlightChoices = []
