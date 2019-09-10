@@ -1880,7 +1880,9 @@ function! s:HighlightInconsistentIndents( highlightingConfig, startLnum, endLnum
 	" Update report, now that we have found out the range / buffer has inconsistent indent.
 	call s:ReportConsistencyResult( l:isEntireBuffer, 0, '', a:isAcknowledgedByUser )
 
-	call s:EchoUserMessage(printf('Marked %d incorrect line%s. %s', len(l:lineNumbers), (len(l:lineNumbers) == 1 ? '' : 's'), a:appendixMessage))
+	call s:EchoUserMessage(printf('%s %d incorrect line%s. %s',
+	\   (empty(l:highlightingConfig) ? 'Found' : 'Marked'), len(l:lineNumbers), (len(l:lineNumbers) == 1 ? '' : 's'), a:appendixMessage)
+	\)
     endif
 endfunction
 
