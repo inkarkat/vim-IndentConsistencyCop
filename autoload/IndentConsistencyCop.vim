@@ -1595,13 +1595,13 @@ function! IndentConsistencyCop#FoldExpr( lnum, foldContext ) " {{{2
     return 1
 endfunction
 
-function! s:ClearMatch()
+function! s:ClearMatch( highlightingConfig )
     if exists('*matchadd')
 	if exists('w:indentconsistencycop_match')
 	    silent! call matchdelete(w:indentconsistencycop_match)
 	    unlet w:indentconsistencycop_match
 	endif
-    elseif g:indentconsistencycop_highlighting =~# 'm'
+    elseif a:highlightingConfig =~# 'm'
 	2match none
     endif
 endfunction
@@ -1610,7 +1610,7 @@ function! s:Save( what, value ) " {{{2
 	let b:indentconsistencycop_save[a:what] = a:value
     endif
 endfunction
-function! s:SetHighlighting( lineNumbers ) " {{{2
+function! s:SetHighlighting( highlightingConfig, lineNumbers ) " {{{2
 "*******************************************************************************
 "* PURPOSE:
 "   Highlights the incorrect lines; saves the original values if modifications
@@ -1618,7 +1618,7 @@ function! s:SetHighlighting( lineNumbers ) " {{{2
 "* ASSUMPTIONS / PRECONDITIONS:
 "   None.
 "* EFFECTS / POSTCONDITIONS:
-"   Sets b:indentconsistencycop_did_highlighting = 1.
+"   Sets b:indentconsistencycop_did_highlighting to the used a:highlightingConfig.
 "   Saves buffer settings in buffer-local variables if they don't already exist.
 "* INPUTS:
 "   lineNumbers: List of buffer line numbers.
@@ -1631,7 +1631,7 @@ function! s:SetHighlighting( lineNumbers ) " {{{2
     " ClearHighlighting() is also executed when the buffer is consistent, and in
     " that case we don't know whether there was any highlighting done
     " beforehand.
-    let b:indentconsistencycop_did_highlighting = 1
+    let b:indentconsistencycop_did_highlighting = a:highlightingConfig
     if ! exists('b:indentconsistencycop_save')
 	let b:indentconsistencycop_save = {}
     endif
@@ -1645,7 +1645,7 @@ function! s:SetHighlighting( lineNumbers ) " {{{2
     " ClearHighlighting(), i.e. when the variables used for saving are
     " undefined.
 
-    if g:indentconsistencycop_highlighting  =~# '[sm]'
+    if a:highlightingConfig  =~# '[sm]'
 	let l:linePattern = ''
 	for l:lnum in a:lineNumbers
 	    let l:linePattern .= '\|\%' . l:lnum . 'l'
@@ -1654,11 +1654,11 @@ function! s:SetHighlighting( lineNumbers ) " {{{2
 	let l:linePattern = '\(' . strpart( l:linePattern, 2) . '\)\&^\s\+' .
 	\   (l:isFindBadMixEverywhere ? '\|\s*' . s:badIndentPattern . '\s*' : '')
 
-	if g:indentconsistencycop_highlighting =~# 's'
+	if a:highlightingConfig =~# 's'
 	    let @/ = l:linePattern
 	endif
-	if g:indentconsistencycop_highlighting =~# 'm'
-	    call s:ClearMatch()
+	if a:highlightingConfig =~# 'm'
+	    call s:ClearMatch(a:highlightingConfig)
 
 	    if exists('*matchadd')
 		let w:indentconsistencycop_match = matchadd('IndentConsistencyCop', l:linePattern)
@@ -1675,25 +1675,27 @@ function! s:SetHighlighting( lineNumbers ) " {{{2
 	    " the user can re-create the highlighting with another
 	    " :IndentConsistencyCop command.
 	    augroup IndentConsistencyCopMatches
-		autocmd! BufWinLeave <buffer> call <SID>ClearMatch() | autocmd! IndentConsistencyCopMatches * <buffer>
+		execute printf('autocmd! BufWinLeave <buffer> call <SID>ClearMatch(%s) | autocmd! IndentConsistencyCopMatches * <buffer>',
+		\   string(a:highlightingConfig)
+		\)
 	    augroup END
 	endif
 
     endif
 
-    if g:indentconsistencycop_highlighting =~# 'g'
+    if a:highlightingConfig =~# 'g'
 	let l:firstLineNum = min( a:lineNumbers )
 	if l:firstLineNum > 0
 	    execute 'normal ' . l:firstLineNum . 'G0'
 	endif
     endif
 
-    if g:indentconsistencycop_highlighting =~# 'l'
+    if a:highlightingConfig =~# 'l'
 	call s:Save('list', &l:list)
 	setlocal list
     endif
 
-    let l:foldContext = matchstr( g:indentconsistencycop_highlighting, '\Cf:\zs\d' )
+    let l:foldContext = matchstr(a:highlightingConfig, '\Cf:\zs\d')
     if ! empty( l:foldContext )
 	" The list of lines to be highlighted is copied to a list with
 	" buffer-scope, because the (buffer-scoped) foldexpr needs access to it.
@@ -1717,8 +1719,8 @@ function! s:SetHighlighting( lineNumbers ) " {{{2
 	endif
     endif
 
-    if g:indentconsistencycop_highlighting =~# '[qQwW]'
-	let [l:QfFunction, l:QfArgs, l:eventSubjectPrefix] = (g:indentconsistencycop_highlighting =~? 'W' ?
+    if a:highlightingConfig =~# '[qQwW]'
+	let [l:QfFunction, l:QfArgs, l:eventSubjectPrefix] = (a:highlightingConfig =~? 'W' ?
 	\   [function('setloclist'), [0], 'l'] :
 	\   [function('setqflist'), [], '']
 	\)
@@ -1731,7 +1733,7 @@ function! s:SetHighlighting( lineNumbers ) " {{{2
 	    \       copy(a:lineNumbers),
 	    \       "s:QfEntry(l:bufNr, v:val, l:isFindBadMixEverywhere)"
 	    \   ),
-	    \   (g:indentconsistencycop_highlighting =~# '[QW]' ? 'a' : ' ')
+	    \   (a:highlightingConfig =~# '[QW]' ? 'a' : ' ')
 	    \])
 	silent call ingo#event#Trigger('QuickFixCmdPost ' . l:eventSubject) | " Allow hooking into the quickfix update.
     endif
@@ -1770,7 +1772,7 @@ function! IndentConsistencyCop#ClearHighlighting() " {{{2
 "   Undoes the highlighting done by SetHighlighting() and restores the buffer
 "   settings to its original values.
 "* ASSUMPTIONS / PRECONDITIONS:
-"   b:indentconsistencycop_did_highlighting == 1 if highlighting was done
+"   b:indentconsistencycop_did_highlighting not empty if highlighting was done
 "* EFFECTS / POSTCONDITIONS:
 "   Restores the buffer settings and undefines the buffer-local variables used
 "   for saving.
@@ -1779,23 +1781,23 @@ function! IndentConsistencyCop#ClearHighlighting() " {{{2
 "* RETURN VALUES:
 "   none
 "*******************************************************************************
-    call s:ClearMatch()
-
-    if ! exists( 'b:indentconsistencycop_did_highlighting' ) || ! b:indentconsistencycop_did_highlighting
+    if ! exists('b:indentconsistencycop_did_highlighting') || empty(b:indentconsistencycop_did_highlighting)
 	return
     endif
-    unlet b:indentconsistencycop_did_highlighting
 
-    if g:indentconsistencycop_highlighting =~# 's'
+    call s:ClearMatch(b:indentconsistencycop_did_highlighting)
+
+    if b:indentconsistencycop_did_highlighting =~# 's'
 	let @/ = histget('search', -1)
     endif
+    unlet b:indentconsistencycop_did_highlighting
 
     for [l:optionName, l:value] in items(get(b:, 'indentconsistencycop_save', {}))
 	execute 'let &l:' . l:optionName . '= l:value'
     endfor
     unlet! b:indentconsistencycop_save
 
-    if exists( 'b:indentconsistencycop_lineNumbers' )
+    if exists('b:indentconsistencycop_lineNumbers')
 	" Just free the memory here.
 	unlet b:indentconsistencycop_lineNumbers
     endif
@@ -1847,7 +1849,7 @@ function! s:HighlightInconsistentIndents( startLnum, endLnum, correctIndentSetti
 
 	call s:EchoUserMessage("No incorrect lines found for setting '" . s:IndentSettingToUserString( a:correctIndentSetting ) . "'! " . a:appendixMessage)
     else
-	call s:SetHighlighting( l:lineNumbers )
+	call s:SetHighlighting(g:indentconsistencycop_highlighting, l:lineNumbers)
 	let s:perfectIndentSetting = ''	" Invalidate the consistency rating.
 
 	" Update report, now that we have found out the range / buffer has inconsistent indent.
