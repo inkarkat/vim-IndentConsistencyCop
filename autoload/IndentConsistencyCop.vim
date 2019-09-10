@@ -1537,7 +1537,14 @@ function! s:IndentBufferConsistencyCop( startLnum, endLnum, consistentIndentSett
 			let l:bufferSettingsMessage = s:GetBufferSettingsMessage( 'The buffer settings have been changed: ' )
 		    endif
 
-		    call s:HighlightInconsistentIndents(g:indentconsistencycop_highlighting, a:startLnum, a:endLnum, s:StripTabstopValueFromIndentSetting( l:chosenIndentSetting ), l:bufferSettingsMessage, 1)
+		    let l:highlightingConfigs = ingo#list#NonEmpty([g:indentconsistencycop_highlighting, get(g:IndentConsistencyCop_AltHighlighting, 'methods', '')])
+		    call s:HighlightInconsistentIndents(
+		    \   (len(l:highlightingConfigs) > 1 ? l:highlightingConfigs : get(l:highlightingConfigs, 0, '')),
+		    \   a:startLnum, a:endLnum,
+		    \   s:StripTabstopValueFromIndentSetting( l:chosenIndentSetting ),
+		    \   l:bufferSettingsMessage,
+		    \   1
+		    \)
 		else
 		    call s:PrintBufferSettings( 'The buffer settings remain ' . (s:IsEnoughIndentForSolidAssessment() ? 'inconsistent' : 'at') . ': ' )
 		endif
@@ -1849,7 +1856,25 @@ function! s:HighlightInconsistentIndents( highlightingConfig, startLnum, endLnum
 
 	call s:EchoUserMessage("No incorrect lines found for setting '" . s:IndentSettingToUserString( a:correctIndentSetting ) . "'! " . a:appendixMessage)
     else
-	call s:SetHighlighting(a:highlightingConfig, l:lineNumbers)
+	if type(a:highlightingConfig) == type([])
+	    let l:action = ingo#query#ConfirmAsText(
+	    \   "Incorrect lines found for setting '" . s:IndentSettingToUserString(a:correctIndentSetting) . "'.",
+	    \   ['&Highlight wrong indents...', g:IndentConsistencyCop_AltHighlighting.menu, '&Ignore'],
+	    \   1,
+	    \   'Question'
+	    \)
+	    if l:action ==? 'Ignore'
+		let l:highlightingConfig = ''
+	    elseif l:action =~? '^Highlight'
+		let l:highlightingConfig = g:indentconsistencycop_highlighting
+	    else
+		let l:highlightingConfig = g:IndentConsistencyCop_AltHighlighting.methods
+	    endif
+	else
+	    let l:highlightingConfig = a:highlightingConfig
+	endif
+
+	call s:SetHighlighting(l:highlightingConfig, l:lineNumbers)
 	let s:perfectIndentSetting = ''	" Invalidate the consistency rating.
 
 	" Update report, now that we have found out the range / buffer has inconsistent indent.
