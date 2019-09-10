@@ -172,6 +172,16 @@ removed via :IndentConsistencyCopOff.
 
     let g:indentconsistencycop_highlighting = 'sglmf:3'
 
+You can offer alternative method(s) of highlighting incorrect lines; the
+default adds lines to the quickfix list:
+
+    let g:IndentConsistencyCop_AltHighlighting =
+    \   {'methods': 'Q', 'menu': 'Add wrong indents to &quickfix...'}
+
+The configuration is a Dict with a "methods" entry (cp.
+g:indentconsistencycop\_highlighting) and a "menu" entry. If empty, no
+alternative method will be presented.
+
 Some comment styles use additional whitespace characters inside the comment
 block to neatly left-align the comment block, e.g. this is often used in Java
 and C/C++ programs:
@@ -415,6 +425,9 @@ HISTORY
   g:IndentConsistencyCop\_IsFindBadMixEverywhere.
 - ENH: Allow population of quickfix / location list via
   g:indentconsistencycop\_highlighting values q/Q/w/W.
+- Offer alternative highlighting methods in menu via
+  g:IndentConsistencyCop\_AltHighlighting, by default adding to the quickfix
+  list.
 
 __You need to update to ingo-library ([vimscript #4433](http://www.vim.org/scripts/script.php?script_id=4433)) version 1.039!__
 

@@ -20,7 +20,10 @@ let g:loaded_indentconsistencycop = 1
 if ! exists('g:indentconsistencycop_highlighting')
     let g:indentconsistencycop_highlighting = 'sglmf:3'
 endif
-if g:indentconsistencycop_highlighting =~# 'm'
+if ! exists('g:IndentConsistencyCop_AltHighlighting')
+    let g:IndentConsistencyCop_AltHighlighting = {'methods': 'Q', 'menu': 'Add wrong indents to &quickfix...'}
+endif
+if g:indentconsistencycop_highlighting =~# 'm' || g:IndentConsistencyCop_AltHighlighting =~# 'm'
     highlight def link IndentConsistencyCop Error
 endif
 
