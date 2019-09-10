@@ -1,0 +1,7 @@
+Found inconsistent indentation in this buffer; generated from these conflicting settings: 
+- 4 characters soft tabstop (8 of 77 lines)
+- bad mix of spaces and tabs (2 of 77 lines)
+Some minor / inconclusive potential settings have been omitted. 
+The buffer setting is tabstop. 
+[I]gnore, (J)ust change buffer settings...: 
+Be careful when modifying the inconsistent indents! 
