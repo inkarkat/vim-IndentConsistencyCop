@@ -60,6 +60,9 @@ if ! exists('g:IndentConsistencyCop_IsFindBadMixEverywhere')
     let g:IndentConsistencyCop_IsFindBadMixEverywhere = 1
 endif
 
+if ! exists('g:IndentConsistencyCop_BlockAlignmentPattern')
+    let g:IndentConsistencyCop_BlockAlignmentPattern = '\%(\<\|[[({''"`]\)'
+endif
 
 
 "- commands ------------------------------------------------------------------

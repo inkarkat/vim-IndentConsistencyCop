@@ -263,6 +263,13 @@ just in indent. To turn this off and just alert to these bad mixes when they
 occur at the beginning of the line: >
     let g:IndentConsistencyCop_IsFindBadMixEverywhere = 0
 <
+				*b:IndentConsistencyCop_BlockAlignmentPattern*
+				*g:IndentConsistencyCop_BlockAlignmentPattern*
+The default block alignment |g:IndentConsistencyCop_line_filters|, can be
+tuned with regards to what it considers a block via: >
+    let g:IndentConsistencyCop_BlockAlignmentPattern = '\<'
+The default handles alignment to previous keywords, brackets, and quotes.
+
 ==============================================================================
 INTEGRATION				    *IndentConsistencyCop-integration*
 					       *b:indentconsistencycop_result*
@@ -430,6 +437,8 @@ HISTORY						*IndentConsistencyCop-history*
 - Offer alternative highlighting methods in menu via
   g:IndentConsistencyCop_AltHighlighting, by default adding to the quickfix
   list.
+- Allow to tweak IndentConsistencyCop#BlockAlignment#Filter() via
+  g:IndentConsistencyCop_BlockAlignmentPattern.
   *** You need to update to ingo-library (vimscript #4433) version 1.039! ***
 
 2.00	23-Dec-2017

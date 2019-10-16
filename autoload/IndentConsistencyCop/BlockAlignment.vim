@@ -23,6 +23,7 @@ function! IndentConsistencyCop#BlockAlignment#Filter( startLnum, endLnum )
 "           // Implementation
 "       }
 "******************************************************************************
+    let l:blockPattern = ingo#plugin#setting#GetBufferLocal('IndentConsistencyCop_BlockAlignmentPattern')
     let l:filteredLnums = {}
     let l:lnum = a:startLnum
     while l:lnum < a:endLnum    " Can ignore last line because there are no subsequent lines then.
@@ -37,7 +38,7 @@ function! IndentConsistencyCop#BlockAlignment#Filter( startLnum, endLnum )
 	    continue
 	endif
 
-	if getline(l:lnum) =~# '\S.\{-}\%' . (l:indent + 1) . 'v\%(\<\|[[({''"`]\)'
+	if getline(l:lnum) =~# '\S.\{-}\%' . (l:indent + 1) . 'v' . l:blockPattern
 	    let l:lnum += 1
 	    let l:filteredLnums[l:lnum] = 1 " Add first line of block-indent to filter list.
 	    while l:lnum < a:endLnum    " And check whether following lines belong to the same block.
