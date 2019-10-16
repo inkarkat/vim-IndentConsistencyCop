@@ -264,6 +264,14 @@ occur at the beginning of the line:
 
     let g:IndentConsistencyCop_IsFindBadMixEverywhere = 0
 
+The default block alignment g:IndentConsistencyCop\_line\_filters, can be
+tuned with regards to what it considers a block via:
+
+    let g:IndentConsistencyCop_BlockAlignmentPattern = '\<'
+
+The default handles alignment to previous keywords, brackets, quotes, and
+@Annotation, $var.
+
 INTEGRATION
 ------------------------------------------------------------------------------
 
@@ -428,6 +436,9 @@ HISTORY
 - Offer alternative highlighting methods in menu via
   g:IndentConsistencyCop\_AltHighlighting, by default adding to the quickfix
   list.
+- Allow to tweak IndentConsistencyCop#BlockAlignment#Filter() via
+  g:IndentConsistencyCop\_BlockAlignmentPattern.
+- Also support @Annotation, $var as starts of blocks.
 
 __You need to update to ingo-library ([vimscript #4433](http://www.vim.org/scripts/script.php?script_id=4433)) version 1.039!__
 

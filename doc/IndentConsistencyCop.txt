@@ -268,7 +268,8 @@ occur at the beginning of the line: >
 The default block alignment |g:IndentConsistencyCop_line_filters|, can be
 tuned with regards to what it considers a block via: >
     let g:IndentConsistencyCop_BlockAlignmentPattern = '\<'
-The default handles alignment to previous keywords, brackets, and quotes.
+The default handles alignment to previous keywords, brackets, quotes, and
+@Annotation, $var.
 
 ==============================================================================
 INTEGRATION				    *IndentConsistencyCop-integration*
@@ -439,6 +440,7 @@ HISTORY						*IndentConsistencyCop-history*
   list.
 - Allow to tweak IndentConsistencyCop#BlockAlignment#Filter() via
   g:IndentConsistencyCop_BlockAlignmentPattern.
+- Also support @Annotation, $var as starts of blocks.
   *** You need to update to ingo-library (vimscript #4433) version 1.039! ***
 
 2.00	23-Dec-2017

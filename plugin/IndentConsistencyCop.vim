@@ -61,7 +61,7 @@ if ! exists('g:IndentConsistencyCop_IsFindBadMixEverywhere')
 endif
 
 if ! exists('g:IndentConsistencyCop_BlockAlignmentPattern')
-    let g:IndentConsistencyCop_BlockAlignmentPattern = '\%(\<\|[[({''"`]\)'
+    let g:IndentConsistencyCop_BlockAlignmentPattern = '\%(\<\|[[({<''"@$`]\)'
 endif
 
 
