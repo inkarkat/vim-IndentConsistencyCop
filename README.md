@@ -405,7 +405,7 @@ below).
 HISTORY
 ------------------------------------------------------------------------------
 
-##### 3.00    RELEASEME
+##### 3.00    20-Feb-2020
 - Add b:indentconsistencycop\_result.acknowledgedByUserSetting
 - ENH: Allow extension of the plugin's user queries with additional menu
   entries. This is used by IndentConsistencyCopAutoCmds.vim to implement
@@ -629,7 +629,7 @@ IndentBufferConsistencyCop.
 - Started development.
 
 ------------------------------------------------------------------------------
-Copyright: (C) 2006-2019 Ingo Karkat -
+Copyright: (C) 2006-2020 Ingo Karkat -
 The [VIM LICENSE](http://vimdoc.sourceforge.net/htmldoc/uganda.html#license) applies to this plugin.
 
 Maintainer:     Ingo Karkat &lt;ingo@karkat.de&gt;
