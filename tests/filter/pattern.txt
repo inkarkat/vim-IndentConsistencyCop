@@ -1,0 +1,49 @@
+# vim: set ft=none ts=8 sts=4 sw=4 expandtab :
+ ####D stuff
+my $prevLine = ''; my $line;
+while (<>) {
+     ####D questionable
+    $line = $_;
+    chomp($line);
+    matchComments($line, $prevLine);
+
+  ####D also questionable
+    $prevLine = $line;
+}
+
+__END__
+
+=head1 NAME
+
+commenter - Match patterns in stdin and then play a sound file or speak the match
+
+=head1 SYNOPSIS
+
+ commenter [--print-matches [PREFIX[\tSUFFIX]] $
+    [--silent [PREFIX[\tSUFFIX]] [--silent-if-locked] [--silent-if-muted] $
+    [--speech-volume VOL] [--silence-after N] [--silence-speech-after N] $
+    [--count-subsequent N] [--dump] $
+    REGEXP COMMENT [...] $
+
+=head1 OPTIONS
+
+=over 8
+
+=item B<--man>
+
+Prints the manual page and exits.
+
+=back
+
+=head1 DESCRIPTION
+
+B<commenter> parses its input for patterns, and can speak parts of the matches, or play certain sounds to alert the user to the occurrence of a pattern.
+
+This is great for monitoring long-running tasks (like builds, or log files) on the side.
+
+=head1 EXAMPLE
+
+ commenter --count-subsequent 9 --silence-speech-after 5 $
+ "#^ERROR: (.*)#" "Problem with \1" "#^startup complete$#" ~/wave/good.wav $
+
+=cut

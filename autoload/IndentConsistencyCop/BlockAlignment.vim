@@ -1,14 +1,13 @@
-" IndentConsistencyCop/Filter.vim: Filters to deal with non-regular indentation styles.
+" IndentConsistencyCop/BlockAlignment.vim: Exclude lines that are aligned as a block.
 "
 " DEPENDENCIES:
-"   - IndentConsistencyCop.vim autoload script
 "
-" Copyright: (C) 2015-2017 Ingo Karkat
+" Copyright: (C) 2015-2019 Ingo Karkat
 "   The VIM LICENSE applies to this script; see ':help copyright'.
 "
 " Maintainer:	Ingo Karkat <ingo@karkat.de>
 
-function! IndentConsistencyCop#Filter#BlockAlignment( startLnum, endLnum )
+function! IndentConsistencyCop#BlockAlignment#Filter( startLnum, endLnum )
 "******************************************************************************
 "* PURPOSE:
 "   Handle alignment to previous keywords, e.g.
@@ -24,9 +23,10 @@ function! IndentConsistencyCop#Filter#BlockAlignment( startLnum, endLnum )
 "           // Implementation
 "       }
 "******************************************************************************
+    let l:blockPattern = ingo#plugin#setting#GetBufferLocal('IndentConsistencyCop_BlockAlignmentPattern')
     let l:filteredLnums = {}
     let l:lnum = a:startLnum
-    while l:lnum < a:endLnum
+    while l:lnum < a:endLnum    " Can ignore last line because there are no subsequent lines then.
 	let l:whitespace = IndentConsistencyCop#GetBeginningWhitespace(l:lnum + 1, 0)
 
 	if l:whitespace =~# '^\t\+ \{0,7}$'
@@ -38,7 +38,7 @@ function! IndentConsistencyCop#Filter#BlockAlignment( startLnum, endLnum )
 	    continue
 	endif
 
-	if getline(l:lnum) =~# '\S.\{-}\%' . (l:indent + 1) . 'v\%(\<\|[[({''"`]\)'
+	if getline(l:lnum) =~# '\S.\{-}\%' . (l:indent + 1) . 'v' . l:blockPattern
 	    let l:lnum += 1
 	    let l:filteredLnums[l:lnum] = 1 " Add first line of block-indent to filter list.
 	    while l:lnum < a:endLnum    " And check whether following lines belong to the same block.

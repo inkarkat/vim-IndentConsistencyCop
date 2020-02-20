@@ -1,278 +1,278 @@
 // vim: set ft=cpp:
 // Inconsistent. 
 
-// OvCDispConfig.cpp: implementation of the OvCDispConfig class.
+// xxxxxxxxxxxxx.xxx: xxxxxxxxxxxxxx xx xxx xxxxxxxxxxxxx xxxxx.
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "OvCDispConfig.h"
-#include <malloc.h>
-#include <string.h>
-#include <stdlib.h>
+#include "xxxxxxxxxxxxx.x"
+#include <xxxxxx.x>
+#include <xxxxxx.x>
+#include <xxxxxx.x>
 
 //////////////////////////////////////////////////////////////////////
-// Construction/Destruction
+// xxxxxxxxxxxx/xxxxxxxxxxx
 //////////////////////////////////////////////////////////////////////
-// global Variables
-// The struct "scParseAlerttype" is used for the parsing of the config-file "alertmonitor" with "alerttype".
-// It is important for the function, that the last entry of szAlerttype ends with "". Please see
-// the following entries, if you want to add a new parameter. 
+// xxxxxx xxxxxxxxx
+// xxx xxxxxx "xxxxxxxxxxxxxxxx" xx xxxx xxx xxx xxxxxxx xx xxx xxxxxx-xxxx "xxxxxxxxxxxx" xxxx "xxxxxxxxx".
+// xx xx xxxxxxxxx xxx xxx xxxxxxxx, xxxx xxx xxxx xxxxx xx xxxxxxxxxxx xxxx xxxx "". xxxxxx xxx
+// xxx xxxxxxxxx xxxxxxx, xx xxx xxxx xx xxx x xxx xxxxxxxxx. 
 // 
 struct 
 {
-	char szAlertmonitor [30];
-	char szaAlerttype [10][32];
-	char szaParameter [30][40];
-} scParseAlerttype [] =
+	char xxxxxxxxxxxxxx [30];
+	char xxxxxxxxxxxx [10][32];
+	char xxxxxxxxxxxx [30][40];
+} xxxxxxxxxxxxxxxx [] =
 {	
-	{ {"ABAP4"}, 
-		{"ABAP4_ERROR_EXIST",""},
+	{ {"xxxx4"}, 
+		{"xxxx4_xxxxx_xxxxx",""},
 		{"",""}
 	},
 		
-	{ {"ALE"}, 
-		{"IDOC_CURRENT_STATUS", ""} 
+	{ {"xxx"}, 
+		{"xxxx_xxxxxxx_xxxxxx", ""} 
 	},  
 		
-	{ {"ALERTCOLLECTOR"}, 
+	{ {"xxxxxxxxxxxxxx"}, 
 		{"",""} 
 	},  
 		
-	{	{"CTS"},
-		{"REQUEST_CREATED", "REQUEST_RELEASED","TASK_CREATED", "TASK_RELEASED",
-		"OBJECT_USED", "OBJECT_RELEASED",""}
+	{	{"xxx"},
+		{"xxxxxxx_xxxxxxx", "xxxxxxx_xxxxxxxx","xxxx_xxxxxxx", "xxxx_xxxxxxxx",
+		"xxxxxx_xxxx", "xxxxxx_xxxxxxxx",""}
 	},
 		
-	{	{"JOBREPORT"},
-		{"JOB_MAX_RUN_TIME", "JOB_MIN_RUN_TIME","START_PASSED", "JOB_ABORTED",""}
+	{	{"xxxxxxxxx"},
+		{"xxx_xxx_xxx_xxxx", "xxx_xxx_xxx_xxxx","xxxxx_xxxxxx", "xxx_xxxxxxx",""}
 	},
 		
-	{	{"LOCK_CHECK"},
-		{"OLD_LOCKS",""}
+	{	{"xxxx_xxxxx"},
+		{"xxx_xxxxx",""}
 	},
 		
-	{	{"OM"},
-		{"OM_SWITCH_OVERDUE",""}
+	{	{"xx"},
+		{"xx_xxxxxx_xxxxxxx",""}
 	},
 		
-	{	{"SPOOLER"},
-		{"SPOOL_ERROR_RANGE", "PRINT_ERROR_EXISTS","SPOOL_ENTRIES_RANGE",""}
+	{	{"xxxxxxx"},
+		{"xxxxx_xxxxx_xxxxx", "xxxxx_xxxxx_xxxxxx","xxxxx_xxxxxxx_xxxxx",""}
 	},
 		
-	{	{"SYSTEM_CHANGE_OPTION"},
-		{"CHANGE_OPT",""}
+	{	{"xxxxxx_xxxxxx_xxxxxx"},
+		{"xxxxxx_xxx",""}
 	},
 		
-	{	{"TEMSE"},
-		{"CONSISTENCY_CHECK",""}
+	{	{"xxxxx"},
+		{"xxxxxxxxxxx_xxxxx",""}
 	},
 		
-	{	{"TRANSPORT"},
-		{"TRANS", "REPAIR","RFCCONNECT", "TPTEST",""}
+	{	{"xxxxxxxxx"},
+		{"xxxxx", "xxxxxx","xxxxxxxxxx", "xxxxxx",""}
 	},
 		
-	{	{"UPDATE"},
-		{"UPDATE_ERRORS_EXIST","UPDATE_ACTIVE",""}
+	{	{"xxxxxx"},
+		{"xxxxxx_xxxxxx_xxxxx","xxxxxx_xxxxxx",""}
 	},
 		
-	{	{"USER"},
-		{"USER_LOGGEDIN_MAX",""}
+	{	{"xxxx"},
+		{"xxxx_xxxxxxxx_xxx",""}
 	},
 		
-	{	{"WP"},
-		{"WP_AVAILABLE", "WP_CHECK_CONFIGURED","WP_IDLE", "WP_STATUS", ""}
+	{	{"xx"},
+		{"xx_xxxxxxxxx", "xx_xxxxx_xxxxxxxxxx","xx_xxxx", "xx_xxxxxx", ""}
 	},
 		
-	{	{"STATRECS_PERF"},
-		{"RESPONSE_TIME",""}
+	{	{"xxxxxxxx_xxxx"},
+		{"xxxxxxxx_xxxx",""}
 	},
 
-	{	{"RFC_DESTINATION"},
-		{"CHECK", ""}
+	{	{"xxx_xxxxxxxxxxx"},
+		{"xxxxx", ""}
 	},		
 
 	{
-		{"SECURITY"},
-		{"SAP_PARAMETERS", "DEFAULT_USERS", "PRIVILEGED_USERS", ""}
+		{"xxxxxxxx"},
+		{"xxx_xxxxxxxxxx", "xxxxxxx_xxxxx", "xxxxxxxxxx_xxxxx", ""}
 	},
 
-		// specifies the end of this structure
+		// xxxxxxxxx xxx xxx xx xxxx xxxxxxxxx
 	{
 		{""},
 		{""}
 	}
 };
 
-// The struct "scParseAlerttype" is used for the parsing of the config-file "alertmonitor" with "alerttype".
-// It is important for the function, that the last entry of szAlerttype ends with "". Please see
-// the following entries, if you want to add a new parameter. 
+// xxx xxxxxx "xxxxxxxxxxxxxxxx" xx xxxx xxx xxx xxxxxxx xx xxx xxxxxx-xxxx "xxxxxxxxxxxx" xxxx "xxxxxxxxx".
+// xx xx xxxxxxxxx xxx xxx xxxxxxxx, xxxx xxx xxxx xxxxx xx xxxxxxxxxxx xxxx xxxx "". xxxxxx xxx
+// xxx xxxxxxxxx xxxxxxx, xx xxx xxxx xx xxx x xxx xxxxxxxxx. 
 // 
 struct 
 {
-	char szaAlerttype [32];
-	char szaParameter [30][40];
-} scParseParameter [] =
+	char xxxxxxxxxxxx [32];
+	char xxxxxxxxxxxx [30][40];
+} xxxxxxxxxxxxxxxx [] =
 {	
 
-	{   {"JOB_MAX_RUN_TIME"},
-		{"JOBNAME","MAX_RUNTIME",""}
+	{   {"xxx_xxx_xxx_xxxx"},
+		{"xxxxxxx","xxx_xxxxxxx",""}
 	},
 
-	{   {"JOB_MIN_RUN_TIME"},
-		{"JOBNAME","MIN_RUNTIME",""}
+	{   {"xxx_xxx_xxx_xxxx"},
+		{"xxxxxxx","xxx_xxxxxxx",""}
 	},
 
-	{   {"JOB_ABORTED"},
-		{"JOBNAME",""}
+	{   {"xxx_xxxxxxx"},
+		{"xxxxxxx",""}
 	},
 
-	{   {"START_PASSED"},
-		{"JOBNAME","TIME_SPAN",""}
+	{   {"xxxxx_xxxxxx"},
+		{"xxxxxxx","xxxx_xxxx",""}
 	},
 
-	{   {"REQUEST_CREATED"},
-		{"TRFUNCTION","TARGET","USERNAME",""}
+	{   {"xxxxxxx_xxxxxxx"},
+		{"xxxxxxxxxx","xxxxxx","xxxxxxxx",""}
 	},
 
-	{   {"REQUEST_RELEASED"},
-		{"TRKORR","TRFUNCTION","TARGET","USERNAME","CUSTOMIZING","WORKBENCH",""}
+	{   {"xxxxxxx_xxxxxxxx"},
+		{"xxxxxx","xxxxxxxxxx","xxxxxx","xxxxxxxx","xxxxxxxxxxx","xxxxxxxxx",""}
 	},
 
-	{   {"TASK_CREATED"},
-		{"TRFUNCTION","USERNAME",""}
+	{   {"xxxx_xxxxxxx"},
+		{"xxxxxxxxxx","xxxxxxxx",""}
 	},
 
-	{   {"TASK_RELEASED"},
-		{"TRKORR","TRFUNCTION","USERNAME",""}
+	{   {"xxxx_xxxxxxxx"},
+		{"xxxxxx","xxxxxxxxxx","xxxxxxxx",""}
 	},
 
-	{   {"OBJECT_USED"},
-		{"PGMID","OBJECT","OBJ_NAME","OBJ_FUNC","IN_REQUEST","IN_TASK",""}
+	{   {"xxxxxx_xxxx"},
+		{"xxxxx","xxxxxx","xxx_xxxx","xxx_xxxx","xx_xxxxxxx","xx_xxxx",""}
 	},
 
-	{   {"OBJECT_RELEASED"},
-		{"TRKORR","PGMID","OBJECT","OBJ_NAME","IN_REQUEST","IN_TASK",""}
+	{   {"xxxxxx_xxxxxxxx"},
+		{"xxxxxx","xxxxx","xxxxxx","xxx_xxxx","xx_xxxxxxx","xx_xxxx",""}
 	},
 
-	{   {"OM_SWITCH_OVERDUE"},
-		{"OVERDUE_TIME","APSERVER",""}
+	{   {"xx_xxxxxx_xxxxxxx"},
+		{"xxxxxxx_xxxx","xxxxxxxx",""}
 	},
 
-	{   {"SPOOL_ERROR_RANGE"},
-		{"RANGE",""}
+	{   {"xxxxx_xxxxx_xxxxx"},
+		{"xxxxx",""}
 	},
 
-	{   {"PRINT_ERROR_EXISTS"},
-		{"PRINTER",""}
+	{   {"xxxxx_xxxxx_xxxxxx"},
+		{"xxxxxxx",""}
 	},
 
-	{   {"SPOOL_ENTRIES_RANGE"},
-		{"RANGE",""}
+	{   {"xxxxx_xxxxxxx_xxxxx"},
+		{"xxxxx",""}
 	},		
 
-	{   {"TRANS"},
-		{"E_SUCCESS","E_FAILURE","I_SUCCESS","I_FAILURE","USERNAME","ALERT_THRESHOLD",""}
+	{   {"xxxxx"},
+		{"x_xxxxxxx","x_xxxxxxx","x_xxxxxxx","x_xxxxxxx","xxxxxxxx","xxxxx_xxxxxxxxx",""}
 	},		
 
-	{   {"RFCCONNECT"},
-		{"CHECKSYSTEM","ALERT_THRESHOLD",""}
+	{   {"xxxxxxxxxx"},
+		{"xxxxxxxxxxx","xxxxx_xxxxxxxxx",""}
 	},		
 
-	{   {"REPAIR"},
-		{"R_CONFIRM","R_UNCONFIR","USERNAME","ALERT_THRESHOLD",""}
+	{   {"xxxxxx"},
+		{"x_xxxxxxx","x_xxxxxxxx","xxxxxxxx","xxxxx_xxxxxxxxx",""}
 	},		
 
-	{   {"TPTEST"},
-		{"CHECKSYSTEM","ALERT_THRESHOLD",""}
+	{   {"xxxxxx"},
+		{"xxxxxxxxxxx","xxxxx_xxxxxxxxx",""}
 	},		
 
-	{   {"CHANGE_OPT"},
-		{"EDTFLAG","NSP_EDTFLAG","SWC_EDTFLAG",""}
+	{   {"xxxxxx_xxx"},
+		{"xxxxxxx","xxx_xxxxxxx","xxx_xxxxxxx",""}
 	},		
 
-	{   {"WP_AVAILABLE"},
-		{"DIA","BTC","UPD","UP2","SPO","ENQ","OPMODE","APSERVER",""}
+	{   {"xx_xxxxxxxxx"},
+		{"xxx","xxx","xxx","xx2","xxx","xxx","xxxxxx","xxxxxxxx",""}
 	},		
 
-	{   {"WP_IDLE"},
-		{"DIA","BTC","UPD","UP2","SPO","ENQ","OPMODE","APSERVER",""}
+	{   {"xx_xxxx"},
+		{"xxx","xxx","xxx","xx2","xxx","xxx","xxxxxx","xxxxxxxx",""}
 	},		
 		
-	{   {"WP_STATUS"},
-		{"STATUS","APSERVER","MAX_ENTRIES", ""}
+	{   {"xx_xxxxxx"},
+		{"xxxxxx","xxxxxxxx","xxx_xxxxxxx", ""}
 	},	
 		
-	{   {"OLD_LOCKS"},
-		{"LOCK_TIME",""}
+	{   {"xxx_xxxxx"},
+		{"xxxx_xxxx",""}
 	},
 
-	{	{"CHECK"},
-		{"CONNECTION_TYPE","NAME","TIME_LIMIT",""}
+	{	{"xxxxx"},
+		{"xxxxxxxxxx_xxxx","xxxx","xxxx_xxxxx",""}
 	},		
 	
 	{
-		{"IDOC_CURRENT_STATUS"},
-		{"DOCNUM", "DOCTYP", "MESCOD","MESFCT", "MESTYP", "RCVPFC", "RCVPRN", "RCVPRT", "SNDPFC", "SNDPRN", "SNDPRT", "STATUS", ""}
+		{"xxxx_xxxxxxx_xxxxxx"},
+		{"xxxxxx", "xxxxxx", "xxxxxx","xxxxxx", "xxxxxx", "xxxxxx", "xxxxxx", "xxxxxx", "xxxxxx", "xxxxxx", "xxxxxx", "xxxxxx", ""}
 	},
 
 	{
-		{"IDOC_HISTORY_STATUS"},
+		{"xxxx_xxxxxxx_xxxxxx"},
 		{""}
 	},
 
 
 	{	
-		{"ABAP4_ERROR_EXIST"},
-		{"MAX_ENTRIES", "TIME_LIMIT", ""}
+		{"xxxx4_xxxxx_xxxxx"},
+		{"xxx_xxxxxxx", "xxxx_xxxxx", ""}
 	},
 
 	{	
-		{"CONSISTENCY_CHECK"},
+		{"xxxxxxxxxxx_xxxxx"},
 		{""}
 	},
 
 	{	
-		{"UPDATE_ERRORS_EXIST"},
+		{"xxxxxx_xxxxxx_xxxxx"},
 		{""}
 	},
 		
 	{	
-		{"UPDATE_ACTIVE"},
+		{"xxxxxx_xxxxxx"},
 		{""}
 	},
 
 	{	
-		{"WP_CHECK_CONFIGURED"},
-		{"APSERVER", ""}
+		{"xx_xxxxx_xxxxxxxxxx"},
+		{"xxxxxxxx", ""}
 	},
 
 	{	
-		{"RESPONSE_TIME"},
-		{"TRANSACTION", ""}
+		{"xxxxxxxx_xxxx"},
+		{"xxxxxxxxxxx", ""}
 	},
 
 	{	
-		{"USER_LOGGEDIN_MAX"},
-		{"APSERVER", "MAX", ""}
+		{"xxxx_xxxxxxxx_xxx"},
+		{"xxxxxxxx", "xxx", ""}
 	},
 
 
 	{	
-		{"SAP_PARAMETERS"},
+		{"xxx_xxxxxxxxxx"},
 		{""}
 	},
 
 	{	
-		{"DEFAULT_USERS"},
+		{"xxxxxxx_xxxxx"},
 		{""}
 	},
 
 	{	
-		{"PRIVILEGED_USERS"},
+		{"xxxxxxxxxx_xxxxx"},
 		{""}
 	},
 
-		// specifies the end of this structure
+		// xxxxxxxxx xxx xxx xx xxxx xxxxxxxxx
 	
 	{	
 		{""},
@@ -284,459 +284,459 @@ struct
 
 
 /*
-	The struct 'rfcParams' is used for parsing of the config-file "RFC Parameter" with "AlertType"
-	It is important for the function, that the last entry of 'rfcParams' ends with "". Please see
-    the following entries, if you want to add a new Alerttype. 
+	xxx xxxxxx 'xxxxxxxxx' xx xxxx xxx xxxxxxx xx xxx xxxxxx-xxxx "xxx xxxxxxxxx" xxxx "xxxxxxxxx"
+	xx xx xxxxxxxxx xxx xxx xxxxxxxx, xxxx xxx xxxx xxxxx xx 'xxxxxxxxx' xxxx xxxx "". xxxxxx xxx
+    xxx xxxxxxxxx xxxxxxx, xx xxx xxxx xx xxx x xxx xxxxxxxxx. 
 
-  Attention:
-  1.If the low/high parameter are Integer, you have to mark this with "INT" in the values arry.
-    If the Interger parameter is a range, you have to add 2 nummbers to the values parameter.
-	The first number is the lowest number, the second number is the highest number. Then the 
-	range from number one till number two is valid, rest not.
+  xxxxxxxxx:
+  1.xx xxx xxx/xxxx xxxxxxxxx xxx xxxxxxx, xxx xxxx xx xxxx xxxx xxxx "xxx" xx xxx xxxxxx xxxx.
+    xx xxx xxxxxxxx xxxxxxxxx xx x xxxxx, xxx xxxx xx xxx 2 xxxxxxxx xx xxx xxxxxx xxxxxxxxx.
+	xxx xxxxx xxxxxx xx xxx xxxxxx xxxxxx, xxx xxxxxx xxxxxx xx xxx xxxxxxx xxxxxx. xxxx xxx 
+	xxxxx xxxx xxxxxx xxx xxxx xxxxxx xxx xx xxxxx, xxxx xxx.
 	
-	For Example {"INT","2","9",""}
-	This means, the numbers from 2 till 9 are valid values, the others not.
+	xxx xxxxxxx {"xxx","2","9",""} xxxx xxxxx, xxx xxxxxxx xxxx 2 xxxx 9 xxx xxxxx xxxxxx, xxx xxxxxx xxx.
+	xxxxx
 
 
-  2.If an array is empty, also look like this one '{""}', then all inputs are valid
+  2.xx xx xxxxx xx xxxxx, xxxx xxxx xxxx xxxx xxx '{""}', xxxx xxx xxxxxx xxx xxxxx
     
 */
 	struct
 	{
-		char szaParameter[30];
-		char sign     [3] [2];
-		char opt      [11][3];
-		char values   [15][30];
+		char xxxxxxxxxxxx[30];
+		char xxxx     [3] [2];
+		char xxx      [11][3];
+		char xxxxxx   [15][30];
 
-	}rfcParams[]=
+	}xxxxxxxxx[]=
 	{
 
-//********************   R3MONALE    **********************
+//********************   x3xxxxxx    **********************
 		{
-			{"DOCNUM"},
-			{"I","E",""},
-			{"GE", "GT", "LE", "LT", "BT", ""},
+			{"xxxxxx"},
+			{"x","x",""},
+			{"xx", "xx", "xx", "xx", "xx", ""},
 			{""}
 		},
 
 		{
-			{"DOCTYP"},
-			{"I","E", ""},
-			{"CP", "EQ", ""},
+			{"xxxxxx"},
+			{"x","x", ""},
+			{"xx", "xx", ""},
 			{""}
 		},
 
 		{
-			{"MESCOD"},
-			{"I","E", ""},
-			{"CP", "EQ", ""},
+			{"xxxxxx"},
+			{"x","x", ""},
+			{"xx", "xx", ""},
 			{""}
 		},
 
 		{
-			{"MESFCT"},
-			{"I","E", ""},
-			{"CP", "EQ", ""},
+			{"xxxxxx"},
+			{"x","x", ""},
+			{"xx", "xx", ""},
 			{""}
 		},
 		
 		{
-			{"MESTYP"},
-			{"I","E", ""},
-			{"CP", "EQ", ""},
+			{"xxxxxx"},
+			{"x","x", ""},
+			{"xx", "xx", ""},
 			{""}
 		},
 		
 		{
-			{"RCVPFC"},
-			{"I","E", ""},
-			{"CP", "EQ", ""},
+			{"xxxxxx"},
+			{"x","x", ""},
+			{"xx", "xx", ""},
 			{""}
 		},
 
 		{
-			{"RCVPRN"},
-			{"I", "E",""},
-			{"CP", "EQ", ""},
+			{"xxxxxx"},
+			{"x", "x",""},
+			{"xx", "xx", ""},
 			{""}
 		},
 
 		{
-			{"RCVPRT"},
-			{"I","E", ""},
-			{"CP", "EQ", ""},
+			{"xxxxxx"},
+			{"x","x", ""},
+			{"xx", "xx", ""},
 			{""}
 		},
 
 		{
-			{"SNDPFC"},
-			{"I","E", ""},
-			{"CP", "EQ", ""},
+			{"xxxxxx"},
+			{"x","x", ""},
+			{"xx", "xx", ""},
 			{""}
 		},
 
 		{
-			{"SNDPRN"},
-			{"I","E", ""},
-			{"CP", "EQ", ""},
+			{"xxxxxx"},
+			{"x","x", ""},
+			{"xx", "xx", ""},
 			{""}
 		},
 
 		{
-			{"SNDPRT"},
-			{"I", "E",""},
-			{"CP", "EQ", ""},
+			{"xxxxxx"},
+			{"x", "x",""},
+			{"xx", "xx", ""},
 			{""}
 		},
 		
-			// Not possible to say the valid values, because in r3monale 0 to 74 is valid
-			// and in r3monwpa "D", "P" and "R" is valid.
+			// xxx xxxxxxxx xx xxx xxx xxxxx xxxxxx, xxxxxxx xx x3xxxxxx 0 xx 74 xx xxxxx
+			// xxx xx x3xxxxxx "x", "x" xxx "x" xx xxxxx.
 		{
-			{"STATUS"},
-			{"I", "E", ""},
-			{"EQ", "BT", "CP", "LE", "GE", "GT", "LT", ""},
+			{"xxxxxx"},
+			{"x", "x", ""},
+			{"xx", "xx", "xx", "xx", "xx", "xx", "xx", ""},
 			{""}
 		},
 	
-//********************   R3MONCHG    **********************
+//********************   x3xxxxxx    **********************
 		
 
 		{
-			{"EDTFLAG"},
-			{"I", "E",""},
-			{"EQ", "CP", ""},
-			{"N", "C", "R" , "ON", "OFF", "PATCH", ""}
+			{"xxxxxxx"},
+			{"x", "x",""},
+			{"xx", "xx", ""},
+			{"x", "x", "x" , "xx", "xxx", "xxxxx", ""}
 		},
 
 		{
-			{"NSP_EDTFLAG"},
-			{"I", "E",""},
-			{"EQ", "CP", ""},
+			{"xxx_xxxxxxx"},
+			{"x", "x",""},
+			{"xx", "xx", ""},
 			{""}
 		},
 
 		{
-			{"SWC_EDTFLAG"},
-			{"I", "E",""},
-			{"EQ", "CP", ""},
+			{"xxx_xxxxxxx"},
+			{"x", "x",""},
+			{"xx", "xx", ""},
 			{""}
 		},
 
-//********************   R3MONCTS    **********************
+//********************   x3xxxxxx    **********************
 
 
 		{
-			{"TRFUNCTION"},
-			{"I", "E", ""},
-			{"EQ", "CP", ""},
-			{"A", "K", "L", "W", "C", "T", "U", "D" ,"X", "S", "R", "Z", "*", ""}
+			{"xxxxxxxxxx"},
+			{"x", "x", ""},
+			{"xx", "xx", ""},
+			{"x", "x", "x", "x", "x", "x", "x", "x" ,"x", "x", "x", "x", "*", ""}
 		},
 
 		{
-			{"TARGET"},
-			{"I", "E", ""},
-			{"EQ", "CP", ""},
-			{""}
-		},
-
-		{
-			{"USERNAME"},
-			{"I", "E"""},
-			{"EQ", "CP", ""},
+			{"xxxxxx"},
+			{"x", "x", ""},
+			{"xx", "xx", ""},
 			{""}
 		},
 
 		{
-			{"TRKORR"},
-			{"I", "E", ""},
-			{"EQ", "CP", ""},
+			{"xxxxxxxx"},
+			{"x", "x"""},
+			{"xx", "xx", ""},
 			{""}
 		},
 
 		{
-			{"CUSTOMIZING"},
-			{"I", "E", ""},
-			{"EQ", ""},
+			{"xxxxxx"},
+			{"x", "x", ""},
+			{"xx", "xx", ""},
+			{""}
+		},
+
+		{
+			{"xxxxxxxxxxx"},
+			{"x", "x", ""},
+			{"xx", ""},
 			{""}
 		},		
 		
 		{
-			{"WORKBENCH"},
-			{"I", "E", ""},
-			{"EQ", "CP", ""},
+			{"xxxxxxxxx"},
+			{"x", "x", ""},
+			{"xx", "xx", ""},
 			{""}
 		},		
 
 		{
-			{"PGMID"},
-			{"I", "E", ""},
-			{"EQ", "CP", ""},
+			{"xxxxx"},
+			{"x", "x", ""},
+			{"xx", "xx", ""},
 			{""}
 		},
 		
 		{
-			{"OBJECT"},
-			{"I", "E", ""},
-			{"EQ", "CP", ""},
+			{"xxxxxx"},
+			{"x", "x", ""},
+			{"xx", "xx", ""},
 			{""}
 		},
 
 		{
-			{"OBJ_NAME"},
-			{"I", "E", ""},
-			{"EQ", "CP", ""},
+			{"xxx_xxxx"},
+			{"x", "x", ""},
+			{"xx", "xx", ""},
 			{""}
 		},
 			
 		{
-			{"OBJ_FUNC"},
-			{"I", "E", ""},
-			{"EQ", "CP", ""},
+			{"xxx_xxxx"},
+			{"x", "x", ""},
+			{"xx", "xx", ""},
 			{""}
 		},
 		
 		{
-			{"IN_REQUEST"},
-			{"I", "E", ""},
-			{"EQ", "CP", ""},
+			{"xx_xxxxxxx"},
+			{"x", "x", ""},
+			{"xx", "xx", ""},
 			{""}
 		},
 
 		{
-			{"IN_TASK"},
-			{"I", "E", ""},
-			{"EQ","CP",  ""},
+			{"xx_xxxx"},
+			{"x", "x", ""},
+			{"xx","xx",  ""},
 			{""}
 		},
 
 
 
-//********************   R3MONDMP    **********************
+//********************   x3xxxxxx    **********************
 
 		{
-			{"MAX_ENTRIES"},
-			{"I", "E",""},
-			{"GT", "GE", ""},
-			{"INT", ""}
+			{"xxx_xxxxxxx"},
+			{"x", "x",""},
+			{"xx", "xx", ""},
+			{"xxx", ""}
 		},
 
 		{
-			{"TIME_LIMIT"},
-			{"I", "E",""},
-			{"LT", "LE","GT", "GE", ""},
-			{"INT", ""}
+			{"xxxx_xxxxx"},
+			{"x", "x",""},
+			{"xx", "xx","xx", "xx", ""},
+			{"xxx", ""}
 		},
 
 
 
-//********************   R3MONJOB    **********************
+//********************   x3xxxxxx    **********************
 
 		{
-			{"JOBNAME"},
-			{"I", "E", ""},
-			{"EQ", "CP", "BT", ""},
+			{"xxxxxxx"},
+			{"x", "x", ""},
+			{"xx", "xx", "xx", ""},
 			{""}
 		},
 
 		{
-			{"MAX_RUNTIME"},
-			{"I", "E", ""},
-			{"EQ", "GE", "GT", "BT", ""},
-			{"INT", ""}
+			{"xxx_xxxxxxx"},
+			{"x", "x", ""},
+			{"xx", "xx", "xx", "xx", ""},
+			{"xxx", ""}
 		},
 
 		{
-			{"MIN_RUNTIME"},
-			{"I", "E", ""},
-			{"EQ", "LE", "LT", "BT", ""},
-			{"INT", ""}
+			{"xxx_xxxxxxx"},
+			{"x", "x", ""},
+			{"xx", "xx", "xx", "xx", ""},
+			{"xxx", ""}
 		},
 
 		{
-			{"TIME_SPAN"},
-			{"I", "E", ""},
-			{"EQ", "LE", "LT", "BT", "GT", "GE", ""},
-			{"INT", ""}
+			{"xxxx_xxxx"},
+			{"x", "x", ""},
+			{"xx", "xx", "xx", "xx", "xx", "xx", ""},
+			{"xxx", ""}
 		},
 
-//********************   R3MONLCK    **********************
+//********************   x3xxxxxx    **********************
 
 		{
-			{"LOCK_TIME"},
-			{"I", "E", ""},
-			{"EQ", "GT", "GE", "LE", "LT", "BT", ""},
-			{"INT", ""}
+			{"xxxx_xxxx"},
+			{"x", "x", ""},
+			{"xx", "xx", "xx", "xx", "xx", "xx", ""},
+			{"xxx", ""}
 		},
 
-//********************   R3MONOMS    **********************
+//********************   x3xxxxxx    **********************
 
 		{
-			{"APSERVER"},
-			{"I", "E", ""},
-			{"CP", ""},
+			{"xxxxxxxx"},
+			{"x", "x", ""},
+			{"xx", ""},
 			{""}
 		},
 
 		{
-			{"OVERDUE_TIME"},
-			{"I", "E", ""},
-			{"GT", "GE", "LE", "LT", "BT", ""},
-			{"INT", ""}
+			{"xxxxxxx_xxxx"},
+			{"x", "x", ""},
+			{"xx", "xx", "xx", "xx", "xx", ""},
+			{"xxx", ""}
 		},
 
-//********************   R3MONRFC    **********************
+//********************   x3xxxxxx    **********************
 
 		{
-			{"CONNECTION_TYPE"},
-			{"I", "E", ""},
-			{"EQ", ""},
+			{"xxxxxxxxxx_xxxx"},
+			{"x", "x", ""},
+			{"xx", ""},
 			{""}
 		},
 
 		{
-			{"NAME"},
-			{"I", "E", ""},
-			{"EQ", "CP", ""},
+			{"xxxx"},
+			{"x", "x", ""},
+			{"xx", "xx", ""},
 			{""}
 		},
 
-//********************   R3MONSPL    **********************
+//********************   x3xxxxxx    **********************
 
 		{
-			{"RANGE"},
-			{"I", "E", ""},
-			{"EQ", "GT", "GE", "LE", "LT", "BT", ""},
-			{"INT", ""}
+			{"xxxxx"},
+			{"x", "x", ""},
+			{"xx", "xx", "xx", "xx", "xx", "xx", ""},
+			{"xxx", ""}
 		},
 
 
 		{
-			{"PRINTER"},
-			{"I", "E", ""},
-			{"CP", "EQ", ""},
+			{"xxxxxxx"},
+			{"x", "x", ""},
+			{"xx", "xx", ""},
 			{""}
 		},
 
-//********************   R3MONTRA    **********************
+//********************   x3xxxxxx    **********************
 
 		{
-			{"ALERT_THRESHOLD"},
-			{"I", "E", ""},
-			{"LE", "LT", "GE", "GT",  ""},
-			{"INT", ""}
+			{"xxxxx_xxxxxxxxx"},
+			{"x", "x", ""},
+			{"xx", "xx", "xx", "xx",  ""},
+			{"xxx", ""}
 		},
 
 		{
-			{"E_SUCCESS"},
-			{"I", "E", ""},
-			{"EQ", ""},
-			{""}
-		},
-
-		{
-			{"E_FAILURE"},
-			{"I", "E", ""},
-			{"EQ", ""},
+			{"x_xxxxxxx"},
+			{"x", "x", ""},
+			{"xx", ""},
 			{""}
 		},
 
 		{
-			{"I_SUCCESS"},
-			{"I", "E", ""},
-			{ "EQ", ""},
+			{"x_xxxxxxx"},
+			{"x", "x", ""},
+			{"xx", ""},
 			{""}
 		},
 
 		{
-			{"I_FAILURE"},
-			{"I", "E", ""},
-			{"EQ", ""},
+			{"x_xxxxxxx"},
+			{"x", "x", ""},
+			{ "xx", ""},
 			{""}
 		},
 
 		{
-			{"R_CONFIRM"},
-			{"I", "E", ""},
-			{"EQ", ""},
+			{"x_xxxxxxx"},
+			{"x", "x", ""},
+			{"xx", ""},
 			{""}
 		},
 
 		{
-			{"R_UNCONFIR"},
-			{"I", "E", ""},
-			{"EQ", "BT", "CP", "LE", "GE", "GT", "LT", ""},
+			{"x_xxxxxxx"},
+			{"x", "x", ""},
+			{"xx", ""},
+			{""}
+		},
+
+		{
+			{"x_xxxxxxxx"},
+			{"x", "x", ""},
+			{"xx", "xx", "xx", "xx", "xx", "xx", "xx", ""},
 			{""}
 		},
 
 
 		{
-			{"CHECKSYSTEM"},
-			{"I", "E", ""},
-			{"EQ", "CP",  ""},
+			{"xxxxxxxxxxx"},
+			{"x", "x", ""},
+			{"xx", "xx",  ""},
 			{""}
 		},
 
-//********************   R3MONUPD    **********************
+//********************   x3xxxxxx    **********************
 
 
-//********************   R3MONUSR    **********************
+//********************   x3xxxxxx    **********************
 
 		{
-			{"MAX"},
-			{"I", "E", ""},
-			{"GT", "GE", ""},
-			{"INT", ""}
+			{"xxx"},
+			{"x", "x", ""},
+			{"xx", "xx", ""},
+			{"xxx", ""}
 		},
 
-//********************   R3MONWPA    **********************
+//********************   x3xxxxxx    **********************
 
 		{
-			{"BTC"},
-			{"I", "E", ""},
-			{"GT", "GE", "LE", "LT", ""},
-			{"INT", ""}
-		},
-
-		{
-			{"DIA"},
-			{"I", "E", ""},
-			{"GT", "GE", "LE", "LT", ""},
-			{"INT", ""}
+			{"xxx"},
+			{"x", "x", ""},
+			{"xx", "xx", "xx", "xx", ""},
+			{"xxx", ""}
 		},
 
 		{
-			{"ENQ"},
-			{"I", "E", ""},
-			{"GT", "GE", "LE", "LT", ""},
-			{"INT", ""}
+			{"xxx"},
+			{"x", "x", ""},
+			{"xx", "xx", "xx", "xx", ""},
+			{"xxx", ""}
 		},
 
 		{
-			{"OPMODE"},
-			{"I", "E", ""},
-			{"CP", "EQ", ""},
+			{"xxx"},
+			{"x", "x", ""},
+			{"xx", "xx", "xx", "xx", ""},
+			{"xxx", ""}
+		},
+
+		{
+			{"xxxxxx"},
+			{"x", "x", ""},
+			{"xx", "xx", ""},
 			{""}
 		},
 
 		{
-			{"SPO"},
-			{"I", "E", ""},
-			{"GT", "GE", "LE", "LT", ""},
-			{"INT", ""}
+			{"xxx"},
+			{"x", "x", ""},
+			{"xx", "xx", "xx", "xx", ""},
+			{"xxx", ""}
 		},
 
 		{
-			{"UPD"},
-			{"I", "E", ""},
-			{"GT", "GE", "LE", "LT", ""},
-			{"INT", ""}
+			{"xxx"},
+			{"x", "x", ""},
+			{"xx", "xx", "xx", "xx", ""},
+			{"xxx", ""}
 		},
 
 		{
-			{"UP2"},
-			{"I", "E", ""},
-			{"GT", "GE", "LE", "LT", ""},
-			{"INT", ""}
+			{"xx2"},
+			{"x", "x", ""},
+			{"xx", "xx", "xx", "xx", ""},
+			{"xxx", ""}
 		},
 
 		{
@@ -752,1660 +752,1660 @@ struct
 
 
 
-// Keywords for parsing the R/3 parameter Sign
-const char* csSign[] =
+// xxxxxxxx xxx xxxxxxx xxx x/3 xxxxxxxxx xxxx
+const char* xxxxxx[] =
 {
-	"I",
-		"E"
+	"x",
+		"x"
 };
 
-// Keywords for parsing the R/3 parameter Option
-const char* csOption [] =
+// xxxxxxxx xxx xxxxxxx xxx x/3 xxxxxxxxx xxxxxx
+const char* xxxxxxxx [] =
 {
-	"EQ",
-		"BT",
-		"CP",
-		"LE",
-		"GE",
-		"NE",
-		"NB",
-		"NP",
-		"GT",
-		"LT"
+	"xx",
+		"xx",
+		"xx",
+		"xx",
+		"xx",
+		"xx",
+		"xx",
+		"xx",
+		"xx",
+		"xx"
 }; 
 
-//static CString sLog_invalid_arguments = "Number of arguments in line %d for keyword \'%s\' is wrong.";
+//xxxxxx xxxxxxx xxxx_xxxxxxx_xxxxxxxxx = "xxxxxx xx xxxxxxxxx xx xxxx %x xxx xxxxxxx \'%x\' xx xxxxx.";
 
-OvCDispConfig::OvCDispConfig(int argc, char** argv, bool bUseCfgFile) : 
-	CReadConfig (argc, argv, bUseCfgFile)
+xxxxxxxxxxxxx::xxxxxxxxxxxxx(int xxxx, char** xxxx, bool xxxxxxxxxxx) : 
+	xxxxxxxxxxx (xxxx, xxxx, xxxxxxxxxxx)
 	{
-		OvCTrace::LogMethodEntry ("OvCDispConfig::OvCDispConfig(int argc, char** argv) ");
-		m_sRfcLoginTimeOut = "60";
-		OvCTrace::LogMethodExit("OvCDispConfig::OvCDispConfig(int argc, char** argv) : ",0);
+		xxxxxxxx::xxxxxxxxxxxxxx ("xxxxxxxxxxxxx::xxxxxxxxxxxxx(xxx xxxx, xxxx** xxxx) ");
+		x_xxxxxxxxxxxxxxxx = "60";
+		xxxxxxxx::xxxxxxxxxxxxx("xxxxxxxxxxxxx::xxxxxxxxxxxxx(xxx xxxx, xxxx** xxxx) : ",0);
 	}
 	
-	OvCDispConfig::~OvCDispConfig()
+	xxxxxxxxxxxxx::~xxxxxxxxxxxxx()
 	{
-		m_InstanceProfileConfig.RemoveAll();
+		x_xxxxxxxxxxxxxxxxxxxxx.xxxxxxxxx();
 	}
 	
 	//-------------------------------------------------------------------------------------
-	// void OvCDispConfig::vParseMonCfgData(CObArray *paCfgDataArray)
+	// xxxx xxxxxxxxxxxxx::xxxxxxxxxxxxxxxx(xxxxxxxx *xxxxxxxxxxxxxx)
 	//                                                                    
-	// The function parses the member variable m_paMonCfgDataArray. This array contains the monitor 
-	// configuration from the file e.g. r3itodisp.cfg. Each line of this file is one CObject entry of
-	// m_paMonCfgArray.  
-	// If the function finished successfully paCfgDataArray contains the monitor configuration
-	// in the parameter paCfgDataArray. This array                                                                    
-	// Input:                                                             
-	//    CObArray *paCfgDataArray:   paCfgDataArray contains CObjects from type 
-	//																OvMonDataContainer
+	// xxx xxxxxxxx xxxxxx xxx xxxxxx xxxxxxxx x_xxxxxxxxxxxxxxxxx. xxxx xxxxx xxxxxxxx xxx xxxxxxx 
+	// xxxxxxxxxxxxx xxxx xxx xxxx x.x. x3xxxxxxx.xxx. xxxx xxxx xx xxxx xxxx xx xxx xxxxxxx xxxxx xx
+	// x_xxxxxxxxxxxxx.  
+	// xx xxx xxxxxxxx xxxxxxxx xxxxxxxxxxxx xxxxxxxxxxxxxx xxxxxxxx xxx xxxxxxx xxxxxxxxxxxxx
+	// xx xxx xxxxxxxxx xxxxxxxxxxxxxx. xxxx xxxxx                                                                    
+	// xxxxx:                                                             
+	//    xxxxxxxx *xxxxxxxxxxxxxx:   xxxxxxxxxxxxxx xxxxxxxx xxxxxxxx xxxx xxxx 
+	//																xxxxxxxxxxxxxxxxxx
 	//
-	// Return value:                                                      
-	//       none                                                            
+	// xxxxxx xxxxx:                                                      
+	//       xxxx                                                            
 	//--------------------------------------------------------------------------------------
-	void OvCDispConfig::vParseMonCfgData(CObArray *paCfgDataArray, ConfigParserResults* result)
+	void xxxxxxxxxxxxx::xxxxxxxxxxxxxxxx(xxxxxxxx *xxxxxxxxxxxxxx, xxxxxxxxxxxxxxxxxxx* xxxxxx)
 	{
-		OvCTrace::LogMethodEntry ("void OvCDispConfig::vParseMonCfgData(CObArray *paCfgDataArray)");
-		char* szToken;
-		char* cpBuffer;
-		CTools myTool;
-		int iCount = 0;
-		int iSizeArray = 0;
-		char szTempstring [1024]="";
-		char szErrorstring[1024]="";
+		xxxxxxxx::xxxxxxxxxxxxxx ("xxxx xxxxxxxxxxxxx::xxxxxxxxxxxxxxxx(xxxxxxxx *xxxxxxxxxxxxxx)");
+		char* xxxxxxx;
+		char* xxxxxxxx;
+		xxxxxx xxxxxx;
+		int xxxxxx = 0;
+		int xxxxxxxxxx = 0;
+		char xxxxxxxxxxxx [1024]="";
+		char xxxxxxxxxxxxx[1024]="";
 		
 		
-		COvSapDataContainer* myFileline ;
-		iSizeArray = paCfgDataArray->GetSize ();
-		OvCTrace::LogMethodEntry ("void OvCDispConfig::vParseMonCfgData(CObArray *paCfgDataArray)");
+		xxxxxxxxxxxxxxxxxxx* xxxxxxxxxx ;
+		xxxxxxxxxx = xxxxxxxxxxxxxx->xxxxxxx ();
+		xxxxxxxx::xxxxxxxxxxxxxx ("xxxx xxxxxxxxxxxxx::xxxxxxxxxxxxxxxx(xxxxxxxx *xxxxxxxxxxxxxx)");
 		
-		OvMonDataContainer* myMonDataContainer;  
+		xxxxxxxxxxxxxxxxxx* xxxxxxxxxxxxxxxxxx;  
 		
 		
-		CString myFileString ="";
-		CString SBuffer ="";
+		xxxxxxx xxxxxxxxxxxx ="";
+		xxxxxxx xxxxxxx ="";
 		
-		iSizeArray = m_paMonCfgDataArray.GetSize ();
-		sprintf (szTempstring, "Number of objects in m_paMonCfgArray:  %d",iSizeArray	);	
-		OvCTrace::LogInfo (szTempstring);
+		xxxxxxxxxx = x_xxxxxxxxxxxxxxxxx.xxxxxxx ();
+		xxxxxxx (xxxxxxxxxxxx, "xxxxxx xx xxxxxxx xx x_xxxxxxxxxxxxx:  %d",xxxxxxxxxx	);	
+		xxxxxxxx::xxxxxxx (xxxxxxxxxxxx);
 
-    // set default value for RfcTimeout
-		m_sRfcTimeOut = "120";
-		// fix for QXCR1000294598
-		m_sRfcLoginTimeOut = "60";
+    // xxx xxxxxxx xxxxx xxx xxxxxxxxxx
+		x_xxxxxxxxxxx = "120";
+		// xxx xxx xxxx1000294598
+		x_xxxxxxxxxxxxxxxx = "60";
 
-		for (iCount = 0; iCount < iSizeArray; iCount++)
+		for (xxxxxx = 0; xxxxxx < xxxxxxxxxx; xxxxxx++)
 		{
-			// myMonDataContainer is used as entry for the input parameter paCfgDataArray
-			// This container contains as member variables the monitor data like SAP SID, Client ...
-			myMonDataContainer = new OvMonDataContainer;
+			// xxxxxxxxxxxxxxxxxx xx xxxx xx xxxxx xxx xxx xxxxx xxxxxxxxx xxxxxxxxxxxxxx
+			// xxxx xxxxxxxxx xxxxxxxx xx xxxxxx xxxxxxxxx xxx xxxxxxx xxxx xxxx xxx xxx, xxxxxx ...
+			xxxxxxxxxxxxxxxxxx = new xxxxxxxxxxxxxxxxxx;
 			
 			// ---------------------------------------
-			// this flag is for memory leak avoidance:
-			int objectInUse = 0;
+			// xxxx xxxx xx xxx xxxxxx xxxx xxxxxxxxx:
+			int xxxxxxxxxxx = 0;
 			// ---------------------------------------
 
-			// myFileline is used to access the elements of the member variable m_paMonCfgDataArray
-			myFileline = (COvSapDataContainer*) m_paMonCfgDataArray.GetAt (iCount);
+			// xxxxxxxxxx xx xxxx xx xxxxxx xxx xxxxxxxx xx xxx xxxxxx xxxxxxxx x_xxxxxxxxxxxxxxxxx
+			xxxxxxxxxx = (xxxxxxxxxxxxxxxxxxx*) x_xxxxxxxxxxxxxxxxx.xxxxx (xxxxxx);
 			
-			myFileString = myFileline->vGetConfigdata ();
-			strcpy (szTempstring,myFileString.GetCharData());
+			xxxxxxxxxxxx = xxxxxxxxxx->xxxxxxxxxxxxxx ();
+			xxxxxx (xxxxxxxxxxxx,xxxxxxxxxxxx.xxxxxxxxxxx());
 
-			//init member variables of myMonDataContainer
-			myMonDataContainer->m_Alertmon   = "";
-			myMonDataContainer->m_Alerttype  = "";
-			myMonDataContainer->m_Appl       = "";
-			myMonDataContainer->m_Counter    = 1;
-			myMonDataContainer->m_Enable     = 0;
-			myMonDataContainer->m_Group      = "";
-			myMonDataContainer->m_Low        = "";
-			myMonDataContainer->m_Hostname   = "";
-			myMonDataContainer->m_High       = "";
-			myMonDataContainer->m_Object     = "";
-			myMonDataContainer->m_Opt        = "";
-			myMonDataContainer->m_Param      = "";
-			myMonDataContainer->m_SAPClient  = "";
-			myMonDataContainer->m_SAPNumber  = "";
-			myMonDataContainer->m_Severity   = "";
-			myMonDataContainer->m_SID        = "";
-			myMonDataContainer->m_Sign       = "";
-			myMonDataContainer->m_SubCounter = 1;			
-			myMonDataContainer->m_LineNumber = iCount+1;
-			myMonDataContainer->m_WPtype	 = "";
-			myMonDataContainer->m_workProcess		 = "";
-			myMonDataContainer->m_limit_percent		 = 0;
-			myMonDataContainer->m_DPQueue	 = 0;
+			//xxxx xxxxxx xxxxxxxxx xx xxxxxxxxxxxxxxxxxx
+			xxxxxxxxxxxxxxxxxx->x_xxxxxxxx   = "";
+			xxxxxxxxxxxxxxxxxx->x_xxxxxxxxx  = "";
+			xxxxxxxxxxxxxxxxxx->x_xxxx       = "";
+			xxxxxxxxxxxxxxxxxx->x_xxxxxxx    = 1;
+			xxxxxxxxxxxxxxxxxx->x_xxxxxx     = 0;
+			xxxxxxxxxxxxxxxxxx->x_xxxxx      = "";
+			xxxxxxxxxxxxxxxxxx->x_xxx        = "";
+			xxxxxxxxxxxxxxxxxx->x_xxxxxxxx   = "";
+			xxxxxxxxxxxxxxxxxx->x_xxxx       = "";
+			xxxxxxxxxxxxxxxxxx->x_xxxxxx     = "";
+			xxxxxxxxxxxxxxxxxx->x_xxx        = "";
+			xxxxxxxxxxxxxxxxxx->x_xxxxx      = "";
+			xxxxxxxxxxxxxxxxxx->x_xxxxxxxxx  = "";
+			xxxxxxxxxxxxxxxxxx->x_xxxxxxxxx  = "";
+			xxxxxxxxxxxxxxxxxx->x_xxxxxxxx   = "";
+			xxxxxxxxxxxxxxxxxx->x_xxx        = "";
+			xxxxxxxxxxxxxxxxxx->x_xxxx       = "";
+			xxxxxxxxxxxxxxxxxx->x_xxxxxxxxxx = 1;			
+			xxxxxxxxxxxxxxxxxx->x_xxxxxxxxxx = xxxxxx+1;
+			xxxxxxxxxxxxxxxxxx->x_xxxxxx	 = "";
+			xxxxxxxxxxxxxxxxxx->x_xxxxxxxxxxx		 = "";
+			xxxxxxxxxxxxxxxxxx->x_xxxxx_xxxxxxx		 = 0;
+			xxxxxxxxxxxxxxxxxx->x_xxxxxxx	 = 0;
 
-			// Get first token of the fileline
-			szToken = (myTool.cpConfParseStringToken (szTempstring, "=", result, iCount+1));
+			// xxx xxxxx xxxxx xx xxx xxxxxxxx
+			xxxxxxx = (xxxxxx.xxxxxxxxxxxxxxxxxxxxxx (xxxxxxxxxxxx, "=", xxxxxx, xxxxxx+1));
 
-			//Search for the keyword "AlertMonFun" and get the parameters of this line
-			if (szToken != NULL)
+			//xxxxxx xxx xxx xxxxxxx "xxxxxxxxxxx" xxx xxx xxx xxxxxxxxxx xx xxxx xxxx
+			if (xxxxxxx != xxxx)
 			{
-				if (stricmp ( szToken, "AlertMonFun") == 0) 
+				if (xxxxxxx ( xxxxxxx, "xxxxxxxxxxx") == 0) 
 				{
-					cpBuffer = myTool.cpConfParseStringToken (NULL, "=", result, iCount+1);
-					if (cpBuffer != NULL)
+					xxxxxxxx = xxxxxx.xxxxxxxxxxxxxxxxxxxxxx (xxxx, "=", xxxxxx, xxxxxx+1);
+					if (xxxxxxxx != xxxx)
 					{
-						//hostname 
-						myMonDataContainer->m_Hostname = cpBuffer ;
+						//xxxxxxxx 
+						xxxxxxxxxxxxxxxxxx->x_xxxxxxxx = xxxxxxxx ;
 					}
 					else 
 					{
-						sprintf (szErrorstring,"Line %d is wrong in r3itosap.cfg.!!",iCount+1);
-						OvCTrace::LogError (szErrorstring,"");
-						/*	>c<
-							Component: OvSAPCfgValidation
-							Description: Additional arguments may have been skipped because the user forgot to prepend the equals sign. 
-							>c<
+						xxxxxxx (xxxxxxxxxxxxx,"xxxx %d xx xxxxx xx x3xxxxxx.xxx.!!",xxxxxx+1);
+						xxxxxxxx::xxxxxxxx (xxxxxxxxxxxxx,"");
+						/*	>x<
+							xxxxxxxxx: xxxxxxxxxxxxxxxxxx
+							xxxxxxxxxxx: xxxxxxxxxx xxxxxxxxx xxx xxxx xxxx xxxxxxx xxxxxxx xxx xxxx xxxxxx xx xxxxxxx xxx xxxxxx xxxx. 
+							>x<
 						 */
-						sprintf (szErrorstring, "><Arguments/Parameters are expected but missing in command 'AlertMonFun'; check for arguments after the equals sign \"=\"\n");
-						result->submitError(iCount + 1,szErrorstring);
+						xxxxxxx (xxxxxxxxxxxxx, "><xxxxxxxxx/xxxxxxxxxx xxx xxxxxxxx xxx xxxxxxx xx xxxxxxx 'xxxxxxxxxxx'; xxxxx xxx xxxxxxxxx xxxxx xxx xxxxxx xxxx \"=\"\n");
+						xxxxxx->xxxxxxxxxxx(xxxxxx + 1,xxxxxxxxxxxxx);
 						break;
 					}
 					
-					cpBuffer = myTool.cpConfParseStringToken (NULL, "=", result, iCount+1);
-					if (cpBuffer != NULL)
+					xxxxxxxx = xxxxxx.xxxxxxxxxxxxxxxxxxxxxx (xxxx, "=", xxxxxx, xxxxxx+1);
+					if (xxxxxxxx != xxxx)
 						{
-						// SAP System
-						myMonDataContainer->m_SID = cpBuffer;
+						// xxx xxxxxx
+						xxxxxxxxxxxxxxxxxx->x_xxx = xxxxxxxx;
 					}
 					
-					cpBuffer = myTool.cpConfParseStringToken (NULL, "=", result, iCount+1);
-					if (cpBuffer != NULL)
+					xxxxxxxx = xxxxxx.xxxxxxxxxxxxxxxxxxxxxx (xxxx, "=", xxxxxx, xxxxxx+1);
+					if (xxxxxxxx != xxxx)
 					{
-						// SAP Number
-						myMonDataContainer->m_SAPNumber = cpBuffer;
+						// xxx xxxxxx
+						xxxxxxxxxxxxxxxxxx->x_xxxxxxxxx = xxxxxxxx;
 					}
 					
-					cpBuffer = myTool.cpConfParseStringToken (NULL, "=", result, iCount+1);
-					if (cpBuffer != NULL)
+					xxxxxxxx = xxxxxx.xxxxxxxxxxxxxxxxxxxxxx (xxxx, "=", xxxxxx, xxxxxx+1);
+					if (xxxxxxxx != xxxx)
 					{
-						// SAP Client
-						myMonDataContainer->m_SAPClient = cpBuffer;
+						// xxx xxxxxx
+						xxxxxxxxxxxxxxxxxx->x_xxxxxxxxx = xxxxxxxx;
 					}
 					
-					cpBuffer = myTool.cpConfParseStringToken (NULL, "=", result, iCount+1);
-					if (cpBuffer != NULL)
+					xxxxxxxx = xxxxxx.xxxxxxxxxxxxxxxxxxxxxx (xxxx, "=", xxxxxx, xxxxxx+1);
+					if (xxxxxxxx != xxxx)
 					{
-						// Alertmonitor
-						myTool.vStringToUpper (cpBuffer);
-						myMonDataContainer->m_Alertmon = cpBuffer;
+						// xxxxxxxxxxxx
+						xxxxxx.xxxxxxxxxxxxxx (xxxxxxxx);
+						xxxxxxxxxxxxxxxxxx->x_xxxxxxxx = xxxxxxxx;
 					}
 					
-					cpBuffer = myTool.cpConfParseStringToken (NULL, "=", result, iCount+1);
-					if (cpBuffer != NULL)
+					xxxxxxxx = xxxxxx.xxxxxxxxxxxxxxxxxxxxxx (xxxx, "=", xxxxxx, xxxxxx+1);
+					if (xxxxxxxx != xxxx)
 					{
-						bool isnumber = true;
-						for (int i =0; cpBuffer[i] != '\0' && isnumber; ++i)
+						bool xxxxxxxx = true;
+						for (int x =0; xxxxxxxx[x] != '\0' && xxxxxxxx; ++x)
 						{				
-							if(!isdigit(cpBuffer[i]))
+							if(!xxxxxxx(xxxxxxxx[x]))
 							{
-								/*	>c<
-									Component: OvSAPCfgValidation
-									Description: The value is missing; assuming it is set to 0. 
-									>c<
+								/*	>x<
+									xxxxxxxxx: xxxxxxxxxxxxxxxxxx
+									xxxxxxxxxxx: xxx xxxxx xx xxxxxxx; xxxxxxxx xx xx xxx xx 0. 
+									>x<
 								 */
-								sprintf(szErrorstring, "><No value found for the parameter Enable/Disable in command 'AlertMonFun'; setting to 0\n");
-								result->submitWarning(iCount +1, szErrorstring);
-								isnumber = false;
+								xxxxxxx(xxxxxxxxxxxxx, "><xx xxxxx xxxxx xxx xxx xxxxxxxxx xxxxxx/xxxxxxx xx xxxxxxx 'xxxxxxxxxxx'; xxxxxxx xx 0\n");
+								xxxxxx->xxxxxxxxxxxxx(xxxxxx +1, xxxxxxxxxxxxx);
+								xxxxxxxx = false;
 							}
 						}
 						
 
-						// Enable / Disable
-						myMonDataContainer->m_Enable = atoi (cpBuffer);
+						// xxxxxx / xxxxxxx
+						xxxxxxxxxxxxxxxxxx->x_xxxxxx = xxxx (xxxxxxxx);
 
-						if(myMonDataContainer->m_Enable != 0 && myMonDataContainer->m_Enable != 1)
+						if(xxxxxxxxxxxxxxxxxx->x_xxxxxx != 0 && xxxxxxxxxxxxxxxxxx->x_xxxxxx != 1)
 						{
-							sprintf (szErrorstring,"The Parameter Enable/Disable has no valid number in line %d!!",iCount+1);
-							OvCTrace::LogError (szErrorstring,"");
-							sprintf(szErrorstring, "><Value for the parameter Enable/Disable in command 'AlertMonFun' must be '0' or '1'\n");
-							result->submitError(iCount + 1, szErrorstring);
+							xxxxxxx (xxxxxxxxxxxxx,"xxx xxxxxxxxx xxxxxx/xxxxxxx xxx xx xxxxx xxxxxx xx xxxx %d!!",xxxxxx+1);
+							xxxxxxxx::xxxxxxxx (xxxxxxxxxxxxx,"");
+							xxxxxxx(xxxxxxxxxxxxx, "><xxxxx xxx xxx xxxxxxxxx xxxxxx/xxxxxxx xx xxxxxxx 'xxxxxxxxxxx' xxxx xx '0' xx '1'\n");
+							xxxxxx->xxxxxxxxxxx(xxxxxx + 1, xxxxxxxxxxxxx);
 						}
 
 					}
 					else 
-					{   //TODO: phkr:does this still make sense? I think not...
-						sprintf(szErrorstring, "><Enable/Disable for the command 'AlertMonFun' is not set; setting to 0\n");
-						result->submitWarning(iCount + 1, szErrorstring);
+					{   //xxxx: xxxx:xxxx xxxx xxxxx xxxx xxxxx? x xxxxx xxx...
+						xxxxxxx(xxxxxxxxxxxxx, "><xxxxxx/xxxxxxx xxx xxx xxxxxxx 'xxxxxxxxxxx' xx xxx xxx; xxxxxxx xx 0\n");
+						xxxxxx->xxxxxxxxxxxxx(xxxxxx + 1, xxxxxxxxxxxxx);
 
-						myMonDataContainer->m_Enable = 0;
+						xxxxxxxxxxxxxxxxxx->x_xxxxxx = 0;
 					}
 					
-					cpBuffer = myTool.cpConfParseStringToken (NULL, "=", result, iCount+1);
-					if (cpBuffer != NULL)
+					xxxxxxxx = xxxxxx.xxxxxxxxxxxxxxxxxxxxxx (xxxx, "=", xxxxxx, xxxxxx+1);
+					if (xxxxxxxx != xxxx)
 					{
-						// Severity
-						myTool.vStringToUpper (cpBuffer);
-						myMonDataContainer->m_Severity = cpBuffer;
+						// xxxxxxxx
+						xxxxxx.xxxxxxxxxxxxxx (xxxxxxxx);
+						xxxxxxxxxxxxxxxxxx->x_xxxxxxxx = xxxxxxxx;
 					}
 					
-					cpBuffer = myTool.cpConfParseStringToken (NULL, "=", result, iCount+1); 
-					if (cpBuffer != NULL)
+					xxxxxxxx = xxxxxx.xxxxxxxxxxxxxxxxxxxxxx (xxxx, "=", xxxxxx, xxxxxx+1); 
+					if (xxxxxxxx != xxxx)
 					{
-						// Msg Object
-						myMonDataContainer->m_Object = cpBuffer;
+						// xxx xxxxxx
+						xxxxxxxxxxxxxxxxxx->x_xxxxxx = xxxxxxxx;
 					}
 					
-					cpBuffer = myTool.cpConfParseStringToken (NULL, "=", result, iCount+1);
-					if (cpBuffer != NULL)
+					xxxxxxxx = xxxxxx.xxxxxxxxxxxxxxxxxxxxxx (xxxx, "=", xxxxxx, xxxxxx+1);
+					if (xxxxxxxx != xxxx)
 					{
-						// Msg Group
-						myMonDataContainer->m_Group = cpBuffer;
+						// xxx xxxxx
+						xxxxxxxxxxxxxxxxxx->x_xxxxx = xxxxxxxx;
 					}
 
-					cpBuffer = myTool.cpConfParseStringToken (NULL, "=", result, iCount+1);
-					if (cpBuffer != NULL)
+					xxxxxxxx = xxxxxx.xxxxxxxxxxxxxxxxxxxxxx (xxxx, "=", xxxxxx, xxxxxx+1);
+					if (xxxxxxxx != xxxx)
 					{
-						// Msg Alerttype
-						myTool.vStringToUpper (cpBuffer);
-						myMonDataContainer->m_Alerttype = cpBuffer;
+						// xxx xxxxxxxxx
+						xxxxxx.xxxxxxxxxxxxxx (xxxxxxxx);
+						xxxxxxxxxxxxxxxxxx->x_xxxxxxxxx = xxxxxxxx;
 					}
 					
-					cpBuffer = myTool.cpConfParseStringToken (NULL, "=", result, iCount+1);
-					if (cpBuffer != NULL)
+					xxxxxxxx = xxxxxx.xxxxxxxxxxxxxxxxxxxxxx (xxxx, "=", xxxxxx, xxxxxx+1);
+					if (xxxxxxxx != xxxx)
 					{
-						// Parameter
-						myTool.vStringToUpper (cpBuffer);
-						myMonDataContainer->m_Param = cpBuffer;
+						// xxxxxxxxx
+						xxxxxx.xxxxxxxxxxxxxx (xxxxxxxx);
+						xxxxxxxxxxxxxxxxxx->x_xxxxx = xxxxxxxx;
 					}
 					
-					cpBuffer = myTool.cpConfParseStringToken (NULL, "=", result, iCount+1);
-					if (cpBuffer != NULL)
+					xxxxxxxx = xxxxxx.xxxxxxxxxxxxxxxxxxxxxx (xxxx, "=", xxxxxx, xxxxxx+1);
+					if (xxxxxxxx != xxxx)
 					{
-						// Sign
-						myTool.vStringToUpper (cpBuffer);
-						myMonDataContainer->m_Sign = cpBuffer;
+						// xxxx
+						xxxxxx.xxxxxxxxxxxxxx (xxxxxxxx);
+						xxxxxxxxxxxxxxxxxx->x_xxxx = xxxxxxxx;
 					}
 					
-					cpBuffer = myTool.cpConfParseStringToken (NULL, "=", result, iCount+1);
-					if (cpBuffer != NULL)
+					xxxxxxxx = xxxxxx.xxxxxxxxxxxxxxxxxxxxxx (xxxx, "=", xxxxxx, xxxxxx+1);
+					if (xxxxxxxx != xxxx)
 					{
-						// Option
-						myTool.vStringToUpper (cpBuffer);
-						myMonDataContainer->m_Opt = cpBuffer;
+						// xxxxxx
+						xxxxxx.xxxxxxxxxxxxxx (xxxxxxxx);
+						xxxxxxxxxxxxxxxxxx->x_xxx = xxxxxxxx;
 					}
 					
-					cpBuffer = myTool.cpConfParseStringToken (NULL, "=", result, iCount+1);
-					if (cpBuffer != NULL)
+					xxxxxxxx = xxxxxx.xxxxxxxxxxxxxxxxxxxxxx (xxxx, "=", xxxxxx, xxxxxx+1);
+					if (xxxxxxxx != xxxx)
 					{
-						// Low
-					// no to upper translation for Alertmonitor WP
-					if ( ((myMonDataContainer->m_Alertmon == "WP"             ) == 0 ) &&
-						 ((myMonDataContainer->m_Alertmon == "RFC_DESTINATION") == 0 ) )
+						// xxx
+					// xx xx xxxxx xxxxxxxxxxx xxx xxxxxxxxxxxx xx
+					if ( ((xxxxxxxxxxxxxxxxxx->x_xxxxxxxx == "xx"             ) == 0 ) &&
+						 ((xxxxxxxxxxxxxxxxxx->x_xxxxxxxx == "xxx_xxxxxxxxxxx") == 0 ) )
 					{
-					  myTool.vStringToUpper (cpBuffer);
+					  xxxxxx.xxxxxxxxxxxxxx (xxxxxxxx);
 					}
-						myMonDataContainer->m_Low = cpBuffer;
-					}
-					
-					cpBuffer = myTool.cpConfParseStringToken (NULL, "=", result, iCount+1);
-					if (cpBuffer != NULL)
-					{
-						// High
-						myTool.vStringToUpper (cpBuffer);
-						myMonDataContainer->m_High = cpBuffer;
+						xxxxxxxxxxxxxxxxxx->x_xxx = xxxxxxxx;
 					}
 					
-					// added: read param list 
-					int j = 0;
-					CString* sNextParameter;
-					while (cpBuffer = myTool.cpConfParseStringToken (NULL, "=", result, iCount+1)) 
+					xxxxxxxx = xxxxxx.xxxxxxxxxxxxxxxxxxxxxx (xxxx, "=", xxxxxx, xxxxxx+1);
+					if (xxxxxxxx != xxxx)
 					{
-						j++;
-						sNextParameter = new CString;
-						//myTool.vStringToUpper (cpBuffer);
-						*sNextParameter = cpBuffer; 
-						myMonDataContainer->m_AdditParameter.Add (sNextParameter);
+						// xxxx
+						xxxxxx.xxxxxxxxxxxxxx (xxxxxxxx);
+						xxxxxxxxxxxxxxxxxx->x_xxxx = xxxxxxxx;
+					}
+					
+					// xxxxx: xxxx xxxxx xxxx 
+					int x = 0;
+					xxxxxxx* xxxxxxxxxxxxxx;
+					while (xxxxxxxx = xxxxxx.xxxxxxxxxxxxxxxxxxxxxx (xxxx, "=", xxxxxx, xxxxxx+1)) 
+					{
+						x++;
+						xxxxxxxxxxxxxx = new xxxxxxx;
+						//xxxxxx.xxxxxxxxxxxxxx (xxxxxxxx);
+						*xxxxxxxxxxxxxx = xxxxxxxx; 
+						xxxxxxxxxxxxxxxxxx->x_xxxxxxxxxxxxxx.xxx (xxxxxxxxxxxxxx);
 					}
 						
-					// add high parameter into container, if not specified in the config
-					// file. 
-					if ((j % NUM_OF_PARAMETER) == NUM_OF_PARAMETER-1)
+					// xxx xxxx xxxxxxxxx xxxx xxxxxxxxx, xx xxx xxxxxxxxx xx xxx xxxxxx
+					// xxxx. 
+					if ((x % xxx_xx_xxxxxxxxx) == xxx_xx_xxxxxxxxx-1)
 					{
-						sNextParameter = new CString;
-						*sNextParameter = "";
-						myMonDataContainer->m_AdditParameter.Add (sNextParameter);
+						xxxxxxxxxxxxxx = new xxxxxxx;
+						*xxxxxxxxxxxxxx = "";
+						xxxxxxxxxxxxxxxxxx->x_xxxxxxxxxxxxxx.xxx (xxxxxxxxxxxxxx);
 					}
 
 
 
-					//Default values for the values Application/Counter/Subcounter
-					myMonDataContainer->m_Appl = OPC_APPLICATION_R3;
-					myMonDataContainer->m_SubCounter = 1;
-					myMonDataContainer->m_Counter = 1;
-					myMonDataContainer->m_LineNumber = iCount+1;
+					//xxxxxxx xxxxxx xxx xxx xxxxxx xxxxxxxxxxx/xxxxxxx/xxxxxxxxxx
+					xxxxxxxxxxxxxxxxxx->x_xxxx = xxx_xxxxxxxxxxx_x3;
+					xxxxxxxxxxxxxxxxxx->x_xxxxxxxxxx = 1;
+					xxxxxxxxxxxxxxxxxx->x_xxxxxxx = 1;
+					xxxxxxxxxxxxxxxxxx->x_xxxxxxxxxx = xxxxxx+1;
 					
 
 
-					paCfgDataArray->Add (myMonDataContainer);
+					xxxxxxxxxxxxxx->xxx (xxxxxxxxxxxxxxxxxx);
 					// ----------------------------------------------------
-					// memory leak avoidance:
-					// the data container is in use! do not delete it later
-						objectInUse = 1;
+					// xxxxxx xxxx xxxxxxxxx:
+					// xxx xxxx xxxxxxxxx xx xx xxx! xx xxx xxxxxx xx xxxxx
+						xxxxxxxxxxx = 1;
 					// ----------------------------------------------------
 
 
 					
 			}	
 			
-			// Check for keyword "Tracelevel"
-			if (stricmp ( szToken, "TraceLevel") == 0) 
+			// xxxxx xxx xxxxxxx "xxxxxxxxxx"
+			if (xxxxxxx ( xxxxxxx, "xxxxxxxxxx") == 0) 
 			{
-				char* szToken1;
-				char* szToken2;
-				char* szToken3;
+				char* xxxxxxx1;
+				char* xxxxxxx2;
+				char* xxxxxxx3;
 
-				// get next two tokens of the fileline (Hostname/Tracelevel)
-				szToken1 = myTool.cpConfParseStringToken (NULL, "=", result, iCount+1);	// Hostname
-				szToken2 = myTool.cpConfParseStringToken (NULL, "=", result, iCount+1);	// Tracelevel
-				szToken3 = myTool.cpConfParseStringToken (NULL, "=", result, iCount+1);	// must be Null
+				// xxx xxxx xxx xxxxxx xx xxx xxxxxxxx (xxxxxxxx/xxxxxxxxxx)
+				xxxxxxx1 = xxxxxx.xxxxxxxxxxxxxxxxxxxxxx (xxxx, "=", xxxxxx, xxxxxx+1);	// xxxxxxxx
+				xxxxxxx2 = xxxxxx.xxxxxxxxxxxxxxxxxxxxxx (xxxx, "=", xxxxxx, xxxxxx+1);	// xxxxxxxxxx
+				xxxxxxx3 = xxxxxx.xxxxxxxxxxxxxxxxxxxxxx (xxxx, "=", xxxxxx, xxxxxx+1);	// xxxx xx xxxx
 				
 				/*----------------------------*/
-				/* Hostname / Tracelevel  */
+				/* xxxxxxxx / xxxxxxxxxx  */
 				/*----------------------------*/
-				if (szToken1 && szToken2 && !szToken3) 
+				if (xxxxxxx1 && xxxxxxx2 && !xxxxxxx3) 
 				{
-					if (strstr (szToken1, "ALL")) 
+					if (xxxxxx (xxxxxxx1, "xxx")) 
 					{
-						// set Tracelevel of the Tracefile
-						OvCTrace::SetTraceLevel( atoi (szToken2));
+						// xxx xxxxxxxxxx xx xxx xxxxxxxxx
+						xxxxxxxx::xxxxxxxxxxxxx( xxxx (xxxxxxx2));
 					}
-						else if (myTool.iIPCompare (m_SHost, myTool.vDelWhiteSpace(szToken1,NULL))) 
+						else if (xxxxxx.xxxxxxxxxx (x_xxxxx, xxxxxx.xxxxxxxxxxxxxx(xxxxxxx1,xxxx))) 
 						{
-							OvCTrace::SetTraceLevel( atoi (szToken2));
+							xxxxxxxx::xxxxxxxxxxxxx( xxxx (xxxxxxx2));
 						}
-					int reported = 0;
-					for(int i = 0; szToken2[i] != '\0'; ++i)
+					int xxxxxxxx = 0;
+					for(int x = 0; xxxxxxx2[x] != '\0'; ++x)
 					{
-						if (!isdigit(szToken2[i]))
+						if (!xxxxxxx(xxxxxxx2[x]))
 						{
-							sprintf (szErrorstring,"The second argument of configuration item with keyword \'TraceLevel\' in line %d is no valid number.",iCount+1);
-							OvCTrace::LogError (szErrorstring,"");
-							sprintf(szErrorstring, "><The second argument of 'TraceLevel' must be a positive number between 0 and 3\n");
-							result->submitError(iCount + 1, szErrorstring);
-							reported = 1;
+							xxxxxxx (xxxxxxxxxxxxx,"xxx xxxxxx xxxxxxxx xx xxxxxxxxxxxxx xxxx xxxx xxxxxxx \'xxxxxxxxxx\' xx xxxx %d xx xx xxxxx xxxxxx.",xxxxxx+1);
+							xxxxxxxx::xxxxxxxx (xxxxxxxxxxxxx,"");
+							xxxxxxx(xxxxxxxxxxxxx, "><xxx xxxxxx xxxxxxxx xx 'xxxxxxxxxx' xxxx xx x xxxxxxxx xxxxxx xxxxxxx 0 xxx 3\n");
+							xxxxxx->xxxxxxxxxxx(xxxxxx + 1, xxxxxxxxxxxxx);
+							xxxxxxxx = 1;
 							break;
 						}
 					}
 
-					if( atoi(szToken2) < 0 || atoi(szToken2) > 3 )
+					if( xxxx(xxxxxxx2) < 0 || xxxx(xxxxxxx2) > 3 )
 					{
-						if( reported == 0 ) {
-							//vSubmittConfigError (result, szToken, iCount+1);
-							sprintf (szErrorstring,"The second argument of \'TraceLevel\' at line %d has no valid number!!",iCount+1);
-							OvCTrace::LogError (szErrorstring,"");
-							sprintf(szErrorstring, "><The second argument in command 'TraceLevel' must be a positive number between 0 and 3\n");
-							result->submitError(iCount + 1, szErrorstring);
+						if( xxxxxxxx == 0 ) {
+							//xxxxxxxxxxxxxxxxxxx (xxxxxx, xxxxxxx, xxxxxx+1);
+							xxxxxxx (xxxxxxxxxxxxx,"xxx xxxxxx xxxxxxxx xx \'xxxxxxxxxx\' xx xxxx %d xxx xx xxxxx xxxxxx!!",xxxxxx+1);
+							xxxxxxxx::xxxxxxxx (xxxxxxxxxxxxx,"");
+							xxxxxxx(xxxxxxxxxxxxx, "><xxx xxxxxx xxxxxxxx xx xxxxxxx 'xxxxxxxxxx' xxxx xx x xxxxxxxx xxxxxx xxxxxxx 0 xxx 3\n");
+							xxxxxx->xxxxxxxxxxx(xxxxxx + 1, xxxxxxxxxxxxx);
 						}
 					}
 
 				}
 				else
 				{		
-					vSubmitConfigError (result,szToken,iCount+1);
-					//sprintf (szErrorstring,"Number of arguments in line %d for keyword \'%s\' is wrong.", iCount+1,szToken);
-					//OvCTrace::LogError (szErrorstring,"");
-					//sprintf(szErrorstring, "><Number of arguments for keyword '%s' is wrong \n", szToken);
-					//result->submitError(iCount + 1, szErrorstring);
+					xxxxxxxxxxxxxxxxxx (xxxxxx,xxxxxxx,xxxxxx+1);
+					//xxxxxxx (xxxxxxxxxxxxx,"xxxxxx xx xxxxxxxxx xx xxxx %x xxx xxxxxxx \'%x\' xx xxxxx.", xxxxxx+1,xxxxxxx);
+					//xxxxxxxx::xxxxxxxx (xxxxxxxxxxxxx,"");
+					//xxxxxxx(xxxxxxxxxxxxx, "><xxxxxx xx xxxxxxxxx xxx xxxxxxx '%x' xx xxxxx \x", xxxxxxx);
+					//xxxxxx->xxxxxxxxxxx(xxxxxx + 1, xxxxxxxxxxxxx);
 				}
 
 			}
-			// Check for the keyword Tracefile
-			if (stricmp (szToken, "TraceFile") == 0) 
+			// xxxxx xxx xxx xxxxxxx xxxxxxxxx
+			if (xxxxxxx (xxxxxxx, "xxxxxxxxx") == 0) 
 			{
-				char* szToken1;
-				char* szToken2;
-				char* szToken3;
-		        char* cpTracepathenv;
+				char* xxxxxxx1;
+				char* xxxxxxx2;
+				char* xxxxxxx3;
+		        char* xxxxxxxxxxxxxx;
 				
-				// get the next two tokens of the fileline (Hostname/Filename)
-				szToken1 = myTool.cpConfParseStringToken (NULL, "=", result, iCount+1);   // Hostname
-				szToken2 = myTool.cpConfParseStringToken (NULL, "=", result, iCount+1);		// Filename
-				szToken3 = myTool.cpConfParseStringToken (NULL, "=", result, iCount+1);	// must be Null
+				// xxx xxx xxxx xxx xxxxxx xx xxx xxxxxxxx (xxxxxxxx/xxxxxxxx)
+				xxxxxxx1 = xxxxxx.xxxxxxxxxxxxxxxxxxxxxx (xxxx, "=", xxxxxx, xxxxxx+1);   // xxxxxxxx
+				xxxxxxx2 = xxxxxx.xxxxxxxxxxxxxxxxxxxxxx (xxxx, "=", xxxxxx, xxxxxx+1);		// xxxxxxxx
+				xxxxxxx3 = xxxxxx.xxxxxxxxxxxxxxxxxxxxxx (xxxx, "=", xxxxxx, xxxxxx+1);	// xxxx xx xxxx
 				//----------------------------
-				// Hostname / filename       
+				// xxxxxxxx / xxxxxxxx       
 				//----------------------------
 
-				if (szToken1 && szToken2 && !szToken3) 
+				if (xxxxxxx1 && xxxxxxx2 && !xxxxxxx3) 
 				{
-					CString sFilename;
-					CString sTraceMode;
-					char szPath[255]="";
+					xxxxxxx xxxxxxxxx;
+					xxxxxxx xxxxxxxxxx;
+					char xxxxxx[255]="";
 					
-					cpTracepathenv = getenv ("SAPOPC_TRACEPATH");
-					if (cpTracepathenv != NULL)
+					xxxxxxxxxxxxxx = xxxxxx ("xxxxxx_xxxxxxxxx");
+					if (xxxxxxxxxxxxxx != xxxx)
 					{
-						sFilename = cpTracepathenv;
+						xxxxxxxxx = xxxxxxxxxxxxxx;
 					}
 					else 
-						sFilename = m_cTools.sGetLogDir();
+						xxxxxxxxx = x_xxxxxx.xxxxxxxxxx();
 					
-					/*				strcpy (szPath, m_cpArgv[0]);
-					for (int i=(strlen (szPath)-1); i>=0 && szPath[i]!='\\'; i--)
-					szPath[i]='\0'; */
+					/*				xxxxxx (xxxxxx, x_xxxxxx[0]);
+					xxx (xxx x=(xxxxxx (xxxxxx)-1); x>=0 && xxxxxx[x]!='\\'; x--)
+					xxxxxx[x]='\0'; */
 						
-					//sFilename = szPath;
+					//xxxxxxxxx = xxxxxx;
           
-					// sFilename = m_cTools.getmondir();
-					sFilename += FILESEP;
-					sFilename += szToken2;
-					OvCTrace::LogInfo ("Tracefile:  ",sFilename,1);
-					tOvCTraceTraceFileMode eTraceMode;
+					// xxxxxxxxx = x_xxxxxx.xxxxxxxxx();
+					xxxxxxxxx += xxxxxxx;
+					xxxxxxxxx += xxxxxxx2;
+					xxxxxxxx::xxxxxxx ("xxxxxxxxx:  ",xxxxxxxxx,1);
+					xxxxxxxxxxxxxxxxxxxxxx xxxxxxxxxx;
 						
-					char  mode[2]="";
-					char* r3tracemode;
-					r3tracemode = getenv ("SAPOPC_TRACEMODE");
-					if (r3tracemode!= NULL) 
+					char  xxxx[2]="";
+					char* x3xxxxxxxxx;
+					x3xxxxxxxxx = xxxxxx ("xxxxxx_xxxxxxxxx");
+					if (x3xxxxxxxxx!= xxxx) 
 					{ 
-						if ((r3tracemode[0] =='a') || (r3tracemode[0] =='A'))
-							eTraceMode = TRACEFILE_APPEND;
+						if ((x3xxxxxxxxx[0] =='x') || (x3xxxxxxxxx[0] =='x'))
+							xxxxxxxxxx = xxxxxxxxx_xxxxxx;
 						else
-							eTraceMode = TRACEFILE_RECREATE;
+							xxxxxxxxxx = xxxxxxxxx_xxxxxxxx;
 					}
 					else
-						eTraceMode = TRACEFILE_RECREATE;
+						xxxxxxxxxx = xxxxxxxxx_xxxxxxxx;
 						
-					// Hostname == ALL
-					if (strstr (szToken1, "ALL"))
+					// xxxxxxxx == xxx
+					if (xxxxxx (xxxxxxx1, "xxx"))
 					{
-						OvCTrace::SetFileName (sFilename, eTraceMode);
-					// Hostname == "Nodename"
+						xxxxxxxx::xxxxxxxxxxx (xxxxxxxxx, xxxxxxxxxx);
+					// xxxxxxxx == "xxxxxxxx"
 					}
 					else
 					{
-						if (myTool.iIPCompare (m_SHost, myTool.vDelWhiteSpace (szToken1,NULL))) 
+						if (xxxxxx.xxxxxxxxxx (x_xxxxx, xxxxxx.xxxxxxxxxxxxxx (xxxxxxx1,xxxx))) 
 						{
-							OvCTrace::SetFileName (sFilename, eTraceMode);
+							xxxxxxxx::xxxxxxxxxxx (xxxxxxxxx, xxxxxxxxxx);
 						}
 					}
 				}
 				else
 				{
-					vSubmitConfigError (result, szToken, iCount+1);
-					//sprintf (szErrorstring,"Number of arguments in line %d for keyword \'%s\' is wrong!!",iCount+1, szToken);
-					//OvCTrace::LogError (szErrorstring,"");
-					//sprintf (szErrorstring, "><Number of arguments for keyword '%s' is wrong\n", szToken);
-					//result->submitError(iCount + 1, szErrorstring);
+					xxxxxxxxxxxxxxxxxx (xxxxxx, xxxxxxx, xxxxxx+1);
+					//xxxxxxx (xxxxxxxxxxxxx,"xxxxxx xx xxxxxxxxx xx xxxx %x xxx xxxxxxx \'%x\' xx xxxxx!!",xxxxxx+1, xxxxxxx);
+					//xxxxxxxx::xxxxxxxx (xxxxxxxxxxxxx,"");
+					//xxxxxxx (xxxxxxxxxxxxx, "><xxxxxx xx xxxxxxxxx xxx xxxxxxx '%x' xx xxxxx\x", xxxxxxx);
+					//xxxxxx->xxxxxxxxxxx(xxxxxx + 1, xxxxxxxxxxxxx);
 				}
 
 			}
 
 			/*-------------------------------------------------*/
-			/* KEYWORD: AgentHostname                          */
+			/* xxxxxxx: xxxxxxxxxxxxx                          */
 			/*-------------------------------------------------*/
 			
-			if (stricmp (szToken, "AgentHostname") == 0)
+			if (xxxxxxx (xxxxxxx, "xxxxxxxxxxxxx") == 0)
 			{
-				char* szToken1;
-				char* szToken2;
-				char* szToken3;
+				char* xxxxxxx1;
+				char* xxxxxxx2;
+				char* xxxxxxx3;
 				
-				// get next two tokens of the fileline (Hostname/Aliasname)
-				szToken1 = myTool.cpConfParseStringToken (NULL, "=", result, iCount+1);   // Hostname
-				szToken2 = myTool.cpConfParseStringToken (NULL, "=", result, iCount+1);	 // Aliasname
-				szToken3 = myTool.cpConfParseStringToken (NULL, "=", result, iCount+1);	 // must be NULL
+				// xxx xxxx xxx xxxxxx xx xxx xxxxxxxx (xxxxxxxx/xxxxxxxxx)
+				xxxxxxx1 = xxxxxx.xxxxxxxxxxxxxxxxxxxxxx (xxxx, "=", xxxxxx, xxxxxx+1);   // xxxxxxxx
+				xxxxxxx2 = xxxxxx.xxxxxxxxxxxxxxxxxxxxxx (xxxx, "=", xxxxxx, xxxxxx+1);	 // xxxxxxxxx
+				xxxxxxx3 = xxxxxx.xxxxxxxxxxxxxxxxxxxxxx (xxxx, "=", xxxxxx, xxxxxx+1);	 // xxxx xx xxxx
 
-				if (szToken1 && szToken2 && !szToken3) 
+				if (xxxxxxx1 && xxxxxxx2 && !xxxxxxx3) 
 				{
-					if (!strstr (szToken1, "ALL")) 
+					if (!xxxxxx (xxxxxxx1, "xxx")) 
 					{  
-						if (myTool.iIPCompare (m_SHost, myTool.vDelWhiteSpace (szToken1,NULL))) 
-							m_SHost = szToken2;
+						if (xxxxxx.xxxxxxxxxx (x_xxxxx, xxxxxx.xxxxxxxxxxxxxx (xxxxxxx1,xxxx))) 
+							x_xxxxx = xxxxxxx2;
 					}
 				}
 				else
 				{
-					vSubmitConfigError (result, szToken, iCount+1);
-					//sprintf (szErrorstring,"Number of arguments in line %d for keyword \'%s\' is wrong.!!",iCount+1, szToken);
-					//OvCTrace::LogError (szErrorstring,"");
-					//sprintf(szErrorstring, "><Too many or too few arguments in command '%s'\n", szToken);
-					//result->submitError(iCount + 1, szErrorstring);
+					xxxxxxxxxxxxxxxxxx (xxxxxx, xxxxxxx, xxxxxx+1);
+					//xxxxxxx (xxxxxxxxxxxxx,"xxxxxx xx xxxxxxxxx xx xxxx %x xxx xxxxxxx \'%x\' xx xxxxx.!!",xxxxxx+1, xxxxxxx);
+					//xxxxxxxx::xxxxxxxx (xxxxxxxxxxxxx,"");
+					//xxxxxxx(xxxxxxxxxxxxx, "><xxx xxxx xx xxx xxx xxxxxxxxx xx xxxxxxx '%x'\x", xxxxxxx);
+					//xxxxxx->xxxxxxxxxxx(xxxxxx + 1, xxxxxxxxxxxxx);
 				}
 
 			}
 
-      //Keyword RemoteMonitoring
-		if (szToken != NULL)
+      //xxxxxxx xxxxxxxxxxxxxxxx
+		if (xxxxxxx != xxxx)
 		{
-			if (stricmp (szToken, KEY_WORD_REMOTE_MONITORING) == 0)
+			if (xxxxxxx (xxxxxxx, xxx_xxxx_xxxxxx_xxxxxxxxxx) == 0)
 		    {
-				char* szToken1;
-				char* szToken2;
-				char* szToken3;
-				CString sRemoteMachine;
-				//spRemoteMachine = new CString;
+				char* xxxxxxx1;
+				char* xxxxxxx2;
+				char* xxxxxxx3;
+				xxxxxxx xxxxxxxxxxxxxx;
+				//xxxxxxxxxxxxxxx = xxx xxxxxxx;
 
-				// get next two tokens of the fileline (Hostname/Remote Machine)
-				szToken1 = myTool.cpConfParseStringToken (NULL, "=", result, iCount+1);   // Hostname
-				szToken2 = myTool.cpConfParseStringToken (NULL, "=", result, iCount+1);	 // RemoteMachine
-				szToken3 = myTool.cpConfParseStringToken (NULL, "=", result, iCount+1);	 // must be NULL
-				if (szToken1 && szToken2 && !szToken3) 
+				// xxx xxxx xxx xxxxxx xx xxx xxxxxxxx (xxxxxxxx/xxxxxx xxxxxxx)
+				xxxxxxx1 = xxxxxx.xxxxxxxxxxxxxxxxxxxxxx (xxxx, "=", xxxxxx, xxxxxx+1);   // xxxxxxxx
+				xxxxxxx2 = xxxxxx.xxxxxxxxxxxxxxxxxxxxxx (xxxx, "=", xxxxxx, xxxxxx+1);	 // xxxxxxxxxxxxx
+				xxxxxxx3 = xxxxxx.xxxxxxxxxxxxxxxxxxxxxx (xxxx, "=", xxxxxx, xxxxxx+1);	 // xxxx xx xxxx
+				if (xxxxxxx1 && xxxxxxx2 && !xxxxxxx3) 
 				{
-					if (myTool.iIPCompare (m_SHost, myTool.vDelWhiteSpace (szToken1,NULL))) 
+					if (xxxxxx.xxxxxxxxxx (x_xxxxx, xxxxxx.xxxxxxxxxxxxxx (xxxxxxx1,xxxx))) 
 					{
-						sRemoteMachine = szToken2;
-						m_paRemoteHosts.Add (sRemoteMachine);
+						xxxxxxxxxxxxxx = xxxxxxx2;
+						x_xxxxxxxxxxxxx.xxx (xxxxxxxxxxxxxx);
 					}
 				}
 				else
 				{
-					vSubmitConfigError (result, szToken, iCount+1);
-					//sprintf (szErrorstring,"Number of arguments in line %d for keyword \'%s\' is wrong.!!",iCount+1, szToken);
-					//OvCTrace::LogError (szErrorstring,"");
-					//sprintf(szErrorstring, "><Number of arguments for keyword '%s' is wrong.\n", szToken);
-					//result->submitError(iCount + 1, szErrorstring);
+					xxxxxxxxxxxxxxxxxx (xxxxxx, xxxxxxx, xxxxxx+1);
+					//xxxxxxx (xxxxxxxxxxxxx,"xxxxxx xx xxxxxxxxx xx xxxx %x xxx xxxxxxx \'%x\' xx xxxxx.!!",xxxxxx+1, xxxxxxx);
+					//xxxxxxxx::xxxxxxxx (xxxxxxxxxxxxx,"");
+					//xxxxxxx(xxxxxxxxxxxxx, "><xxxxxx xx xxxxxxxxx xxx xxxxxxx '%x' xx xxxxx.\x", xxxxxxx);
+					//xxxxxx->xxxxxxxxxxx(xxxxxx + 1, xxxxxxxxxxxxx);
 				}
 
 			}
 
 		}
-		//Keyword InstanceProfilePath
-		if (szToken != NULL)
+		//xxxxxxx xxxxxxxxxxxxxxxxxxx
+		if (xxxxxxx != xxxx)
 		{
-			if (stricmp (szToken, "InstanceProfilePath") == 0)
+			if (xxxxxxx (xxxxxxx, "xxxxxxxxxxxxxxxxxxx") == 0)
 		    {
-				char* szToken1;
-				char* szToken2;
-				char* szToken3;
-				char* szToken4;
+				char* xxxxxxx1;
+				char* xxxxxxx2;
+				char* xxxxxxx3;
+				char* xxxxxxx4;
 				
-				// get next two tokens of the fileline (Hostname/Remote Machine)
-				szToken1 = myTool.cpStringToken (NULL, "=");   // Hostname
-				szToken2 = myTool.cpStringToken (NULL, "=");	 // SID
-				szToken3 = myTool.cpStringToken (NULL, "=");	 // Instance Nr
-				szToken4 = myTool.cpStringToken (NULL, "=");	 // path
+				// xxx xxxx xxx xxxxxx xx xxx xxxxxxxx (xxxxxxxx/xxxxxx xxxxxxx)
+				xxxxxxx1 = xxxxxx.xxxxxxxxxxxxx (xxxx, "=");   // xxxxxxxx
+				xxxxxxx2 = xxxxxx.xxxxxxxxxxxxx (xxxx, "=");	 // xxx
+				xxxxxxx3 = xxxxxx.xxxxxxxxxxxxx (xxxx, "=");	 // xxxxxxxx xx
+				xxxxxxx4 = xxxxxx.xxxxxxxxxxxxx (xxxx, "=");	 // xxxx
 				
-				if (szToken1 && szToken2 && szToken3 && szToken4) 
+				if (xxxxxxx1 && xxxxxxx2 && xxxxxxx3 && xxxxxxx4) 
 				{
-					OvMonDataContainer* myConfigLine = new OvMonDataContainer();
-					myConfigLine->m_Hostname = szToken1;
-					myConfigLine->m_SID = szToken2;
-					myConfigLine->m_SAPNumber = szToken3;
-					myConfigLine->m_Low = szToken4;				//use low parameter to store path
-					m_InstanceProfileConfig.Add( myConfigLine );
+					xxxxxxxxxxxxxxxxxx* xxxxxxxxxxxx = new xxxxxxxxxxxxxxxxxx();
+					xxxxxxxxxxxx->x_xxxxxxxx = xxxxxxx1;
+					xxxxxxxxxxxx->x_xxx = xxxxxxx2;
+					xxxxxxxxxxxx->x_xxxxxxxxx = xxxxxxx3;
+					xxxxxxxxxxxx->x_xxx = xxxxxxx4;				//xxx xxx xxxxxxxxx xx xxxxx xxxx
+					x_xxxxxxxxxxxxxxxxxxxxx.xxx( xxxxxxxxxxxx );
 				}
 			}
 
 		}
 			
-			if (stricmp (szToken, "HistoryPathWinNT") == 0) 
+			if (xxxxxxx (xxxxxxx, "xxxxxxxxxxxxxxxx") == 0) 
 			{
-				char* szToken1;
-				char* szToken2;
-				char* szToken3;
+				char* xxxxxxx1;
+				char* xxxxxxx2;
+				char* xxxxxxx3;
 				
-				szToken1 = myTool.cpConfParseStringToken (NULL, "=", result, iCount+1);
-		        szToken2 = myTool.cpConfParseStringToken (NULL, "=", result, iCount+1);
-				szToken3 = myTool.cpConfParseStringToken (NULL, "=", result, iCount+1);
+				xxxxxxx1 = xxxxxx.xxxxxxxxxxxxxxxxxxxxxx (xxxx, "=", xxxxxx, xxxxxx+1);
+		        xxxxxxx2 = xxxxxx.xxxxxxxxxxxxxxxxxxxxxx (xxxx, "=", xxxxxx, xxxxxx+1);
+				xxxxxxx3 = xxxxxx.xxxxxxxxxxxxxxxxxxxxxx (xxxx, "=", xxxxxx, xxxxxx+1);
         //----------------------------
-				// Hostname / filename       
+				// xxxxxxxx / xxxxxxxx       
         //----------------------------
-        if (szToken1 && szToken2 && !szToken3) 
+        if (xxxxxxx1 && xxxxxxx2 && !xxxxxxx3) 
 				{
-					if (strstr (szToken1, "ALL")) 
+					if (xxxxxx (xxxxxxx1, "xxx")) 
 					{
-						m_sHistoryPathWinNT = myTool.sGetHistoryPathNt (szToken1, szToken2);
-						OvCTrace::LogInfo ("HistoryPathWinNT:  ",m_sHistoryPathWinNT);
+						x_xxxxxxxxxxxxxxxxx = xxxxxx.xxxxxxxxxxxxxxxxx (xxxxxxx1, xxxxxxx2);
+						xxxxxxxx::xxxxxxx ("xxxxxxxxxxxxxxxx:  ",x_xxxxxxxxxxxxxxxxx);
 					}
 
-					else if (myTool.iIPCompare  (m_SHost, myTool.vDelWhiteSpace (szToken1,NULL))) 
+					else if (xxxxxx.xxxxxxxxxx  (x_xxxxx, xxxxxx.xxxxxxxxxxxxxx (xxxxxxx1,xxxx))) 
 					{
-						m_sHistoryPathWinNT = myTool.sGetHistoryPathNt (szToken1, szToken2);
-						OvCTrace::LogInfo ("HistoryPathWinNT:  ",m_sHistoryPathWinNT);
+						x_xxxxxxxxxxxxxxxxx = xxxxxx.xxxxxxxxxxxxxxxxx (xxxxxxx1, xxxxxxx2);
+						xxxxxxxx::xxxxxxx ("xxxxxxxxxxxxxxxx:  ",x_xxxxxxxxxxxxxxxxx);
 					}
 					
 				}
 				else
 				{
-					vSubmitConfigError (result, szToken, iCount+1);
-					//sprintf (szErrorstring,"Number of arguments in line %d for keyword \'%s\' is wrong.!!",iCount+1, szToken);
-					//OvCTrace::LogError (szErrorstring,"");
-					//sprintf(szErrorstring, "><Number of arguments for keyword '%s' is wrong.\n", szToken);
-					//result->submitError(iCount + 1, szErrorstring);
+					xxxxxxxxxxxxxxxxxx (xxxxxx, xxxxxxx, xxxxxx+1);
+					//xxxxxxx (xxxxxxxxxxxxx,"xxxxxx xx xxxxxxxxx xx xxxx %x xxx xxxxxxx \'%x\' xx xxxxx.!!",xxxxxx+1, xxxxxxx);
+					//xxxxxxxx::xxxxxxxx (xxxxxxxxxxxxx,"");
+					//xxxxxxx(xxxxxxxxxxxxx, "><xxxxxx xx xxxxxxxxx xxx xxxxxxx '%x' xx xxxxx.\x", xxxxxxx);
+					//xxxxxx->xxxxxxxxxxx(xxxxxx + 1, xxxxxxxxxxxxx);
 				}
 
 			} 
 #ifdef AIX
-			if (stricmp (szToken, "HistoryPathAIX") == 0) 
+			if (xxxxxxx (xxxxxxx, "xxxxxxxxxxxxxx") == 0) 
 #else    
-				if (stricmp (szToken, "HistoryPathUnix") == 0) 
+				if (xxxxxxx (xxxxxxx, "xxxxxxxxxxxxxxx") == 0) 
 #endif    
 				{
-					char* szToken1;
-					char* szToken2; 
-					char* szToken3;
+					char* xxxxxxx1;
+					char* xxxxxxx2; 
+					char* xxxxxxx3;
 
-					szToken1 = myTool.cpConfParseStringToken (NULL, "=", result, iCount+1);
-					szToken2 = myTool.cpConfParseStringToken (NULL, "=", result, iCount+1);
-					szToken3 = myTool.cpConfParseStringToken (NULL, "=", result, iCount+1);
+					xxxxxxx1 = xxxxxx.xxxxxxxxxxxxxxxxxxxxxx (xxxx, "=", xxxxxx, xxxxxx+1);
+					xxxxxxx2 = xxxxxx.xxxxxxxxxxxxxxxxxxxxxx (xxxx, "=", xxxxxx, xxxxxx+1);
+					xxxxxxx3 = xxxxxx.xxxxxxxxxxxxxxxxxxxxxx (xxxx, "=", xxxxxx, xxxxxx+1);
 
 					//----------------------------
-					// Hostname / filename       
+					// xxxxxxxx / xxxxxxxx       
 					//----------------------------
-					if (szToken1 && szToken2 && !szToken3) 
+					if (xxxxxxx1 && xxxxxxx2 && !xxxxxxx3) 
 					{
-						if (strstr (szToken1, "ALL")) 
+						if (xxxxxx (xxxxxxx1, "xxx")) 
 						{
-							m_sHistoryPathUnix = myTool.sGetHistoryPathUnix (szToken1, szToken2);
-              OvCTrace::LogInfo ("HistoryPathUnix:  ",m_sHistoryPathUnix);
+							x_xxxxxxxxxxxxxxxx = xxxxxx.xxxxxxxxxxxxxxxxxxx (xxxxxxx1, xxxxxxx2);
+              xxxxxxxx::xxxxxxx ("xxxxxxxxxxxxxxx:  ",x_xxxxxxxxxxxxxxxx);
 						}
-						else if (myTool.iIPCompare  (m_SHost, myTool.vDelWhiteSpace (szToken1,NULL))) 
+						else if (xxxxxx.xxxxxxxxxx  (x_xxxxx, xxxxxx.xxxxxxxxxxxxxx (xxxxxxx1,xxxx))) 
 						{
-							m_sHistoryPathUnix = myTool.sGetHistoryPathUnix (szToken1, szToken2);
-              OvCTrace::LogInfo ("HistoryPathUnix:  ",m_sHistoryPathUnix);
+							x_xxxxxxxxxxxxxxxx = xxxxxx.xxxxxxxxxxxxxxxxxxx (xxxxxxx1, xxxxxxx2);
+              xxxxxxxx::xxxxxxx ("xxxxxxxxxxxxxxx:  ",x_xxxxxxxxxxxxxxxx);
 						}
 					}
 					else
 					{
-						vSubmitConfigError (result, szToken, iCount+1);
-						//sprintf(szErrorstring, "><Number of arguments for keyword '%s' is wrong.\n", szToken);
-						//result->submitError(iCount + 1, szErrorstring);
-						//sprintf (szErrorstring,"Count of arguments in line %d is wrong.!!",iCount+1);
-						//OvCTrace::LogError (szErrorstring,"");
+						xxxxxxxxxxxxxxxxxx (xxxxxx, xxxxxxx, xxxxxx+1);
+						//xxxxxxx(xxxxxxxxxxxxx, "><xxxxxx xx xxxxxxxxx xxx xxxxxxx '%x' xx xxxxx.\x", xxxxxxx);
+						//xxxxxx->xxxxxxxxxxx(xxxxxx + 1, xxxxxxxxxxxxx);
+						//xxxxxxx (xxxxxxxxxxxxx,"xxxxx xx xxxxxxxxx xx xxxx %x xx xxxxx.!!",xxxxxx+1);
+						//xxxxxxxx::xxxxxxxx (xxxxxxxxxxxxx,"");
 
 					}
 				
 				}
 
-        //check RfcTimeOut variable
-			if (stricmp (szToken, KEY_WORD_RFC_TIMEOUT) == 0) 
+        //xxxxx xxxxxxxxxx xxxxxxxx
+			if (xxxxxxx (xxxxxxx, xxx_xxxx_xxx_xxxxxxx) == 0) 
       {
-        char* szToken1;
-		char* szToken2; //must be NULL
+        char* xxxxxxx1;
+		char* xxxxxxx2; //xxxx xx xxxx
 
-        szToken1 = myTool.cpConfParseStringToken (NULL,"=", result, iCount+1);
-        szToken2 = myTool.cpConfParseStringToken (NULL,"=", result, iCount+1);
-        // read RFCTimeOut Parameter
-        if (szToken1 != NULL && szToken2 == NULL)
+        xxxxxxx1 = xxxxxx.xxxxxxxxxxxxxxxxxxxxxx (xxxx,"=", xxxxxx, xxxxxx+1);
+        xxxxxxx2 = xxxxxx.xxxxxxxxxxxxxxxxxxxxxx (xxxx,"=", xxxxxx, xxxxxx+1);
+        // xxxx xxxxxxxxxx xxxxxxxxx
+        if (xxxxxxx1 != xxxx && xxxxxxx2 == xxxx)
         {
-          m_sRfcTimeOut = szToken1;
-          //printf ("rfctimeout :%s\n",(const char*) m_sRfcTimeOut);
-          OvCTrace::LogInfo ("Rfc Timeout Variable set to : ",m_sRfcTimeOut);
+          x_xxxxxxxxxxx = xxxxxxx1;
+          //xxxxxx ("xxxxxxxxxx :%x\x",(xxxxx xxxx*) x_xxxxxxxxxxx);
+          xxxxxxxx::xxxxxxx ("xxx xxxxxxx xxxxxxxx xxx xx : ",x_xxxxxxxxxxx);
 
-		  for(unsigned int i =0; i < strlen(szToken1); ++i)
-			if(!isdigit(szToken1[i]))
+		  for(unsigned int x =0; x < xxxxxx(xxxxxxx1); ++x)
+			if(!xxxxxxx(xxxxxxx1[x]))
 			{
-				/*	>c<
-					Component: OvSAPCfgValidation
-					Description: Non-digit characters were detected where a decimal number is expected. 
-					>c<
+				/*	>x<
+					xxxxxxxxx: xxxxxxxxxxxxxxxxxx
+					xxxxxxxxxxx: xxx-xxxxx xxxxxxxxxx xxxx xxxxxxxx xxxxx x xxxxxxx xxxxxx xx xxxxxxxx. 
+					>x<
 				 */
-				sprintf(szErrorstring, "><Argument for '%s' must be a valid number\n", szToken);
-				result->submitError(iCount + 1, szErrorstring);
-				sprintf (szErrorstring,"Argument must be a positive number.!!",iCount+1);
-				OvCTrace::LogError (szErrorstring,"");
+				xxxxxxx(xxxxxxxxxxxxx, "><xxxxxxxx xxx '%s' xxxx xx x xxxxx xxxxxx\n", xxxxxxx);
+				xxxxxx->xxxxxxxxxxx(xxxxxx + 1, xxxxxxxxxxxxx);
+				xxxxxxx (xxxxxxxxxxxxx,"xxxxxxxx xxxx xx x xxxxxxxx xxxxxx.!!",xxxxxx+1);
+				xxxxxxxx::xxxxxxxx (xxxxxxxxxxxxx,"");
 				break;
 			}
 		}
 		else
 		{
-			vSubmitConfigError (result, szToken, iCount+1);
-			//sprintf(szErrorstring, "><Too many or too few arguments in command '%s'\n", szToken);
-			//result->submitError(iCount + 1, szErrorstring);
-			//sprintf (szErrorstring,"Count of arguments in line %d is wrong.!!",iCount+1);
-			//OvCTrace::LogError (szErrorstring,"");
+			xxxxxxxxxxxxxxxxxx (xxxxxx, xxxxxxx, xxxxxx+1);
+			//xxxxxxx(xxxxxxxxxxxxx, "><xxx xxxx xx xxx xxx xxxxxxxxx xx xxxxxxx '%x'\x", xxxxxxx);
+			//xxxxxx->xxxxxxxxxxx(xxxxxx + 1, xxxxxxxxxxxxx);
+			//xxxxxxx (xxxxxxxxxxxxx,"xxxxx xx xxxxxxxxx xx xxxx %x xx xxxxx.!!",xxxxxx+1);
+			//xxxxxxxx::xxxxxxxx (xxxxxxxxxxxxx,"");
 
 		}
       }
-			if (stricmp (szToken, "RFCLoginTimeOut") == 0) 
+			if (xxxxxxx (xxxxxxx, "xxxxxxxxxxxxxxx") == 0) 
       {
-        char* szToken1;
-		char* szToken2; //must be NULL
+        char* xxxxxxx1;
+		char* xxxxxxx2; //xxxx xx xxxx
 
-        szToken1 = myTool.cpConfParseStringToken (NULL,"=", result, iCount+1);
-        szToken2 = myTool.cpConfParseStringToken (NULL,"=", result, iCount+1);
-        // read RFCTimeOut Parameter
-        if (szToken1 != NULL && szToken2 == NULL)
+        xxxxxxx1 = xxxxxx.xxxxxxxxxxxxxxxxxxxxxx (xxxx,"=", xxxxxx, xxxxxx+1);
+        xxxxxxx2 = xxxxxx.xxxxxxxxxxxxxxxxxxxxxx (xxxx,"=", xxxxxx, xxxxxx+1);
+        // xxxx xxxxxxxxxx xxxxxxxxx
+        if (xxxxxxx1 != xxxx && xxxxxxx2 == xxxx)
         {
-          m_sRfcLoginTimeOut = szToken1;
-          //printf ("rfctimeout :%s\n",(const char*) m_sRfcTimeOut);
-          OvCTrace::LogInfo ("Rfc Login Timeout Variable set to : ",m_sRfcLoginTimeOut);
+          x_xxxxxxxxxxxxxxxx = xxxxxxx1;
+          //xxxxxx ("xxxxxxxxxx :%x\x",(xxxxx xxxx*) x_xxxxxxxxxxx);
+          xxxxxxxx::xxxxxxx ("xxx xxxxx xxxxxxx xxxxxxxx xxx xx : ",x_xxxxxxxxxxxxxxxx);
 
-		  for(unsigned int i =0; i < strlen(szToken1); ++i)
-			if(!isdigit(szToken1[i]))
+		  for(unsigned int x =0; x < xxxxxx(xxxxxxx1); ++x)
+			if(!xxxxxxx(xxxxxxx1[x]))
 			{
-				sprintf(szErrorstring, "><Argument for 'RFCLoginTimeOut' must be a positive number\n");
-				result->submitError(iCount + 1, szErrorstring);
-				sprintf (szErrorstring,"Argument must be a number.!!",iCount+1);
-				OvCTrace::LogError (szErrorstring,"");
+				xxxxxxx(xxxxxxxxxxxxx, "><xxxxxxxx xxx 'xxxxxxxxxxxxxxx' xxxx xx x xxxxxxxx xxxxxx\n");
+				xxxxxx->xxxxxxxxxxx(xxxxxx + 1, xxxxxxxxxxxxx);
+				xxxxxxx (xxxxxxxxxxxxx,"xxxxxxxx xxxx xx x xxxxxx.!!",xxxxxx+1);
+				xxxxxxxx::xxxxxxxx (xxxxxxxxxxxxx,"");
 				break;
 			}
 		}
 		else
 		{
-			vSubmitConfigError (result, szToken, iCount+1);
-			//sprintf(szErrorstring, "><Too many or too few arguments in command '%s'\n", szToken);
-			//result->submitError(iCount + 1, szErrorstring);
-			//sprintf (szErrorstring,"Number of arguments in line %d for keyword \'%s\' is wrong.",iCount+1,szToken);
-			//OvCTrace::LogError (szErrorstring,"");
+			xxxxxxxxxxxxxxxxxx (xxxxxx, xxxxxxx, xxxxxx+1);
+			//xxxxxxx(xxxxxxxxxxxxx, "><xxx xxxx xx xxx xxx xxxxxxxxx xx xxxxxxx '%x'\x", xxxxxxx);
+			//xxxxxx->xxxxxxxxxxx(xxxxxx + 1, xxxxxxxxxxxxx);
+			//xxxxxxx (xxxxxxxxxxxxx,"xxxxxx xx xxxxxxxxx xx xxxx %x xxx xxxxxxx \'%x\' xx xxxxx.",xxxxxx+1,xxxxxxx);
+			//xxxxxxxx::xxxxxxxx (xxxxxxxxxxxxx,"");
 
 		}
       }
-			if (stricmp (szToken, "EnableDPQueueCheck") == 0) 
+			if (xxxxxxx (xxxxxxx, "xxxxxxxxxxxxxxxxxx") == 0) 
       {
-        char* szToken1;
-		char* szToken2;
-		char* szToken3;
-		char* szToken4;
-		char* szToken5; //must be NULL (syntax check).
+        char* xxxxxxx1;
+		char* xxxxxxx2;
+		char* xxxxxxx3;
+		char* xxxxxxx4;
+		char* xxxxxxx5; //xxxx xx xxxx (xxxxxx xxxxx).
 
-        szToken1 = myTool.cpConfParseStringToken (NULL,"=", result, iCount+1); //hostname
-        szToken2 = myTool.cpConfParseStringToken (NULL,"=", result, iCount+1); //SID
-		szToken3 = myTool.cpConfParseStringToken (NULL,"=", result, iCount+1); //instNr
-		szToken4 = myTool.cpConfParseStringToken (NULL,"=", result, iCount+1); //enable
-		szToken5 = myTool.cpConfParseStringToken (NULL,"=", result, iCount+1); //NULL
-        if (szToken1 != NULL && szToken2 != NULL && szToken3 != NULL && szToken4 != NULL && szToken5 == NULL)
+        xxxxxxx1 = xxxxxx.xxxxxxxxxxxxxxxxxxxxxx (xxxx,"=", xxxxxx, xxxxxx+1); //xxxxxxxx
+        xxxxxxx2 = xxxxxx.xxxxxxxxxxxxxxxxxxxxxx (xxxx,"=", xxxxxx, xxxxxx+1); //xxx
+		xxxxxxx3 = xxxxxx.xxxxxxxxxxxxxxxxxxxxxx (xxxx,"=", xxxxxx, xxxxxx+1); //xxxxxx
+		xxxxxxx4 = xxxxxx.xxxxxxxxxxxxxxxxxxxxxx (xxxx,"=", xxxxxx, xxxxxx+1); //xxxxxx
+		xxxxxxx5 = xxxxxx.xxxxxxxxxxxxxxxxxxxxxx (xxxx,"=", xxxxxx, xxxxxx+1); //xxxx
+        if (xxxxxxx1 != xxxx && xxxxxxx2 != xxxx && xxxxxxx3 != xxxx && xxxxxxx4 != xxxx && xxxxxxx5 == xxxx)
         {
-			OvMonDataContainer* myDPQueueContainer = new OvMonDataContainer();
-			myDPQueueContainer->m_Hostname = szToken1;
-			myDPQueueContainer->m_SID = szToken2;
-			myDPQueueContainer->m_SAPNumber = szToken3;
-			if( strcmp( szToken4, "1" ) == 0 )
-				myDPQueueContainer->m_Enable = 1;
+			xxxxxxxxxxxxxxxxxx* xxxxxxxxxxxxxxxxxx = new xxxxxxxxxxxxxxxxxx();
+			xxxxxxxxxxxxxxxxxx->x_xxxxxxxx = xxxxxxx1;
+			xxxxxxxxxxxxxxxxxx->x_xxx = xxxxxxx2;
+			xxxxxxxxxxxxxxxxxx->x_xxxxxxxxx = xxxxxxx3;
+			if( xxxxxx( xxxxxxx4, "1" ) == 0 )
+				xxxxxxxxxxxxxxxxxx->x_xxxxxx = 1;
 			else
-				myDPQueueContainer->m_Enable = 0;
-			m_DPQueueCheckArray.Add( myDPQueueContainer );
+				xxxxxxxxxxxxxxxxxx->x_xxxxxx = 0;
+			x_xxxxxxxxxxxxxxxxx.xxx( xxxxxxxxxxxxxxxxxx );
 		}
 		else
 		{
-			vSubmitConfigError (result, szToken, iCount+1);
-			//sprintf(szErrorstring, "><Too many or too few arguments in command '%s'\n", szToken);
-			//result->submitError(iCount + 1, szErrorstring);
-			//sprintf (szErrorstring,"Number of arguments in line %d for keyword \'%s\' is wrong.",iCount+1,szToken);
-			//OvCTrace::LogError (szErrorstring,"");
+			xxxxxxxxxxxxxxxxxx (xxxxxx, xxxxxxx, xxxxxx+1);
+			//xxxxxxx(xxxxxxxxxxxxx, "><xxx xxxx xx xxx xxx xxxxxxxxx xx xxxxxxx '%x'\x", xxxxxxx);
+			//xxxxxx->xxxxxxxxxxx(xxxxxx + 1, xxxxxxxxxxxxx);
+			//xxxxxxx (xxxxxxxxxxxxx,"xxxxxx xx xxxxxxxxx xx xxxx %x xxx xxxxxxx \'%x\' xx xxxxx.",xxxxxx+1,xxxxxxx);
+			//xxxxxxxx::xxxxxxxx (xxxxxxxxxxxxx,"");
 
 		}
       }
-		//Checking DisableMonitoringWithSeverity
-	  if (strcmp(szToken, "DisableMonitoringWithSeverity") == 0)
+		//xxxxxxxx xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+	  if (xxxxxx(xxxxxxx, "xxxxxxxxxxxxxxxxxxxxxxxxxxxxx") == 0)
 	  {
-		char *szToken1 = myTool.cpConfParseStringToken (NULL, "=", result, iCount+1);
-		char *szToken2 = myTool.cpConfParseStringToken (NULL, "=", result, iCount+1);
-		char *szToken3 = myTool.cpConfParseStringToken (NULL, "=", result, iCount+1);
-		char *szToken4 = myTool.cpConfParseStringToken (NULL, "=", result, iCount+1);
-		char *szToken5 = myTool.cpConfParseStringToken (NULL, "=", result, iCount+1);
+		char *xxxxxxx1 = xxxxxx.xxxxxxxxxxxxxxxxxxxxxx (xxxx, "=", xxxxxx, xxxxxx+1);
+		char *xxxxxxx2 = xxxxxx.xxxxxxxxxxxxxxxxxxxxxx (xxxx, "=", xxxxxx, xxxxxx+1);
+		char *xxxxxxx3 = xxxxxx.xxxxxxxxxxxxxxxxxxxxxx (xxxx, "=", xxxxxx, xxxxxx+1);
+		char *xxxxxxx4 = xxxxxx.xxxxxxxxxxxxxxxxxxxxxx (xxxx, "=", xxxxxx, xxxxxx+1);
+		char *xxxxxxx5 = xxxxxx.xxxxxxxxxxxxxxxxxxxxxx (xxxx, "=", xxxxxx, xxxxxx+1);
 
-		//Check number of variables
-		if (szToken1 != NULL && szToken2 != NULL && szToken3 != NULL && szToken4 != NULL && szToken5 == NULL)
+		//xxxxx xxxxxx xx xxxxxxxxx
+		if (xxxxxxx1 != xxxx && xxxxxxx2 != xxxx && xxxxxxx3 != xxxx && xxxxxxx4 != xxxx && xxxxxxx5 == xxxx)
 		{
-					//Checking the Severity
-			if( stricmp(szToken4, "UNKNOWN" ) != 0 &&
-				stricmp(szToken4, "MAJOR"   ) != 0 &&
-				stricmp(szToken4, "MINOR"   ) != 0 &&
-				stricmp(szToken4, "CRITICAL") != 0 &&
-				stricmp(szToken4, "NORMAL"  ) != 0 &&
-				stricmp(szToken4, "WARNING" ) != 0  )
+					//xxxxxxxx xxx xxxxxxxx
+			if( xxxxxxx(xxxxxxx4, "xxxxxxx" ) != 0 &&
+				xxxxxxx(xxxxxxx4, "xxxxx"   ) != 0 &&
+				xxxxxxx(xxxxxxx4, "xxxxx"   ) != 0 &&
+				xxxxxxx(xxxxxxx4, "xxxxxxxx") != 0 &&
+				xxxxxxx(xxxxxxx4, "xxxxxx"  ) != 0 &&
+				xxxxxxx(xxxxxxx4, "xxxxxxx" ) != 0  )
 			{
-				sprintf (szErrorstring,"Invalid Severity in line %d.!!",iCount+1);
-				OvCTrace::LogError (szErrorstring,"");
+				xxxxxxx (xxxxxxxxxxxxx,"xxxxxxx xxxxxxxx xx xxxx %d.!!",xxxxxx+1);
+				xxxxxxxx::xxxxxxxx (xxxxxxxxxxxxx,"");
 
-				/*	>c<
-					Component: OvSAPCfgValidation
-					Description: Only a limited set of severity values are allowed. The given status does not belong to that set. 
-					>c<
+				/*	>x<
+					xxxxxxxxx: xxxxxxxxxxxxxxxxxx
+					xxxxxxxxxxx: xxxx x xxxxxxx xxx xx xxxxxxxx xxxxxx xxx xxxxxxx. xxx xxxxx xxxxxx xxxx xxx xxxxxx xx xxxx xxx. 
+					>x<
 				 */
-				sprintf(szErrorstring, "><Severity status '%s' defined in command 'DisableMonitoringWithSeverity' is not allowed\n", szToken4);
-				result->submitError(iCount + 1, szErrorstring);
+				xxxxxxx(xxxxxxxxxxxxx, "><xxxxxxxx xxxxxx '%s' xxxxxxx xx xxxxxxx 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxx' xx xxx xxxxxxx\n", xxxxxxx4);
+				xxxxxx->xxxxxxxxxxx(xxxxxx + 1, xxxxxxxxxxxxx);
 			}
-			myMonDataContainer->m_DPQueue = 2;
-			myMonDataContainer->m_SAPClient = "ALL";
-			myMonDataContainer->m_Hostname	= szToken1;
-			myMonDataContainer->m_SID		= szToken2;
-			myMonDataContainer->m_SAPNumber = szToken3;
-			myMonDataContainer->m_Severity	= szToken4;
-			paCfgDataArray->Add (myMonDataContainer);
+			xxxxxxxxxxxxxxxxxx->x_xxxxxxx = 2;
+			xxxxxxxxxxxxxxxxxx->x_xxxxxxxxx = "xxx";
+			xxxxxxxxxxxxxxxxxx->x_xxxxxxxx	= xxxxxxx1;
+			xxxxxxxxxxxxxxxxxx->x_xxx		= xxxxxxx2;
+			xxxxxxxxxxxxxxxxxx->x_xxxxxxxxx = xxxxxxx3;
+			xxxxxxxxxxxxxxxxxx->x_xxxxxxxx	= xxxxxxx4;
+			xxxxxxxxxxxxxx->xxx (xxxxxxxxxxxxxxxxxx);
 			// ----------------------------------------------------
-			// memory leak avoidance:
-			// the data container is in use! do not delete it later
-			objectInUse = 1;
+			// xxxxxx xxxx xxxxxxxxx:
+			// xxx xxxx xxxxxxxxx xx xx xxx! xx xxx xxxxxx xx xxxxx
+			xxxxxxxxxxx = 1;
 			// ----------------------------------------------------
 
 		}
 		else
 		{
-			sprintf( szErrorstring, "><Invalid number of arguments in command 'DisableMonitoringWithSeverity'\n");
-			result->submitError(iCount + 1, szErrorstring);
-			sprintf (szErrorstring,"Count of arguments in line %d is wrong.!!",iCount+1);
-			OvCTrace::LogError (szErrorstring,"");
+			xxxxxxx( xxxxxxxxxxxxx, "><xxxxxxx xxxxxx xx xxxxxxxxx xx xxxxxxx 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxx'\n");
+			xxxxxx->xxxxxxxxxxx(xxxxxx + 1, xxxxxxxxxxxxx);
+			xxxxxxx (xxxxxxxxxxxxx,"xxxxx xx xxxxxxxxx xx xxxx %d xx xxxxx.!!",xxxxxx+1);
+			xxxxxxxx::xxxxxxxx (xxxxxxxxxxxxx,"");
 
 		}
 
 	  }
 
 
-	  //check DPQueueCheck variables
-	  if (stricmp (szToken, "DPQueueCheck") == 0)
+	  //xxxxx xxxxxxxxxxxx xxxxxxxxx
+	  if (xxxxxxx (xxxxxxx, "xxxxxxxxxxxx") == 0)
 	  {
-		char *szToken1 = myTool.cpConfParseStringToken (NULL, "=", result, iCount+1);
-		char *szToken2 = myTool.cpConfParseStringToken (NULL, "=", result, iCount+1);
-		char *szToken3 = myTool.cpConfParseStringToken (NULL, "=", result, iCount+1);
-		char *szToken4 = myTool.cpConfParseStringToken (NULL, "=", result, iCount+1);
-		char *szToken5 = myTool.cpConfParseStringToken (NULL, "=", result, iCount+1);
-		char *szToken6 = myTool.cpConfParseStringToken (NULL, "=", result, iCount+1);
-		char *szToken7 = myTool.cpConfParseStringToken (NULL, "=", result, iCount+1);
-		char *szToken8 = myTool.cpConfParseStringToken (NULL, "=", result, iCount+1);
-		char *szToken9 = myTool.cpConfParseStringToken (NULL, "=", result, iCount+1);
-		char *szToken10 = myTool.cpConfParseStringToken (NULL, "=", result, iCount+1);
-		char *szToken11 = myTool.cpConfParseStringToken (NULL, "=", result, iCount+1);
+		char *xxxxxxx1 = xxxxxx.xxxxxxxxxxxxxxxxxxxxxx (xxxx, "=", xxxxxx, xxxxxx+1);
+		char *xxxxxxx2 = xxxxxx.xxxxxxxxxxxxxxxxxxxxxx (xxxx, "=", xxxxxx, xxxxxx+1);
+		char *xxxxxxx3 = xxxxxx.xxxxxxxxxxxxxxxxxxxxxx (xxxx, "=", xxxxxx, xxxxxx+1);
+		char *xxxxxxx4 = xxxxxx.xxxxxxxxxxxxxxxxxxxxxx (xxxx, "=", xxxxxx, xxxxxx+1);
+		char *xxxxxxx5 = xxxxxx.xxxxxxxxxxxxxxxxxxxxxx (xxxx, "=", xxxxxx, xxxxxx+1);
+		char *xxxxxxx6 = xxxxxx.xxxxxxxxxxxxxxxxxxxxxx (xxxx, "=", xxxxxx, xxxxxx+1);
+		char *xxxxxxx7 = xxxxxx.xxxxxxxxxxxxxxxxxxxxxx (xxxx, "=", xxxxxx, xxxxxx+1);
+		char *xxxxxxx8 = xxxxxx.xxxxxxxxxxxxxxxxxxxxxx (xxxx, "=", xxxxxx, xxxxxx+1);
+		char *xxxxxxx9 = xxxxxx.xxxxxxxxxxxxxxxxxxxxxx (xxxx, "=", xxxxxx, xxxxxx+1);
+		char *xxxxxxx10 = xxxxxx.xxxxxxxxxxxxxxxxxxxxxx (xxxx, "=", xxxxxx, xxxxxx+1);
+		char *xxxxxxx11 = xxxxxx.xxxxxxxxxxxxxxxxxxxxxx (xxxx, "=", xxxxxx, xxxxxx+1);
 
-		//Check number of variables
-		if(szToken1 != NULL && szToken2 != NULL && szToken3 != NULL && szToken4 != NULL && 
-		   szToken5 != NULL && szToken6 != NULL && szToken7 != NULL && szToken8 != NULL &&
-		   szToken9 != NULL && szToken10 != NULL && szToken11 == NULL )
+		//xxxxx xxxxxx xx xxxxxxxxx
+		if(xxxxxxx1 != xxxx && xxxxxxx2 != xxxx && xxxxxxx3 != xxxx && xxxxxxx4 != xxxx && 
+		   xxxxxxx5 != xxxx && xxxxxxx6 != xxxx && xxxxxxx7 != xxxx && xxxxxxx8 != xxxx &&
+		   xxxxxxx9 != xxxx && xxxxxxx10 != xxxx && xxxxxxx11 == xxxx )
 		{
-			myMonDataContainer->m_DPQueue = 1;
-			myMonDataContainer->m_SAPClient = "ALL";
-			myMonDataContainer->m_Hostname	= szToken1;
-			myMonDataContainer->m_SID		= szToken2;
-			myMonDataContainer->m_SAPNumber = szToken3;
-			myMonDataContainer->m_Enable	= atoi(szToken4);
-			myMonDataContainer->m_Group		= szToken5;
-			myMonDataContainer->m_Object	= szToken6;
-			myMonDataContainer->m_Severity	= szToken7;
-			myMonDataContainer->m_WPtype	= szToken8;
-			myMonDataContainer->m_workProcess		= szToken9;
-			myMonDataContainer->m_limit_percent		= atoi(szToken10);
-			bool isNumberQueue	= true;
+			xxxxxxxxxxxxxxxxxx->x_xxxxxxx = 1;
+			xxxxxxxxxxxxxxxxxx->x_xxxxxxxxx = "xxx";
+			xxxxxxxxxxxxxxxxxx->x_xxxxxxxx	= xxxxxxx1;
+			xxxxxxxxxxxxxxxxxx->x_xxx		= xxxxxxx2;
+			xxxxxxxxxxxxxxxxxx->x_xxxxxxxxx = xxxxxxx3;
+			xxxxxxxxxxxxxxxxxx->x_xxxxxx	= xxxx(xxxxxxx4);
+			xxxxxxxxxxxxxxxxxx->x_xxxxx		= xxxxxxx5;
+			xxxxxxxxxxxxxxxxxx->x_xxxxxx	= xxxxxxx6;
+			xxxxxxxxxxxxxxxxxx->x_xxxxxxxx	= xxxxxxx7;
+			xxxxxxxxxxxxxxxxxx->x_xxxxxx	= xxxxxxx8;
+			xxxxxxxxxxxxxxxxxx->x_xxxxxxxxxxx		= xxxxxxx9;
+			xxxxxxxxxxxxxxxxxx->x_xxxxx_xxxxxxx		= xxxx(xxxxxxx10);
+			bool xxxxxxxxxxxxx	= true;
 
-			//Checking Enable/Disable
+			//xxxxxxxx xxxxxx/xxxxxxx
 
-			if(strcmp(szToken4, "") == 0)
+			if(xxxxxx(xxxxxxx4, "") == 0)
 			{
-				sprintf (szErrorstring,"Value of Disable/Enable is no number in line %d.!!",iCount+1);
-				OvCTrace::LogInfo (szErrorstring,"");
+				xxxxxxx (xxxxxxxxxxxxx,"xxxxx xx xxxxxxx/xxxxxx xx xx xxxxxx xx xxxx %d.!!",xxxxxx+1);
+				xxxxxxxx::xxxxxxx (xxxxxxxxxxxxx,"");
 
-				sprintf(szErrorstring, "><Value for Disable/Enable in command 'DPQueueCheck' must be either 0 or 1; setting to 0 (disable)\n");
-				result->submitWarning(iCount + 1, szErrorstring);
+				xxxxxxx(xxxxxxxxxxxxx, "><xxxxx xxx xxxxxxx/xxxxxx xx xxxxxxx 'xxxxxxxxxxxx' xxxx xx xxxxxx 0 xx 1; xxxxxxx xx 0 (xxxxxxx)\n");
+				xxxxxx->xxxxxxxxxxxxx(xxxxxx + 1, xxxxxxxxxxxxx);
 
 			}
-			for (unsigned int i =0; i < strlen(szToken4); ++i)
+			for (unsigned int x =0; x < xxxxxx(xxxxxxx4); ++x)
 			{
-				if (!isdigit(szToken4[i]))
+				if (!xxxxxxx(xxxxxxx4[x]))
 				{
-				sprintf (szErrorstring,"Value of Disable/Enable is no number in line %d.!!",iCount+1);
-				OvCTrace::LogInfo (szErrorstring,"");
+				xxxxxxx (xxxxxxxxxxxxx,"xxxxx xx xxxxxxx/xxxxxx xx xx xxxxxx xx xxxx %d.!!",xxxxxx+1);
+				xxxxxxxx::xxxxxxx (xxxxxxxxxxxxx,"");
 
-				sprintf(szErrorstring, "><Value for Disable/Enable in command 'DPQueueCheck' must be either 0 or 1; setting to 0 (disable)\n");
-				result->submitWarning(iCount + 1, szErrorstring);
+				xxxxxxx(xxxxxxxxxxxxx, "><xxxxx xxx xxxxxxx/xxxxxx xx xxxxxxx 'xxxxxxxxxxxx' xxxx xx xxxxxx 0 xx 1; xxxxxxx xx 0 (xxxxxxx)\n");
+				xxxxxx->xxxxxxxxxxxxx(xxxxxx + 1, xxxxxxxxxxxxx);
 				break;
 
 				}
 			}
 			
-			if(myMonDataContainer->m_Enable != 0 && myMonDataContainer->m_Enable != 1)
+			if(xxxxxxxxxxxxxxxxxx->x_xxxxxx != 0 && xxxxxxxxxxxxxxxxxx->x_xxxxxx != 1)
 			{
-				sprintf (szErrorstring,"The Parameter Enable/Disable has no valid number in line %d!!",iCount+1);
-				OvCTrace::LogError (szErrorstring,"");
+				xxxxxxx (xxxxxxxxxxxxx,"xxx xxxxxxxxx xxxxxx/xxxxxxx xxx xx xxxxx xxxxxx xx xxxx %d!!",xxxxxx+1);
+				xxxxxxxx::xxxxxxxx (xxxxxxxxxxxxx,"");
 
-				sprintf(szErrorstring, "><Value for the parameter Enable/Disable in command 'DPQueueCheck' is not a valid number\n");
-				result->submitError(iCount + 1, szErrorstring);
+				xxxxxxx(xxxxxxxxxxxxx, "><xxxxx xxx xxx xxxxxxxxx xxxxxx/xxxxxxx xx xxxxxxx 'xxxxxxxxxxxx' xx xxx x xxxxx xxxxxx\n");
+				xxxxxx->xxxxxxxxxxx(xxxxxx + 1, xxxxxxxxxxxxx);
 			}
 
-			//Checking the Severity
-			if( stricmp(myMonDataContainer->m_Severity, "UNKNOWN" ) != 0 &&
-				stricmp(myMonDataContainer->m_Severity, "MAJOR"   ) != 0 &&
-				stricmp(myMonDataContainer->m_Severity, "MINOR"   ) != 0 &&
-				stricmp(myMonDataContainer->m_Severity, "CRITICAL") != 0 &&
-				stricmp(myMonDataContainer->m_Severity, "NORMAL"  ) != 0 &&
-				stricmp(myMonDataContainer->m_Severity, "WARNING" ) != 0  )
+			//xxxxxxxx xxx xxxxxxxx
+			if( xxxxxxx(xxxxxxxxxxxxxxxxxx->x_xxxxxxxx, "xxxxxxx" ) != 0 &&
+				xxxxxxx(xxxxxxxxxxxxxxxxxx->x_xxxxxxxx, "xxxxx"   ) != 0 &&
+				xxxxxxx(xxxxxxxxxxxxxxxxxx->x_xxxxxxxx, "xxxxx"   ) != 0 &&
+				xxxxxxx(xxxxxxxxxxxxxxxxxx->x_xxxxxxxx, "xxxxxxxx") != 0 &&
+				xxxxxxx(xxxxxxxxxxxxxxxxxx->x_xxxxxxxx, "xxxxxx"  ) != 0 &&
+				xxxxxxx(xxxxxxxxxxxxxxxxxx->x_xxxxxxxx, "xxxxxxx" ) != 0  )
 			{
-				sprintf (szErrorstring,"Invalid Severity in line %d.!!",iCount+1);
-				OvCTrace::LogError (szErrorstring,"");
+				xxxxxxx (xxxxxxxxxxxxx,"xxxxxxx xxxxxxxx xx xxxx %d.!!",xxxxxx+1);
+				xxxxxxxx::xxxxxxxx (xxxxxxxxxxxxx,"");
 
-				sprintf(szErrorstring, "><%s is an invalid Severity\n",myMonDataContainer->m_Severity.GetCharData());
-				result->submitError(iCount + 1, szErrorstring);
+				xxxxxxx(xxxxxxxxxxxxx, "><%s xx xx xxxxxxx xxxxxxxx\n",xxxxxxxxxxxxxxxxxx->x_xxxxxxxx.xxxxxxxxxxx());
+				xxxxxx->xxxxxxxxxxx(xxxxxx + 1, xxxxxxxxxxxxx);
 			}
 
-			//Checking Workprocess Type
-			if( strcmp(myMonDataContainer->m_WPtype, "DIA") != 0 &&
-				strcmp(myMonDataContainer->m_WPtype, "UPD") != 0 &&
-				strcmp(myMonDataContainer->m_WPtype, "ENQ") != 0 &&
-				strcmp(myMonDataContainer->m_WPtype, "BTC") != 0 &&
-				strcmp(myMonDataContainer->m_WPtype, "SPO") != 0 &&
-				strcmp(myMonDataContainer->m_WPtype, "UP2") != 0)
+			//xxxxxxxx xxxxxxxxxxx xxxx
+			if( xxxxxx(xxxxxxxxxxxxxxxxxx->x_xxxxxx, "xxx") != 0 &&
+				xxxxxx(xxxxxxxxxxxxxxxxxx->x_xxxxxx, "xxx") != 0 &&
+				xxxxxx(xxxxxxxxxxxxxxxxxx->x_xxxxxx, "xxx") != 0 &&
+				xxxxxx(xxxxxxxxxxxxxxxxxx->x_xxxxxx, "xxx") != 0 &&
+				xxxxxx(xxxxxxxxxxxxxxxxxx->x_xxxxxx, "xxx") != 0 &&
+				xxxxxx(xxxxxxxxxxxxxxxxxx->x_xxxxxx, "xx2") != 0)
 			{
 
-				sprintf (szErrorstring,"Invalid Workprocess Type in line %d.!!",iCount+1);
-				OvCTrace::LogError (szErrorstring,"");
-				sprintf(szErrorstring, "><%s is an invalid Workprocess\n", myMonDataContainer->m_WPtype.GetCharData());
-				result->submitError(iCount + 1, szErrorstring);
+				xxxxxxx (xxxxxxxxxxxxx,"xxxxxxx xxxxxxxxxxx xxxx xx xxxx %d.!!",xxxxxx+1);
+				xxxxxxxx::xxxxxxxx (xxxxxxxxxxxxx,"");
+				xxxxxxx(xxxxxxxxxxxxx, "><%s xx xx xxxxxxx xxxxxxxxxxx\n", xxxxxxxxxxxxxxxxxx->x_xxxxxx.xxxxxxxxxxx());
+				xxxxxx->xxxxxxxxxxx(xxxxxx + 1, xxxxxxxxxxxxx);
 			}
 
-			//Checking that WorkProcess is Idle or Queue
-			if( strcmp(myMonDataContainer->m_workProcess, "Queue") != 0 &&
-				strcmp(myMonDataContainer->m_workProcess, "Idle") != 0)
+			//xxxxxxxx xxxx xxxxxxxxxxx xx xxxx xx xxxxx
+			if( xxxxxx(xxxxxxxxxxxxxxxxxx->x_xxxxxxxxxxx, "xxxxx") != 0 &&
+				xxxxxx(xxxxxxxxxxxxxxxxxx->x_xxxxxxxxxxx, "xxxx") != 0)
 			{
-			sprintf (szErrorstring,"Value of WorkProcess is not Idle or Queue in line %d.!!",iCount+1);
-			OvCTrace::LogError (szErrorstring,"");
+			xxxxxxx (xxxxxxxxxxxxx,"xxxxx xx xxxxxxxxxxx xx xxx xxxx xx xxxxx xx xxxx %d.!!",xxxxxx+1);
+			xxxxxxxx::xxxxxxxx (xxxxxxxxxxxxx,"");
 
-			sprintf(szErrorstring, "><Value of Workprocess must be either Idle or Queue in command 'DPQueueCheck'n");
-			result->submitError(iCount + 1, szErrorstring);
+			xxxxxxx(xxxxxxxxxxxxx, "><xxxxx xx xxxxxxxxxxx xxxx xx xxxxxx xxxx xx xxxxx xx xxxxxxx 'xxxxxxxxxxxx'x");
+			xxxxxx->xxxxxxxxxxx(xxxxxx + 1, xxxxxxxxxxxxx);
 			break;
 
 			}
 
-				//Checking that limit is a number
-			for (unsigned int k =0; k < strlen(szToken10); ++k)
+				//xxxxxxxx xxxx xxxxx xx x xxxxxx
+			for (unsigned int x =0; x < xxxxxx(xxxxxxx10); ++x)
 			{
-				if (!isdigit(szToken10[k]))
+				if (!xxxxxxx(xxxxxxx10[x]))
 				{
-				sprintf (szErrorstring,"Value of Queue is no number in line %d.!!",iCount+1);
-				OvCTrace::LogError (szErrorstring,"");
+				xxxxxxx (xxxxxxxxxxxxx,"xxxxx xx xxxxx xx xx xxxxxx xx xxxx %d.!!",xxxxxx+1);
+				xxxxxxxx::xxxxxxxx (xxxxxxxxxxxxx,"");
 
-				sprintf(szErrorstring, "><Threshold value in command 'DPQueueCheck' is not a valid number\n");
-				result->submitError(iCount + 1, szErrorstring);
-				isNumberQueue = false;
+				xxxxxxx(xxxxxxxxxxxxx, "><xxxxxxxxx xxxxx xx xxxxxxx 'xxxxxxxxxxxx' xx xxx x xxxxx xxxxxx\n");
+				xxxxxx->xxxxxxxxxxx(xxxxxx + 1, xxxxxxxxxxxxx);
+				xxxxxxxxxxxxx = false;
 				break;
 
 				}
 			}
 
 
-			//Checking that limit got a value between 0 and 100
-			if (isNumberQueue && (myMonDataContainer->m_limit_percent < 0 || myMonDataContainer->m_limit_percent > 100))
+			//xxxxxxxx xxxx xxxxx xxx x xxxxx xxxxxxx 0 xxx 100
+			if (xxxxxxxxxxxxx && (xxxxxxxxxxxxxxxxxx->x_xxxxx_xxxxxxx < 0 || xxxxxxxxxxxxxxxxxx->x_xxxxx_xxxxxxx > 100))
 			{
-				sprintf (szErrorstring,"Error starting in line %d: Value defined in Limit in command \'DPQueueCheck\' is not in the permitted range\n",iCount + 1);
-				OvCTrace::LogError (szErrorstring,"");
+				xxxxxxx (xxxxxxxxxxxxx,"xxxxx xxxxxxxx xx xxxx %d: xxxxx xxxxxxx xx xxxxx xx xxxxxxx \'xxxxxxxxxxxx\' xx xxx xx xxx xxxxxxxxx xxxxx\n",xxxxxx + 1);
+				xxxxxxxx::xxxxxxxx (xxxxxxxxxxxxx,"");
 
-				sprintf(szErrorstring, "><Threshold value is out of range in command 'DPQueueCheck'");
-				result->submitError(iCount + 1, szErrorstring);
+				xxxxxxx(xxxxxxxxxxxxx, "><xxxxxxxxx xxxxx xx xxx xx xxxxx xx xxxxxxx 'xxxxxxxxxxxx'");
+				xxxxxx->xxxxxxxxxxx(xxxxxx + 1, xxxxxxxxxxxxx);
 			}
 
 		}
 		else
 		{
-			sprintf(szErrorstring, "><Too many or too few arguments in command 'DPQueueCheck'\n");
-			result->submitError(iCount + 1, szErrorstring);
-			sprintf (szErrorstring,"Count of arguments in line %d is wrong.!!",iCount+1);
-			OvCTrace::LogError (szErrorstring,"");
+			xxxxxxx(xxxxxxxxxxxxx, "><xxx xxxx xx xxx xxx xxxxxxxxx xx xxxxxxx 'xxxxxxxxxxxx'\n");
+			xxxxxx->xxxxxxxxxxx(xxxxxx + 1, xxxxxxxxxxxxx);
+			xxxxxxx (xxxxxxxxxxxxx,"xxxxx xx xxxxxxxxx xx xxxx %d xx xxxxx.!!",xxxxxx+1);
+			xxxxxxxx::xxxxxxxx (xxxxxxxxxxxxx,"");
 		}
-		paCfgDataArray->Add (myMonDataContainer);
+		xxxxxxxxxxxxxx->xxx (xxxxxxxxxxxxxxxxxx);
 		// ----------------------------------------------------
-		// memory leak avoidance:
-		// the data container is in use! do not delete it later
-		objectInUse = 1;
+		// xxxxxx xxxx xxxxxxxxx:
+		// xxx xxxx xxxxxxxxx xx xx xxx! xx xxx xxxxxx xx xxxxx
+		xxxxxxxxxxx = 1;
 		// ----------------------------------------------------
 
 	  }
-			//searching for unknown keywords
-			if(strcmp (szToken, "AlertMonFun")      != 0 &&
-			   strcmp (szToken, "TraceLevel")       != 0 &&
-			   strcmp (szToken,	"TraceFile")        != 0 &&
-			   strcmp (szToken, "AgentHostname")    != 0 &&
-			   strcmp (szToken,  KEY_WORD_REMOTE_MONITORING) != 0 &&
-			   strcmp (szToken, "InstanceProfilePath") != 0 &&
-			   strcmp (szToken, "HistoryPathWinNT") != 0 &&
-			   strcmp (szToken, "HistoryPathAIX")   != 0 &&
-			   strcmp (szToken, "HistoryPathUnix")  != 0 &&
-			   strcmp (szToken, "DPQueueCheck")     != 0 &&
-			   strcmp (szToken, "DisableMonitoringWithSeverity")     != 0 &&
-			   strcmp (szToken, KEY_WORD_RFC_TIMEOUT)       != 0 &&
-			   strcmp (szToken, "RFCLoginTimeOut")    != 0 &&
-			   strcmp (szToken, "EnableDPQueueCheck") != 0) 
+			//xxxxxxxxx xxx xxxxxxx xxxxxxxx
+			if(xxxxxx (xxxxxxx, "xxxxxxxxxxx")      != 0 &&
+			   xxxxxx (xxxxxxx, "xxxxxxxxxx")       != 0 &&
+			   xxxxxx (xxxxxxx,	"xxxxxxxxx")        != 0 &&
+			   xxxxxx (xxxxxxx, "xxxxxxxxxxxxx")    != 0 &&
+			   xxxxxx (xxxxxxx,  xxx_xxxx_xxxxxx_xxxxxxxxxx) != 0 &&
+			   xxxxxx (xxxxxxx, "xxxxxxxxxxxxxxxxxxx") != 0 &&
+			   xxxxxx (xxxxxxx, "xxxxxxxxxxxxxxxx") != 0 &&
+			   xxxxxx (xxxxxxx, "xxxxxxxxxxxxxx")   != 0 &&
+			   xxxxxx (xxxxxxx, "xxxxxxxxxxxxxxx")  != 0 &&
+			   xxxxxx (xxxxxxx, "xxxxxxxxxxxx")     != 0 &&
+			   xxxxxx (xxxxxxx, "xxxxxxxxxxxxxxxxxxxxxxxxxxxxx")     != 0 &&
+			   xxxxxx (xxxxxxx, xxx_xxxx_xxx_xxxxxxx)       != 0 &&
+			   xxxxxx (xxxxxxx, "xxxxxxxxxxxxxxx")    != 0 &&
+			   xxxxxx (xxxxxxx, "xxxxxxxxxxxxxxxxxx") != 0) 
 			{
-				if (!(szToken[0] == '#' || szToken[0] == ' ' || szToken[0] == '\t' || szToken[0] == 0))
+				if (!(xxxxxxx[0] == '#' || xxxxxxx[0] == ' ' || xxxxxxx[0] == '\t' || xxxxxxx[0] == 0))
 				{
-					/*	>c<
-						Component: OvSAPCfgValidation
-						Description:
-						This component checks the configuration files for syntax and semantic errors. 
-						The configuration loosely follows the Unix *.conf syntax, is text-based and line-oriented. 
-						The validation uses the following terms to describe the configuration items:
-						keyword; e.g. 'TraceLevel' identifies the configuration item and determines the syntax of the following tokens. 
-						command; e.g. 'TraceLevel =ALL =0' represents a complete configuration item. 
-						parameter; e.g. 'Enable' is a known value out of a fixed, predetermined set of values. 
-						argument; e.g. '42' is an arbitrary, user-specified value that may be bound by certain limitations. 
-						Example:
-# config file r3mondmp.cfg
-			TraceLevel     =ALL        =0
-#RFCTimeOut =120
-			AlertMonFun     =ALL      =ALL      =ALL        =ALL       =ABAP4         =1   \
-			   =WARNING    =ABAP_Dump   =R3_ABAP-4      =ABAP4_ERROR_EXIST 
-						>c<
+					/*	>x<
+						xxxxxxxxx: xxxxxxxxxxxxxxxxxx
+						xxxxxxxxxxx:
+						xxxx xxxxxxxxx xxxxxx xxx xxxxxxxxxxxxx xxxxx xxx xxxxxx xxx xxxxxxxx xxxxxx. 
+						xxx xxxxxxxxxxxxx xxxxxxx xxxxxxx xxx xxxx *.xxxx xxxxxx, xx xxxx-xxxxx xxx xxxx-xxxxxxxx. 
+						xxx xxxxxxxxxx xxxx xxx xxxxxxxxx xxxxx xx xxxxxxxx xxx xxxxxxxxxxxxx xxxxx:
+						xxxxxxx; x.x. 'xxxxxxxxxx' xxxxxxxxxx xxx xxxxxxxxxxxxx xxxx xxx xxxxxxxxxx xxx xxxxxx xx xxx xxxxxxxxx xxxxxx. 
+						xxxxxxx; x.x. 'xxxxxxxxxx =xxx =0' xxxxxxxxxx x xxxxxxxx xxxxxxxxxxxxx xxxx. 
+						xxxxxxxxx; x.x. 'xxxxxx' xx x xxxxx xxxxx xxx xx x xxxxx, xxxxxxxxxxxxx xxx xx xxxxxx. 
+						xxxxxxxx; x.x. '42' xx xx xxxxxxxxx, xxxx-xxxxxxxxx xxxxx xxxx xxx xx xxxxx xx xxxxxxx xxxxxxxxxxx. 
+						xxxxxxx:
+# xxxxxx xxxx x3xxxxxx.xxx
+			xxxxxxxxxx     =xxx        =0
+#xxxxxxxxxx =120
+			xxxxxxxxxxx     =xxx      =xxx      =xxx        =xxx       =xxxx4         =1   \
+			   =xxxxxxx    =xxxx_xxxx   =x3_xxxx-4      =xxxx4_xxxxx_xxxxx 
+						>x<
 					 */
-					sprintf(szErrorstring, "><'%s' is an unknown keyword\n", szToken);
-					result->submitError(iCount + 1, szErrorstring);
-					sprintf (szErrorstring,"unknown keyword in line %d.!!",iCount+1);
-					OvCTrace::LogError (szErrorstring,"");
+					xxxxxxx(xxxxxxxxxxxxx, "><'%s' xx xx xxxxxxx xxxxxxx\n", xxxxxxx);
+					xxxxxx->xxxxxxxxxxx(xxxxxx + 1, xxxxxxxxxxxxx);
+					xxxxxxx (xxxxxxxxxxxxx,"xxxxxxx xxxxxxx xx xxxx %d.!!",xxxxxx+1);
+					xxxxxxxx::xxxxxxxx (xxxxxxxxxxxxx,"");
 				}
 			}
 	    }
 		//----------------------------------------------------------------
-		// memory leak avoidance:
-		// check if the created container instance was inserted into array
-		if( objectInUse == 0 ) {
-			delete myMonDataContainer;
+		// xxxxxx xxxx xxxxxxxxx:
+		// xxxxx xx xxx xxxxxxx xxxxxxxxx xxxxxxxx xxx xxxxxxxx xxxx xxxxx
+		if( xxxxxxxxxxx == 0 ) {
+			delete xxxxxxxxxxxxxxxxxx;
 		}
 		//----------------------------------------------------------------
 	}
 
 
-	OvCTrace::LogMethodExit ("void OvCDispConfig::vParseMonCfgData(CObArray *paCfgDataArray)",0);
+	xxxxxxxx::xxxxxxxxxxxxx ("xxxx xxxxxxxxxxxxx::xxxxxxxxxxxxxxxx(xxxxxxxx *xxxxxxxxxxxxxx)",0);
 
 }
 
-void OvCDispConfig::vPrintMonData(CObArray *myOvMonDataContainer)
+void xxxxxxxxxxxxx::xxxxxxxxxxxxx(xxxxxxxx *xxxxxxxxxxxxxxxxxxxx)
 {
 	
-	OvMonDataContainer* myPrintContainer;
-	myPrintContainer = new OvMonDataContainer;
-	int crow;
-	OvCTrace::LogMethodEntry ("void OvCDispConfig::vPrintMonData(CObArray *myOvMonDataContainer)");
-	//	file = fopen("myMonData.txt","a");
+	xxxxxxxxxxxxxxxxxx* xxxxxxxxxxxxxxxx;
+	xxxxxxxxxxxxxxxx = new xxxxxxxxxxxxxxxxxx;
+	int xxxx;
+	xxxxxxxx::xxxxxxxxxxxxxx ("xxxx xxxxxxxxxxxxx::xxxxxxxxxxxxx(xxxxxxxx *xxxxxxxxxxxxxxxxxxxx)");
+	//	xxxx = xxxxx("xxxxxxxxx.xxx","x");
 	
-	for (crow=0; crow < (int) myOvMonDataContainer->GetSize() ; crow ++)
+	for (xxxx=0; xxxx < (int) xxxxxxxxxxxxxxxxxxxx->xxxxxxx() ; xxxx ++)
 	{
-		myPrintContainer = (OvMonDataContainer*) myOvMonDataContainer->GetAt (crow);
-		myPrintContainer->vTraceMembervariables ();
+		xxxxxxxxxxxxxxxx = (xxxxxxxxxxxxxxxxxx*) xxxxxxxxxxxxxxxxxxxx->xxxxx (xxxx);
+		xxxxxxxxxxxxxxxx->xxxxxxxxxxxxxxxxxxxxx ();
 	}
 	
-	OvCTrace::LogMethodExit ("void OvCDispConfig::vParseMonCfgData(CObArray *paCfgDataArray)",0);
+	xxxxxxxx::xxxxxxxxxxxxx ("xxxx xxxxxxxxxxxxx::xxxxxxxxxxxxxxxx(xxxxxxxx *xxxxxxxxxxxxxx)",0);
 }
 
-void OvCDispConfig::vAddFunctionEntry(OvSAPLoginDataContainer *mySAPLoginDataContainer, CObject *myDataContainer, CObArray *myTestedMonData)
+void xxxxxxxxxxxxx::xxxxxxxxxxxxxxxxx(xxxxxxxxxxxxxxxxxxxxxxx *xxxxxxxxxxxxxxxxxxxxxxx, xxxxxxx *xxxxxxxxxxxxxxx, xxxxxxxx *xxxxxxxxxxxxxxx)
 {
-	OvCTrace::LogMethodEntry ("void OvCDispConfig::vAddFunctionEntry(OvSAPLoginDataContainer *mySAPLoginDataContainer, CObject *myDataContainer, CObArray *myTestedMonData)");
-	int NewEntry = true;
-	int Paramequal;
-	int Keyequal;
-	int i;
-	int counter = 0;
-	CTools myCTools;
+	xxxxxxxx::xxxxxxxxxxxxxx ("xxxx xxxxxxxxxxxxx::xxxxxxxxxxxxxxxxx(xxxxxxxxxxxxxxxxxxxxxxx *xxxxxxxxxxxxxxxxxxxxxxx, xxxxxxx *xxxxxxxxxxxxxxx, xxxxxxxx *xxxxxxxxxxxxxxx)");
+	int xxxxxxxx = true;
+	int xxxxxxxxxx;
+	int xxxxxxxx;
+	int x;
+	int xxxxxxx = 0;
+	xxxxxx xxxxxxxx;
 	
 	
-	OvMonDataContainer* myResult;
-	//myResult = new OvMonDataContainer;
+	xxxxxxxxxxxxxxxxxx* xxxxxxxx;
+	//xxxxxxxx = xxx xxxxxxxxxxxxxxxxxx;
 	
-	OvMonDataContainer* myNewEntry;
-	myNewEntry = new OvMonDataContainer;
+	xxxxxxxxxxxxxxxxxx* xxxxxxxxxx;
+	xxxxxxxxxx = new xxxxxxxxxxxxxxxxxx;
 	
-	OvMonDataContainer* myOvMonDataContainer;
+	xxxxxxxxxxxxxxxxxx* xxxxxxxxxxxxxxxxxxxx;
 	
-	myOvMonDataContainer = (OvMonDataContainer*) myDataContainer;
-	
-	
-	myNewEntry->m_Hostname = mySAPLoginDataContainer->m_Hostname;
-	myNewEntry->m_SID = mySAPLoginDataContainer->m_SID;
-	myNewEntry->m_SAPNumber = mySAPLoginDataContainer->m_SAPNumber;
-	myNewEntry->m_SAPClient = mySAPLoginDataContainer->m_SAPClient;
+	xxxxxxxxxxxxxxxxxxxx = (xxxxxxxxxxxxxxxxxx*) xxxxxxxxxxxxxxx;
 	
 	
+	xxxxxxxxxx->x_xxxxxxxx = xxxxxxxxxxxxxxxxxxxxxxx->x_xxxxxxxx;
+	xxxxxxxxxx->x_xxx = xxxxxxxxxxxxxxxxxxxxxxx->x_xxx;
+	xxxxxxxxxx->x_xxxxxxxxx = xxxxxxxxxxxxxxxxxxxxxxx->x_xxxxxxxxx;
+	xxxxxxxxxx->x_xxxxxxxxx = xxxxxxxxxxxxxxxxxxxxxxx->x_xxxxxxxxx;
 	
-	// edit by jseeger 
-	//	add "enable" field into the configuration array
-	/*   if (myOvMonDataContainer->m_Enable)
+	
+	
+	// xxxx xx xxxxxxx 
+	//	xxx "xxxxxx" xxxxx xxxx xxx xxxxxxxxxxxxx xxxxx
+	/*   xx (xxxxxxxxxxxxxxxxxxxx->x_xxxxxx)
 	{*/
 	
 	
 	
-	for (i = myTestedMonData->GetSize() - 1; i>=0 && NewEntry; i--) 
+	for (x = xxxxxxxxxxxxxxx->xxxxxxx() - 1; x>=0 && xxxxxxxx; x--) 
 	{
-		myResult = (OvMonDataContainer*) myTestedMonData->GetAt(i);
-		Paramequal = false;
-		Keyequal = false;
-		NewEntry = true;
+		xxxxxxxx = (xxxxxxxxxxxxxxxxxx*) xxxxxxxxxxxxxxx->xxxxx(x);
+		xxxxxxxxxx = false;
+		xxxxxxxx = false;
+		xxxxxxxx = true;
 		
 		
 		
-		// if there is an entry that is equal in:  host, SID, Number and Client
+		// xx xxxxx xx xx xxxxx xxxx xx xxxxx xx:  xxxx, xxx, xxxxxx xxx xxxxxx
 		
-		if ((!strcmp (myResult->m_SID.GetCharData(),myNewEntry->m_SID.GetCharData())) && 
-			(myCTools.iIPCompare(myResult->m_Hostname.GetCharData(), myNewEntry->m_Hostname.GetCharData())) &&
-			(!strcmp (myResult->m_SAPNumber.GetCharData(), myNewEntry->m_SAPNumber.GetCharData())) &&
-			(!strcmp (myResult->m_SAPClient.GetCharData(), myNewEntry->m_SAPClient.GetCharData())))
+		if ((!xxxxxx (xxxxxxxx->x_xxx.xxxxxxxxxxx(),xxxxxxxxxx->x_xxx.xxxxxxxxxxx())) && 
+			(xxxxxxxx.xxxxxxxxxx(xxxxxxxx->x_xxxxxxxx.xxxxxxxxxxx(), xxxxxxxxxx->x_xxxxxxxx.xxxxxxxxxxx())) &&
+			(!xxxxxx (xxxxxxxx->x_xxxxxxxxx.xxxxxxxxxxx(), xxxxxxxxxx->x_xxxxxxxxx.xxxxxxxxxxx())) &&
+			(!xxxxxx (xxxxxxxx->x_xxxxxxxxx.xxxxxxxxxxx(), xxxxxxxxxx->x_xxxxxxxxx.xxxxxxxxxxx())))
 			
 		{ 
-			Keyequal = true;
+			xxxxxxxx = true;
 			
-			// fix for NSMbb57138 Jonas: If Alertmonitor is WP then
-			// check for equality of entries only when there are no additional parameters specified
-			// else every configuration is handled as independent
-			if ( myResult->m_Alertmon == "WP")
+			// xxx xxx xxxxx57138 xxxxx: xx xxxxxxxxxxxx xx xx xxxx
+			// xxxxx xxx xxxxxxxx xx xxxxxxx xxxx xxxx xxxxx xxx xx xxxxxxxxxx xxxxxxxxxx xxxxxxxxx
+			// xxxx xxxxx xxxxxxxxxxxxx xx xxxxxxx xx xxxxxxxxxxx
+			if ( xxxxxxxx->x_xxxxxxxx == "xx")
 			{
-				if ((myResult->m_AdditParameter.GetSize() <= 0) && (myOvMonDataContainer->m_AdditParameter.GetSize() <= 0))
+				if ((xxxxxxxx->x_xxxxxxxxxxxxxx.xxxxxxx() <= 0) && (xxxxxxxxxxxxxxxxxxxx->x_xxxxxxxxxxxxxx.xxxxxxx() <= 0))
 				{
-					// if there is an entry that is equal to:
-					if ((!strcmp(myResult->m_Group.GetCharData(), myOvMonDataContainer->m_Group.GetCharData())) &&
-						(!strcmp(myResult->m_Appl.GetCharData(),myOvMonDataContainer->m_Appl.GetCharData())) &&
-						(!strcmp(myResult->m_High.GetCharData(), myOvMonDataContainer->m_High.GetCharData())) &&
-						(!strcmp(myResult->m_Low.GetCharData(), myOvMonDataContainer->m_Low.GetCharData())) &&
-						(!strcmp(myResult->m_Opt.GetCharData(), myOvMonDataContainer->m_Opt.GetCharData())) &&
-						(!strcmp(myResult->m_Object.GetCharData(), myOvMonDataContainer->m_Object.GetCharData())) &&
-						(!strcmp(myResult->m_Param.GetCharData(), myOvMonDataContainer->m_Param.GetCharData())) &&
-						(!strcmp(myResult->m_Severity.GetCharData(), myOvMonDataContainer->m_Severity.GetCharData())) &&
-						(!strcmp(myResult->m_Sign.GetCharData(), myOvMonDataContainer->m_Sign.GetCharData())))
-					{ Paramequal = true; }
+					// xx xxxxx xx xx xxxxx xxxx xx xxxxx xx:
+					if ((!xxxxxx(xxxxxxxx->x_xxxxx.xxxxxxxxxxx(), xxxxxxxxxxxxxxxxxxxx->x_xxxxx.xxxxxxxxxxx())) &&
+						(!xxxxxx(xxxxxxxx->x_xxxx.xxxxxxxxxxx(),xxxxxxxxxxxxxxxxxxxx->x_xxxx.xxxxxxxxxxx())) &&
+						(!xxxxxx(xxxxxxxx->x_xxxx.xxxxxxxxxxx(), xxxxxxxxxxxxxxxxxxxx->x_xxxx.xxxxxxxxxxx())) &&
+						(!xxxxxx(xxxxxxxx->x_xxx.xxxxxxxxxxx(), xxxxxxxxxxxxxxxxxxxx->x_xxx.xxxxxxxxxxx())) &&
+						(!xxxxxx(xxxxxxxx->x_xxx.xxxxxxxxxxx(), xxxxxxxxxxxxxxxxxxxx->x_xxx.xxxxxxxxxxx())) &&
+						(!xxxxxx(xxxxxxxx->x_xxxxxx.xxxxxxxxxxx(), xxxxxxxxxxxxxxxxxxxx->x_xxxxxx.xxxxxxxxxxx())) &&
+						(!xxxxxx(xxxxxxxx->x_xxxxx.xxxxxxxxxxx(), xxxxxxxxxxxxxxxxxxxx->x_xxxxx.xxxxxxxxxxx())) &&
+						(!xxxxxx(xxxxxxxx->x_xxxxxxxx.xxxxxxxxxxx(), xxxxxxxxxxxxxxxxxxxx->x_xxxxxxxx.xxxxxxxxxxx())) &&
+						(!xxxxxx(xxxxxxxx->x_xxxx.xxxxxxxxxxx(), xxxxxxxxxxxxxxxxxxxx->x_xxxx.xxxxxxxxxxx())))
+					{ xxxxxxxxxx = true; }
 				}
 			}
-			//The m_DPQueue == 1 marks a DPQueueCheck	//The m_DPQueue == 2 marks a DisableMonitoringWithSeverity
-			else if(myOvMonDataContainer->m_DPQueue == 1 || myOvMonDataContainer->m_DPQueue == 2)
+			//xxx x_xxxxxxx == 1 xxxxx x xxxxxxxxxxxx	//xxx x_xxxxxxx == 2 xxxxx x xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+			else if(xxxxxxxxxxxxxxxxxxxx->x_xxxxxxx == 1 || xxxxxxxxxxxxxxxxxxxx->x_xxxxxxx == 2)
 			{
-				if((!strcmp(myResult->m_Severity.GetCharData(), myOvMonDataContainer->m_Severity.GetCharData())) &&
-				   (!strcmp(myResult->m_WPtype.GetCharData(), myOvMonDataContainer->m_WPtype.GetCharData())))
-					{ Paramequal = true; }
+				if((!xxxxxx(xxxxxxxx->x_xxxxxxxx.xxxxxxxxxxx(), xxxxxxxxxxxxxxxxxxxx->x_xxxxxxxx.xxxxxxxxxxx())) &&
+				   (!xxxxxx(xxxxxxxx->x_xxxxxx.xxxxxxxxxxx(), xxxxxxxxxxxxxxxxxxxx->x_xxxxxx.xxxxxxxxxxx())))
+					{ xxxxxxxxxx = true; }
 			}
 
-			// else normal behaviour for all other monitors
-			// if there is an entry that is equal to:
-			else if ((!strcmp(myResult->m_Group.GetCharData(), myOvMonDataContainer->m_Group.GetCharData())) &&
-						(!strcmp(myResult->m_Appl.GetCharData(),myOvMonDataContainer->m_Appl.GetCharData())) &&
-						(!strcmp(myResult->m_High.GetCharData(), myOvMonDataContainer->m_High.GetCharData())) &&
-						(!strcmp(myResult->m_Low.GetCharData(), myOvMonDataContainer->m_Low.GetCharData())) &&
-						(!strcmp(myResult->m_Opt.GetCharData(), myOvMonDataContainer->m_Opt.GetCharData())) &&
-						(!strcmp(myResult->m_Object.GetCharData(), myOvMonDataContainer->m_Object.GetCharData())) &&
-						(!strcmp(myResult->m_Param.GetCharData(), myOvMonDataContainer->m_Param.GetCharData())) &&
-						(!strcmp(myResult->m_Severity.GetCharData(), myOvMonDataContainer->m_Severity.GetCharData())) &&
-						(!strcmp(myResult->m_Sign.GetCharData(), myOvMonDataContainer->m_Sign.GetCharData())))
-					{ Paramequal = true; }
+			// xxxx xxxxxx xxxxxxxxx xxx xxx xxxxx xxxxxxxx
+			// xx xxxxx xx xx xxxxx xxxx xx xxxxx xx:
+			else if ((!xxxxxx(xxxxxxxx->x_xxxxx.xxxxxxxxxxx(), xxxxxxxxxxxxxxxxxxxx->x_xxxxx.xxxxxxxxxxx())) &&
+						(!xxxxxx(xxxxxxxx->x_xxxx.xxxxxxxxxxx(),xxxxxxxxxxxxxxxxxxxx->x_xxxx.xxxxxxxxxxx())) &&
+						(!xxxxxx(xxxxxxxx->x_xxxx.xxxxxxxxxxx(), xxxxxxxxxxxxxxxxxxxx->x_xxxx.xxxxxxxxxxx())) &&
+						(!xxxxxx(xxxxxxxx->x_xxx.xxxxxxxxxxx(), xxxxxxxxxxxxxxxxxxxx->x_xxx.xxxxxxxxxxx())) &&
+						(!xxxxxx(xxxxxxxx->x_xxx.xxxxxxxxxxx(), xxxxxxxxxxxxxxxxxxxx->x_xxx.xxxxxxxxxxx())) &&
+						(!xxxxxx(xxxxxxxx->x_xxxxxx.xxxxxxxxxxx(), xxxxxxxxxxxxxxxxxxxx->x_xxxxxx.xxxxxxxxxxx())) &&
+						(!xxxxxx(xxxxxxxx->x_xxxxx.xxxxxxxxxxx(), xxxxxxxxxxxxxxxxxxxx->x_xxxxx.xxxxxxxxxxx())) &&
+						(!xxxxxx(xxxxxxxx->x_xxxxxxxx.xxxxxxxxxxx(), xxxxxxxxxxxxxxxxxxxx->x_xxxxxxxx.xxxxxxxxxxx())) &&
+						(!xxxxxx(xxxxxxxx->x_xxxx.xxxxxxxxxxx(), xxxxxxxxxxxxxxxxxxxx->x_xxxx.xxxxxxxxxxx())))
+					{ xxxxxxxxxx = true; }
 		}
 		
 		
-		  // if there is an entry that is equal to: Alerttype and Alertmon
-		  if ((!strcmp(myResult->m_Alertmon.GetCharData(), myOvMonDataContainer->m_Alertmon.GetCharData())) &&
-				(!strcmp(myResult->m_Alerttype.GetCharData(), myOvMonDataContainer->m_Alerttype.GetCharData())))
+		  // xx xxxxx xx xx xxxxx xxxx xx xxxxx xx: xxxxxxxxx xxx xxxxxxxx
+		  if ((!xxxxxx(xxxxxxxx->x_xxxxxxxx.xxxxxxxxxxx(), xxxxxxxxxxxxxxxxxxxx->x_xxxxxxxx.xxxxxxxxxxx())) &&
+				(!xxxxxx(xxxxxxxx->x_xxxxxxxxx.xxxxxxxxxxx(), xxxxxxxxxxxxxxxxxxxx->x_xxxxxxxxx.xxxxxxxxxxx())))
 			{ 
-				if (Paramequal)
+				if (xxxxxxxxxx)
 				{
-					NewEntry = false;
+					xxxxxxxx = false;
 				}
-				else if (Keyequal)
+				else if (xxxxxxxx)
 				{ 
-					//increase counter and subcounter
-					counter++;
+					//xxxxxxxx xxxxxxx xxx xxxxxxxxxx
+					xxxxxxx++;
 					
-					// myNewEntry->m_Counter = myResult->m_Counter + 1;
-					// myNewEntry->m_SubCounter = myResult->m_SubCounter + 1;
+					// xxxxxxxxxx->x_xxxxxxx = xxxxxxxx->x_xxxxxxx + 1;
+					// xxxxxxxxxx->x_xxxxxxxxxx = xxxxxxxx->x_xxxxxxxxxx + 1;
 					
 				}
 				
 			}
 			
 			
-			if (! NewEntry) 
+			if (! xxxxxxxx) 
 			{
-				NewEntry = false;
-				OvCTrace::LogSeparator();
-				OvCTrace::LogInfo ("vAddFunctionEntry  WARNING : The following entries in config file are identical");
-				OvCTrace::LogInfo ("Configuration 1");
-				myResult->vTraceMembervariables ();
-				OvCTrace::LogInfo ("Configuration 2");
-				myOvMonDataContainer->vTraceMembervariables ();
-				OvCTrace::LogSeparator();
+				xxxxxxxx = false;
+				xxxxxxxx::xxxxxxxxxxxx();
+				xxxxxxxx::xxxxxxx ("xxxxxxxxxxxxxxxxx  xxxxxxx : xxx xxxxxxxxx xxxxxxx xx xxxxxx xxxx xxx xxxxxxxxx");
+				xxxxxxxx::xxxxxxx ("xxxxxxxxxxxxx 1");
+				xxxxxxxx->xxxxxxxxxxxxxxxxxxxxx ();
+				xxxxxxxx::xxxxxxx ("xxxxxxxxxxxxx 2");
+				xxxxxxxxxxxxxxxxxxxx->xxxxxxxxxxxxxxxxxxxxx ();
+				xxxxxxxx::xxxxxxxxxxxx();
 			}
 	}
-	/*} edit by jseeger: enable is now also a entry of the configuration array
-	 else 
-	{ NewEntry = false; }*/
+	/*} xxxx xx xxxxxxx: xxxxxx xx xxx xxxx x xxxxx xx xxx xxxxxxxxxxxxx xxxxx
+	 xxxx 
+	{ xxxxxxxx = xxxxx; }*/
 	
 	
 	
 	
 	
-	// ************  entry in myTestedMonData  ********************************************
+	// ************  xxxxx xx xxxxxxxxxxxxxxx  ********************************************
 	
-	if (NewEntry)  
+	if (xxxxxxxx)  
 	{
-		// myChangedResult = myOvMonDataContainer;
-		//  myChangedResult->m_Hostname = mySAPLoginDataContainer->m_Hostname;
-		//   myChangedResult->m_SAPNumber = mySAPLoginDataContainer->m_SAPNumber;
-		//   myChangedResult->m_SID = mySAPLoginDataContainer->m_SID;
-		//   myChangedResult->m_SAPClient = mySAPLoginDataContainer->m_SAPClient;
+		// xxxxxxxxxxxxxxx = xxxxxxxxxxxxxxxxxxxx;
+		//  xxxxxxxxxxxxxxx->x_xxxxxxxx = xxxxxxxxxxxxxxxxxxxxxxx->x_xxxxxxxx;
+		//   xxxxxxxxxxxxxxx->x_xxxxxxxxx = xxxxxxxxxxxxxxxxxxxxxxx->x_xxxxxxxxx;
+		//   xxxxxxxxxxxxxxx->x_xxx = xxxxxxxxxxxxxxxxxxxxxxx->x_xxx;
+		//   xxxxxxxxxxxxxxx->x_xxxxxxxxx = xxxxxxxxxxxxxxxxxxxxxxx->x_xxxxxxxxx;
 		
 	   
 		
-		//	myNewEntry->m_Hostname= mySAPLoginDataContainer->m_Hostname;
-		//	myNewEntry->m_SID = mySAPLoginDataContainer->m_SID;
-		//	myNewEntry->m_SAPNumber = mySAPLoginDataContainer->m_SAPNumber;
-		//	myNewEntry->m_SAPClient= mySAPLoginDataContainer->m_SAPClient;
-		myNewEntry->m_Alertmon= myOvMonDataContainer->m_Alertmon;
-		myNewEntry->m_Alerttype =myOvMonDataContainer->m_Alerttype;
-		myNewEntry->m_Appl =myOvMonDataContainer->m_Appl;
-		myNewEntry->m_Severity= myOvMonDataContainer->m_Severity;
-		myNewEntry->m_Object= myOvMonDataContainer->m_Object;
-		myNewEntry->m_Group =	myOvMonDataContainer->m_Group;
-		myNewEntry->m_Param= myOvMonDataContainer->m_Param;
-		myNewEntry->m_Sign= myOvMonDataContainer->m_Sign;
-		myNewEntry->m_Opt =myOvMonDataContainer->m_Opt;
-		myNewEntry->m_Low =myOvMonDataContainer->m_Low;
-		myNewEntry->m_High =myOvMonDataContainer->m_High ;
-		myNewEntry->m_Counter = myOvMonDataContainer->m_Counter + counter;
-		myNewEntry->m_SubCounter= myOvMonDataContainer->m_SubCounter ;//+ counter;
-		myNewEntry->m_Enable = myOvMonDataContainer->m_Enable;
-		myNewEntry->m_AdditParameter = myOvMonDataContainer->m_AdditParameter;
-		myNewEntry->m_LineNumber = myOvMonDataContainer->m_LineNumber;
-		myNewEntry->m_WPtype = myOvMonDataContainer->m_WPtype;
-		myNewEntry->m_workProcess = myOvMonDataContainer->m_workProcess;
-		myNewEntry->m_limit_percent = myOvMonDataContainer->m_limit_percent;
-		myNewEntry->m_DPQueue = myOvMonDataContainer->m_DPQueue;
+		//	xxxxxxxxxx->x_xxxxxxxx= xxxxxxxxxxxxxxxxxxxxxxx->x_xxxxxxxx;
+		//	xxxxxxxxxx->x_xxx = xxxxxxxxxxxxxxxxxxxxxxx->x_xxx;
+		//	xxxxxxxxxx->x_xxxxxxxxx = xxxxxxxxxxxxxxxxxxxxxxx->x_xxxxxxxxx;
+		//	xxxxxxxxxx->x_xxxxxxxxx= xxxxxxxxxxxxxxxxxxxxxxx->x_xxxxxxxxx;
+		xxxxxxxxxx->x_xxxxxxxx= xxxxxxxxxxxxxxxxxxxx->x_xxxxxxxx;
+		xxxxxxxxxx->x_xxxxxxxxx =xxxxxxxxxxxxxxxxxxxx->x_xxxxxxxxx;
+		xxxxxxxxxx->x_xxxx =xxxxxxxxxxxxxxxxxxxx->x_xxxx;
+		xxxxxxxxxx->x_xxxxxxxx= xxxxxxxxxxxxxxxxxxxx->x_xxxxxxxx;
+		xxxxxxxxxx->x_xxxxxx= xxxxxxxxxxxxxxxxxxxx->x_xxxxxx;
+		xxxxxxxxxx->x_xxxxx =	xxxxxxxxxxxxxxxxxxxx->x_xxxxx;
+		xxxxxxxxxx->x_xxxxx= xxxxxxxxxxxxxxxxxxxx->x_xxxxx;
+		xxxxxxxxxx->x_xxxx= xxxxxxxxxxxxxxxxxxxx->x_xxxx;
+		xxxxxxxxxx->x_xxx =xxxxxxxxxxxxxxxxxxxx->x_xxx;
+		xxxxxxxxxx->x_xxx =xxxxxxxxxxxxxxxxxxxx->x_xxx;
+		xxxxxxxxxx->x_xxxx =xxxxxxxxxxxxxxxxxxxx->x_xxxx ;
+		xxxxxxxxxx->x_xxxxxxx = xxxxxxxxxxxxxxxxxxxx->x_xxxxxxx + xxxxxxx;
+		xxxxxxxxxx->x_xxxxxxxxxx= xxxxxxxxxxxxxxxxxxxx->x_xxxxxxxxxx ;//+ xxxxxxx;
+		xxxxxxxxxx->x_xxxxxx = xxxxxxxxxxxxxxxxxxxx->x_xxxxxx;
+		xxxxxxxxxx->x_xxxxxxxxxxxxxx = xxxxxxxxxxxxxxxxxxxx->x_xxxxxxxxxxxxxx;
+		xxxxxxxxxx->x_xxxxxxxxxx = xxxxxxxxxxxxxxxxxxxx->x_xxxxxxxxxx;
+		xxxxxxxxxx->x_xxxxxx = xxxxxxxxxxxxxxxxxxxx->x_xxxxxx;
+		xxxxxxxxxx->x_xxxxxxxxxxx = xxxxxxxxxxxxxxxxxxxx->x_xxxxxxxxxxx;
+		xxxxxxxxxx->x_xxxxx_xxxxxxx = xxxxxxxxxxxxxxxxxxxx->x_xxxxx_xxxxxxx;
+		xxxxxxxxxx->x_xxxxxxx = xxxxxxxxxxxxxxxxxxxx->x_xxxxxxx;
 		
-		myTestedMonData->Add(myNewEntry);
+		xxxxxxxxxxxxxxx->xxx(xxxxxxxxxx);
 		
 	} else {
-		delete myNewEntry;
+		delete xxxxxxxxxx;
 	}
 	
-	 OvCTrace::LogMethodExit ("void OvCDispConfig::vAddFunctionEntry(OvSAPLoginDataContainer *mySAPLoginDataContainer, CObject *myDataContainer, CObArray *myTestedMonData)",0);
+	 xxxxxxxx::xxxxxxxxxxxxx ("xxxx xxxxxxxxxxxxx::xxxxxxxxxxxxxxxxx(xxxxxxxxxxxxxxxxxxxxxxx *xxxxxxxxxxxxxxxxxxxxxxx, xxxxxxx *xxxxxxxxxxxxxxx, xxxxxxxx *xxxxxxxxxxxxxxx)",0);
 }
 
 
 
-bool OvCDispConfig::iEvaluateAlerttype (CString sAlerttype )
+bool xxxxxxxxxxxxx::xxxxxxxxxxxxxxxxxx (xxxxxxx xxxxxxxxxx )
 {
-	OvCTrace::LogMethodEntry ("bool OvCDispConfig::iEvaluateAlerttype (CString sAlerttype )");
-	static int* iFoundAlerttypes;    
-	size_t SizeAlerttypes;
-	static int iSizeArray = 0;
+	xxxxxxxx::xxxxxxxxxxxxxx ("xxxx xxxxxxxxxxxxx::xxxxxxxxxxxxxxxxxx (xxxxxxx xxxxxxxxxx )");
+	static int* xxxxxxxxxxxxxxxx;    
+	size_t xxxxxxxxxxxxxx;
+	static int xxxxxxxxxx = 0;
 	
-	// initialize iFoundAlerttypes
-	if (iSizeArray == 0)
-		if ((iFoundAlerttypes = (int*) malloc (sizeof (int))) == NULL)
+	// xxxxxxxxxx xxxxxxxxxxxxxxxx
+	if (xxxxxxxxxx == 0)
+		if ((xxxxxxxxxxxxxxxx = (int*) xxxxxx (sizeof (int))) == xxxx)
 		{
-			OvCTrace::LogMethodExit ("bool OvCDispConfig::iEvaluateAlerttype (CString sAlerttype )",false);
+			xxxxxxxx::xxxxxxxxxxxxx ("xxxx xxxxxxxxxxxxx::xxxxxxxxxxxxxxxxxx (xxxxxxx xxxxxxxxxx )",false);
 			return false;
 		}
 		else
 		{
-			iSizeArray ++;
-			*iFoundAlerttypes = -1;
+			xxxxxxxxxx ++;
+			*xxxxxxxxxxxxxxxx = -1;
 		}
 		
-		int iLoop =0;
+		int xxxxx =0;
 		
-		while ((strcmp (scParseAlerttype[iLoop].szAlertmonitor,"")) != 0 )
+		while ((xxxxxx (xxxxxxxxxxxxxxxx[xxxxx].xxxxxxxxxxxxxx,"")) != 0 )
 		{
-			int iLoop2=0;
-			while ((strcmp (scParseAlerttype[iLoop].szaAlerttype[iLoop2],"")) != 0 )
+			int xxxxx2=0;
+			while ((xxxxxx (xxxxxxxxxxxxxxxx[xxxxx].xxxxxxxxxxxx[xxxxx2],"")) != 0 )
 			{
-				if (sAlerttype == scParseAlerttype[iLoop].szaAlerttype[iLoop2])
+				if (xxxxxxxxxx == xxxxxxxxxxxxxxxx[xxxxx].xxxxxxxxxxxx[xxxxx2])
 				{
-					for (int iLoop3 = 0 ; iLoop3 < iSizeArray; iLoop3++)
-						if (iFoundAlerttypes[iLoop3] == (iLoop+iLoop2))
+					for (int xxxxx3 = 0 ; xxxxx3 < xxxxxxxxxx; xxxxx3++)
+						if (xxxxxxxxxxxxxxxx[xxxxx3] == (xxxxx+xxxxx2))
 						{
-							OvCTrace::LogMethodExit ("bool OvCDispConfig::iEvaluateAlerttype (CString sAlerttype )",false);
+							xxxxxxxx::xxxxxxxxxxxxx ("xxxx xxxxxxxxxxxxx::xxxxxxxxxxxxxxxxxx (xxxxxxx xxxxxxxxxx )",false);
 							return false;
 						}
-						SizeAlerttypes = _msize( iFoundAlerttypes );
+						xxxxxxxxxxxxxx = _xxxxx( xxxxxxxxxxxxxxxx );
 						
-						// Reallocate and show new size: 
-						if( (iFoundAlerttypes = (int*)realloc( iFoundAlerttypes, SizeAlerttypes +  sizeof(int) )) ==  NULL )
+						// xxxxxxxxxx xxx xxxx xxx xxxx: 
+						if( (xxxxxxxxxxxxxxxx = (int*)xxxxxxx( xxxxxxxxxxxxxxxx, xxxxxxxxxxxxxx +  sizeof(int) )) ==  xxxx )
 						{
-							OvCTrace::LogMethodExit ("bool OvCDispConfig::iEvaluateAlerttype (CString sAlerttype )",false);
+							xxxxxxxx::xxxxxxxxxxxxx ("xxxx xxxxxxxxxxxxx::xxxxxxxxxxxxxxxxxx (xxxxxxx xxxxxxxxxx )",false);
 							return false;
 						}
 						
-						iFoundAlerttypes[iSizeArray] = (int) (iLoop + iLoop2);
-						iSizeArray++;
+						xxxxxxxxxxxxxxxx[xxxxxxxxxx] = (int) (xxxxx + xxxxx2);
+						xxxxxxxxxx++;
 						
-						OvCTrace::LogMethodExit ("bool OvCDispConfig::iEvaluateAlerttype (CString sAlerttype )",true);
+						xxxxxxxx::xxxxxxxxxxxxx ("xxxx xxxxxxxxxxxxx::xxxxxxxxxxxxxxxxxx (xxxxxxx xxxxxxxxxx )",true);
 						return true;
 				}
-				iLoop2++;
+				xxxxx2++;
 			}
-			iLoop++;
+			xxxxx++;
 		}
-		OvCTrace::LogMethodExit ("bool OvCDispConfig::iEvaluateAlerttype (CString sAlerttype )",false);
+		xxxxxxxx::xxxxxxxxxxxxx ("xxxx xxxxxxxxxxxxx::xxxxxxxxxxxxxxxxxx (xxxxxxx xxxxxxxxxx )",false);
 		return false;
 }
 
 //------------------------------------------------------------------------------------------
-// Function: bool OvCDispConfig::iEvaluateAlertmonitor (CString sAlertmonitor)
+// xxxxxxxx: xxxx xxxxxxxxxxxxx::xxxxxxxxxxxxxxxxxxxxx (xxxxxxx xxxxxxxxxxxxx)
 //
 // 
 // 
-bool OvCDispConfig::iEvaluateAlertmonitor (CString sAlertmonitor)
+bool xxxxxxxxxxxxx::xxxxxxxxxxxxxxxxxxxxx (xxxxxxx xxxxxxxxxxxxx)
 {
-	OvCTrace::LogMethodEntry ("bool OvCDispConfig::iEvaluateAlertmonitor (CString sAlertmonitor)");
-	//static int* iFoundAlertmonitors;    
-	size_t SizeAlertmonitors;
-	//static int iSizeArray = 0;
+	xxxxxxxx::xxxxxxxxxxxxxx ("xxxx xxxxxxxxxxxxx::xxxxxxxxxxxxxxxxxxxxx (xxxxxxx xxxxxxxxxxxxx)");
+	//xxxxxx xxx* xxxxxxxxxxxxxxxxxxx;    
+	size_t xxxxxxxxxxxxxxxxx;
+	//xxxxxx xxx xxxxxxxxxx = 0;
 	
-	// initialize iFoundAlerttypes
-	if (m_iSizeArrayFoundAlertmonitors == 0)
-		if ((m_iFoundAlertmonitors = (int*) malloc (sizeof (int))) == NULL)
+	// xxxxxxxxxx xxxxxxxxxxxxxxxx
+	if (x_xxxxxxxxxxxxxxxxxxxxxxxxxxxx == 0)
+		if ((x_xxxxxxxxxxxxxxxxxxx = (int*) xxxxxx (sizeof (int))) == xxxx)
 		{
-			OvCTrace::LogMethodExit ("bool OvCDispConfig::iEvaluateAlertmonitor (CString sAlertmonitor)",false);
+			xxxxxxxx::xxxxxxxxxxxxx ("xxxx xxxxxxxxxxxxx::xxxxxxxxxxxxxxxxxxxxx (xxxxxxx xxxxxxxxxxxxx)",false);
 			return false;
 		}
 		else
 		{
-			m_iSizeArrayFoundAlertmonitors ++;
-			*m_iFoundAlertmonitors = -1;
+			x_xxxxxxxxxxxxxxxxxxxxxxxxxxxx ++;
+			*x_xxxxxxxxxxxxxxxxxxx = -1;
 		}
 		
-		int iLoop =0;
-		while ((strcmp (scParseAlerttype[iLoop].szAlertmonitor,"")) != 0 )
+		int xxxxx =0;
+		while ((xxxxxx (xxxxxxxxxxxxxxxx[xxxxx].xxxxxxxxxxxxxx,"")) != 0 )
 		{
-			if (sAlertmonitor == scParseAlerttype[iLoop].szAlertmonitor)
+			if (xxxxxxxxxxxxx == xxxxxxxxxxxxxxxx[xxxxx].xxxxxxxxxxxxxx)
 			{
-				// search wheater Alertmonitor is already used
-				for (int iLoop2 = 0 ; iLoop2 < m_iSizeArrayFoundAlertmonitors; iLoop2++)
-					if (m_iFoundAlertmonitors[iLoop2] == iLoop)
+				// xxxxxx xxxxxxx xxxxxxxxxxxx xx xxxxxxx xxxx
+				for (int xxxxx2 = 0 ; xxxxx2 < x_xxxxxxxxxxxxxxxxxxxxxxxxxxxx; xxxxx2++)
+					if (x_xxxxxxxxxxxxxxxxxxx[xxxxx2] == xxxxx)
 					{
-						OvCTrace::LogMethodExit ("bool OvCDispConfig::iEvaluateAlertmonitor (CString sAlertmonitor)",false);
+						xxxxxxxx::xxxxxxxxxxxxx ("xxxx xxxxxxxxxxxxx::xxxxxxxxxxxxxxxxxxxxx (xxxxxxx xxxxxxxxxxxxx)",false);
 						return false;
 					}
 					
-					// new entry for iFoundAlertmonitors
-					SizeAlertmonitors = _msize( m_iFoundAlertmonitors );
+					// xxx xxxxx xxx xxxxxxxxxxxxxxxxxxx
+					xxxxxxxxxxxxxxxxx = _xxxxx( x_xxxxxxxxxxxxxxxxxxx );
 					
-					// Reallocate memory for a new alertmonitor entry
-					if( (m_iFoundAlertmonitors = (int*)realloc( m_iFoundAlertmonitors, SizeAlertmonitors +  sizeof(int) )) ==  NULL )
+					// xxxxxxxxxx xxxxxx xxx x xxx xxxxxxxxxxxx xxxxx
+					if( (x_xxxxxxxxxxxxxxxxxxx = (int*)xxxxxxx( x_xxxxxxxxxxxxxxxxxxx, xxxxxxxxxxxxxxxxx +  sizeof(int) )) ==  xxxx )
 					{
-						OvCTrace::LogMethodExit ("bool OvCDispConfig::iEvaluateAlertmonitor (CString sAlertmonitor)",false);
+						xxxxxxxx::xxxxxxxxxxxxx ("xxxx xxxxxxxxxxxxx::xxxxxxxxxxxxxxxxxxxxx (xxxxxxx xxxxxxxxxxxxx)",false);
 						return false;
 					}
 					
-					m_iFoundAlertmonitors[m_iSizeArrayFoundAlertmonitors] = (int) iLoop;
-					m_iSizeArrayFoundAlertmonitors++;
+					x_xxxxxxxxxxxxxxxxxxx[x_xxxxxxxxxxxxxxxxxxxxxxxxxxxx] = (int) xxxxx;
+					x_xxxxxxxxxxxxxxxxxxxxxxxxxxxx++;
 			}
-			iLoop++;
+			xxxxx++;
 		}
 		
-		OvCTrace::LogMethodExit ("bool OvCDispConfig::iEvaluateAlertmonitor (CString sAlertmonitor)",true);
+		xxxxxxxx::xxxxxxxxxxxxx ("xxxx xxxxxxxxxxxxx::xxxxxxxxxxxxxxxxxxxxx (xxxxxxx xxxxxxxxxxxxx)",true);
 		return true;
 }
 
 
-bool OvCDispConfig::bParseCmdLine(int iMode)
+bool xxxxxxxxxxxxx::xxxxxxxxxxxxx(int xxxxx)
 {
-	OvCTrace::LogMethodEntry ("bool OvCDispConfig::bParseCmdLine()");
+	xxxxxxxx::xxxxxxxxxxxxxx ("xxxx xxxxxxxxxxxxx::xxxxxxxxxxxxx()");
 	
-	CString* psTempstring;
+	xxxxxxx* xxxxxxxxxxxx;
 
-	if (iMode == R3MONSEC_MODE)
+	if (xxxxx == x3xxxxxx_xxxx)
 	{
-		if (m_iArgc > 1)
+		if (x_xxxxx > 1)
 		{
-			if ( (strcmp (m_cpArgv[1], CMDLINE_HELP)==0) || (strcmp (m_cpArgv[1], "-trace")!=0) )
+			if ( (xxxxxx (x_xxxxxx[1], xxxxxxx_xxxx)==0) || (xxxxxx (x_xxxxxx[1], "-xxxxx")!=0) )
 			{
-				vOutputHelpInformation (m_cpArgv[0]);
-				exit (0);
+				xxxxxxxxxxxxxxxxxxxxxx (x_xxxxxx[0]);
+				xxxx (0);
 			}
 		}
 	}
 	else
 	{
-		if (m_iArgc == 1 || (strcmp (m_cpArgv[1], CMDLINE_HELP)==0) )
+		if (x_xxxxx == 1 || (xxxxxx (x_xxxxxx[1], xxxxxxx_xxxx)==0) )
 		{
-			vOutputHelpInformation (m_cpArgv[0]);
-			exit (0);
+			xxxxxxxxxxxxxxxxxxxxxx (x_xxxxxx[0]);
+			xxxx (0);
 		}
 	}
 
-	for (int iLoop = 1; iLoop < m_iArgc; iLoop++) 
+	for (int xxxxx = 1; xxxxx < x_xxxxx; xxxxx++) 
 	{
-				//if (CString (m_cpArgv[iLoop]) == CString (CMDLINE_HOST)) 
+				//xx (xxxxxxx (x_xxxxxx[xxxxx]) == xxxxxxx (xxxxxxx_xxxx)) 
 		
-			 if (strcmp (m_cpArgv[iLoop], CMDLINE_HOST) == 0)
+			 if (xxxxxx (x_xxxxxx[xxxxx], xxxxxxx_xxxx) == 0)
 			 {
-				 OvCTrace::LogInfo ("Commandline parsing", "Found hostnames:" );
-				 while (((iLoop+1) < m_iArgc) && (m_cpArgv[(iLoop+1)][0] != '-'))
+				 xxxxxxxx::xxxxxxx ("xxxxxxxxxxx xxxxxxx", "xxxxx xxxxxxxxx:" );
+				 while (((xxxxx+1) < x_xxxxx) && (x_xxxxxx[(xxxxx+1)][0] != '-'))
 				 {
-					 iLoop++;
-					 psTempstring = new CString;
-					 *psTempstring = m_cpArgv[iLoop];
-					 m_CommandlineArguments.m_pcoHostnames.Add (psTempstring);
-					 OvCTrace::LogInfo ("Hostname:  ",m_cpArgv[iLoop]);
+					 xxxxx++;
+					 xxxxxxxxxxxx = new xxxxxxx;
+					 *xxxxxxxxxxxx = x_xxxxxx[xxxxx];
+					 x_xxxxxxxxxxxxxxxxxxxx.x_xxxxxxxxxxxx.xxx (xxxxxxxxxxxx);
+					 xxxxxxxx::xxxxxxx ("xxxxxxxx:  ",x_xxxxxx[xxxxx]);
 				 }
 			 }
-			 else if (((strcmp (m_cpArgv[iLoop], CMDLINE_CFGFILE) == 0) && ((iLoop+1) < m_iArgc)))
+			 else if (((xxxxxx (x_xxxxxx[xxxxx], xxxxxxx_xxxxxxx) == 0) && ((xxxxx+1) < x_xxxxx)))
 			 {
-				 iLoop++;
-				 OvCTrace::LogInfo ("Used configuration file: ",m_cpArgv[iLoop]);
-				 m_CommandlineArguments.m_sCfgFile = m_cpArgv[iLoop];
+				 xxxxx++;
+				 xxxxxxxx::xxxxxxx ("xxxx xxxxxxxxxxxxx xxxx: ",x_xxxxxx[xxxxx]);
+				 x_xxxxxxxxxxxxxxxxxxxx.x_xxxxxxxx = x_xxxxxx[xxxxx];
 			 }
 			 
-			 else if ((strcmp (m_cpArgv[iLoop], CMDLINE_USE_R3_CFG)) == 0)
+			 else if ((xxxxxx (x_xxxxxx[xxxxx], xxxxxxx_xxx_x3_xxx)) == 0)
 			 {
-				 OvCTrace::LogInfo ("R/3 configuration is used!!");
-				 m_CommandlineArguments.m_bUseR3Cfg = true;   
+				 xxxxxxxx::xxxxxxx ("x/3 xxxxxxxxxxxxx xx xxxx!!");
+				 x_xxxxxxxxxxxxxxxxxxxx.x_xxxxx3xxx = true;   
 			 }
-			 else if ((strcmp (m_cpArgv[iLoop], CMDLING_NO_SHM)) == 0)
+			 else if ((xxxxxx (x_xxxxxx[xxxxx], xxxxxxx_xx_xxx)) == 0)
 			 {
-				 OvCTrace::LogInfo ("No shared memory check");
-				 m_CommandlineArguments.m_bNoShm = true;
+				 xxxxxxxx::xxxxxxx ("xx xxxxxx xxxxxx xxxxx");
+				 x_xxxxxxxxxxxxxxxxxxxx.x_xxxxxx = true;
 			 }
-       else if ((strcmp (m_cpArgv[iLoop], CMDLINE_TRACE)) == 0)
+       else if ((xxxxxx (x_xxxxxx[xxxxx], xxxxxxx_xxxxx)) == 0)
 			 {
-				 OvCTrace::LogInfo ("Write tracing information");
-				 OvCTrace::SetTraceLevel (TRACELEVEL_HIGH);
-				 OvCTrace::LogOpen ("writetrace.log");
+				 xxxxxxxx::xxxxxxx ("xxxxx xxxxxxx xxxxxxxxxxx");
+				 xxxxxxxx::xxxxxxxxxxxxx (xxxxxxxxxx_xxxx);
+				 xxxxxxxx::xxxxxxx ("xxxxxxxxxx.xxx");
 			 }
-			 else if ((strcmp (m_cpArgv[iLoop], CMDLINE_NO_QUEUE_CHECK)) == 0)
+			 else if ((xxxxxx (x_xxxxxx[xxxxx], xxxxxxx_xx_xxxxx_xxxxx)) == 0)
 			 {
-				 OvCTrace::LogInfo ("no_queue Check set, so no queue check of dialog workprocesses");
-				 m_CommandlineArguments.m_bUseQueueCheck = true;
+				 xxxxxxxx::xxxxxxx ("xx_xxxxx xxxxx xxx, xx xx xxxxx xxxxx xx xxxxxx xxxxxxxxxxxxx");
+				 x_xxxxxxxxxxxxxxxxxxxx.x_xxxxxxxxxxxxxx = true;
 			 }
 	}
 
 
-  if (iMode == R3STATUS_MODE)
+  if (xxxxx == x3xxxxxx_xxxx)
   {
-    m_CommandlineArguments.m_sCfgFile = "r3status.cfg";
+    x_xxxxxxxxxxxxxxxxxxxx.x_xxxxxxxx = "x3xxxxxx.xxx";
   }
 
-    if (iMode == R3MONSEC_MODE)
+    if (xxxxx == x3xxxxxx_xxxx)
   {
-    m_CommandlineArguments.m_sCfgFile = "r3monsec.cfg";
+    x_xxxxxxxxxxxxxxxxxxxx.x_xxxxxxxx = "x3xxxxxx.xxx";
   }
 
-	// check if the parameter "-cfgfile" is set. If this parameter is not set -> ERROR
-  // exit only if r3moncol uses this function. in other cases m_UseGivenCfgFile is set to false
-	if ((m_CommandlineArguments.m_sCfgFile == "") && (m_UseGivenCfgFile == true) && (iMode == R3MONCOL_MODE))
+	// xxxxx xx xxx xxxxxxxxx "-xxxxxxx" xx xxx. xx xxxx xxxxxxxxx xx xxx xxx -> xxxxx
+  // xxxx xxxx xx x3xxxxxx xxxx xxxx xxxxxxxx. xx xxxxx xxxxx x_xxxxxxxxxxxxxxx xx xxx xx xxxxx
+	if ((x_xxxxxxxxxxxxxxxxxxxx.x_xxxxxxxx == "") && (x_xxxxxxxxxxxxxxx == true) && (xxxxx == x3xxxxxx_xxxx))
 	{
-		printf ("ERROR: Parameter -cfgfile is not set\n");
-		exit (1);
+		xxxxxx ("xxxxx: xxxxxxxxx -xxxxxxx xx xxx xxx\n");
+		xxxx (1);
 	}
-	// for the release SAP 7.0 there is no config in R/3 so the parameter m_bNoShm is 
-	// set to true for this monitor
-	m_CommandlineArguments.m_bUseR3Cfg = true;
+	// xxx xxx xxxxxxx xxx 7.0 xxxxx xx xx xxxxxx xx x/3 xx xxx xxxxxxxxx x_xxxxxx xx 
+	// xxx xx xxxx xxx xxxx xxxxxxx
+	x_xxxxxxxxxxxxxxxxxxxx.x_xxxxx3xxx = true;
 	
 	
-	OvCTrace::LogMethodExit ("bool OvCDispConfig::bParseCmdLine()",true);
+	xxxxxxxx::xxxxxxxxxxxxx ("xxxx xxxxxxxxxxxxx::xxxxxxxxxxxxx()",true);
 	return true;
 }
 
 
 
 //------------------------------------------------------------------------------------
-// Function: bool OvCDispConfig::bParseCfgParameter(OvMonDataContainer *myCfgParameter)
+// xxxxxxxx: xxxx xxxxxxxxxxxxx::xxxxxxxxxxxxxxxxxx(xxxxxxxxxxxxxxxxxx *xxxxxxxxxxxxxx)
 // 
-// Function parses the configuration parameter of the input parameter "myCfgParameter"
-// for errors. These errors are f.e. wrong Alerttype or Param parameter. Possible errors are
-// written in the trace file.
+// xxxxxxxx xxxxxx xxx xxxxxxxxxxxxx xxxxxxxxx xx xxx xxxxx xxxxxxxxx "xxxxxxxxxxxxxx"
+// xxx xxxxxx. xxxxx xxxxxx xxx x.x. xxxxx xxxxxxxxx xx xxxxx xxxxxxxxx. xxxxxxxx xxxxxx xxx
+// xxxxxxx xx xxx xxxxx xxxx.
 // 
-// Input Parameter: myCfgParameter from type OvMonDataContainer
-//					results from type ConfigParserResults* (output for Parser)
+// xxxxx xxxxxxxxx: xxxxxxxxxxxxxx xxxx xxxx xxxxxxxxxxxxxxxxxx
+//					xxxxxxx xxxx xxxx xxxxxxxxxxxxxxxxxxx* (xxxxxx xxx xxxxxx)
 //
-// Return value:  
-//	true:		Function finished successful
-//	false:	Configuration includes error(s)
-bool OvCDispConfig::bParseCfgParameter(OvMonDataContainer *myCfgParameter, ConfigParserResults* result)
+// xxxxxx xxxxx:  
+//	xxxx:		xxxxxxxx xxxxxxxx xxxxxxxxxx
+//	xxxxx:	xxxxxxxxxxxxx xxxxxxxx xxxxx(x)
+bool xxxxxxxxxxxxx::xxxxxxxxxxxxxxxxxx(xxxxxxxxxxxxxxxxxx *xxxxxxxxxxxxxx, xxxxxxxxxxxxxxxxxxx* xxxxxx)
 {
 
-	OvCTrace::LogMethodEntry ("bool OvCDispConfig::bParseCfgParameter(OvMonDataContainer* myCfgParameter, ConfigParserResults* result= new NullResults())");
-	bool bInsert = true;
-	bool bParseFlagSign = false;
-	bool bParseFlagOption = false;
-	bool bParseFlagAlertmonitor = false;
-	bool bParseParameter = false;	
-	bool bFoundAlerttype = false;
-	char szTempstring [1024]="";
+	xxxxxxxx::xxxxxxxxxxxxxx ("xxxx xxxxxxxxxxxxx::xxxxxxxxxxxxxxxxxx(xxxxxxxxxxxxxxxxxx* xxxxxxxxxxxxxx, xxxxxxxxxxxxxxxxxxx* xxxxxx= xxx xxxxxxxxxxx())");
+	bool xxxxxxx = true;
+	bool xxxxxxxxxxxxxx = false;
+	bool xxxxxxxxxxxxxxxx = false;
+	bool xxxxxxxxxxxxxxxxxxxxxx = false;
+	bool xxxxxxxxxxxxxxx = false;	
+	bool xxxxxxxxxxxxxxx = false;
+	char xxxxxxxxxxxx [1024]="";
 
-	if (myCfgParameter->m_DPQueue ==1 || myCfgParameter->m_DPQueue ==2)
+	if (xxxxxxxxxxxxxx->x_xxxxxxx ==1 || xxxxxxxxxxxxxx->x_xxxxxxx ==2)
 	{
-		OvCTrace::LogInfo("Exiting bParseCfgParameter without doing something, because Object is a \'DPQueueCheck\' or a \'DisableMonitoringWithSeverity\' Object");
-		OvCTrace::LogMethodEntry ("bool OvCDispConfig::bParseCfgParameter(OvMonDataContainer* myCfgParameter, ConfigParserResults* result= new NullResults())");
+		xxxxxxxx::xxxxxxx("xxxxxxx xxxxxxxxxxxxxxxxxx xxxxxxx xxxxx xxxxxxxxx, xxxxxxx xxxxxx xx x \'xxxxxxxxxxxx\' xx x \'xxxxxxxxxxxxxxxxxxxxxxxxxxxxx\' xxxxxx");
+		xxxxxxxx::xxxxxxxxxxxxxx ("xxxx xxxxxxxxxxxxx::xxxxxxxxxxxxxxxxxx(xxxxxxxxxxxxxxxxxx* xxxxxxxxxxxxxx, xxxxxxxxxxxxxxxxxxx* xxxxxx= xxx xxxxxxxxxxx())");
 		return true;
 	}
 
-	// check all mandatory parameter:
+	// xxxxx xxx xxxxxxxxx xxxxxxxxx:
 	
 
-	if (myCfgParameter->m_Alertmon  == "ALERTCOLLECTOR") 
+	if (xxxxxxxxxxxxxx->x_xxxxxxxx  == "xxxxxxxxxxxxxx") 
 	{
-		if(	strcmp(myCfgParameter->m_Hostname, "")      == 0  ||
-			strcmp(myCfgParameter->m_SID, "")		== 0  ||
-			strcmp(myCfgParameter->m_SAPNumber, "") == 0  ||
-			strcmp(myCfgParameter->m_SAPClient, "") == 0  ||
-			strcmp(myCfgParameter->m_Severity, "")	!= 0
+		if(	xxxxxx(xxxxxxxxxxxxxx->x_xxxxxxxx, "")      == 0  ||
+			xxxxxx(xxxxxxxxxxxxxx->x_xxx, "")		== 0  ||
+			xxxxxx(xxxxxxxxxxxxxx->x_xxxxxxxxx, "") == 0  ||
+			xxxxxx(xxxxxxxxxxxxxx->x_xxxxxxxxx, "") == 0  ||
+			xxxxxx(xxxxxxxxxxxxxx->x_xxxxxxxx, "")	!= 0
 		  )
 		{
-			vSubmitConfigError (result, "AlertMonFun", myCfgParameter->m_LineNumber);
-			//sprintf (szTempstring,"Count of arguments in line %d is wrong.!!",myCfgParameter->m_LineNumber);
-			//OvCTrace::LogError (szTempstring,"");
-			bInsert = false;
+			xxxxxxxxxxxxxxxxxx (xxxxxx, "xxxxxxxxxxx", xxxxxxxxxxxxxx->x_xxxxxxxxxx);
+			//xxxxxxx (xxxxxxxxxxxx,"xxxxx xx xxxxxxxxx xx xxxx %x xx xxxxx.!!",xxxxxxxxxxxxxx->x_xxxxxxxxxx);
+			//xxxxxxxx::xxxxxxxx (xxxxxxxxxxxx,"");
+			xxxxxxx = false;
 
-			//sprintf(szTempstring, "><Too many or too few parameters in the command 'AlertMonFun' (Monitor = ALERTCOLLECTOR)\n");
-			//result->submitError(myCfgParameter->m_LineNumber, szTempstring);
+			//xxxxxxx(xxxxxxxxxxxx, "><xxx xxxx xx xxx xxx xxxxxxxxxx xx xxx xxxxxxx 'xxxxxxxxxxx' (xxxxxxx = xxxxxxxxxxxxxx)\x");
+			//xxxxxx->xxxxxxxxxxx(xxxxxxxxxxxxxx->x_xxxxxxxxxx, xxxxxxxxxxxx);
 		}
 	}
 
-	//Checking the Severity
-	if( stricmp(myCfgParameter->m_Severity, "" ) != 0 &&
-		stricmp(myCfgParameter->m_Severity, "UNKNOWN" ) != 0 &&
-		stricmp(myCfgParameter->m_Severity, "MAJOR"   ) != 0 &&
-		stricmp(myCfgParameter->m_Severity, "MINOR"   ) != 0 &&
-		stricmp(myCfgParameter->m_Severity, "CRITICAL") != 0 &&
-		stricmp(myCfgParameter->m_Severity, "NORMAL"  ) != 0 &&
-		stricmp(myCfgParameter->m_Severity, "WARNING" ) != 0  )
+	//xxxxxxxx xxx xxxxxxxx
+	if( xxxxxxx(xxxxxxxxxxxxxx->x_xxxxxxxx, "" ) != 0 &&
+		xxxxxxx(xxxxxxxxxxxxxx->x_xxxxxxxx, "xxxxxxx" ) != 0 &&
+		xxxxxxx(xxxxxxxxxxxxxx->x_xxxxxxxx, "xxxxx"   ) != 0 &&
+		xxxxxxx(xxxxxxxxxxxxxx->x_xxxxxxxx, "xxxxx"   ) != 0 &&
+		xxxxxxx(xxxxxxxxxxxxxx->x_xxxxxxxx, "xxxxxxxx") != 0 &&
+		xxxxxxx(xxxxxxxxxxxxxx->x_xxxxxxxx, "xxxxxx"  ) != 0 &&
+		xxxxxxx(xxxxxxxxxxxxxx->x_xxxxxxxx, "xxxxxxx" ) != 0  )
 	{
-		if( !(myCfgParameter->m_Alertmon == "ALERTCOLLECTOR") )
+		if( !(xxxxxxxxxxxxxx->x_xxxxxxxx == "xxxxxxxxxxxxxx") )
 		{
-			sprintf (szTempstring,"Invalid Severity starting in line %d.!!",myCfgParameter->m_LineNumber);
-			OvCTrace::LogError (szTempstring,"");
-			bInsert = false;
-			sprintf(szTempstring, "><'%s' is an invalid Severity\n", myCfgParameter->m_Severity.GetCharData());
-			result->submitError(myCfgParameter->m_LineNumber, szTempstring);
+			xxxxxxx (xxxxxxxxxxxx,"xxxxxxx xxxxxxxx xxxxxxxx xx xxxx %d.!!",xxxxxxxxxxxxxx->x_xxxxxxxxxx);
+			xxxxxxxx::xxxxxxxx (xxxxxxxxxxxx,"");
+			xxxxxxx = false;
+			xxxxxxx(xxxxxxxxxxxx, "><'%s' xx xx xxxxxxx xxxxxxxx\n", xxxxxxxxxxxxxx->x_xxxxxxxx.xxxxxxxxxxx());
+			xxxxxx->xxxxxxxxxxx(xxxxxxxxxxxxxx->x_xxxxxxxxxx, xxxxxxxxxxxx);
 		}
 	}
 
 
-	//checking the Alertmonitor --> Alerttype --> Param 
-	if (!(myCfgParameter->m_Alertmon == "ALERTCOLLECTOR") &&
-		bInsert == true )   // no parsing of Alerttype <-> Alertmon for Alertmon ALERTCOLLECTOR or invalid severity
+	//xxxxxxxx xxx xxxxxxxxxxxx --> xxxxxxxxx --> xxxxx 
+	if (!(xxxxxxxxxxxxxx->x_xxxxxxxx == "xxxxxxxxxxxxxx") &&
+		xxxxxxx == true )   // xx xxxxxxx xx xxxxxxxxx <-> xxxxxxxx xxx xxxxxxxx xxxxxxxxxxxxxx xx xxxxxxx xxxxxxxx
 	{
-		// Parse Alertmonitor <-> Alerttype
-		for (int iLoop4 = 0; iLoop4 < (sizeof (scParseAlerttype) / sizeof (scParseAlerttype[0])); iLoop4++)
-			if (strcmp (scParseAlerttype[iLoop4].szAlertmonitor,myCfgParameter->m_Alertmon) == 0) 
+		// xxxxx xxxxxxxxxxxx <-> xxxxxxxxx
+		for (int xxxxx4 = 0; xxxxx4 < (sizeof (xxxxxxxxxxxxxxxx) / sizeof (xxxxxxxxxxxxxxxx[0])); xxxxx4++)
+			if (xxxxxx (xxxxxxxxxxxxxxxx[xxxxx4].xxxxxxxxxxxxxx,xxxxxxxxxxxxxx->x_xxxxxxxx) == 0) 
 			{
-				int iLoop5 = 0;  // counter to loop the szaAlerttypes in structure scParseAlerttype for the 
-								 // Alertmonitor given in the parameter myCfgParameter->m_Alertmon
-				int iLoop6 = 0;  // counter to loop the szaAlerttypes in structure scParseParameter for the 
-								 // Alerttype given in the parameter myCfgParameter->m_Alerttype
-				int iLoop7 = 0;
+				int xxxxx5 = 0;  // xxxxxxx xx xxxx xxx xxxxxxxxxxxxx xx xxxxxxxxx xxxxxxxxxxxxxxxx xxx xxx 
+								 // xxxxxxxxxxxx xxxxx xx xxx xxxxxxxxx xxxxxxxxxxxxxx->x_xxxxxxxx
+				int xxxxx6 = 0;  // xxxxxxx xx xxxx xxx xxxxxxxxxxxxx xx xxxxxxxxx xxxxxxxxxxxxxxxx xxx xxx 
+								 // xxxxxxxxx xxxxx xx xxx xxxxxxxxx xxxxxxxxxxxxxx->x_xxxxxxxxx
+				int xxxxx7 = 0;
 
-				while ((strcmp (scParseAlerttype[iLoop4].szaAlerttype[iLoop5],"")) != 0 )
+				while ((xxxxxx (xxxxxxxxxxxxxxxx[xxxxx4].xxxxxxxxxxxx[xxxxx5],"")) != 0 )
 				{
-					if ((strcmp (scParseAlerttype[iLoop4].szaAlerttype[iLoop5], myCfgParameter->m_Alerttype)) == 0)
+					if ((xxxxxx (xxxxxxxxxxxxxxxx[xxxxx4].xxxxxxxxxxxx[xxxxx5], xxxxxxxxxxxxxx->x_xxxxxxxxx)) == 0)
 					{
-						bParseFlagAlertmonitor = true;
-						for (int iLoop6 = 0; iLoop6 < (sizeof (scParseParameter) / sizeof (scParseParameter[0])); iLoop6++)
+						xxxxxxxxxxxxxxxxxxxxxx = true;
+						for (int xxxxx6 = 0; xxxxx6 < (sizeof (xxxxxxxxxxxxxxxx) / sizeof (xxxxxxxxxxxxxxxx[0])); xxxxx6++)
 						{
-							if ((strcmp (scParseParameter[iLoop6].szaAlerttype, myCfgParameter->m_Alerttype)) == 0)
+							if ((xxxxxx (xxxxxxxxxxxxxxxx[xxxxx6].xxxxxxxxxxxx, xxxxxxxxxxxxxx->x_xxxxxxxxx)) == 0)
 							{
-								//alerttype was found in the structure scParseParameter
-								bFoundAlerttype = true;
-								//sometimes there are no szaParamaters given(in UPDATE or ABAP4)
-								if (strcmp (myCfgParameter->m_Param, "") == 0 && (strcmp(myCfgParameter->m_Alertmon, "UPDATE") == 0 || strcmp(myCfgParameter->m_Alertmon, "ABAP4") == 0 || strcmp(myCfgParameter->m_Alerttype, "DEFAULT_USERS") == 0))
-									bParseParameter = true;
-								//sometimes szaParameters can have any value (Alerttype = PRIVILEGED_USERS or SAP_PARAMETERS)
-								if ((strcmp(myCfgParameter->m_Alerttype, "PRIVILEGED_USERS") == 0 || strcmp(myCfgParameter->m_Alerttype, "SAP_PARAMETERS") == 0) && strcmp(myCfgParameter->m_Param, "") != 0)
-									bParseParameter = true;
+								//xxxxxxxxx xxx xxxxx xx xxx xxxxxxxxx xxxxxxxxxxxxxxxx
+								xxxxxxxxxxxxxxx = true;
+								//xxxxxxxxx xxxxx xxx xx xxxxxxxxxxxxx xxxxx(xx xxxxxx xx xxxx4)
+								if (xxxxxx (xxxxxxxxxxxxxx->x_xxxxx, "") == 0 && (xxxxxx(xxxxxxxxxxxxxx->x_xxxxxxxx, "xxxxxx") == 0 || xxxxxx(xxxxxxxxxxxxxx->x_xxxxxxxx, "xxxx4") == 0 || xxxxxx(xxxxxxxxxxxxxx->x_xxxxxxxxx, "xxxxxxx_xxxxx") == 0))
+									xxxxxxxxxxxxxxx = true;
+								//xxxxxxxxx xxxxxxxxxxxxx xxx xxxx xxx xxxxx (xxxxxxxxx = xxxxxxxxxx_xxxxx xx xxx_xxxxxxxxxx)
+								if ((xxxxxx(xxxxxxxxxxxxxx->x_xxxxxxxxx, "xxxxxxxxxx_xxxxx") == 0 || xxxxxx(xxxxxxxxxxxxxx->x_xxxxxxxxx, "xxx_xxxxxxxxxx") == 0) && xxxxxx(xxxxxxxxxxxxxx->x_xxxxx, "") != 0)
+									xxxxxxxxxxxxxxx = true;
 								
 								
-								while ((strcmp (scParseParameter[iLoop6].szaParameter[iLoop7],"")) != 0)
+								while ((xxxxxx (xxxxxxxxxxxxxxxx[xxxxx6].xxxxxxxxxxxx[xxxxx7],"")) != 0)
 								{
-									if ((strcmp (scParseParameter[iLoop6].szaParameter[iLoop7],myCfgParameter->m_Param)) == 0)
+									if ((xxxxxx (xxxxxxxxxxxxxxxx[xxxxx6].xxxxxxxxxxxx[xxxxx7],xxxxxxxxxxxxxx->x_xxxxx)) == 0)
 									{
-										// parameter was found in the structure scParseParameter
-										bParseParameter = true;
+										// xxxxxxxxx xxx xxxxx xx xxx xxxxxxxxx xxxxxxxxxxxxxxxx
+										xxxxxxxxxxxxxxx = true;
 									}
-									iLoop7++;
+									xxxxx7++;
 								}
 
 							}
 						}
 					}
-					iLoop5 ++;
+					xxxxx5 ++;
 				}
-				switch (iLoop4) // call functions for further parsing functions
+				switch (xxxxx4) // xxxx xxxxxxxxx xxx xxxxxxx xxxxxxx xxxxxxxxx
 				{
 				default:
 					break;
 				}
 			}
 
-	// Checking count of arguments (not for TEMSE and ALERTCOLLECOT) 
-	// Checking the APAB4 and UPDATE, too
-	if ( (bParseFlagAlertmonitor == true) &&
-		!(myCfgParameter->m_Alertmon  == "TEMSE") &&
-		 !(myCfgParameter->m_Alertmon == "ALERTCOLLECTOR") )
+	// xxxxxxxx xxxxx xx xxxxxxxxx (xxx xxx xxxxx xxx xxxxxxxxxxxxx) 
+	// xxxxxxxx xxx xxxx4 xxx xxxxxx, xxx
+	if ( (xxxxxxxxxxxxxxxxxxxxxx == true) &&
+		!(xxxxxxxxxxxxxx->x_xxxxxxxx  == "xxxxx") &&
+		 !(xxxxxxxxxxxxxx->x_xxxxxxxx == "xxxxxxxxxxxxxx") )
 	{
 
-		if (!(myCfgParameter->m_AdditParameter.GetSize() % NUM_OF_PARAMETER == 0 || (myCfgParameter->m_AdditParameter.GetSize() + 1) % NUM_OF_PARAMETER == 0 )) 
+		if (!(xxxxxxxxxxxxxx->x_xxxxxxxxxxxxxx.xxxxxxx() % xxx_xx_xxxxxxxxx == 0 || (xxxxxxxxxxxxxx->x_xxxxxxxxxxxxxx.xxxxxxx() + 1) % xxx_xx_xxxxxxxxx == 0 )) 
 		{
-			vSubmitConfigError (result, "AlertMonFun", myCfgParameter->m_LineNumber);
-			//sprintf (szTempstring,"Count of arguments in line %d is wrong.!!",myCfgParameter->m_LineNumber);
-			//OvCTrace::LogError (szTempstring,"");
-			bInsert = false;
+			xxxxxxxxxxxxxxxxxx (xxxxxx, "xxxxxxxxxxx", xxxxxxxxxxxxxx->x_xxxxxxxxxx);
+			//xxxxxxx (xxxxxxxxxxxx,"xxxxx xx xxxxxxxxx xx xxxx %x xx xxxxx.!!",xxxxxxxxxxxxxx->x_xxxxxxxxxx);
+			//xxxxxxxx::xxxxxxxx (xxxxxxxxxxxx,"");
+			xxxxxxx = false;
 
-			//sprintf(szTempstring, "><Too many or to few arguments in command 'AlertMonFun'\n");
-			//result->submitError(myCfgParameter->m_LineNumber, szTempstring);
+			//xxxxxxx(xxxxxxxxxxxx, "><xxx xxxx xx xx xxx xxxxxxxxx xx xxxxxxx 'xxxxxxxxxxx'\x");
+			//xxxxxx->xxxxxxxxxxx(xxxxxxxxxxxxxx->x_xxxxxxxxxx, xxxxxxxxxxxx);
 		}
 
-		if (strcmp(myCfgParameter->m_Alertmon, "ABAP4") == 0)
+		if (xxxxxx(xxxxxxxxxxxxxx->x_xxxxxxxx, "xxxx4") == 0)
 		{
-			if ( strcmp(myCfgParameter->m_Alerttype, "") == 0)
+			if ( xxxxxx(xxxxxxxxxxxxxx->x_xxxxxxxxx, "") == 0)
 			{
-				vSubmitConfigError (result, "AlertMonFun", myCfgParameter->m_LineNumber);
-				//sprintf (szTempstring,"Count of arguments in line %d is wrong.!!",myCfgParameter->m_LineNumber);
-				//OvCTrace::LogError (szTempstring,"");
-				bInsert = false;
+				xxxxxxxxxxxxxxxxxx (xxxxxx, "xxxxxxxxxxx", xxxxxxxxxxxxxx->x_xxxxxxxxxx);
+				//xxxxxxx (xxxxxxxxxxxx,"xxxxx xx xxxxxxxxx xx xxxx %x xx xxxxx.!!",xxxxxxxxxxxxxx->x_xxxxxxxxxx);
+				//xxxxxxxx::xxxxxxxx (xxxxxxxxxxxx,"");
+				xxxxxxx = false;
 
-				//sprintf(szTempstring, "><Too many or to few arguments in configuration item 'AlertMonFun' (alertmonitor = ABAP4!!)\n");
-				//result->submitError(myCfgParameter->m_LineNumber, szTempstring);
+				//xxxxxxx(xxxxxxxxxxxx, "><xxx xxxx xx xx xxx xxxxxxxxx xx xxxxxxxxxxxxx xxxx 'xxxxxxxxxxx' (xxxxxxxxxxxx = xxxx4!!)\x");
+				//xxxxxx->xxxxxxxxxxx(xxxxxxxxxxxxxx->x_xxxxxxxxxx, xxxxxxxxxxxx);
 			}
 		}
-		else if(strcmp(myCfgParameter->m_Alertmon, "UPDATE") == 0)
+		else if(xxxxxx(xxxxxxxxxxxxxx->x_xxxxxxxx, "xxxxxx") == 0)
 		{
-			if(strcmp(myCfgParameter->m_Alerttype, "") == 0 || strcmp(myCfgParameter->m_Param, "") != 0)
+			if(xxxxxx(xxxxxxxxxxxxxx->x_xxxxxxxxx, "") == 0 || xxxxxx(xxxxxxxxxxxxxx->x_xxxxx, "") != 0)
 			{
-				vSubmitConfigError (result, "AlertMonFun", myCfgParameter->m_LineNumber);
-				//sprintf (szTempstring,"Count of arguments of configuration item starting in line %d is wrong.!!",myCfgParameter->m_LineNumber);
-				//OvCTrace::LogError (szTempstring,"");
-				bInsert = false;
+				xxxxxxxxxxxxxxxxxx (xxxxxx, "xxxxxxxxxxx", xxxxxxxxxxxxxx->x_xxxxxxxxxx);
+				//xxxxxxx (xxxxxxxxxxxx,"xxxxx xx xxxxxxxxx xx xxxxxxxxxxxxx xxxx xxxxxxxx xx xxxx %x xx xxxxx.!!",xxxxxxxxxxxxxx->x_xxxxxxxxxx);
+				//xxxxxxxx::xxxxxxxx (xxxxxxxxxxxx,"");
+				xxxxxxx = false;
 
-				//sprintf(szTempstring, "><Too many or to few arguments in configuration item 'AlertMonFun' (monitor = UPDATE!!)\n");
-				//result->submitError(myCfgParameter->m_LineNumber, szTempstring);
+				//xxxxxxx(xxxxxxxxxxxx, "><xxx xxxx xx xx xxx xxxxxxxxx xx xxxxxxxxxxxxx xxxx 'xxxxxxxxxxx' (xxxxxxx = xxxxxx!!)\x");
+				//xxxxxx->xxxxxxxxxxx(xxxxxxxxxxxxxx->x_xxxxxxxxxx, xxxxxxxxxxxx);
 			}
 		}
-		else if(strcmp(myCfgParameter->m_Alertmon, "SECURITY") == 0)
+		else if(xxxxxx(xxxxxxxxxxxxxx->x_xxxxxxxx, "xxxxxxxx") == 0)
 		{
-			if(strcmp(myCfgParameter->m_Alerttype, "DEFAULT_USERS") == 0 && strcmp(myCfgParameter->m_Param, "") != 0)
+			if(xxxxxx(xxxxxxxxxxxxxx->x_xxxxxxxxx, "xxxxxxx_xxxxx") == 0 && xxxxxx(xxxxxxxxxxxxxx->x_xxxxx, "") != 0)
 			{
-				vSubmitConfigError (result, "AlertMonFun", myCfgParameter->m_LineNumber);
-				//sprintf (szTempstring,"Count of arguments of configuration starting in line %d is wrong.!!",myCfgParameter->m_LineNumber);
-				//OvCTrace::LogError (szTempstring,"");
-				bInsert = false;
+				xxxxxxxxxxxxxxxxxx (xxxxxx, "xxxxxxxxxxx", xxxxxxxxxxxxxx->x_xxxxxxxxxx);
+				//xxxxxxx (xxxxxxxxxxxx,"xxxxx xx xxxxxxxxx xx xxxxxxxxxxxxx xxxxxxxx xx xxxx %x xx xxxxx.!!",xxxxxxxxxxxxxx->x_xxxxxxxxxx);
+				//xxxxxxxx::xxxxxxxx (xxxxxxxxxxxx,"");
+				xxxxxxx = false;
 
-				//sprintf(szTempstring, "><Too many or to few arguments in command 'AlertMonFun' (monitor = DEFAULT_USERS!!)\n");
-				//result->submitError(myCfgParameter->m_LineNumber, szTempstring);
+				//xxxxxxx(xxxxxxxxxxxx, "><xxx xxxx xx xx xxx xxxxxxxxx xx xxxxxxx 'xxxxxxxxxxx' (xxxxxxx = xxxxxxx_xxxxx!!)\x");
+				//xxxxxx->xxxxxxxxxxx(xxxxxxxxxxxxxx->x_xxxxxxxxxx, xxxxxxxxxxxx);
 			}
 		}
 
-		else if ( strcmp(myCfgParameter->m_Low ,"") == 0 )
+		else if ( xxxxxx(xxxxxxxxxxxxxx->x_xxx ,"") == 0 )
 		{
-			vSubmitConfigError (result, "AlertMonFun", myCfgParameter->m_LineNumber);
-			//sprintf (szTempstring,"Count of arguments of configuration starting in line %d is wrong.!!",myCfgParameter->m_LineNumber);
-			//OvCTrace::LogError (szTempstring,"");
-			bInsert = false;
+			xxxxxxxxxxxxxxxxxx (xxxxxx, "xxxxxxxxxxx", xxxxxxxxxxxxxx->x_xxxxxxxxxx);
+			//xxxxxxx (xxxxxxxxxxxx,"xxxxx xx xxxxxxxxx xx xxxxxxxxxxxxx xxxxxxxx xx xxxx %x xx xxxxx.!!",xxxxxxxxxxxxxx->x_xxxxxxxxxx);
+			//xxxxxxxx::xxxxxxxx (xxxxxxxxxxxx,"");
+			xxxxxxx = false;
 
-			//sprintf(szTempstring, "><Too many or to few arguments in command 'AlertMonFun'\n");
-			//result->submitError(myCfgParameter->m_LineNumber, szTempstring);
+			//xxxxxxx(xxxxxxxxxxxx, "><xxx xxxx xx xx xxx xxxxxxxxx xx xxxxxxx 'xxxxxxxxxxx'\x");
+			//xxxxxx->xxxxxxxxxxx(xxxxxxxxxxxxxx->x_xxxxxxxxxx, xxxxxxxxxxxx);
 		}
 	}
 	
@@ -2413,144 +2413,144 @@ bool OvCDispConfig::bParseCfgParameter(OvMonDataContainer *myCfgParameter, Confi
 
 
 
-			if ((bFoundAlerttype == true) && (bParseParameter == false))
+			if ((xxxxxxxxxxxxxxx == true) && (xxxxxxxxxxxxxxx == false))
 			{
-				CString sErrorString ="";
-				sErrorString.Format ("parameter %s of configuration item starting in line %d is wrong",(const char*)myCfgParameter->m_Param,
-																		myCfgParameter->m_LineNumber);
-				OvCTrace::LogError (sErrorString);
-				bInsert = false ;
+				xxxxxxx xxxxxxxxxxxx ="";
+				xxxxxxxxxxxx.xxxxxx ("xxxxxxxxx %s xx xxxxxxxxxxxxx xxxx xxxxxxxx xx xxxx %d xx xxxxx",(const char*)xxxxxxxxxxxxxx->x_xxxxx,
+																		xxxxxxxxxxxxxx->x_xxxxxxxxxx);
+				xxxxxxxx::xxxxxxxx (xxxxxxxxxxxx);
+				xxxxxxx = false ;
 				
-				sprintf(szTempstring, "><Invalid or missing value '%s' for RFC parameter in configuration item 'AlertMonFun'\n",(const char*)myCfgParameter->m_Param);
-				result->submitError(myCfgParameter->m_LineNumber, szTempstring);
+				xxxxxxx(xxxxxxxxxxxx, "><xxxxxxx xx xxxxxxx xxxxx '%s' xxx xxx xxxxxxxxx xx xxxxxxxxxxxxx xxxx 'xxxxxxxxxxx'\n",(const char*)xxxxxxxxxxxxxx->x_xxxxx);
+				xxxxxx->xxxxxxxxxxx(xxxxxxxxxxxxxx->x_xxxxxxxxxx, xxxxxxxxxxxx);
 			}
 
-			if (bParseFlagAlertmonitor == false)
+			if (xxxxxxxxxxxxxxxxxxxxxx == false)
 			{
-				CString sErrorString ="";
-				sErrorString.Format ("Alertmonitor %s or Alerttype %s of configuration item starting in line %d is wrong",
-										(const char*) myCfgParameter->m_Alertmon,
-										(const char*) myCfgParameter->m_Alerttype,
-										myCfgParameter->m_LineNumber );
-				OvCTrace::LogError (sErrorString);
+				xxxxxxx xxxxxxxxxxxx ="";
+				xxxxxxxxxxxx.xxxxxx ("xxxxxxxxxxxx %s xx xxxxxxxxx %s xx xxxxxxxxxxxxx xxxx xxxxxxxx xx xxxx %d xx xxxxx",
+										(const char*) xxxxxxxxxxxxxx->x_xxxxxxxx,
+										(const char*) xxxxxxxxxxxxxx->x_xxxxxxxxx,
+										xxxxxxxxxxxxxx->x_xxxxxxxxxx );
+				xxxxxxxx::xxxxxxxx (xxxxxxxxxxxx);
 				
-				bInsert = false;
+				xxxxxxx = false;
 
-				sprintf(szTempstring, "><Invalid Alertmonitor '%s' or Alerttype parameter '%s'\n",
-										(const char*) myCfgParameter->m_Alertmon,
-										(const char*) myCfgParameter->m_Alerttype);
-				result->submitError(myCfgParameter->m_LineNumber, szTempstring);
+				xxxxxxx(xxxxxxxxxxxx, "><xxxxxxx xxxxxxxxxxxx '%s' xx xxxxxxxxx xxxxxxxxx '%s'\n",
+										(const char*) xxxxxxxxxxxxxx->x_xxxxxxxx,
+										(const char*) xxxxxxxxxxxxxx->x_xxxxxxxxx);
+				xxxxxx->xxxxxxxxxxx(xxxxxxxxxxxxxx->x_xxxxxxxxxx, xxxxxxxxxxxx);
 			}
 
 
-			//Checking, if the Params in additParam are right
-			for (int i = 0; strcmp(scParseParameter[i].szaAlerttype, "") != 0; ++i)
+			//xxxxxxxx, xx xxx xxxxxx xx xxxxxxxxxx xxx xxxxx
+			for (int x = 0; xxxxxx(xxxxxxxxxxxxxxxx[x].xxxxxxxxxxxx, "") != 0; ++x)
 			{
-				if(strcmp(myCfgParameter->m_Alerttype, scParseParameter[i].szaAlerttype) == 0
-					&& bInsert == true )
+				if(xxxxxx(xxxxxxxxxxxxxx->x_xxxxxxxxx, xxxxxxxxxxxxxxxx[x].xxxxxxxxxxxx) == 0
+					&& xxxxxxx == true )
 				{
-					for (unsigned int j = 0; j < myCfgParameter->m_AdditParameter.GetSize(); j+= NUM_OF_PARAMETER)
+					for (unsigned int x = 0; x < xxxxxxxxxxxxxx->x_xxxxxxxxxxxxxx.xxxxxxx(); x+= xxx_xx_xxxxxxxxx)
 					{
-						bool paramfound;
-						paramfound = false;
+						bool xxxxxxxxxx;
+						xxxxxxxxxx = false;
 
-						for(int k = 0; strcmp(scParseParameter[i].szaParameter[k], "") != 0; ++k)
+						for(int x = 0; xxxxxx(xxxxxxxxxxxxxxxx[x].xxxxxxxxxxxx[x], "") != 0; ++x)
 						{
-							if( strcmp(*(CString*)myCfgParameter->m_AdditParameter.GetAt(j), scParseParameter[i].szaParameter[k]) ==0)
-								paramfound = true;
+							if( xxxxxx(*(xxxxxxx*)xxxxxxxxxxxxxx->x_xxxxxxxxxxxxxx.xxxxx(x), xxxxxxxxxxxxxxxx[x].xxxxxxxxxxxx[x]) ==0)
+								xxxxxxxxxx = true;
 
 						}
 	
-						if (!paramfound)
+						if (!xxxxxxxxxx)
 						{
-							CString sParameterName = *(CString*)myCfgParameter->m_AdditParameter.GetAt(j);
-							sprintf (szTempstring,"Parameter %s for Alertmonitor %s of configuration item starting in line %d is wrong.!!",
-																		(const char*) sParameterName,
-																		(const char*) myCfgParameter->m_Alertmon,
-																		myCfgParameter->m_LineNumber);
-							OvCTrace::LogError (szTempstring,"");
-							bInsert = false;
+							xxxxxxx xxxxxxxxxxxxxx = *(xxxxxxx*)xxxxxxxxxxxxxx->x_xxxxxxxxxxxxxx.xxxxx(x);
+							xxxxxxx (xxxxxxxxxxxx,"xxxxxxxxx %s xxx xxxxxxxxxxxx %s xx xxxxxxxxxxxxx xxxx xxxxxxxx xx xxxx %d xx xxxxx.!!",
+																		(const char*) xxxxxxxxxxxxxx,
+																		(const char*) xxxxxxxxxxxxxx->x_xxxxxxxx,
+																		xxxxxxxxxxxxxx->x_xxxxxxxxxx);
+							xxxxxxxx::xxxxxxxx (xxxxxxxxxxxx,"");
+							xxxxxxx = false;
 
-							sprintf(szTempstring, "><Parameter '%s' for Alertmonitor '%s' is not valid\n", 
-												(const char*) sParameterName,
-												(const char*) myCfgParameter->m_Alertmon );
-							result->submitError(myCfgParameter->m_LineNumber, szTempstring);
+							xxxxxxx(xxxxxxxxxxxx, "><xxxxxxxxx '%s' xxx xxxxxxxxxxxx '%s' xx xxx xxxxx\n", 
+												(const char*) xxxxxxxxxxxxxx,
+												(const char*) xxxxxxxxxxxxxx->x_xxxxxxxx );
+							xxxxxx->xxxxxxxxxxx(xxxxxxxxxxxxxx->x_xxxxxxxxxx, xxxxxxxxxxxx);
 						}
 
 					}
 				}
 			}
 
-			//Checking the Param --> Sign --> Opt --> High --> Low
-			//Checking the Parameter in myCfgParameter and in MyCfgParameter->m-AdditParameter, too
-			if(strcmp(myCfgParameter->m_Alertmon, "UPDATE") !=0 && ( strcmp(myCfgParameter->m_Alertmon, "ABAP4") !=0 || strcmp(myCfgParameter->m_Param, "") != 0)
-				&& bInsert == true )	
+			//xxxxxxxx xxx xxxxx --> xxxx --> xxx --> xxxx --> xxx
+			//xxxxxxxx xxx xxxxxxxxx xx xxxxxxxxxxxxxx xxx xx xxxxxxxxxxxxxx->x-xxxxxxxxxxxxxx, xxx
+			if(xxxxxx(xxxxxxxxxxxxxx->x_xxxxxxxx, "xxxxxx") !=0 && ( xxxxxx(xxxxxxxxxxxxxx->x_xxxxxxxx, "xxxx4") !=0 || xxxxxx(xxxxxxxxxxxxxx->x_xxxxx, "") != 0)
+				&& xxxxxxx == true )	
 			{
-					for (int iLoop10 = 0; strcmp(rfcParams[iLoop10].szaParameter, "") != 0; ++iLoop10)
+					for (int xxxxx10 = 0; xxxxxx(xxxxxxxxx[xxxxx10].xxxxxxxxxxxx, "") != 0; ++xxxxx10)
 				{
-					if (strcmp(rfcParams[iLoop10].szaParameter, myCfgParameter->m_Param) == 0)
+					if (xxxxxx(xxxxxxxxx[xxxxx10].xxxxxxxxxxxx, xxxxxxxxxxxxxx->x_xxxxx) == 0)
 					{
-						CString parambuff[5];
-						bool tempInsert = true;
-						parambuff[0] = myCfgParameter->m_Param;
-						parambuff[1] = myCfgParameter->m_Sign;
-						parambuff[2] = myCfgParameter->m_Opt;
-						parambuff[3] = myCfgParameter->m_Low;
-						parambuff[4] = myCfgParameter->m_High;
-						tempInsert = bParseCfgRfcParameter(parambuff, myCfgParameter->m_LineNumber, 0, result);
-						if (tempInsert == false)
-							bInsert = false;
+						xxxxxxx xxxxxxxxx[5];
+						bool xxxxxxxxxx = true;
+						xxxxxxxxx[0] = xxxxxxxxxxxxxx->x_xxxxx;
+						xxxxxxxxx[1] = xxxxxxxxxxxxxx->x_xxxx;
+						xxxxxxxxx[2] = xxxxxxxxxxxxxx->x_xxx;
+						xxxxxxxxx[3] = xxxxxxxxxxxxxx->x_xxx;
+						xxxxxxxxx[4] = xxxxxxxxxxxxxx->x_xxxx;
+						xxxxxxxxxx = xxxxxxxxxxxxxxxxxxxxx(xxxxxxxxx, xxxxxxxxxxxxxx->x_xxxxxxxxxx, 0, xxxxxx);
+						if (xxxxxxxxxx == false)
+							xxxxxxx = false;
 					}
 				}
 		
 
-				for (unsigned int iLoop9 = 0;  iLoop9 < myCfgParameter->m_AdditParameter.GetSize(); iLoop9 += NUM_OF_PARAMETER)
-				{	//If count of Argument is wrong(errormessage isn't necessary, was putted before)
-					int iter = 0;
-					if(iLoop9+4 < myCfgParameter->m_AdditParameter.GetSize())
+				for (unsigned int xxxxx9 = 0;  xxxxx9 < xxxxxxxxxxxxxx->x_xxxxxxxxxxxxxx.xxxxxxx(); xxxxx9 += xxx_xx_xxxxxxxxx)
+				{	//xx xxxxx xx xxxxxxxx xx xxxxx(xxxxxxxxxxxx xxx'x xxxxxxxxx, xxx xxxxxx xxxxxx)
+					int xxxx = 0;
+					if(xxxxx9+4 < xxxxxxxxxxxxxx->x_xxxxxxxxxxxxxx.xxxxxxx())
 					{
-						++iter;
-						CString parambuff[5];
-						bool tempInsert = true;
-						parambuff[0] = *(CString*)(myCfgParameter->m_AdditParameter.GetAt(iLoop9));
-						parambuff[1] = *(CString*)(myCfgParameter->m_AdditParameter.GetAt(iLoop9 + 1));
-						parambuff[2] = *(CString*)(myCfgParameter->m_AdditParameter.GetAt(iLoop9 + 2));
-						parambuff[3] = *(CString*)(myCfgParameter->m_AdditParameter.GetAt(iLoop9 + 3));
-						parambuff[4] = *(CString*)(myCfgParameter->m_AdditParameter.GetAt(iLoop9 + 4));
-						tempInsert = bParseCfgRfcParameter(parambuff, myCfgParameter->m_LineNumber, iter, result);
-						if (tempInsert == false)
-							bInsert = false;
+						++xxxx;
+						xxxxxxx xxxxxxxxx[5];
+						bool xxxxxxxxxx = true;
+						xxxxxxxxx[0] = *(xxxxxxx*)(xxxxxxxxxxxxxx->x_xxxxxxxxxxxxxx.xxxxx(xxxxx9));
+						xxxxxxxxx[1] = *(xxxxxxx*)(xxxxxxxxxxxxxx->x_xxxxxxxxxxxxxx.xxxxx(xxxxx9 + 1));
+						xxxxxxxxx[2] = *(xxxxxxx*)(xxxxxxxxxxxxxx->x_xxxxxxxxxxxxxx.xxxxx(xxxxx9 + 2));
+						xxxxxxxxx[3] = *(xxxxxxx*)(xxxxxxxxxxxxxx->x_xxxxxxxxxxxxxx.xxxxx(xxxxx9 + 3));
+						xxxxxxxxx[4] = *(xxxxxxx*)(xxxxxxxxxxxxxx->x_xxxxxxxxxxxxxx.xxxxx(xxxxx9 + 4));
+						xxxxxxxxxx = xxxxxxxxxxxxxxxxxxxxx(xxxxxxxxx, xxxxxxxxxxxxxx->x_xxxxxxxxxx, xxxx, xxxxxx);
+						if (xxxxxxxxxx == false)
+							xxxxxxx = false;
 					}
 				}
 
 			}
 		}
 
-	//searchs for the  alerttype TRANS and REPAIR
-	// if found, then one of the params have to be USERNAME
-	if(	  strcmp(myCfgParameter->m_Alerttype, "TRANS")    == 0 ||
-		  strcmp(myCfgParameter->m_Alerttype, "REPAIR")   == 0 )   
+	//xxxxxxx xxx xxx  xxxxxxxxx xxxxx xxx xxxxxx
+	// xx xxxxx, xxxx xxx xx xxx xxxxxx xxxx xx xx xxxxxxxx
+	if(	  xxxxxx(xxxxxxxxxxxxxx->x_xxxxxxxxx, "xxxxx")    == 0 ||
+		  xxxxxx(xxxxxxxxxxxxxx->x_xxxxxxxxx, "xxxxxx")   == 0 )   
 		
 	{
-		bool unamefound = false;
+		bool xxxxxxxxxx = false;
 		
-		if (strcmp (myCfgParameter->m_Param, "USERNAME") == 0 )
-			unamefound = true;
+		if (xxxxxx (xxxxxxxxxxxxxx->x_xxxxx, "xxxxxxxx") == 0 )
+			xxxxxxxxxx = true;
 
-		for (unsigned int i = 0; myCfgParameter->m_AdditParameter.GetSize() > i; i+=NUM_OF_PARAMETER)
-			if (strcmp(*(CString*)myCfgParameter->m_AdditParameter.GetAt(i), "USERNAME") == 0)
-				unamefound = true;
+		for (unsigned int x = 0; xxxxxxxxxxxxxx->x_xxxxxxxxxxxxxx.xxxxxxx() > x; x+=xxx_xx_xxxxxxxxx)
+			if (xxxxxx(*(xxxxxxx*)xxxxxxxxxxxxxx->x_xxxxxxxxxxxxxx.xxxxx(x), "xxxxxxxx") == 0)
+				xxxxxxxxxx = true;
 
-		if(!unamefound)
+		if(!xxxxxxxxxx)
 		{			
-			sprintf (szTempstring,"The configuration item starting in line %d have to specify an USERNAME.!!",myCfgParameter->m_LineNumber);
-			OvCTrace::LogError (szTempstring,"");
-			bInsert = false;
+			xxxxxxx (xxxxxxxxxxxx,"xxx xxxxxxxxxxxxx xxxx xxxxxxxx xx xxxx %d xxxx xx xxxxxxx xx xxxxxxxx.!!",xxxxxxxxxxxxxx->x_xxxxxxxxxx);
+			xxxxxxxx::xxxxxxxx (xxxxxxxxxxxx,"");
+			xxxxxxx = false;
 
-			sprintf(szTempstring, "><Alertmonitor '%s' and Alerttype '%s' requires the parameter USERNAME\n",
-				(const char*) myCfgParameter->m_Alertmon,
-				(const char*) myCfgParameter->m_Alerttype);
-			result->submitError(myCfgParameter->m_LineNumber, szTempstring);
+			xxxxxxx(xxxxxxxxxxxx, "><xxxxxxxxxxxx '%s' xxx xxxxxxxxx '%s' xxxxxxxx xxx xxxxxxxxx xxxxxxxx\n",
+				(const char*) xxxxxxxxxxxxxx->x_xxxxxxxx,
+				(const char*) xxxxxxxxxxxxxx->x_xxxxxxxxx);
+			xxxxxx->xxxxxxxxxxx(xxxxxxxxxxxxxx->x_xxxxxxxxxx, xxxxxxxxxxxx);
 		}
 
 	}
@@ -2558,135 +2558,135 @@ bool OvCDispConfig::bParseCfgParameter(OvMonDataContainer *myCfgParameter, Confi
 	
 
 	
-	OvCTrace::LogMethodExit ("bool OvCDispConfig::bParseCfgParameter(OvMonDataContainer* myCfgParameter, ConfigParserResults* result= new NullResults())",bInsert);
-	return bInsert;	
+	xxxxxxxx::xxxxxxxxxxxxx ("xxxx xxxxxxxxxxxxx::xxxxxxxxxxxxxxxxxx(xxxxxxxxxxxxxxxxxx* xxxxxxxxxxxxxx, xxxxxxxxxxxxxxxxxxx* xxxxxx= xxx xxxxxxxxxxx())",xxxxxxx);
+	return xxxxxxx;	
 }	
 
 /*
 //------------------------------------------------------------------------------------
-// Function: bool OvCDispConfig::bParseCfgRfcParameter(CString cfgRfcParams[5], int line, ConfigParserResults* result)
+// xxxxxxxx: xxxx xxxxxxxxxxxxx::xxxxxxxxxxxxxxxxxxxxx(xxxxxxx xxxxxxxxxxxx[5], xxx xxxx, xxxxxxxxxxxxxxxxxxx* xxxxxx)
 // 
-// Function parses the 5 configuration parameter of the input parameter "cfgRfcParams"
-// for errors. These errors are f.e. wrong Sign or Option parameter. Possible errors are
-// written in the trace file and put to the specified output of ConfigParserResults.
+// xxxxxxxx xxxxxx xxx 5 xxxxxxxxxxxxx xxxxxxxxx xx xxx xxxxx xxxxxxxxx "xxxxxxxxxxxx"
+// xxx xxxxxx. xxxxx xxxxxx xxx x.x. xxxxx xxxx xx xxxxxx xxxxxxxxx. xxxxxxxx xxxxxx xxx
+// xxxxxxx xx xxx xxxxx xxxx xxx xxx xx xxx xxxxxxxxx xxxxxx xx xxxxxxxxxxxxxxxxxxx.
 // 
-// Input Parameter: cfgRfcParams from type CString[5]
-//					line from type int (is the linenumber of the command)
-//					result from type ConfigParserResults* (for Parser Output)
+// xxxxx xxxxxxxxx: xxxxxxxxxxxx xxxx xxxx xxxxxxx[5]
+//					xxxx xxxx xxxx xxx (xx xxx xxxxxxxxxx xx xxx xxxxxxx)
+//					xxxxxx xxxx xxxx xxxxxxxxxxxxxxxxxxx* (xxx xxxxxx xxxxxx)
 //
-// Return value:  
-//	true:	Function finished successful
-//	false:	Configuration includes error(s)
+// xxxxxx xxxxx:  
+//	xxxx:	xxxxxxxx xxxxxxxx xxxxxxxxxx
+//	xxxxx:	xxxxxxxxxxxxx xxxxxxxx xxxxx(x)
 */
 
-bool OvCDispConfig::bParseCfgRfcParameter (CString cfgRfcParams[5], int line, int rfcCount, ConfigParserResults* result)
+bool xxxxxxxxxxxxx::xxxxxxxxxxxxxxxxxxxxx (xxxxxxx xxxxxxxxxxxx[5], int xxxx, int xxxxxxxx, xxxxxxxxxxxxxxxxxxx* xxxxxx)
 {
-	OvCTrace::LogMethodEntry ("bool OvCDispConfig::bParseCfgRfcParameter(CString rfcParams[5], ConfigParserResults* result = new NullResults())");
+	xxxxxxxx::xxxxxxxxxxxxxx ("xxxx xxxxxxxxxxxxx::xxxxxxxxxxxxxxxxxxxxx(xxxxxxx xxxxxxxxx[5], xxxxxxxxxxxxxxxxxxx* xxxxxx = xxx xxxxxxxxxxx())");
 
-	bool bInsert = true;
-	bool foundsign = false;
-	bool foundopt = false;
-	bool nodigit = false;
-	bool foundhigh = false;
-	bool foundlow = false;
-	char szTempstring [1024]="";
-
-
+	bool xxxxxxx = true;
+	bool xxxxxxxxx = false;
+	bool xxxxxxxx = false;
+	bool xxxxxxx = false;
+	bool xxxxxxxxx = false;
+	bool xxxxxxxx = false;
+	char xxxxxxxxxxxx [1024]="";
 
 
-	for (int iLoop1 = 0; strcmp(rfcParams[iLoop1].szaParameter, "") != 0; ++iLoop1)
+
+
+	for (int xxxxx1 = 0; xxxxxx(xxxxxxxxx[xxxxx1].xxxxxxxxxxxx, "") != 0; ++xxxxx1)
 	{
-		if (strcmp(rfcParams[iLoop1].szaParameter, cfgRfcParams[0]) == 0)
-		{	//searching for Sign
-			for (int iLoop2 = 0;  strcmp(rfcParams[iLoop1].sign[iLoop2], "") != 0; ++iLoop2)
-				if (strcmp(rfcParams[iLoop1].sign[iLoop2], cfgRfcParams[1]) ==0)
-					foundsign = true;
-			//searching for Opt
-			for (int iLoop3 = 0; strcmp(rfcParams[iLoop1].opt[iLoop3], "") != 0; ++iLoop3)
-				if (strcmp(rfcParams[iLoop1].opt[iLoop3], cfgRfcParams[2]) == 0)
-					foundopt = true;
+		if (xxxxxx(xxxxxxxxx[xxxxx1].xxxxxxxxxxxx, xxxxxxxxxxxx[0]) == 0)
+		{	//xxxxxxxxx xxx xxxx
+			for (int xxxxx2 = 0;  xxxxxx(xxxxxxxxx[xxxxx1].xxxx[xxxxx2], "") != 0; ++xxxxx2)
+				if (xxxxxx(xxxxxxxxx[xxxxx1].xxxx[xxxxx2], xxxxxxxxxxxx[1]) ==0)
+					xxxxxxxxx = true;
+			//xxxxxxxxx xxx xxx
+			for (int xxxxx3 = 0; xxxxxx(xxxxxxxxx[xxxxx1].xxx[xxxxx3], "") != 0; ++xxxxx3)
+				if (xxxxxx(xxxxxxxxx[xxxxx1].xxx[xxxxx3], xxxxxxxxxxxx[2]) == 0)
+					xxxxxxxx = true;
 
 
 	
 
-			//Checking the high and low parameter 
-			if (strcmp(rfcParams[iLoop1].values[0], "INT") == 0)
+			//xxxxxxxx xxx xxxx xxx xxx xxxxxxxxx 
+			if (xxxxxx(xxxxxxxxx[xxxxx1].xxxxxx[0], "xxx") == 0)
 			{
-				//if high and low must be numbers
-				for(unsigned int iLoop2 =0 ; cfgRfcParams[3][iLoop2] != '\0'; ++iLoop2)
+				//xx xxxx xxx xxx xxxx xx xxxxxxx
+				for(unsigned int xxxxx2 =0 ; xxxxxxxxxxxx[3][xxxxx2] != '\0'; ++xxxxx2)
 				{
-					if (!isdigit(cfgRfcParams[3][iLoop2]))
-						nodigit = true;
+					if (!xxxxxxx(xxxxxxxxxxxx[3][xxxxx2]))
+						xxxxxxx = true;
 				}
-				if (strcmp(cfgRfcParams[2], "BT") == 0 || strcmp(cfgRfcParams[2], "NB") == 0)
+				if (xxxxxx(xxxxxxxxxxxx[2], "xx") == 0 || xxxxxx(xxxxxxxxxxxx[2], "xx") == 0)
 				{
-					for(unsigned int iLoop3 =0 ; cfgRfcParams[4][iLoop3] != '\0'; ++iLoop3)
+					for(unsigned int xxxxx3 =0 ; xxxxxxxxxxxx[4][xxxxx3] != '\0'; ++xxxxx3)
 					{
-						if (!isdigit(cfgRfcParams[4][iLoop3]))
-							nodigit = true;
+						if (!xxxxxxx(xxxxxxxxxxxx[4][xxxxx3]))
+							xxxxxxx = true;
 					}
 				}
-				if (nodigit)
+				if (xxxxxxx)
 				{
-					sprintf (szTempstring,"Values for configuration item starting in line %d are no valid numbers.!!",line);
-					OvCTrace::LogError (szTempstring,"");
+					xxxxxxx (xxxxxxxxxxxx,"xxxxxx xxx xxxxxxxxxxxxx xxxx xxxxxxxx xx xxxx %d xxx xx xxxxx xxxxxxx.!!",xxxx);
+					xxxxxxxx::xxxxxxxx (xxxxxxxxxxxx,"");
 
-					sprintf(szTempstring, "><Values specified for HIGH and/or LOW parameter must be positive numbers.\n");
-					result->submitError(line, szTempstring);
-					bInsert = false;
+					xxxxxxx(xxxxxxxxxxxx, "><xxxxxx xxxxxxxxx xxx xxxx xxx/xx xxx xxxxxxxxx xxxx xx xxxxxxxx xxxxxxx.\n");
+					xxxxxx->xxxxxxxxxxx(xxxx, xxxxxxxxxxxx);
+					xxxxxxx = false;
 				}
-				//if there is a range of numbers, are the values in this range
-				if(strcmp(rfcParams[iLoop1].values[1], "") != 0 && strcmp(rfcParams[iLoop1].values[2], "") != 0)
+				//xx xxxxx xx x xxxxx xx xxxxxxx, xxx xxx xxxxxx xx xxxx xxxxx
+				if(xxxxxx(xxxxxxxxx[xxxxx1].xxxxxx[1], "") != 0 && xxxxxx(xxxxxxxxx[xxxxx1].xxxxxx[2], "") != 0)
 				{
-					int low = atoi(cfgRfcParams[3]);
-					int high = atoi(cfgRfcParams[4]);
-					int max = atoi(rfcParams[iLoop1].values[2]);
-					int min = atoi(rfcParams[iLoop1].values[1]);
-					if(!(low >= min && low <= max && high >= min && high <= max))
+					int xxx = xxxx(xxxxxxxxxxxx[3]);
+					int xxxx = xxxx(xxxxxxxxxxxx[4]);
+					int xxx = xxxx(xxxxxxxxx[xxxxx1].xxxxxx[2]);
+					int xxx = xxxx(xxxxxxxxx[xxxxx1].xxxxxx[1]);
+					if(!(xxx >= xxx && xxx <= xxx && xxxx >= xxx && xxxx <= xxx))
 					{
-						sprintf (szTempstring,"Invalid values specified for HIGH and/or LOW parameter in line %i\n",line);
-						OvCTrace::LogError (szTempstring,"");
+						xxxxxxx (xxxxxxxxxxxx,"xxxxxxx xxxxxx xxxxxxxxx xxx xxxx xxx/xx xxx xxxxxxxxx xx xxxx %i\n",xxxx);
+						xxxxxxxx::xxxxxxxx (xxxxxxxxxxxx,"");
 
-						/*	>c<
-							Component: OvSAPCfgValidation
-							Description: The first %i represents the minimum, the second %i the maximum. 
-							>c<
+						/*	>x<
+							xxxxxxxxx: xxxxxxxxxxxxxxxxxx
+							xxxxxxxxxxx: xxx xxxxx %x xxxxxxxxxx xxx xxxxxxx, xxx xxxxxx %x xxx xxxxxxx. 
+							>x<
 						 */
-						sprintf(szTempstring, "><Values for HIGH and/or LOW parameter must be between %i and %i\n", min, max);
-						result->submitError(line, szTempstring);
-						bInsert = false;
+						xxxxxxx(xxxxxxxxxxxx, "><xxxxxx xxx xxxx xxx/xx xxx xxxxxxxxx xxxx xx xxxxxxx %i xxx %i\n", xxx, xxx);
+						xxxxxx->xxxxxxxxxxx(xxxx, xxxxxxxxxxxx);
+						xxxxxxx = false;
 					}
 
 				}
 			}
 			else
 			{
-				//if low and high no numbers
-				if (strcmp(rfcParams[iLoop1].values[0], "") != 0)
+				//xx xxx xxx xxxx xx xxxxxxx
+				if (xxxxxx(xxxxxxxxx[xxxxx1].xxxxxx[0], "") != 0)
 				{
-					//are they defined values or not
-					for (int iLoop4 = 0; strcmp(rfcParams[iLoop1].values[iLoop4], "") !=0 ; ++iLoop4)
+					//xxx xxxx xxxxxxx xxxxxx xx xxx
+					for (int xxxxx4 = 0; xxxxxx(xxxxxxxxx[xxxxx1].xxxxxx[xxxxx4], "") !=0 ; ++xxxxx4)
 					{
-						if (strcmp(cfgRfcParams[3], rfcParams[iLoop1].values[iLoop4]) == 0)
-							foundlow = true;
+						if (xxxxxx(xxxxxxxxxxxx[3], xxxxxxxxx[xxxxx1].xxxxxx[xxxxx4]) == 0)
+							xxxxxxxx = true;
 
-						if (strcmp(cfgRfcParams[2], "BT") == 0 || strcmp(cfgRfcParams[2], "NB") == 0)
+						if (xxxxxx(xxxxxxxxxxxx[2], "xx") == 0 || xxxxxx(xxxxxxxxxxxx[2], "xx") == 0)
 						{
-							if (strcmp(cfgRfcParams[4], rfcParams[iLoop1].values[iLoop4]) == 0)
-								foundhigh = true;
+							if (xxxxxx(xxxxxxxxxxxx[4], xxxxxxxxx[xxxxx1].xxxxxx[xxxxx4]) == 0)
+								xxxxxxxxx = true;
 						}
 						else
-							foundhigh = true;
+							xxxxxxxxx = true;
 					}
 				
-					if (!foundlow || !foundhigh)
+					if (!xxxxxxxx || !xxxxxxxxx)
 					{
-						sprintf (szTempstring,"Low/High Parameter starting in line %d isn't valid.!!",line);
-						OvCTrace::LogError (szTempstring,"");
+						xxxxxxx (xxxxxxxxxxxx,"xxx/xxxx xxxxxxxxx xxxxxxxx xx xxxx %d xxx'x xxxxx.!!",xxxx);
+						xxxxxxxx::xxxxxxxx (xxxxxxxxxxxx,"");
 
-						sprintf(szTempstring, "><Invalid values specified for parameters LOW and/or HIGH, see the administrator reference guide for valid values\n");
-						result->submitError(line, szTempstring);
-						bInsert = false;
+						xxxxxxx(xxxxxxxxxxxx, "><xxxxxxx xxxxxx xxxxxxxxx xxx xxxxxxxxxx xxx xxx/xx xxxx, xxx xxx xxxxxxxxxxxxx xxxxxxxxx xxxxx xxx xxxxx xxxxxx\n");
+						xxxxxx->xxxxxxxxxxx(xxxx, xxxxxxxxxxxx);
+						xxxxxxx = false;
 
 					}
 				}
@@ -2696,62 +2696,62 @@ bool OvCDispConfig::bParseCfgRfcParameter (CString cfgRfcParams[5], int line, in
 		}
 
 	}
-	if(!foundsign)
+	if(!xxxxxxxxx)
 	{
-		sprintf (szTempstring,"The sign of configuration item starting in line %d isn't valid. Please check RFC parameters!!",line);
-		OvCTrace::LogError (szTempstring,"");
+		xxxxxxx (xxxxxxxxxxxx,"xxx xxxx xx xxxxxxxxxxxxx xxxx xxxxxxxx xx xxxx %d xxx'x xxxxx. xxxxxx xxxxx xxx xxxxxxxxxx!!",xxxx);
+		xxxxxxxx::xxxxxxxx (xxxxxxxxxxxx,"");
 
-		sprintf(szTempstring, "><The value '%s' specified for the SIGN parameter is not allowed; please enter the appropriate value as described in the administrators reference.", (const char*)cfgRfcParams[1]);
-		result->submitError(line, szTempstring);
-		bInsert = false;
+		xxxxxxx(xxxxxxxxxxxx, "><xxx xxxxx '%s' xxxxxxxxx xxx xxx xxxx xxxxxxxxx xx xxx xxxxxxx; xxxxxx xxxxx xxx xxxxxxxxxxx xxxxx xx xxxxxxxxx xx xxx xxxxxxxxxxxxxx xxxxxxxxx.", (const char*)xxxxxxxxxxxx[1]);
+		xxxxxx->xxxxxxxxxxx(xxxx, xxxxxxxxxxxx);
+		xxxxxxx = false;
 
 	}
 
-	if(!foundopt)
+	if(!xxxxxxxx)
 	{
-		sprintf (szTempstring,"The Opt in line %d istn't valid.!!",line);
-		OvCTrace::LogError (szTempstring,"");
+		xxxxxxx (xxxxxxxxxxxx,"xxx xxx xx xxxx %d xxxx'x xxxxx.!!",xxxx);
+		xxxxxxxx::xxxxxxxx (xxxxxxxxxxxx,"");
 
-		sprintf(szTempstring, "><Invalid value '%s' specified for the OPTION parameter.\n", (const char*)cfgRfcParams[2]);
-		result->submitError(line, szTempstring);
-		bInsert = false;
+		xxxxxxx(xxxxxxxxxxxx, "><xxxxxxx xxxxx '%s' xxxxxxxxx xxx xxx xxxxxx xxxxxxxxx.\n", (const char*)xxxxxxxxxxxx[2]);
+		xxxxxx->xxxxxxxxxxx(xxxx, xxxxxxxxxxxx);
+		xxxxxxx = false;
 	}
 
-	if (strcmp(cfgRfcParams[2], "BT") == 0 || strcmp(cfgRfcParams[2], "NB") == 0)
+	if (xxxxxx(xxxxxxxxxxxx[2], "xx") == 0 || xxxxxx(xxxxxxxxxxxx[2], "xx") == 0)
 	{
-		if(strcmp(cfgRfcParams[4], "") == 0)
+		if(xxxxxx(xxxxxxxxxxxx[4], "") == 0)
 		{
-			sprintf (szTempstring,"Missing High parameter in line %d.!!",line);
-			OvCTrace::LogError (szTempstring,"");
+			xxxxxxx (xxxxxxxxxxxx,"xxxxxxx xxxx xxxxxxxxx xx xxxx %d.!!",xxxx);
+			xxxxxxxx::xxxxxxxx (xxxxxxxxxxxx,"");
 
-			sprintf(szTempstring, "><Low AND High parameter is required if OPTION is '%s'\n", (const char*)cfgRfcParams[2]);
-			result->submitError(line, szTempstring);
-			bInsert = false;
+			xxxxxxx(xxxxxxxxxxxx, "><xxx xxx xxxx xxxxxxxxx xx xxxxxxxx xx xxxxxx xx '%s'\n", (const char*)xxxxxxxxxxxx[2]);
+			xxxxxx->xxxxxxxxxxx(xxxx, xxxxxxxxxxxx);
+			xxxxxxx = false;
 		}
 	}
 	else
 	{
-		if (strcmp(cfgRfcParams[4], "") != 0)
+		if (xxxxxx(xxxxxxxxxxxx[4], "") != 0)
 		{	
-			sprintf(szTempstring, "><No HIGH parameter is required if OPTION is '%s'\n", (const char*)cfgRfcParams[2]);
-			result->submitWarning(line, szTempstring);
+			xxxxxxx(xxxxxxxxxxxx, "><xx xxxx xxxxxxxxx xx xxxxxxxx xx xxxxxx xx '%s'\n", (const char*)xxxxxxxxxxxx[2]);
+			xxxxxx->xxxxxxxxxxxxx(xxxx, xxxxxxxxxxxx);
 		}
 	}
 
 
 
-	//checking if the Low parameter contains a '*' when the opt is EQ
-	//For all parameters
+	//xxxxxxxx xx xxx xxx xxxxxxxxx xxxxxxxx x '*' xxxx xxx xxx xx xx
+	//xxx xxx xxxxxxxxxx
  
-	if( strcmp(cfgRfcParams[2], "EQ") == 0 && strchr(cfgRfcParams[3], '*') != NULL)
+	if( xxxxxx(xxxxxxxxxxxx[2], "xx") == 0 && xxxxxx(xxxxxxxxxxxx[3], '*') != xxxx)
 	{
-		sprintf (szTempstring, "><Note: The character '*' in LOW parameter of OPTION 'EQ' will be interpreted literally; that is as '*' and NOT as a wildcard.\n");
-		result->submitWarning(line, szTempstring);
+		xxxxxxx (xxxxxxxxxxxx, "><xxxx: xxx xxxxxxxxx '*' xx xxx xxxxxxxxx xx xxxxxx 'xx' xxxx xx xxxxxxxxxxx xxxxxxxxx; xxxx xx xx '*' xxx xxx xx x xxxxxxxx.\n");
+		xxxxxx->xxxxxxxxxxxxx(xxxx, xxxxxxxxxxxx);
 	}
 
 
-	OvCTrace::LogMethodExit ("bool OvCDispConfig::bParseCfgRfcParameter(CString rfcParams[5], ConfigParserResults* result = new NullResults())",bInsert);
-	return bInsert;	
+	xxxxxxxx::xxxxxxxxxxxxx ("xxxx xxxxxxxxxxxxx::xxxxxxxxxxxxxxxxxxxxx(xxxxxxx xxxxxxxxx[5], xxxxxxxxxxxxxxxxxxx* xxxxxx = xxx xxxxxxxxxxx())",xxxxxxx);
+	return xxxxxxx;	
 
 }
 
@@ -2762,147 +2762,147 @@ bool OvCDispConfig::bParseCfgRfcParameter (CString cfgRfcParams[5], int line, in
 
 
 
-bool OvCDispConfig::bGetUseR3CfgFlag()
+bool xxxxxxxxxxxxx::xxxxxxxx3xxxxxxx()
 {
-	return (m_CommandlineArguments.m_bUseR3Cfg);
+	return (x_xxxxxxxxxxxxxxxxxxxx.x_xxxxx3xxx);
 }
 
-bool OvCDispConfig::bGetShmInfo()
+bool xxxxxxxxxxxxx::xxxxxxxxxxx()
 {
-		return (m_CommandlineArguments.m_bNoShm);
+		return (x_xxxxxxxxxxxxxxxxxxxx.x_xxxxxx);
 }
 
 
-CString OvCDispConfig::sGetConfigFileName()
+xxxxxxx xxxxxxxxxxxxx::xxxxxxxxxxxxxxxxxx()
 {
-	char szConfigfileName[255]="";
-	char* pCfgName;
-	CString sRetString;
+	char xxxxxxxxxxxxxxxx[255]="";
+	char* xxxxxxxx;
+	xxxxxxx xxxxxxxxxx;
 	
-	strcpy (szConfigfileName, m_CommandlineArguments.m_sCfgFile.LPCTSTR());
+	xxxxxx (xxxxxxxxxxxxxxxx, x_xxxxxxxxxxxxxxxxxxxx.x_xxxxxxxx.xxxxxxx());
 	
 	
-	 // remove ".cfg" suffix
-	 pCfgName = strstr (szConfigfileName, ".CFG");
-   if (pCfgName != NULL) *pCfgName = '\0';
-   pCfgName = strstr (szConfigfileName, ".cfg");
-   if (pCfgName != NULL) *pCfgName = '\0';
+	 // xxxxxx ".xxx" xxxxxx
+	 xxxxxxxx = xxxxxx (xxxxxxxxxxxxxxxx, ".xxx");
+   if (xxxxxxxx != xxxx) *xxxxxxxx = '\0';
+   xxxxxxxx = xxxxxx (xxxxxxxxxxxxxxxx, ".xxx");
+   if (xxxxxxxx != xxxx) *xxxxxxxx = '\0';
 	 
-	 sRetString = szConfigfileName;
-	 return (sRetString);
+	 xxxxxxxxxx = xxxxxxxxxxxxxxxx;
+	 return (xxxxxxxxxx);
 }
 
-bool OvCDispConfig::bGetUseQueueCheckFlag (void)
+bool xxxxxxxxxxxxx::xxxxxxxxxxxxxxxxxxxxx (void)
 {
-	return (m_CommandlineArguments.m_bUseQueueCheck);
+	return (x_xxxxxxxxxxxxxxxxxxxx.x_xxxxxxxxxxxxxx);
 }
 
 
 
-// Prints out help information about the comandline parameters of 
-// program r3moncol or r3itocfg
-void OvCDispConfig::vOutputHelpInformation(CString sProgname)
+// xxxxxx xxx xxxx xxxxxxxxxxx xxxxx xxx xxxxxxxxxx xxxxxxxxxx xx 
+// xxxxxxx x3xxxxxx xx x3xxxxxx
+void xxxxxxxxxxxxx::xxxxxxxxxxxxxxxxxxxxxx(xxxxxxx xxxxxxxxx)
 {
-  // output for r3itocfg
-  if (strstr ((const char*)sProgname, "r3itocfg") != NULL)
+  // xxxxxx xxx x3xxxxxx
+  if (xxxxxx ((const char*)xxxxxxxxx, "x3xxxxxx") != xxxx)
   {
-    cout << "Programname: " << (const char*) sProgname << "\n";
-    cout << "Usage of this program\n";
-    cout << "-cfgfile:      mendatory, this indicates the configuration file,\n";
-    cout << "               which the monitor should use\n" ;
-    cout << "               Example: " << (const char*) sProgname << " -cfgfile r3perfstat.cfg -host sapsys1\n";
-    cout << "\n";
-    cout << "-host   :      mendatory, this describes in which SAP System the configured\n";
-    cout << "               statistical records should be imported\n";
-    cout << "               Example: " << (const char*) sProgname << " -cfgfile r3perfstat.cfg -host sapsys1\n";
+    xxxx << "xxxxxxxxxxx: " << (const char*) xxxxxxxxx << "\n";
+    xxxx << "xxxxx xx xxxx xxxxxxx\n";
+    xxxx << "-xxxxxxx:      xxxxxxxxx, xxxx xxxxxxxxx xxx xxxxxxxxxxxxx xxxx,\n";
+    xxxx << "               xxxxx xxx xxxxxxx xxxxxx xxx\n" ;
+    xxxx << "               xxxxxxx: " << (const char*) xxxxxxxxx << " -xxxxxxx x3xxxxxxxx.xxx -xxxx xxxxxx1\n";
+    xxxx << "\n";
+    xxxx << "-xxxx   :      xxxxxxxxx, xxxx xxxxxxxxx xx xxxxx xxx xxxxxx xxx xxxxxxxxxx\n";
+    xxxx << "               xxxxxxxxxxx xxxxxxx xxxxxx xx xxxxxxxx\n";
+    xxxx << "               xxxxxxx: " << (const char*) xxxxxxxxx << " -xxxxxxx x3xxxxxxxx.xxx -xxxx xxxxxx1\n";
 	return;
   }
-  // output for r3monsec
-  if (strstr ((const char*)sProgname, "r3monsec") != NULL)
+  // xxxxxx xxx x3xxxxxx
+  if (xxxxxx ((const char*)xxxxxxxxx, "x3xxxxxx") != xxxx)
   {
-    cout << "Programname: " << (const char*) sProgname << "\n";
-    cout << "Usage of this program\n";
-    cout << "-trace  :      optional, writes an inital tracefile called writetrace.log in\n";
-    cout << "               actual working directory\n";
-    cout << "               Example: " << (const char*) sProgname << " -trace\n";
+    xxxx << "xxxxxxxxxxx: " << (const char*) xxxxxxxxx << "\n";
+    xxxx << "xxxxx xx xxxx xxxxxxx\n";
+    xxxx << "-xxxxx  :      xxxxxxxx, xxxxxx xx xxxxxx xxxxxxxxx xxxxxx xxxxxxxxxx.xxx xx\n";
+    xxxx << "               xxxxxx xxxxxxx xxxxxxxxx\n";
+    xxxx << "               xxxxxxx: " << (const char*) xxxxxxxxx << " -xxxxx\n";
   }
-    // output for r3moncol
+    // xxxxxx xxx x3xxxxxx
   else
   {
-    cout << "Programname: " << (const char*) sProgname << "\n";
-    cout << "Usage of this program\n";
-    cout << "-cfgfile:      mendatory, this indicates the configuration file,\n";
-    cout << "               which the monitor should use\n" ;
-    cout << "               Example: " << (const char*) sProgname << " -cfgfile r3mondmp.cfg\n";
-    cout << "\n";
-    cout << "-trace  :      optional, writes an inital tracefile called writetrace.log in\n";
-    cout << "               actual working directory\n";
-    cout << "               Example: " << (const char*) sProgname << " -cfgfile r3mondmp.cfg -trace\n";
+    xxxx << "xxxxxxxxxxx: " << (const char*) xxxxxxxxx << "\n";
+    xxxx << "xxxxx xx xxxx xxxxxxx\n";
+    xxxx << "-xxxxxxx:      xxxxxxxxx, xxxx xxxxxxxxx xxx xxxxxxxxxxxxx xxxx,\n";
+    xxxx << "               xxxxx xxx xxxxxxx xxxxxx xxx\n" ;
+    xxxx << "               xxxxxxx: " << (const char*) xxxxxxxxx << " -xxxxxxx x3xxxxxx.xxx\n";
+    xxxx << "\n";
+    xxxx << "-xxxxx  :      xxxxxxxx, xxxxxx xx xxxxxx xxxxxxxxx xxxxxx xxxxxxxxxx.xxx xx\n";
+    xxxx << "               xxxxxx xxxxxxx xxxxxxxxx\n";
+    xxxx << "               xxxxxxx: " << (const char*) xxxxxxxxx << " -xxxxxxx x3xxxxxx.xxx -xxxxx\n";
   }
 }
 
 
-void OvCDispConfig::vSubmitConfigError (ConfigParserResults* result, CString sKeyword, int iLineNumber)
+void xxxxxxxxxxxxx::xxxxxxxxxxxxxxxxxx (xxxxxxxxxxxxxxxxxxx* xxxxxx, xxxxxxx xxxxxxxx, int xxxxxxxxxxx)
 {
-	CString sErrorMsg = "";
-	CString sLogMsg   = "";
-	sLogMsg.Format ("Number of arguments starting in line %d for keyword \'%s\' is wrong.",
-				iLineNumber, (const char*) sKeyword);
-	OvCTrace::LogError (sLogMsg);
-	sErrorMsg.Format ("><The number of arguments for keyword '%s' is wrong.\n", (const char*) sKeyword);	
-	result->submitError(iLineNumber, sErrorMsg);
+	xxxxxxx xxxxxxxxx = "";
+	xxxxxxx xxxxxxx   = "";
+	xxxxxxx.xxxxxx ("xxxxxx xx xxxxxxxxx xxxxxxxx xx xxxx %d xxx xxxxxxx \'%s\' xx xxxxx.",
+				xxxxxxxxxxx, (const char*) xxxxxxxx);
+	xxxxxxxx::xxxxxxxx (xxxxxxx);
+	xxxxxxxxx.xxxxxx ("><xxx xxxxxx xx xxxxxxxxx xxx xxxxxxx '%s' xx xxxxx.\n", (const char*) xxxxxxxx);	
+	xxxxxx->xxxxxxxxxxx(xxxxxxxxxxx, xxxxxxxxx);
 
 }
 
 
 
-CString OvCDispConfig::sGetConfiguredInstanceProfile(CString hostname, CString SID, CString sysNo)
+xxxxxxx xxxxxxxxxxxxx::xxxxxxxxxxxxxxxxxxxxxxxxxxxxx(xxxxxxx xxxxxxxx, xxxxxxx xxx, xxxxxxx xxxxx)
 {
-	OvCTrace::LogMethodEntry( "CString OvCDispConfig::sGetConfiguredInstanceProfile(CString hostname, CString SID, CString sysNo)" );
-	if( m_InstanceProfileConfig.GetSize() == 0 )
-		return "default";
+	xxxxxxxx::xxxxxxxxxxxxxx( "xxxxxxx xxxxxxxxxxxxx::xxxxxxxxxxxxxxxxxxxxxxxxxxxxx(xxxxxxx xxxxxxxx, xxxxxxx xxx, xxxxxxx xxxxx)" );
+	if( x_xxxxxxxxxxxxxxxxxxxxx.xxxxxxx() == 0 )
+		return "xxxxxxx";
 	
-	CTools mytool;
+	xxxxxx xxxxxx;
 
-	CString retPath = "default";
-	int assignedPrio = 9;
-	for( int j = 0; j < m_InstanceProfileConfig.GetSize(); j++ ) {
-		OvMonDataContainer* myProfileContainer = (OvMonDataContainer*)m_InstanceProfileConfig.GetAt( j );
+	xxxxxxx xxxxxxx = "xxxxxxx";
+	int xxxxxxxxxxxx = 9;
+	for( int x = 0; x < x_xxxxxxxxxxxxxxxxxxxxx.xxxxxxx(); x++ ) {
+		xxxxxxxxxxxxxxxxxx* xxxxxxxxxxxxxxxxxx = (xxxxxxxxxxxxxxxxxx*)x_xxxxxxxxxxxxxxxxxxxxx.xxxxx( x );
 
-		CString PROhost = myProfileContainer->m_Hostname;
-		CString PROsid = myProfileContainer->m_SID;
-		CString PROnr = myProfileContainer->m_SAPNumber;
-		CString PROpath = myProfileContainer->m_Low;
+		xxxxxxx xxxxxxx = xxxxxxxxxxxxxxxxxx->x_xxxxxxxx;
+		xxxxxxx xxxxxx = xxxxxxxxxxxxxxxxxx->x_xxx;
+		xxxxxxx xxxxx = xxxxxxxxxxxxxxxxxx->x_xxxxxxxxx;
+		xxxxxxx xxxxxxx = xxxxxxxxxxxxxxxxxx->x_xxx;
 
-		if( PROhost == "ALL" || mytool.iIPCompare( PROhost, hostname ) ) {
-			//calculate priority of rule based on distribution of ALL values (see ovreadconfig.cpp for matrix)
-			int rulePrio = 9;
-			if( PROhost == "ALL" ) { //no host specified
-				if( PROsid == "ALL" && PROnr == "ALL" )
-					rulePrio = 8;
-				else if( PROsid == "ALL" && PROnr == sysNo )
-					rulePrio = 7;
-				else if( PROnr == "ALL" && PROsid == SID )
-					rulePrio = 6;
-				else if( PROnr == sysNo && PROsid == SID )
-					rulePrio = 5;
-			} else { //host specified
-				if( PROsid == "ALL" && PROnr == "ALL" )
-					rulePrio = 4;
-				else if( PROsid == "ALL" && PROnr == sysNo )
-					rulePrio = 3;
-				else if( PROnr == "ALL" && PROsid == SID )
-					rulePrio = 2;
-				else if( PROnr == sysNo && PROsid == SID )
-					rulePrio = 1;
+		if( xxxxxxx == "xxx" || xxxxxx.xxxxxxxxxx( xxxxxxx, xxxxxxxx ) ) {
+			//xxxxxxxxx xxxxxxxx xx xxxx xxxxx xx xxxxxxxxxxxx xx xxx xxxxxx (xxx xxxxxxxxxxxx.xxx xxx xxxxxx)
+			int xxxxxxxx = 9;
+			if( xxxxxxx == "xxx" ) { //xx xxxx xxxxxxxxx
+				if( xxxxxx == "xxx" && xxxxx == "xxx" )
+					xxxxxxxx = 8;
+				else if( xxxxxx == "xxx" && xxxxx == xxxxx )
+					xxxxxxxx = 7;
+				else if( xxxxx == "xxx" && xxxxxx == xxx )
+					xxxxxxxx = 6;
+				else if( xxxxx == xxxxx && xxxxxx == xxx )
+					xxxxxxxx = 5;
+			} else { //xxxx xxxxxxxxx
+				if( xxxxxx == "xxx" && xxxxx == "xxx" )
+					xxxxxxxx = 4;
+				else if( xxxxxx == "xxx" && xxxxx == xxxxx )
+					xxxxxxxx = 3;
+				else if( xxxxx == "xxx" && xxxxxx == xxx )
+					xxxxxxxx = 2;
+				else if( xxxxx == xxxxx && xxxxxx == xxx )
+					xxxxxxxx = 1;
 			}
-			if( rulePrio < assignedPrio ) {
-				assignedPrio = rulePrio;
-				retPath = PROpath;
+			if( xxxxxxxx < xxxxxxxxxxxx ) {
+				xxxxxxxxxxxx = xxxxxxxx;
+				xxxxxxx = xxxxxxx;
 			}
 		}
 	}
 	
-	OvCTrace::LogMethodExit( "CString OvCDispConfig::sGetConfiguredInstanceProfile(CString hostname, CString SID, CString sysNo)", 1 );
-	return retPath;
+	xxxxxxxx::xxxxxxxxxxxxx( "xxxxxxx xxxxxxxxxxxxx::xxxxxxxxxxxxxxxxxxxxxxxxxxxxx(xxxxxxx xxxxxxxx, xxxxxxx xxx, xxxxxxx xxxxx)", 1 );
+	return xxxxxxx;
 }

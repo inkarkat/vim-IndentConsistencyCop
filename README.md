@@ -1,4 +1,4 @@
-INDENT CONSISTENCY COP   
+INDENT CONSISTENCY COP
 ===============================================================================
 _by Ingo Karkat_
 
@@ -91,19 +91,24 @@ USAGE
 ------------------------------------------------------------------------------
 
     Start the examination of the current buffer or range via:
-        :[range]IndentConsistencyCop
+        :[range]IndentConsistencyCop [{setting}]
+    The optional {setting} specifies the assumed correct indent setting for the
+    buffer / range (if omitted the cop can later be told), as combination of
+    either tab, spc, or sts with a number between 1-8, e.g. "sts4" for a
+    4-character soft tabstop indent.
     The triggering can be done automatically for configurable filetypes with the
     autocmds defined in IndentConsistencyCopAutoCmds.vim ([vimscript #1691](http://www.vim.org/scripts/script.php?script_id=1691)).
 
     If you chose to highlight incorrect indents, either re-execute the
     IndentConsistencyCop to update the highlighting, or execute
         :IndentConsistencyCopOff
-    to remove the highlightings.
+    to remove the highlightings. Entries in the quickfix and location lists will
+    be kept.
 
     If you just want to check a read-only file, or do not intend to modify the
     file, you don't care if Vim's buffer settings are compatible with the used
     indent. In this case, you can use
-        :[range]IndentRangeConsistencyCop
+        :[range]IndentRangeConsistencyCop [{setting}]
     instead of :IndentConsistencyCop.
 
 INSTALLATION
@@ -128,7 +133,7 @@ To uninstall, use the :RmVimball command.
 ### DEPENDENCIES
 
 - Requires Vim 7.0 or higher.
-- Requires the ingo-library.vim plugin ([vimscript #4433](http://www.vim.org/scripts/script.php?script_id=4433)), version 1.019 or
+- Requires the ingo-library.vim plugin ([vimscript #4433](http://www.vim.org/scripts/script.php?script_id=4433)), version 1.039 or
   higher.
 
 CONFIGURATION
@@ -155,14 +160,27 @@ removed via :IndentConsistencyCopOff.
         to locate the incorrect lines.
         You can customize this by defining / linking the
         'IndentConsistencyCop' highlight group before this script is
-        sourced:
-        highlight link IndentConsistencyCop Error
-    f:{n} (n = 0..9) - Fold correct lines with a context of {n} lines (like
+        sourced: >
+            highlight link IndentConsistencyCop Error
+    f:{n} (n = 0..9)
+      - Fold correct lines with a context of {n} lines (like
         in Vim diff mode).
-    TODO:
-    q - Populate quickfix list with all incorrect lines. Idea: Use :cgetexpr.
->
+    q - Populate quickfix list with all incorrect lines. With uppercase Q
+        appends to an existing list.
+    w - Populate location list with all incorrect lines. With uppercase W
+        appends to an existing list.
+
     let g:indentconsistencycop_highlighting = 'sglmf:3'
+
+You can offer alternative method(s) of highlighting incorrect lines; the
+default adds lines to the quickfix list:
+
+    let g:IndentConsistencyCop_AltHighlighting =
+    \   {'methods': 'Q', 'menu': 'Add wrong indents to &quickfix...'}
+
+The configuration is a Dict with a "methods" entry (cp.
+g:indentconsistencycop\_highlighting) and a "menu" entry. If empty, no
+alternative method will be presented.
 
 Some comment styles use additional whitespace characters inside the comment
 block to neatly left-align the comment block, e.g. this is often used in Java
@@ -179,9 +197,31 @@ removes these additional whitespaces from the indent when evaluating lines.
     let g:indentconsistencycop_non_indent_pattern = ' \*\%([*/ \t]\|$\)'
 
 (You can also override / set this for certain files with a buffer-local var.)
+The pattern could also match in non-comment lines; to avoid that, the cop can
+additionally check for a syntax match at the comment position, by supplying a
+regular expression for the syntax item name, and optionally another one for a
+syntax item name that stops looking further down the syntax stack:
 
-Some com,ment styles use irregularly indented blocks, for example aligment to
-a start of a keyword or construct in the previous line, without regard to
+    let g:indentconsistencycop_non_indent_pattern = [' \*\%([*/ \t]\|$\)',
+    \ '^Comment$', 'FoldMarker$']
+
+These are only considered when :syntax on.
+
+You may never want certain indent settings in your files. As an indent
+multiplier of 1 more often is the result of a mess of different indents than
+an explicit choice, the default forbids 'spc1' and 'sts1' from being accepted
+as consistent indentation:
+
+    let g:IndentConsistencyCop_UnacceptableIndentSettings = ['spc1', 'sts1']
+
+Assign an empty List or String to accept any indent setting. As an alternative
+to the List of unacceptable indent settings, this configuration can also take
+a regular expression pattern:
+
+    let g:IndentConsistencyCop_UnacceptableIndentSettings = '^sts'
+
+Some comment styles use irregularly indented blocks, for example aligment to a
+start of a keyword or construct in the previous line, without regard to
 whether that aligns with the indent width. To avoid annoying false positives
 on those lines, you can implement custom function(s) that detect these, so
 that they will be excluded from the cop's checking. Define a List of Funcrefs:
@@ -193,22 +233,61 @@ The function must take two startLnum, endLnum arguments and return a
 Dictionary whose keys represent the filtered out line numbers. The cop ignores
 the union of all returned Sets.
 
+In case of really irregular lines where the removal of some whitespace per
+g:indentconsistencycop\_non\_indent\_pattern isn't possible, the lines can be
+ignored altogether. Lines can be selected by a List of patterns, optionally
+limited to certain syntax item names (tested after the matched text),
+optionally with another one for a syntax item name that stops looking further
+down the syntax stack:
+
+    let g:IndentConsistencyCop_IgnorePatterns = [
+    \   '^\s\+####D',
+    \   ['^\s\+', 'podVerbatimLine']
+    \]
+
+(This is implemented as a default g:IndentConsistencyCop\_line\_filters.)
+
+By default, the cop sets 'copyindent' and 'preserveindent' if the buffer's
+indent is inconsistent and this is ignored by the user, as these options
+typically make Vim respect the original indent. This is undone automatically
+if the buffer becomes consistent or the cop is turned off via
+:IndentConsistencyCopOff. To disable this feature, set
+
+    let g:IndentConsistencyCop_IsCopyAndPreserveIndent = 0
+
+(This is implemented as a default IndentConsistencyCop-event.)
+
+By default, the cop also checks for bad whitespace combinations (i.e. space
+character(s) followed by one or more tabs) everywhere inside the buffer, not
+just in indent. To turn this off and just alert to these bad mixes when they
+occur at the beginning of the line:
+
+    let g:IndentConsistencyCop_IsFindBadMixEverywhere = 0
+
+The default block alignment g:IndentConsistencyCop\_line\_filters, can be
+tuned with regards to what it considers a block via:
+
+    let g:IndentConsistencyCop_BlockAlignmentPattern = '\<'
+
+The default handles alignment to previous keywords, brackets, quotes, and
+@Annotation, $var.
+
 INTEGRATION
 ------------------------------------------------------------------------------
 
 The :IndentConsistencyCop and :IndentRangeConsistencyCop commands fill a
 buffer-scoped dictionary with the results of the check. These results can be
 consumed by other Vim integrations (e.g. for a custom 'statusline').
->
+
     b:indentconsistencycop_result.maxIndent
 Maximum indent (in columns) found in the entire buffer. (Not reduced by range
 checks.)
->
+
     b:indentconsistencycop_result.minIndent
 Minimum indent (in columns, not counting lines that do not start with
 whitespace at all) found in the entire buffer. (Not increased by range
 checks.)
->
+
     b:indentconsistencycop_result.indentSetting
 String representing the actual indent settings. Consistent indent settings are
 represented by 'tabN', 'spcN', 'stsN' (where N is the indent multiplier) or
@@ -216,39 +295,83 @@ represented by 'tabN', 'spcN', 'stsN' (where N is the indent multiplier) or
 settings are shown as 'XXX'; a setting which is almost consistent, with only
 some bad mix of spaces and tabs, is represented by 'BADtabN', 'BADspcN' or
 'BADstsN'.
->
+
     b:indentconsistencycop_result.isConsistent
 Flag whether the indent in the entire buffer is consistent. (Not set by range
 checks.)
->
+
     b:indentconsistencycop_result.isDefinite
 Flag whether there has been enough indent to make a definite judgement about
 the buffer indent settings. (Not set by range checks.)
->
+
+    b:indentconsistencycop_result.acknowledgedByUserSetting
+Indent setting that the user has explicitly acknowledged in its interaction
+with the cop (by answering "Wrong" or "Change" in one of the dialogs).
+
     b:indentconsistencycop_result.isDefiniteOrAcknowledgedByUser
-Flag whether there either has been enough indent to make a definite judgement
-about the buffer indent settings, or whether the user has explicitly
-acknowledged the current indent settings in its interaction with the cop (by
-answering "Wrong" or "Change" in one of the dialogs).
->
+Combination of the above two: Flag whether there either has been enough indent
+to make a definite judgement about the buffer indent settings, or whether the
+user has explicitly acknowledged the current indent settings in its
+interaction with the cop (by answering "Wrong" or "Change" in one of the
+dialogs).
+
     b:indentconsistencycop_result.bufferSettings
 String representing the buffer settings. One of 'tabN', 'spcN', 'stsN' (where
 N is the indent multiplier), or '???' (meaning inconsistent buffer indent
 settings).
->
+
     b:indentconsistencycop_result.isBufferSettingsConsistent
 Flag whether the buffer indent settings (tabstop, softtabstop, shiftwidth,
 expandtab) are consistent with each other.
->
+
     b:indentconsistencycop_result.isConsistentWithBufferSettings
 Flag whether the indent in the entire buffer is consistent with the buffer
 indent settings. (Not set by range checks; :IndentRangeConsistencyCop leaves
 this flag unchanged.)
->
+
     b:indentconsistencycop_result.isIgnore
 Flag whether the user chose to ignore the inconsistent results. This can be
 used by integrations (like IndentConsistencyCopAutoCmds) to cease scheduling
 of further cop runs in this buffer.
+
+    b:indentconsistencycop_result.isOff
+Flag whether the cop has been (at least temporarily) disabled via
+:IndentConsistencyCopOff.
+
+The user queries can be extended with additional menu entries, defined in a
+Dictionary:
+
+    let g:IndentConsistencyCop_MenuExtensions = {
+    \   'Dummy': {
+    \       'priority': 100,
+    \       'choice':   'Dumm&y',
+    \       'Action':   function('DummyAction')
+    \   },
+    \   [...]
+    \}
+
+With the optional "choice" attribute, you can define an accelerator key via &amp;;
+the rest of the text must be identical to the key!
+The optional "priority" attribute determines the order of the extension
+entries; they will always come after the plugin's core entries, though.
+The mandatory "Action" attribute is a Funcref to a function that is invoked
+without arguments if the menu entry is chosen.
+
+The plugin emits a User event "IndentConsistencyCop" after each run.
+Integrations can check the b:indentconsistencycop\_result dictionary to react
+differently to various conditions. For example:
+
+    augroup IndentConsistencyCopCustomization
+        autocmd!
+        autocmd User IndentConsistencyCop unsilent echomsg 'The cop is'
+        \   b:indentconsistencycop_result.isOff ? 'off' : 'on'
+    augroup END
+
+The following turns the buffer read-only if it is inconsistent:
+
+        autocmd User IndentConsistencyCop let &l:readonly =
+        \   ! b:indentconsistencycop_result.isConsistent &&
+        \   ! b:indentconsistencycop_result.isOff
 
 LIMITATIONS
 ------------------------------------------------------------------------------
@@ -273,15 +396,6 @@ LIMITATIONS
   If tabstop is non-standard, anyway, we rather modify tabstop than turning on
   softtabstop.
 
-### TODO
-
-- Define autocmds to remove the highlighting if it isn't in scope any more
-  (e.g. remove search pattern when buffer is changed, remove error
-  highlighting and folding if another file is loaded into the buffer via :e).
-- Allow user to override wrongly found consistent setting (e.g. 'sts1' instead
-  of 'tab'), by specifying the correct setting in the :IndentConsistencyCop
-  call. (Overriding is already offered in the cop's dialog.)
-
 ### CONTRIBUTING
 
 Report any bugs, send patches, or suggest features via the issue tracker at
@@ -290,6 +404,43 @@ below).
 
 HISTORY
 ------------------------------------------------------------------------------
+
+##### 3.00    20-Feb-2020
+- Add b:indentconsistencycop\_result.acknowledgedByUserSetting
+- ENH: Allow extension of the plugin's user queries with additional menu
+  entries. This is used by IndentConsistencyCopAutoCmds.vim to implement
+  blacklisting of certain files so that they are never checked again.
+- Add g:IndentConsistencyCop\_UnacceptableIndentSettings and by default forbid
+  indents with multiplier 1 (i.e. 'spc1' and 'sts1') from being accepted as
+  consistent indentation.
+- ENH: g:indentconsistencycop\_non\_indent\_pattern now also enforces a comment
+  syntax item (if :syntax on) for applying the special indent pattern, to
+  avoid false positives in non-comment lines that just look like they're
+  starting with a comment prefix.
+- Add g:IndentConsistencyCop\_IgnorePatterns to completely ignore certain lines
+  that match a pattern (and optionally have a certain syntax item name),
+  implemented as a default g:IndentConsistencyCop\_line\_filters.
+- Emit "IndentConsistencyCop" User event after each cop command, so that
+  customizations can react to the results.
+- Set 'copyindent' and 'preserveindent' when the buffer is inconsistent and
+  this is ignored (configurable via
+  g:IndentConsistencyCop\_IsCopyAndPreserveIndent).
+- ENH: Allow passing correct indent setting as an :Indent[Range]ConsistencyCop
+  argument. (Overriding of a wrongly found indent setting is already offered
+  in the cop's dialog.)
+- Alert to bad "tab after space" whitespace combinations everywhere, not just
+  in indent. Can be configured (turned off) via
+  g:IndentConsistencyCop\_IsFindBadMixEverywhere.
+- ENH: Allow population of quickfix / location list via
+  g:indentconsistencycop\_highlighting values q/Q/w/W.
+- Offer alternative highlighting methods in menu via
+  g:IndentConsistencyCop\_AltHighlighting, by default adding to the quickfix
+  list.
+- Allow to tweak IndentConsistencyCop#BlockAlignment#Filter() via
+  g:IndentConsistencyCop\_BlockAlignmentPattern.
+- Also support @Annotation, $var as starts of blocks.
+
+__You need to update to ingo-library ([vimscript #4433](http://www.vim.org/scripts/script.php?script_id=4433)) version 1.039!__
 
 ##### 2.00    23-Dec-2017
 - Minor: Replace explicit regexp engine workaround with ingo/compat/regexp.vim.
@@ -332,17 +483,20 @@ HISTORY
   are wrong, and the assessment is solid. This is the most common (and
   sensible) choice. If there's not enough indent for that, don't default to
   anything.
-  __You need to update to ingo-library ([vimscript #4433](http://www.vim.org/scripts/script.php?script_id=4433)) version 1.024!__
+
+__You need to update to ingo-library ([vimscript #4433](http://www.vim.org/scripts/script.php?script_id=4433)) version 1.024!__
 
 ##### 1.45    12-Dec-2014
 - Minor: Highlight action checks are dependent on 'iskeyword' setting, and
   could cause script errors.
-- Add dependency to ingo-library ([vimscript #4433](http://www.vim.org/scripts/script.php?script_id=4433)). __You need to separately
+- Add dependency to ingo-library ([vimscript #4433](http://www.vim.org/scripts/script.php?script_id=4433)).
+
+__You need to separately
   install ingo-library ([vimscript #4433](http://www.vim.org/scripts/script.php?script_id=4433)) version 1.019 (or higher)!__
 
 ##### 1.44    11-Jan-2014
 - BUG: The version 1.43 workaround for the Vim 7.4 new regexp engine was
-  ineffective, because the \%#=1 atom needs to be prepended to the entire
+  ineffective, because the \\%#=1 atom needs to be prepended to the entire
   regular expression, but that's not possible with the configuration value
   alone. (Also, the workaround mistakenly specified auto-select (0) instead of
   old engine (1).) Move the workaround to s:GetBeginningWhitespace() instead.
@@ -465,7 +619,7 @@ IndentBufferConsistencyCop.
   inconsistent ('badset'), which threw an exception when selected.
 
 ##### 1.00    30-Oct-2006
-- Improved g:indentconsistencycop\_non\_indent\_pattern to also allow ' \*\t' and '
+- Improved g:indentconsistencycop\_non\_indent\_pattern to also allow ' \*\\t' and '
 !!!\*\*' comments.
 
 ##### 1.00    24-Oct-2006
@@ -475,7 +629,7 @@ IndentBufferConsistencyCop.
 - Started development.
 
 ------------------------------------------------------------------------------
-Copyright: (C) 2006-2017 Ingo Karkat -
+Copyright: (C) 2006-2020 Ingo Karkat -
 The [VIM LICENSE](http://vimdoc.sourceforge.net/htmldoc/uganda.html#license) applies to this plugin.
 
-Maintainer:     Ingo Karkat <ingo@karkat.de>
+Maintainer:     Ingo Karkat &lt;ingo@karkat.de&gt;

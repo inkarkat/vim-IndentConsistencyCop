@@ -1,14 +1,14 @@
 // vim: set ft=java:
 // Inconsistent. 
-package com.hp.ov.ictex.util.checker;
+package xxx.xx.xx.xxxxx.xxxx.xxxxxxx;
 
-import java.text.MessageFormat;
+import xxxx.xxxx.xxxxxxxxxxxxx;
 
-import com.hp.ov.common.tracing.XTrace;
-import com.hp.ov.ictex.util.Constants;
+import xxx.xx.xx.xxxxxx.xxxxxxx.xxxxxx;
+import xxx.xx.xx.xxxxx.xxxx.xxxxxxxxx;
 
 public abstract class Check {
-    private static final XTrace s_tracer = XTrace.getXTrace(Constants.OVICTEX_XPL_COMPONENT, Check.class.getName());
+    private static final xxxxxx x_xxxxxx = xxxxxx.xxxxxxxxx(xxxxxxxxx.xxxxxxx_xxx_xxxxxxxxx, Check.class.getName());
     private static int s_checkCnt = 0;
     private int m_index = 0;
     private String m_name;

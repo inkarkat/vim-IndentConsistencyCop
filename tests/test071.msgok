@@ -1,10 +1,8 @@
 Found inconsistent indentation in this buffer; generated from these conflicting settings: 
-- 1 spaces (2 of 23 lines)
-- 3 spaces (3 of 23 lines)
-- bad mix of spaces and tabs (1 of 23 lines)
+- 1 spaces (8 of 581 lines)
 Some minor / inconclusive potential settings have been omitted. 
-The buffer setting is 4 spaces. 
+The buffer setting is 2 spaces. 
 [I]gnore, (J)ust change buffer settings..., (H)ighlight wrong indents...: 
 What kind of inconsistent indents do you want to highlight?
-Not [b]uffer settings (spc4), Not best (g)uess (spc1), Not (c)hosen setting..., (I)llegal indents only: 
-Marked 6 incorrect lines. 
+Not [b]uffer settings (spc2), Not best (g)uess (spc1), Not (c)hosen setting...: 
+Marked 14 incorrect lines. 

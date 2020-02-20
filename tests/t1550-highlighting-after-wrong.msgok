@@ -1,0 +1,9 @@
+The buffer's indent settings are inconsistent with the used indent '4 characters soft tabstop'; these settings must be changed: 
+- tabstop from 4 to 8
+- softtabstop from 0 to 4
+How do you want to deal with the inconsistency?
+(I)gnore, [C]hange, Wrong, use (b)uffer settings (tabstop), (W)rong, choose correct setting...: 
+Incorrect lines found for setting 'tabstop'.
+[H]ighlight wrong indents..., Add wrong indents to (q)uickfix..., (I)gnore: 
+
+Marked 8 incorrect lines. 

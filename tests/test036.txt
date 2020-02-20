@@ -2,74 +2,74 @@
 <!-- vim: set ft=ant: -->
 <!-- Consistent with tabstop. --> 
 
-<project name="ovictex_quality" default="help" basedir=".">
+<project name="xxxxxxx_xxxxxxx" default="xxxx" basedir=".">
 
 	<!-- Import properties from build.xml -->
-	<import file="build.xml" />
+	<import file="xxxxx.xxx" />
 
-	<property name="reports" location="${project.home}/.reports" />
-	<property name="checkstyle.dir" location="${DE}/3rd-party/java/CheckStyle/3.5" />
-	<property name="checkstyle.configdir" location="${project.home}/data/toolconfig" />
-	<property name="emma.lib.dir" location="${DE}/3rd-party/java/EMMA/2.0.4217/lib" />
-	<property name="junit" location="${DE}/3rd-party/java/junit/3.8.1/junit.jar" />
+	<property name="xxxxxxx" location="${xxxxxxx.xxxx}/.xxxxxxx" />
+	<property name="xxxxxxxxxx.xxx" location="${xx}/3xx-xxxxx/xxxx/xxxxxxxxxx/3.5" />
+	<property name="xxxxxxxxxx.xxxxxxxxx" location="${xxxxxxx.xxxx}/xxxx/xxxxxxxxxx" />
+	<property name="xxxx.xxx.xxx" location="${xx}/3xx-xxxxx/xxxx/xxxx/2.0.4217/xxx" />
+	<property name="xxxxx" location="${xx}/3xx-xxxxx/xxxx/xxxxx/3.8.1/xxxxx.xxx" />
 
 	<!-- ========== -->
 	<!-- checkstyle -->
 	<!-- ========== -->
-	<target name="checkstyle" description="Generates a report of code convention violations.">
-		<taskdef resource="checkstyletask.properties" classpath="${checkstyle.dir}/checkstyle-all-3.5.jar" />
-		<delete dir="${reports}/checkstyle" />
-		<mkdir dir="${reports}/checkstyle" />
-		<checkstyle config="${checkstyle.configdir}/checkstyle.xml" failOnViolation="false">
-			<formatter type="xml" tofile="${reports}/checkstyle/checkstyle_report.xml" />
-			<fileset dir="Java/src" includes="**/*.java" excludes="**/ICT_SERVICE_DESK_API*" />
-			<fileset dir="${sharedcomponents.home}/Java/src" includes="**/*.java" />
+	<target name="xxxxxxxxxx" description="xxxxxxxxx x xxxxxx xx xxxx xxxxxxxxxx xxxxxxxxxx.">
+		<taskdef resource="xxxxxxxxxxxxxx.xxxxxxxxxx" classpath="${xxxxxxxxxx.xxx}/xxxxxxxxxx-xxx-3.5.xxx" />
+		<delete dir="${xxxxxxx}/xxxxxxxxxx" />
+		<mkdir dir="${xxxxxxx}/xxxxxxxxxx" />
+		<checkstyle config="${xxxxxxxxxx.xxxxxxxxx}/xxxxxxxxxx.xxx" failOnViolation="xxxxx">
+			<formatter type="xxx" tofile="${xxxxxxx}/xxxxxxxxxx/xxxxxxxxxx_xxxxxx.xxx" />
+			<fileset dir="xxxx/xxx" includes="**/*.xxxx" excludes="**/xxx_xxxxxxx_xxxx_xxx*" />
+			<fileset dir="${xxxxxxxxxxxxxxxx.xxxx}/xxxx/xxx" includes="**/*.xxxx" />
 		</checkstyle>
-		<style in="${reports}/checkstyle/checkstyle_report.xml" out="${reports}/checkstyle/index.html" style="${checkstyle.configdir}/checkstyle-noframes.xsl" />
+		<style in="${xxxxxxx}/xxxxxxxxxx/xxxxxxxxxx_xxxxxx.xxx" out="${xxxxxxx}/xxxxxxxxxx/xxxxx.xxxx" style="${xxxxxxxxxx.xxxxxxxxx}/xxxxxxxxxx-xxxxxxxx.xxx" />
 	</target>
 
 	<!-- =========== -->
 	<!-- JUnit tests -->
 	<!-- =========== -->
-	<target name="runtest" description="Runs a given JUnit test. syntax:  ant runtest -Dtestname=fully_qualified_classname">
-		<delete file="${project.home}/junit.output" />
-		<junit fork="yes" printsummary="on">
-			<classpath refid="project.classpath" />
-			<formatter type="plain" />
-			<test name="${testname}" outfile="junit.output"/>
+	<target name="xxxxxxx" description="xxxx x xxxxx xxxxx xxxx. xxxxxx:  xxx xxxxxxx -xxxxxxxxx=xxxxx_xxxxxxxxx_xxxxxxxxx">
+		<delete file="${xxxxxxx.xxxx}/xxxxx.xxxxxx" />
+		<junit fork="xxx" printsummary="xx">
+			<classpath refid="xxxxxxx.xxxxxxxxx" />
+			<formatter type="xxxxx" />
+			<test name="${xxxxxxxx}" outfile="xxxxx.xxxxxx"/>
 		</junit>
-		<antcall target="print.current.time" />
+		<antcall target="xxxxx.xxxxxxx.xxxx" />
 	</target>
 
-	<target name="junit.developer" description="Runs the JUnit tests without building sources before. Has to be done manually.">
-		<property name="testname" value="${pkgname}.AllTests" />
-		<antcall target="runtest" />
+	<target name="xxxxx.xxxxxxxxx" description="xxxx xxx xxxxx xxxxx xxxxxxx xxxxxxxx xxxxxxx xxxxxx. xxx xx xx xxxx xxxxxxxx.">
+		<property name="xxxxxxxx" value="${xxxxxxx}.xxxxxxxx" />
+		<antcall target="xxxxxxx" />
 	</target>
 
-	<target name="junit" depends="fresh" description="Runs the JUnit tests.">
-		<antcall target="junit.developer" />
+	<target name="xxxxx" depends="xxxxx" description="xxxx xxx xxxxx xxxxx.">
+		<antcall target="xxxxx.xxxxxxxxx" />
 	</target>
 
 	<!-- ==== -->
 	<!-- Emma -->
 	<!-- ==== -->
-	<property name="out.lib.dir" location="${main.output.root.dir}/ovictex/WEB-INF/lib" />
-	<property name="all.jars" location="${out.lib.dir}/ojdbc14.jar;${out.lib.dir}/msbase.jar;${out.lib.dir}/msutil.jar;${out.lib.dir}/mssqlserver.jar;${out.lib.dir}/web-api.jar;${out.lib.dir}/axis.jar;${out.lib.dir}/jasrpc.jar;${out.lib.dir}/commons-discovery-0.2.jar;${out.lib.dir}/commons-logging-1.0.4.jar;${out.lib.dir}/saaj.jar;${out.lib.dir}/wsdl4f-1.5.1.jar;${out.lib.dir}/jakarta-oro-2.0.8.jar;${out.lib.dir}/commons-net-1.4.0.jar;${DE}/stage.2/java/release/OvXpl/xpl.jar;${DE}/stage.1/java/release/OvSecCore/OvSecCore.jar" />
-	<path id="emma.testclasses" >
-		<pathelement location="${buildout}" />
-		<pathelement location="${project.home}/Java/_ant-testbin" />
+	<property name="xxx.xxx.xxx" location="${xxxx.xxxxxx.xxxx.xxx}/xxxxxxx/xxx-xxx/xxx" />
+	<property name="xxx.xxxx" location="${xxx.xxx.xxx}/xxxxx14.xxx;${xxx.xxx.xxx}/xxxxxx.xxx;${xxx.xxx.xxx}/xxxxxx.xxx;${xxx.xxx.xxx}/xxxxxxxxxxx.xxx;${xxx.xxx.xxx}/xxx-xxx.xxx;${xxx.xxx.xxx}/xxxx.xxx;${xxx.xxx.xxx}/xxxxxx.xxx;${xxx.xxx.xxx}/xxxxxxx-xxxxxxxxx-0.2.xxx;${xxx.xxx.xxx}/xxxxxxx-xxxxxxx-1.0.4.xxx;${xxx.xxx.xxx}/xxxx.xxx;${xxx.xxx.xxx}/xxxx4x-1.5.1.xxx;${xxx.xxx.xxx}/xxxxxxx-xxx-2.0.8.xxx;${xxx.xxx.xxx}/xxxxxxx-xxx-1.4.0.xxx;${xx}/xxxxx.2/xxxx/xxxxxxx/xxxxx/xxx.xxx;${xx}/xxxxx.1/xxxx/xxxxxxx/xxxxxxxxx/xxxxxxxxx.xxx" />
+	<path id="xxxx.xxxxxxxxxxx" >
+		<pathelement location="${xxxxxxxx}" />
+		<pathelement location="${xxxxxxx.xxxx}/xxxx/_xxx-xxxxxxx" />
 	</path>
 
-	<target name="emma" description="Generates a report of unit test coverage. " depends="fresh.debug">
-		<taskdef resource="emma_ant.properties" classpath="${emma.lib.dir}/emma.jar;${emma.lib.dir}/emma_ant.jar" />
-		<delete dir="${reports}/emma" />
-		<mkdir dir="${reports}/emma" />
-		<emmajava fullmetadata="yes" sourcepath="${msgout}/src;${sharedcomponents.home}/Java/src;${project.home}/Java/test;${sharedcomponents.home}/Java/test"
-			libclasspath="${emma.lib.dir}/emma.jar;${emma.lib.dir}/emma_ant.jar;${junit};${all.jars}"
-			classname="com.hp.ov.ictex.AllTests" classpathref="emma.testclasses">
+	<target name="xxxx" description="xxxxxxxxx x xxxxxx xx xxxx xxxx xxxxxxxx. " depends="xxxxx.xxxxx">
+		<taskdef resource="xxxx_xxx.xxxxxxxxxx" classpath="${xxxx.xxx.xxx}/xxxx.xxx;${xxxx.xxx.xxx}/xxxx_xxx.xxx" />
+		<delete dir="${xxxxxxx}/xxxx" />
+		<mkdir dir="${xxxxxxx}/xxxx" />
+		<emmajava fullmetadata="xxx" sourcepath="${xxxxxx}/xxx;${xxxxxxxxxxxxxxxx.xxxx}/xxxx/xxx;${xxxxxxx.xxxx}/xxxx/xxxx;${xxxxxxxxxxxxxxxx.xxxx}/xxxx/xxxx"
+			libclasspath="${xxxx.xxx.xxx}/xxxx.xxx;${xxxx.xxx.xxx}/xxxx_xxx.xxx;${xxxxx};${xxx.xxxx}"
+			classname="xxx.xx.xx.xxxxx.xxxxxxxx" classpathref="xxxx.xxxxxxxxxxx">
 			<!-- FIXME: Remove the duplication of the <emmajava sourcepath="..."> attribute with the <javac><src path="..."> by defining a separate <classpathref> and linking to it via <emmajava sourcepathref="...">. -->
-			<txt outfile="${reports}/emma/coverage.txt" />
-			<html outfile="${reports}/emma/index.html" />
+			<txt outfile="${xxxxxxx}/xxxx/xxxxxxxx.xxx" />
+			<html outfile="${xxxxxxx}/xxxx/xxxxx.xxxx" />
 		</emmajava>
 	</target>
 
