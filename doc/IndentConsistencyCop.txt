@@ -139,7 +139,7 @@ To uninstall, use the |:RmVimball| command.
 DEPENDENCIES				   *IndentConsistencyCop-dependencies*
 
 - Requires Vim 7.0 or higher.
-- Requires the |ingo-library.vim| plugin (vimscript #4433), version 1.039 or
+- Requires the |ingo-library.vim| plugin (vimscript #4433), version 1.041 or
   higher.
 
 ==============================================================================
@@ -406,6 +406,9 @@ below).
 
 ==============================================================================
 HISTORY						*IndentConsistencyCop-history*
+
+3.01	RELEASEME
+  *** You need to update to ingo-library (vimscript #4433) version 1.041! ***
 
 3.00	20-Feb-2020
 - Add b:indentconsistencycop_result.acknowledgedByUserSetting

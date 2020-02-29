@@ -3,7 +3,7 @@
 " DEPENDENCIES:
 "   - ingo-library.vim plugin
 "
-" Copyright: (C) 2006-2019 Ingo Karkat
+" Copyright: (C) 2006-2020 Ingo Karkat
 "   The VIM LICENSE applies to this script; see ':help copyright'.
 "
 " Maintainer:	Ingo Karkat <ingo@karkat.de>
@@ -1727,22 +1727,19 @@ function! s:SetHighlighting( highlightingConfig, lineNumbers ) " {{{2
     endif
 
     if a:highlightingConfig =~# '[qQwW]'
-	let [l:QfFunction, l:QfArgs, l:eventSubjectPrefix] = (a:highlightingConfig =~? 'W' ?
-	\   [function('setloclist'), [0], 'l'] :
-	\   [function('setqflist'), [], '']
-	\)
-	let l:eventSubject = l:eventSubjectPrefix . 'IndentConsistencyCop'
+	let l:quickfixType = (a:highlightingConfig =~? 'W' ? 2 : 1)
 	let l:bufNr = bufnr('')
 	let l:isFindBadMixEverywhere = ingo#plugin#setting#GetBufferLocal('IndentConsistencyCop_IsFindBadMixEverywhere')
-	silent call ingo#event#Trigger('QuickFixCmdPre ' . l:eventSubject) | " Allow hooking into the quickfix update.
-	    call call(l:QfFunction, l:QfArgs + [
+	call ingo#window#quickfix#CmdPre(l:quickfixType, '[l]IndentConsistencyCop')
+	    call ingo#window#quickfix#SetOtherList(
+	    \   l:quickfixType,
 	    \   map(
 	    \       copy(a:lineNumbers),
 	    \       "s:QfEntry(l:bufNr, v:val, l:isFindBadMixEverywhere)"
 	    \   ),
 	    \   (a:highlightingConfig =~# '[QW]' ? 'a' : ' ')
-	    \])
-	silent call ingo#event#Trigger('QuickFixCmdPost ' . l:eventSubject) | " Allow hooking into the quickfix update.
+	    \)
+	call ingo#window#quickfix#CmdPost(l:quickfixType, '[l]IndentConsistencyCop')
     endif
 endfunction
 function! s:QfEntry( bufNr, lnum, isFindBadMixEverywhere ) abort
