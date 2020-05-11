@@ -1190,23 +1190,29 @@ function! s:CheckConsistencyWithBufferSettings( indentSetting ) " {{{2
 	\   ( s:IsEnoughIndentForSolidAssessment() ? '' : 'potentially ')
 	let l:userString .= "inconsistent with the used indent '" .
 	\   s:IndentSettingToUserString( a:indentSetting ) .
-	\   "'; these settings must be changed: "
+	\   "'"
+	let l:settingsChangeMessages = []
 	if ! l:isTabstopCorrect
-	    let l:userString .= "\n- tabstop from " . &l:tabstop .
-	    \   ' to ' . s:GetCorrectTabstopSetting( a:indentSetting )
+	    call add(l:settingsChangeMessages, "- tabstop from " . &l:tabstop .
+	    \   ' to ' . s:GetCorrectTabstopSetting(a:indentSetting)
+	    \)
 	endif
 	if ! l:isSofttabstopCorrect
-	    let l:userString .= "\n- softtabstop from " . &l:softtabstop .
-	    \   ' to ' . s:GetCorrectSofttabstopSetting( a:indentSetting )
+	    call add(l:settingsChangeMessages, "- softtabstop from " . &l:softtabstop .
+	    \   ' to ' . s:GetCorrectSofttabstopSetting(a:indentSetting)
+	    \)
 	endif
 	if ! l:isShiftwidthCorrect
-	    let l:userString .= "\n- shiftwidth from " . &l:shiftwidth .
-	    \   ' to ' . s:GetCorrectShiftwidthSetting( a:indentSetting )
+	    call add(l:settingsChangeMessages, "- shiftwidth from " . &l:shiftwidth .
+	    \   ' to ' . s:GetCorrectShiftwidthSetting(a:indentSetting)
+	    \)
 	endif
 	if ! l:isExpandtabCorrect
-	    let l:userString .= "\n- " . ingo#plugin#setting#BooleanToStringValue('expandtab') .
+	    call add(l:settingsChangeMessages, "- " . ingo#plugin#setting#BooleanToStringValue('expandtab') .
 	    \   ' to ' . ingo#plugin#setting#BooleanToStringValue('expandtab', s:GetCorrectExpandtabSetting(a:indentSetting))
+	    \)
 	endif
+	let l:userString .= (empty(l:settingsChangeMessages) ? '.' : "; these settings must be changed: \n" . join(l:settingsChangeMessages, "\n"))
 
 	let l:userString .= s:GetInsufficientIndentUserMessage()
 
