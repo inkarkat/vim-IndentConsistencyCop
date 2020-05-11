@@ -1113,6 +1113,8 @@ function! s:GetCorrectTabstopSetting( indentSetting ) " {{{2
 	else
 	    return IndentConsistencyCop#GetMultiplierFromIndentSetting( a:indentSetting )
 	endif
+    elseif s:IsBadIndentSetting(a:indentSetting)
+	return &l:tabstop
     else
 	return &l:tabstop
     endif
@@ -1134,6 +1136,8 @@ function! s:GetCorrectSofttabstopSetting( indentSetting ) " {{{2
 	else
 	    return 0
 	endif
+    elseif s:IsBadIndentSetting(a:indentSetting)
+	return &l:softtabstop
     else
 	" Prefers (ts=n sts=0 expandtab) over (ts=8 sts=n expandtab).
 	return 0
@@ -1143,12 +1147,17 @@ endfunction
 function! s:GetCorrectShiftwidthSetting( indentSetting ) " {{{2
     if IndentConsistencyCop#GetSettingFromIndentSetting( a:indentSetting ) ==# 'tab'
 	return (a:indentSetting ==# 'tab' ? &l:tabstop : IndentConsistencyCop#GetMultiplierFromIndentSetting( a:indentSetting ))
+    elseif s:IsBadIndentSetting(a:indentSetting)
+	return &l:shiftwidth
     else
 	return IndentConsistencyCop#GetMultiplierFromIndentSetting( a:indentSetting )
     endif
 endfunction
 
 function! s:GetCorrectExpandtabSetting( indentSetting ) " {{{2
+    if s:IsBadIndentSetting(a:indentSetting)
+	return &l:expandtab
+    endif
     return (IndentConsistencyCop#GetSettingFromIndentSetting( a:indentSetting ) ==# 'spc')
 endfunction
 
