@@ -1114,7 +1114,7 @@ function! s:GetCorrectTabstopSetting( indentSetting ) " {{{2
 	    return IndentConsistencyCop#GetMultiplierFromIndentSetting( a:indentSetting )
 	endif
     else
-	throw 'ASSERT: Unknown setting. '
+	return &l:tabstop
     endif
 endfunction
 
