@@ -1,0 +1,17 @@
+--- .profile.20200511a	2020-05-11 15:43:36.975222943 +0200
++++ .profile	2020-05-11 15:44:36.095384149 +0200
+@@ -232,8 +232,12 @@ _performUserprofile()
+ 		case ",${PROFILING}," in *,userprofile,*) date +%N; echo "$filespec";; esac
+ 		case ",${DEBUG:-}," in
+ 		    *,userprofile\!,*)	echo >&2 "would source $filespec"; continue;;
+-		    *,userprofile,*)	echo >&2 "sourcing $filespec";;&
+-		    *,userprofile\&,*)	echo >&2 "tracing $filespec"; typeset userprofileTrace='set -x'; typeset userprofileTraceOff='set +x';;&
++		    *,userprofile,*)	echo >&2 "sourcing $filespec";;
++		esac
++		case ",${DEBUG:-}," in
++		    *,userprofile\&,*)	echo >&2 "tracing $filespec"; typeset userprofileTrace='set -x'; typeset userprofileTraceOff='set +x';;
++		esac
++		case ",${DEBUG:-}," in
+ 		    *,userprofile=*,*)	typeset userprofileCommand=",${DEBUG},"; userprofileCommand="${userprofileCommand#*,userprofile=}"; userprofileCommand="${userprofileCommand%%,*}"; eval "$userprofileCommand" '"$filespec"';;
+ 		esac
+ 		$userprofileTrace

@@ -1,0 +1,4 @@
+The buffer has bad mix of spaces and tabs.
+How do you want to deal with the inconsistency?
+[I]gnore: 
+The buffer settings remain inconsistent: tabstop=8 softtabstop=0 shiftwidth=8 noexpandtab
