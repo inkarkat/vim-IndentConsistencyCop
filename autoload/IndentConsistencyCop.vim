@@ -1183,13 +1183,15 @@ function! s:CheckConsistencyWithBufferSettings( indentSetting ) " {{{2
     let l:isShiftwidthCorrect  = (s:GetCorrectShiftwidthSetting( a:indentSetting )  == &l:shiftwidth)
     let l:isExpandtabCorrect   = (s:GetCorrectExpandtabSetting( a:indentSetting )   == &l:expandtab)
 
-    if l:isTabstopCorrect && l:isSofttabstopCorrect && l:isShiftwidthCorrect && l:isExpandtabCorrect && ! s:IsBadIndentSetting(a:indentSetting)
+    if s:IsBadIndentSetting(a:indentSetting)
+	return "The buffer has " . s:IndentSettingToUserString(a:indentSetting) . "."
+    elseif l:isTabstopCorrect && l:isSofttabstopCorrect && l:isShiftwidthCorrect && l:isExpandtabCorrect
 	return ''
     else
 	let l:userString = "The buffer's indent settings are " .
 	\   ( s:IsEnoughIndentForSolidAssessment() ? '' : 'potentially ')
 	let l:userString .= "inconsistent with the used indent '" .
-	\   s:IndentSettingToUserString( a:indentSetting ) .
+	\   s:IndentSettingToUserString(a:indentSetting) .
 	\   "'"
 	let l:settingsChangeMessages = []
 	if ! l:isTabstopCorrect
@@ -1511,15 +1513,21 @@ function! s:IndentBufferConsistencyCop( startLnum, endLnum, consistentIndentSett
 	    let l:userMessage .= "\nHow do you want to deal with the "
 	    let l:userMessage .= (s:IsEnoughIndentForSolidAssessment() ? '' : 'potential ')
 	    let l:userMessage .= 'inconsistency?'
-	    let l:bufferSettingsChoices = [
-	    \   '&Ignore',
-	    \   '&Change',
-	    \   (empty(a:correctIndentSetting) ? '&Wrong, choose correct setting...' : '&Wrong, use correct ' . a:correctIndentSetting)
-	    \]
-	    if s:IsBufferSettingsConsistent()
-		call insert(l:bufferSettingsChoices, printf('Wrong, use &buffer settings (%s)', s:IndentSettingToUserString(s:GetIndentSettingForBufferSettings())), -1)
+	    if s:IsBadIndentSetting(l:consistentIndentSetting)
+		let l:bufferSettingsChoices = ['&Ignore']
+		let l:bufferSettingsDefaultChoice = 1
+	    else
+		let l:bufferSettingsChoices = [
+		\   '&Ignore',
+		\   '&Change',
+		\   (empty(a:correctIndentSetting) ? '&Wrong, choose correct setting...' : '&Wrong, use correct ' . a:correctIndentSetting)
+		\]
+		let l:bufferSettingsDefaultChoice = (s:IsEnoughIndentForSolidAssessment() ? 2 : 0)
+		if s:IsBufferSettingsConsistent()
+		    call insert(l:bufferSettingsChoices, printf('Wrong, use &buffer settings (%s)', s:IndentSettingToUserString(s:GetIndentSettingForBufferSettings())), -1)
+		endif
 	    endif
-	    let l:action = ingo#query#ConfirmAsText(l:userMessage, s:AppendMenuExtensionChoices(l:bufferSettingsChoices), (s:IsEnoughIndentForSolidAssessment() ? 2 : 0), 'Question')
+	    let l:action = ingo#query#ConfirmAsText(l:userMessage, s:AppendMenuExtensionChoices(l:bufferSettingsChoices), l:bufferSettingsDefaultChoice, 'Question')
 	    if s:HandleMenuExtensions(l:action)
 		" Extension action.
 	    elseif empty(l:action) || l:action ==? 'Ignore'
