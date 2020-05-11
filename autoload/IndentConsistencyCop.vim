@@ -1183,7 +1183,7 @@ function! s:CheckConsistencyWithBufferSettings( indentSetting ) " {{{2
     let l:isShiftwidthCorrect  = (s:GetCorrectShiftwidthSetting( a:indentSetting )  == &l:shiftwidth)
     let l:isExpandtabCorrect   = (s:GetCorrectExpandtabSetting( a:indentSetting )   == &l:expandtab)
 
-    if l:isTabstopCorrect && l:isSofttabstopCorrect && l:isShiftwidthCorrect && l:isExpandtabCorrect
+    if l:isTabstopCorrect && l:isSofttabstopCorrect && l:isShiftwidthCorrect && l:isExpandtabCorrect && ! s:IsBadIndentSetting(a:indentSetting)
 	return ''
     else
 	let l:userString = "The buffer's indent settings are " .
