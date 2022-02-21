@@ -408,7 +408,7 @@ HISTORY
 ##### 3.01    RELEASEME
 - Better handle a buffer with consistent bad mix of spaces and tabs.
 
-__You need to update to ingo-library ([vimscript #4433](http://www.vim.org/scripts/script.php?script_id=4433)) version 1.041!__
+__You need to update to ingo-library ([vimscript #4433](http://www.vim.org/scripts/script.php?script_id=4433)) version 1.044!__
 
 ##### 3.00    20-Feb-2020
 - Add b:indentconsistencycop\_result.acknowledgedByUserSetting
@@ -634,7 +634,7 @@ IndentBufferConsistencyCop.
 - Started development.
 
 ------------------------------------------------------------------------------
-Copyright: (C) 2006-2020 Ingo Karkat -
+Copyright: (C) 2006-2022 Ingo Karkat -
 The [VIM LICENSE](http://vimdoc.sourceforge.net/htmldoc/uganda.html#license) applies to this plugin.
 
 Maintainer:     Ingo Karkat &lt;ingo@karkat.de&gt;

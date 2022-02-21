@@ -3,7 +3,7 @@
 " DEPENDENCIES:
 "   - ingo-library.vim plugin
 "
-" Copyright: (C) 2006-2020 Ingo Karkat
+" Copyright: (C) 2006-2022 Ingo Karkat
 "   The VIM LICENSE applies to this script; see ':help copyright'.
 "
 " Maintainer:	Ingo Karkat <ingo@karkat.de>
@@ -106,7 +106,7 @@ function! s:IsBadIndentSetting( indentSetting ) " {{{2
 endfunction
 let s:validSettings = ['tab', 'sts', 'spc']
 function! s:IsValidIndentSetting( indentSetting ) " {{{2
-    return a:indentSetting =~? '^\%(' . join(map(copy(s:validSettings), 'v:val . "[1-8]"'), '\|') . '\)$'
+    return a:indentSetting =~? ingo#regexp#Anchored(join(map(copy(s:validSettings), 'v:val . "[1-8]"'), '\|'))
 endfunction
 function! IndentConsistencyCop#IndentSettingComplete( ArgLead, CmdLine, CursorPos ) abort
     if index(s:validSettings, a:ArgLead) != -1
