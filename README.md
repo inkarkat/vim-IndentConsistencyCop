@@ -45,7 +45,7 @@ screwing up the indent consistency with your wrong buffer settings:
     - expandtab from 0 to 1
     How do you want to deal with the inconsistency?
         [I]gnore, (C)hange: c
-    The buffer settings have been changed: tabstop=8 softtabstop=0 shiftwidth=8
+    The buffer settings have been changed: tabstop=8 softtabstop=8 shiftwidth=8
     expandtab
 
 The IndentConsistencyCop is only concerned with the amount of whitespace from
@@ -133,7 +133,7 @@ To uninstall, use the :RmVimball command.
 ### DEPENDENCIES
 
 - Requires Vim 7.0 or higher.
-- Requires the ingo-library.vim plugin ([vimscript #4433](http://www.vim.org/scripts/script.php?script_id=4433)), version 1.041 or
+- Requires the ingo-library.vim plugin ([vimscript #4433](http://www.vim.org/scripts/script.php?script_id=4433)), version 1.044 or
   higher.
 
 CONFIGURATION
@@ -407,6 +407,10 @@ HISTORY
 
 ##### 3.01    RELEASEME
 - Better handle a buffer with consistent bad mix of spaces and tabs.
+- CHG: Require 'softtabstop' to be set when space-indenting (except for spc1),
+  so that the backspace key will remove an entire indent's worth of spaces
+  instead of just one. Sorry, I totally missed this important detail, as I
+  haven't been editing a lot with pure space indents.
 
 __You need to update to ingo-library ([vimscript #4433](http://www.vim.org/scripts/script.php?script_id=4433)) version 1.044!__
 

@@ -1,4 +1,4 @@
-// vim: set ft=cpp ts=8 sts=0 sw=8 expandtab:
+// vim: set ft=cpp ts=8 sts=8 sw=8 expandtab:
 // Consistent with '8 spaces' and buffer settings. 
 foo
         bar

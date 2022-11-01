@@ -1130,11 +1130,14 @@ function! s:GetCorrectSofttabstopSetting( indentSetting ) " {{{2
 	return IndentConsistencyCop#GetMultiplierFromIndentSetting( a:indentSetting )
     elseif IndentConsistencyCop#GetSettingFromIndentSetting( a:indentSetting ) ==# 'spc'
 	" If tabstop=8, we prefer changing the indent via softtabstop.
-	" If tabstop!=8, we rather modify tabstop than turning on softtabstop.
-	if &l:tabstop == 8 && IndentConsistencyCop#GetMultiplierFromIndentSetting( a:indentSetting ) != 8
+	if &l:tabstop == 8
 	    return IndentConsistencyCop#GetMultiplierFromIndentSetting( a:indentSetting )
 	else
-	    return 0
+	    " softtabstop needs to be enabled so that backspace deletes a whole
+	    " indent worth of spaces.
+	    return IndentConsistencyCop#GetMultiplierFromIndentSetting( a:indentSetting ) > 1 ?
+	    \   IndentConsistencyCop#GetMultiplierFromIndentSetting( a:indentSetting ) :
+	    \   0
 	endif
     elseif s:IsBadIndentSetting(a:indentSetting)
 	return &l:softtabstop
