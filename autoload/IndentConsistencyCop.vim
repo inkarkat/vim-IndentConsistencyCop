@@ -1041,8 +1041,8 @@ function! s:CheckBufferSettingsConsistency() " {{{2
 	endif
     endif
 
-    " When using 'softtabstop', 'tabstop' remains at the standard value of 8.
-    if &l:softtabstop > 0 && &l:tabstop != 8
+    " When using 'softtabstop' without 'expandtab', 'tabstop' remains at the standard value of 8.
+    if &l:softtabstop > 0 && &l:tabstop != 8 && ! &l:expandtab
 	let l:inconsistencies .= "\nWhen using soft tabstops, tabstop (" . &l:tabstop . ") should remain at the standard value of 8. "
     endif
 
