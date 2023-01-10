@@ -86,6 +86,8 @@ style.
 - Indent Detector ([vimscript #5195](http://www.vim.org/scripts/script.php?script_id=5195)) run when a file is opened or written, has
   warnings about mixed tab / space indent, and can adapt Vim's corresponding
   options automatically.
+- Yet Another Detect Indent (https://github.com/timakro/vim-yadi) is simple
+  and ignores outliers.
 
 USAGE
 ------------------------------------------------------------------------------
@@ -638,7 +640,7 @@ IndentBufferConsistencyCop.
 - Started development.
 
 ------------------------------------------------------------------------------
-Copyright: (C) 2006-2022 Ingo Karkat -
+Copyright: (C) 2006-2023 Ingo Karkat -
 The [VIM LICENSE](http://vimdoc.sourceforge.net/htmldoc/uganda.html#license) applies to this plugin.
 
 Maintainer:     Ingo Karkat &lt;ingo@karkat.de&gt;
