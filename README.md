@@ -45,7 +45,7 @@ screwing up the indent consistency with your wrong buffer settings:
     - expandtab from 0 to 1
     How do you want to deal with the inconsistency?
         [I]gnore, (C)hange: c
-    The buffer settings have been changed: tabstop=8 softtabstop=0 shiftwidth=8
+    The buffer settings have been changed: tabstop=8 softtabstop=8 shiftwidth=8
     expandtab
 
 The IndentConsistencyCop is only concerned with the amount of whitespace from
@@ -86,6 +86,8 @@ style.
 - Indent Detector ([vimscript #5195](http://www.vim.org/scripts/script.php?script_id=5195)) run when a file is opened or written, has
   warnings about mixed tab / space indent, and can adapt Vim's corresponding
   options automatically.
+- Yet Another Detect Indent (https://github.com/timakro/vim-yadi) is simple
+  and ignores outliers.
 
 USAGE
 ------------------------------------------------------------------------------
@@ -133,7 +135,7 @@ To uninstall, use the :RmVimball command.
 ### DEPENDENCIES
 
 - Requires Vim 7.0 or higher.
-- Requires the ingo-library.vim plugin ([vimscript #4433](http://www.vim.org/scripts/script.php?script_id=4433)), version 1.039 or
+- Requires the ingo-library.vim plugin ([vimscript #4433](http://www.vim.org/scripts/script.php?script_id=4433)), version 1.044 or
   higher.
 
 CONFIGURATION
@@ -405,6 +407,15 @@ below).
 HISTORY
 ------------------------------------------------------------------------------
 
+##### 3.01    10-Nov-2024
+- Better handle a buffer with consistent bad mix of spaces and tabs.
+- CHG: Require 'softtabstop' to be set when space-indenting (except for spc1),
+  so that the backspace key will remove an entire indent's worth of spaces
+  instead of just one. Sorry, I totally missed this important detail, as I
+  haven't been editing a lot with pure space indents.
+
+__You need to update to ingo-library ([vimscript #4433](http://www.vim.org/scripts/script.php?script_id=4433)) version 1.044!__
+
 ##### 3.00    20-Feb-2020
 - Add b:indentconsistencycop\_result.acknowledgedByUserSetting
 - ENH: Allow extension of the plugin's user queries with additional menu
@@ -629,7 +640,7 @@ IndentBufferConsistencyCop.
 - Started development.
 
 ------------------------------------------------------------------------------
-Copyright: (C) 2006-2020 Ingo Karkat -
+Copyright: (C) 2006-2024 Ingo Karkat -
 The [VIM LICENSE](http://vimdoc.sourceforge.net/htmldoc/uganda.html#license) applies to this plugin.
 
 Maintainer:     Ingo Karkat &lt;ingo@karkat.de&gt;

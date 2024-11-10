@@ -3,7 +3,7 @@
 " DEPENDENCIES:
 "   - ingo-library.vim plugin
 "
-" Copyright: (C) 2006-2019 Ingo Karkat
+" Copyright: (C) 2006-2022 Ingo Karkat
 "   The VIM LICENSE applies to this script; see ':help copyright'.
 "
 " Maintainer:	Ingo Karkat <ingo@karkat.de>
@@ -106,7 +106,7 @@ function! s:IsBadIndentSetting( indentSetting ) " {{{2
 endfunction
 let s:validSettings = ['tab', 'sts', 'spc']
 function! s:IsValidIndentSetting( indentSetting ) " {{{2
-    return a:indentSetting =~? '^\%(' . join(map(copy(s:validSettings), 'v:val . "[1-8]"'), '\|') . '\)$'
+    return a:indentSetting =~? ingo#regexp#Anchored(join(map(copy(s:validSettings), 'v:val . "[1-8]"'), '\|'))
 endfunction
 function! IndentConsistencyCop#IndentSettingComplete( ArgLead, CmdLine, CursorPos ) abort
     if index(s:validSettings, a:ArgLead) != -1
@@ -1041,8 +1041,8 @@ function! s:CheckBufferSettingsConsistency() " {{{2
 	endif
     endif
 
-    " When using 'softtabstop', 'tabstop' remains at the standard value of 8.
-    if &l:softtabstop > 0 && &l:tabstop != 8
+    " When using 'softtabstop' without 'expandtab', 'tabstop' remains at the standard value of 8.
+    if &l:softtabstop > 0 && &l:tabstop != 8 && ! &l:expandtab
 	let l:inconsistencies .= "\nWhen using soft tabstops, tabstop (" . &l:tabstop . ") should remain at the standard value of 8. "
     endif
 
@@ -1113,8 +1113,10 @@ function! s:GetCorrectTabstopSetting( indentSetting ) " {{{2
 	else
 	    return IndentConsistencyCop#GetMultiplierFromIndentSetting( a:indentSetting )
 	endif
+    elseif s:IsBadIndentSetting(a:indentSetting)
+	return &l:tabstop
     else
-	throw 'ASSERT: Unknown setting. '
+	return &l:tabstop
     endif
 endfunction
 
@@ -1128,12 +1130,17 @@ function! s:GetCorrectSofttabstopSetting( indentSetting ) " {{{2
 	return IndentConsistencyCop#GetMultiplierFromIndentSetting( a:indentSetting )
     elseif IndentConsistencyCop#GetSettingFromIndentSetting( a:indentSetting ) ==# 'spc'
 	" If tabstop=8, we prefer changing the indent via softtabstop.
-	" If tabstop!=8, we rather modify tabstop than turning on softtabstop.
-	if &l:tabstop == 8 && IndentConsistencyCop#GetMultiplierFromIndentSetting( a:indentSetting ) != 8
+	if &l:tabstop == 8
 	    return IndentConsistencyCop#GetMultiplierFromIndentSetting( a:indentSetting )
 	else
-	    return 0
+	    " softtabstop needs to be enabled so that backspace deletes a whole
+	    " indent worth of spaces.
+	    return IndentConsistencyCop#GetMultiplierFromIndentSetting( a:indentSetting ) > 1 ?
+	    \   IndentConsistencyCop#GetMultiplierFromIndentSetting( a:indentSetting ) :
+	    \   0
 	endif
+    elseif s:IsBadIndentSetting(a:indentSetting)
+	return &l:softtabstop
     else
 	" Prefers (ts=n sts=0 expandtab) over (ts=8 sts=n expandtab).
 	return 0
@@ -1143,12 +1150,17 @@ endfunction
 function! s:GetCorrectShiftwidthSetting( indentSetting ) " {{{2
     if IndentConsistencyCop#GetSettingFromIndentSetting( a:indentSetting ) ==# 'tab'
 	return (a:indentSetting ==# 'tab' ? &l:tabstop : IndentConsistencyCop#GetMultiplierFromIndentSetting( a:indentSetting ))
+    elseif s:IsBadIndentSetting(a:indentSetting)
+	return &l:shiftwidth
     else
 	return IndentConsistencyCop#GetMultiplierFromIndentSetting( a:indentSetting )
     endif
 endfunction
 
 function! s:GetCorrectExpandtabSetting( indentSetting ) " {{{2
+    if s:IsBadIndentSetting(a:indentSetting)
+	return &l:expandtab
+    endif
     return (IndentConsistencyCop#GetSettingFromIndentSetting( a:indentSetting ) ==# 'spc')
 endfunction
 
@@ -1174,30 +1186,38 @@ function! s:CheckConsistencyWithBufferSettings( indentSetting ) " {{{2
     let l:isShiftwidthCorrect  = (s:GetCorrectShiftwidthSetting( a:indentSetting )  == &l:shiftwidth)
     let l:isExpandtabCorrect   = (s:GetCorrectExpandtabSetting( a:indentSetting )   == &l:expandtab)
 
-    if l:isTabstopCorrect && l:isSofttabstopCorrect && l:isShiftwidthCorrect && l:isExpandtabCorrect
+    if s:IsBadIndentSetting(a:indentSetting)
+	return "The buffer has " . s:IndentSettingToUserString(a:indentSetting) . "."
+    elseif l:isTabstopCorrect && l:isSofttabstopCorrect && l:isShiftwidthCorrect && l:isExpandtabCorrect
 	return ''
     else
 	let l:userString = "The buffer's indent settings are " .
 	\   ( s:IsEnoughIndentForSolidAssessment() ? '' : 'potentially ')
 	let l:userString .= "inconsistent with the used indent '" .
-	\   s:IndentSettingToUserString( a:indentSetting ) .
-	\   "'; these settings must be changed: "
+	\   s:IndentSettingToUserString(a:indentSetting) .
+	\   "'"
+	let l:settingsChangeMessages = []
 	if ! l:isTabstopCorrect
-	    let l:userString .= "\n- tabstop from " . &l:tabstop .
-	    \   ' to ' . s:GetCorrectTabstopSetting( a:indentSetting )
+	    call add(l:settingsChangeMessages, "- tabstop from " . &l:tabstop .
+	    \   ' to ' . s:GetCorrectTabstopSetting(a:indentSetting)
+	    \)
 	endif
 	if ! l:isSofttabstopCorrect
-	    let l:userString .= "\n- softtabstop from " . &l:softtabstop .
-	    \   ' to ' . s:GetCorrectSofttabstopSetting( a:indentSetting )
+	    call add(l:settingsChangeMessages, "- softtabstop from " . &l:softtabstop .
+	    \   ' to ' . s:GetCorrectSofttabstopSetting(a:indentSetting)
+	    \)
 	endif
 	if ! l:isShiftwidthCorrect
-	    let l:userString .= "\n- shiftwidth from " . &l:shiftwidth .
-	    \   ' to ' . s:GetCorrectShiftwidthSetting( a:indentSetting )
+	    call add(l:settingsChangeMessages, "- shiftwidth from " . &l:shiftwidth .
+	    \   ' to ' . s:GetCorrectShiftwidthSetting(a:indentSetting)
+	    \)
 	endif
 	if ! l:isExpandtabCorrect
-	    let l:userString .= "\n- " . ingo#plugin#setting#BooleanToStringValue('expandtab') .
+	    call add(l:settingsChangeMessages, "- " . ingo#plugin#setting#BooleanToStringValue('expandtab') .
 	    \   ' to ' . ingo#plugin#setting#BooleanToStringValue('expandtab', s:GetCorrectExpandtabSetting(a:indentSetting))
+	    \)
 	endif
+	let l:userString .= (empty(l:settingsChangeMessages) ? '.' : "; these settings must be changed: \n" . join(l:settingsChangeMessages, "\n"))
 
 	let l:userString .= s:GetInsufficientIndentUserMessage()
 
@@ -1496,15 +1516,21 @@ function! s:IndentBufferConsistencyCop( startLnum, endLnum, consistentIndentSett
 	    let l:userMessage .= "\nHow do you want to deal with the "
 	    let l:userMessage .= (s:IsEnoughIndentForSolidAssessment() ? '' : 'potential ')
 	    let l:userMessage .= 'inconsistency?'
-	    let l:bufferSettingsChoices = [
-	    \   '&Ignore',
-	    \   '&Change',
-	    \   (empty(a:correctIndentSetting) ? '&Wrong, choose correct setting...' : '&Wrong, use correct ' . a:correctIndentSetting)
-	    \]
-	    if s:IsBufferSettingsConsistent()
-		call insert(l:bufferSettingsChoices, printf('Wrong, use &buffer settings (%s)', s:IndentSettingToUserString(s:GetIndentSettingForBufferSettings())), -1)
+	    if s:IsBadIndentSetting(l:consistentIndentSetting)
+		let l:bufferSettingsChoices = ['&Ignore']
+		let l:bufferSettingsDefaultChoice = 1
+	    else
+		let l:bufferSettingsChoices = [
+		\   '&Ignore',
+		\   '&Change',
+		\   (empty(a:correctIndentSetting) ? '&Wrong, choose correct setting...' : '&Wrong, use correct ' . a:correctIndentSetting)
+		\]
+		let l:bufferSettingsDefaultChoice = (s:IsEnoughIndentForSolidAssessment() ? 2 : 0)
+		if s:IsBufferSettingsConsistent()
+		    call insert(l:bufferSettingsChoices, printf('Wrong, use &buffer settings (%s)', s:IndentSettingToUserString(s:GetIndentSettingForBufferSettings())), -1)
+		endif
 	    endif
-	    let l:action = ingo#query#ConfirmAsText(l:userMessage, s:AppendMenuExtensionChoices(l:bufferSettingsChoices), (s:IsEnoughIndentForSolidAssessment() ? 2 : 0), 'Question')
+	    let l:action = ingo#query#ConfirmAsText(l:userMessage, s:AppendMenuExtensionChoices(l:bufferSettingsChoices), l:bufferSettingsDefaultChoice, 'Question')
 	    if s:HandleMenuExtensions(l:action)
 		" Extension action.
 	    elseif empty(l:action) || l:action ==? 'Ignore'
@@ -1727,22 +1753,19 @@ function! s:SetHighlighting( highlightingConfig, lineNumbers ) " {{{2
     endif
 
     if a:highlightingConfig =~# '[qQwW]'
-	let [l:QfFunction, l:QfArgs, l:eventSubjectPrefix] = (a:highlightingConfig =~? 'W' ?
-	\   [function('setloclist'), [0], 'l'] :
-	\   [function('setqflist'), [], '']
-	\)
-	let l:eventSubject = l:eventSubjectPrefix . 'IndentConsistencyCop'
+	let l:quickfixType = (a:highlightingConfig =~? 'W' ? 2 : 1)
 	let l:bufNr = bufnr('')
 	let l:isFindBadMixEverywhere = ingo#plugin#setting#GetBufferLocal('IndentConsistencyCop_IsFindBadMixEverywhere')
-	silent call ingo#event#Trigger('QuickFixCmdPre ' . l:eventSubject) | " Allow hooking into the quickfix update.
-	    call call(l:QfFunction, l:QfArgs + [
+	call ingo#window#quickfix#CmdPre(l:quickfixType, '[l]IndentConsistencyCop')
+	    call ingo#window#quickfix#SetOtherList(
+	    \   l:quickfixType,
 	    \   map(
 	    \       copy(a:lineNumbers),
 	    \       "s:QfEntry(l:bufNr, v:val, l:isFindBadMixEverywhere)"
 	    \   ),
 	    \   (a:highlightingConfig =~# '[QW]' ? 'a' : ' ')
-	    \])
-	silent call ingo#event#Trigger('QuickFixCmdPost ' . l:eventSubject) | " Allow hooking into the quickfix update.
+	    \)
+	call ingo#window#quickfix#CmdPost(l:quickfixType, '[l]IndentConsistencyCop')
     endif
 endfunction
 function! s:QfEntry( bufNr, lnum, isFindBadMixEverywhere ) abort
