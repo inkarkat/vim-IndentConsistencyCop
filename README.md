@@ -407,7 +407,7 @@ below).
 HISTORY
 ------------------------------------------------------------------------------
 
-##### 3.01    RELEASEME
+##### 3.01    10-Nov-2024
 - Better handle a buffer with consistent bad mix of spaces and tabs.
 - CHG: Require 'softtabstop' to be set when space-indenting (except for spc1),
   so that the backspace key will remove an entire indent's worth of spaces
@@ -640,7 +640,7 @@ IndentBufferConsistencyCop.
 - Started development.
 
 ------------------------------------------------------------------------------
-Copyright: (C) 2006-2023 Ingo Karkat -
+Copyright: (C) 2006-2024 Ingo Karkat -
 The [VIM LICENSE](http://vimdoc.sourceforge.net/htmldoc/uganda.html#license) applies to this plugin.
 
 Maintainer:     Ingo Karkat &lt;ingo@karkat.de&gt;
