@@ -234,6 +234,8 @@ that they will be excluded from the cop's checking. Define a List of Funcrefs:
 The function must take two startLnum, endLnum arguments and return a
 Dictionary whose keys represent the filtered out line numbers. The cop ignores
 the union of all returned Sets.
+By default, the cop ignores lines that match a configured pattern, block
+alignment, and those excluded by editorconfig-checker exclusion comments.
 
 In case of really irregular lines where the removal of some whitespace per
 g:indentconsistencycop\_non\_indent\_pattern isn't possible, the lines can be
@@ -406,6 +408,12 @@ below).
 
 HISTORY
 ------------------------------------------------------------------------------
+
+##### 3.10    RELEASEME
+- ENH: Default g:IndentConsistencyCop\_line\_filters configuration now also
+  ignores lines excluded by editorconfig-checker exclusion comments (e.g.
+  "editorconfig-checker-disable-line"); cp.
+  https://github.com/editorconfig-checker/editorconfig-checker#excluding
 
 ##### 3.01    10-Nov-2024
 - Better handle a buffer with consistent bad mix of spaces and tabs.
@@ -640,7 +648,7 @@ IndentBufferConsistencyCop.
 - Started development.
 
 ------------------------------------------------------------------------------
-Copyright: (C) 2006-2024 Ingo Karkat -
+Copyright: (C) 2006-2026 Ingo Karkat -
 The [VIM LICENSE](http://vimdoc.sourceforge.net/htmldoc/uganda.html#license) applies to this plugin.
 
 Maintainer:     Ingo Karkat &lt;ingo@karkat.de&gt;

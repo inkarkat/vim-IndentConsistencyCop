@@ -3,7 +3,7 @@
 " DEPENDENCIES:
 "   - Requires Vim 7.0 or higher.
 "
-" Copyright: (C) 2006-2019 by Ingo Karkat
+" Copyright: (C) 2006-2026 by Ingo Karkat
 "   The VIM LICENSE applies to this script; see ':help copyright'.
 "
 " Maintainer:	Ingo Karkat <ingo@karkat.de>
@@ -13,7 +13,8 @@ if exists('g:loaded_indentconsistencycop') || (v:version < 700)
     finish
 endif
 let g:loaded_indentconsistencycop = 1
-
+let s:save_cpo = &cpo
+set cpo&vim
 
 "- configuration --------------------------------------------------------------
 
@@ -38,9 +39,14 @@ if ! exists('g:IndentConsistencyCop_UnacceptableIndentSettings')
     let g:IndentConsistencyCop_UnacceptableIndentSettings = ['spc1', 'sts1']
 endif
 if ! exists('g:IndentConsistencyCop_line_filters')
+    if v:version < 702 | runtime autoload/IndentConsistencyCop/EditorConfigCheckerExclusions.vim | endif  " The Funcref doesn't trigger the autoload in older Vim versions.
     if v:version < 702 | runtime autoload/IndentConsistencyCop/Pattern.vim | endif  " The Funcref doesn't trigger the autoload in older Vim versions.
     if v:version < 702 | runtime autoload/IndentConsistencyCop/BlockAlignment.vim | endif  " The Funcref doesn't trigger the autoload in older Vim versions.
-    let g:IndentConsistencyCop_line_filters = [function('IndentConsistencyCop#Pattern#Filter'), function('IndentConsistencyCop#BlockAlignment#Filter')]
+    let g:IndentConsistencyCop_line_filters = [
+    \   function('IndentConsistencyCop#EditorConfigCheckerExclusions#Filter'),
+    \   function('IndentConsistencyCop#Pattern#Filter'),
+    \   function('IndentConsistencyCop#BlockAlignment#Filter'),
+    \]
 endif
 
 if ! exists('g:IndentConsistencyCop_MenuExtensions')
@@ -82,4 +88,6 @@ command! -bar IndentConsistencyCopOff call IndentConsistencyCop#TurnOff()
 " know does not conform to the buffer indent settings.
 command! -bar -range=% -nargs=? -complete=customlist,IndentConsistencyCop#IndentSettingComplete IndentRangeConsistencyCop if ! IndentConsistencyCop#IndentConsistencyCop(<line1>, <line2>, 0, <q-args>) | echoerr ingo#err#Get() | endif
 
+let &cpo = s:save_cpo
+unlet s:save_cpo
 " vim: set ts=8 sts=4 sw=4 noexpandtab ff=unix fdm=syntax :
