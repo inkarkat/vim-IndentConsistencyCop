@@ -1,6 +1,7 @@
 " IndentConsistencyCop/EditorConfigCheckerExclusions.vim: Exclude lines marked with editorconfig-checker exclusion comments.
 "
 " DEPENDENCIES:
+"   - ingo-library.vim plugin
 "
 " Copyright: (C) 2026 Ingo Karkat
 "   The VIM LICENSE applies to this script; see ':help copyright'.
@@ -13,7 +14,9 @@ function! IndentConsistencyCop#EditorConfigCheckerExclusions#Filter( startLnum, 
     let l:isDisabled = 0
     while l:lnum <= a:endLnum
 	let l:line = getline(l:lnum)
-	if l:isDisabled
+	if l:lnum == 1 && l:line =~# '\<editorconfig-checker-disable-file\>'
+	    return ingo#collections#ToDict(range(a:startLnum, a:endLnum))
+	elseif l:isDisabled
 	    let l:filteredLnums[l:lnum] = 1
 	elseif l:line =~# '\<editorconfig-checker-disable-line\>'
 	    let l:filteredLnums[l:lnum] = 1
